@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta name="theme-color" content="#1a3a6c">
-<title>오늘의 신문 요약 · 아카이브</title>
-<meta name="description" content="매일 발행되는 주요 경제·산업·국제 뉴스 요약 아카이브">
+<title>가좌버핏 뉴스 · 아카이브</title>
+<meta name="description" content="가좌버핏 뉴스 — 주요 경제·산업·국제 뉴스 요약 아카이브">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
@@ -58,26 +58,6 @@ body {
     opacity: 0.92;
     position: relative;
 }
-.hero .stats {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.2);
-    position: relative;
-}
-.hero .stats .stat .num {
-    font-size: 22px;
-    font-weight: 800;
-    display: block;
-}
-.hero .stats .stat .lbl {
-    font-size: 11px;
-    opacity: 0.85;
-    margin-top: 2px;
-}
-
 /* ===== 최신호 카드 ===== */
 .latest-section {
     margin: -30px 12px 16px;
@@ -302,19 +282,8 @@ body {
 
 <!-- 헤더 -->
 <div class="hero">
-    <div class="label">D A I L Y &nbsp; B R I E F</div>
-    <h1>오늘의 신문 요약</h1>
+    <h1>가좌버핏 뉴스</h1>
     <div class="subtitle">주요 경제·산업·국제 뉴스를 매일 한눈에</div>
-    <div class="stats">
-        <div class="stat">
-            <span class="num" id="totalCount">1</span>
-            <span class="lbl">발행 호수</span>
-        </div>
-        <div class="stat">
-            <span class="num" id="totalArticles">40</span>
-            <span class="lbl">총 기사</span>
-        </div>
-    </div>
 </div>
 
 <!-- 최신호 -->
@@ -385,19 +354,15 @@ body {
 
 <!-- 푸터 -->
 <div class="footer">
-    <div class="footer-logo">📰 Daily News Brief</div>
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
     개인 학습·기록 목적의 뉴스 요약 사이트<br/>
     원문 저작권은 각 언론사에 있습니다<br/><br/>
     <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
 </div>
 
 <script>
-// 통계 자동 업데이트 (발행분 늘어나면 archive-item 개수 세서 표시)
-const items = document.querySelectorAll('.archive-item');
-const count = items.length;
-document.getElementById('totalCount').textContent = count;
+const count = document.querySelectorAll('.archive-item').length;
 document.getElementById('archiveCount').textContent = `총 ${count}호`;
-// 총 기사 수는 발행마다 다르므로 일단 현재 호수만 반영 (수동 업데이트 권장)
 </script>
 
 </body>
