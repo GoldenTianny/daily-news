@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://goldentianny.github.io/daily-news/sitemap.xml
