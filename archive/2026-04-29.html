@@ -483,16 +483,75 @@ body {
     .share-btn { background: #2a2f38; border-color: #3a4150; color: #c0c5d0; }
     .share-btn:hover, .share-btn:active { background: #353b46; color: #6da3e8; border-color: #6da3e8; }
 }
+
+/* ===== 상단바 타이틀 링크 ===== */
+.top-bar .title {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+
+/* ===== 날짜 드롭다운 ===== */
+.date-dropdown { position: relative; }
+.date-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: inherit;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.4;
+}
+.date-btn:hover, .date-btn:active { background: rgba(255,255,255,0.22); }
+.date-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: white;
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    min-width: 140px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 200;
+}
+.date-menu li { margin: 0; }
+.date-menu a {
+    display: block;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    color: #1a1a1a;
+    text-decoration: none;
+}
+.date-menu a:hover { background: #f0f4fa; color: #1a3a6c; }
+.date-menu a.active { background: #f0f4fa; color: #1a3a6c; font-weight: 700; }
+.date-menu .empty { padding: 10px 14px; color: #888; font-size: 13px; }
+@media (prefers-color-scheme: dark) {
+    .date-menu { background: #232730; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .date-menu a { color: #f0f4fa; }
+    .date-menu a:hover { background: #2d3340; color: #6da3e8; }
+    .date-menu a.active { background: #2d3340; color: #6da3e8; }
+}
 </style>
 </head>
 <body>
 
 <!-- 상단 고정 헤더 -->
 <div class="top-bar">
-    <div>
-        <div class="title">📰 가좌버핏 뉴스</div>
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스</a>
+    <div class="date-dropdown">
+        <button class="date-btn" id="dateBtn" type="button" aria-haspopup="listbox" aria-expanded="false">2026.04.29 ▾</button>
+        <ul class="date-menu" id="dateMenu" hidden></ul>
     </div>
-    <div class="date">2026.04.29</div>
 </div>
 
 <!-- 표지 -->
@@ -1189,6 +1248,63 @@ document.querySelectorAll('article.article').forEach(article => {
     bottom.addEventListener('click', () => shareArticle(id, title));
     article.appendChild(bottom);
 });
+</script>
+
+<script>
+// 날짜 드롭다운: 현재 페이지 URL에서 날짜 추출, ../index.html에서 archive-item 목록 가져와 메뉴 채움
+(async function initDateDropdown() {
+    const btn = document.getElementById('dateBtn');
+    const menu = document.getElementById('dateMenu');
+    if (!btn || !menu) return;
+
+    const m = location.pathname.match(/(\d{4}-\d{2}-\d{2})\.html$/);
+    const current = m ? m[1] : null;
+
+    let dates = [];
+    try {
+        const res = await fetch('../index.html', { cache: 'no-cache' });
+        const text = await res.text();
+        const doc = new DOMParser().parseFromString(text, 'text/html');
+        doc.querySelectorAll('.archive-item').forEach(a => {
+            const href = a.getAttribute('href') || '';
+            const mm = href.match(/(\d{4}-\d{2}-\d{2})\.html$/);
+            if (mm) dates.push(mm[1]);
+        });
+        if (current && !dates.includes(current)) dates.unshift(current);
+    } catch (e) {
+        if (current) dates = [current];
+    }
+
+    if (dates.length) {
+        menu.innerHTML = dates.map(d => {
+            const display = d.replace(/-/g, '.');
+            const cls = d === current ? ' class="active"' : '';
+            return `<li><a href="${d}.html"${cls}>${display}</a></li>`;
+        }).join('');
+    } else {
+        menu.innerHTML = '<li class="empty">목록을 불러올 수 없습니다</li>';
+    }
+
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const willOpen = menu.hidden;
+        menu.hidden = !willOpen;
+        btn.setAttribute('aria-expanded', String(willOpen));
+    });
+    document.addEventListener('click', e => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+            menu.hidden = true;
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !menu.hidden) {
+            menu.hidden = true;
+            btn.setAttribute('aria-expanded', 'false');
+            btn.focus();
+        }
+    });
+})();
 </script>
 
 </body>
