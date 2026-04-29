@@ -1340,15 +1340,13 @@ document.querySelectorAll('article.article').forEach(article => {
     // 5개 기사마다 1장 → 20개 기사면 4장
     const interval = 5;
     const numQuotes = Math.floor(articles.length / interval);
-    const selected = pickN(quotes, numQuotes);
+    const selected = pickN(quotes, numQuotes + 1);  // +1: 헤드라인 위 인트로용
 
     function esc(s) {
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    selected.forEach((q, i) => {
-        const after = articles[(i + 1) * interval - 1];
-        if (!after) return;
+    function createQuoteCard(q) {
         const card = document.createElement('div');
         card.className = 'quote-card';
         card.innerHTML = `
@@ -1359,7 +1357,18 @@ document.querySelectorAll('article.article').forEach(article => {
             <button class="share-btn" type="button" aria-label="이 명언 공유하기">📤 공유</button>
         `;
         card.querySelector('.share-btn').addEventListener('click', () => shareQuote(q));
-        after.parentNode.insertBefore(card, after.nextSibling);
+        return card;
+    }
+
+    // 인트로 명언: 헤드라인(목차) 바로 위 — 첫 인상용
+    const introTarget = document.querySelector('.toc') || articles[0];
+    if (introTarget) introTarget.parentNode.insertBefore(createQuoteCard(selected[0]), introTarget);
+
+    // 나머지: 5개 기사마다 1장
+    selected.slice(1).forEach((q, i) => {
+        const after = articles[(i + 1) * interval - 1];
+        if (!after) return;
+        after.parentNode.insertBefore(createQuoteCard(q), after.nextSibling);
     });
 })();
 
