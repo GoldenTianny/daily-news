@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>오늘의 신문 요약 · 2026.04.29</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 (sticky) ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title { font-size: 15px; font-weight: 700; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #1a3a6c 0%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+}
+.cover .label {
+    font-size: 11px;
+    letter-spacing: 5px;
+    opacity: 0.85;
+    margin-bottom: 16px;
+}
+.cover h1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+}
+.cover .subtitle {
+    font-size: 14px;
+    opacity: 0.92;
+    margin-bottom: 6px;
+}
+.cover .date-info {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+.cover .stat-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    padding: 18px 0 0;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+.cover .stat-row .stat .num {
+    font-size: 24px;
+    font-weight: 800;
+    display: block;
+}
+.cover .stat-row .stat .lbl {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 {
+    font-size: 16px;
+    color: #1a3a6c;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8edf5;
+}
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #1a3a6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 10px;
+    margin-top: 1px;
+}
+
+/* ===== 섹션 구분 ===== */
+.section-divider {
+    text-align: center;
+    color: #1a3a6c;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 28px 16px 12px;
+    letter-spacing: 3px;
+    padding: 8px 0;
+    border-top: 1px solid #d0d8e4;
+    border-bottom: 1px solid #d0d8e4;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.article-header {
+    padding: 16px 18px 12px;
+    border-left: 4px solid #1a3a6c;
+}
+.article .num {
+    display: inline-block;
+    background: #1a3a6c;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d2444;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+.article .body {
+    padding: 0 18px 16px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #2a2a2a;
+}
+.article .body p {
+    margin-bottom: 12px;
+    word-break: keep-all;
+}
+.article .body p:last-child { margin-bottom: 0; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a3a6c;
+}
+.ig-unit {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+}
+
+/* 막대 차트 */
+.bar-chart .row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+.bar-chart .label {
+    width: 70px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 10px;
+    color: #555;
+    font-weight: 500;
+    font-size: 12px;
+}
+.bar-chart .bar-wrap {
+    flex: 1;
+    background: #eef1f6;
+    border-radius: 4px;
+    height: 22px;
+    position: relative;
+    overflow: hidden;
+}
+.bar-chart .bar {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.bar-blue { background: linear-gradient(90deg, #2a5ca8, #3d7ad1); }
+.bar-red { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+.bar-orange { background: linear-gradient(90deg, #d68910, #f39c12); }
+.bar-teal { background: linear-gradient(90deg, #138d75, #1abc9c); }
+
+/* 통계 카드 */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card {
+    background: linear-gradient(135deg, #f0f4fa, #e3eaf5);
+    border-left: 3px solid #1a3a6c;
+    padding: 10px 12px;
+    border-radius: 6px;
+}
+.stat-card .stat-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+}
+.stat-card .stat-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a3a6c;
+    line-height: 1.1;
+}
+.stat-card .stat-sub {
+    font-size: 10px;
+    color: #999;
+    margin-top: 2px;
+}
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+
+/* 데이터 표 */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 6px;
+}
+.data-table th {
+    background: #1a3a6c;
+    color: white;
+    padding: 8px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+}
+.data-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #e5e8ed;
+    background: white;
+    word-break: keep-all;
+}
+.data-table tr:nth-child(even) td { background: #f7f9fc; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+.data-table .label-cell {
+    font-weight: 700;
+    color: white;
+}
+
+/* SVG 차트 */
+.line-chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 비교 박스 */
+.compare-box {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+}
+.compare-side {
+    flex: 1;
+    padding: 10px 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+.compare-side .c-label {
+    font-size: 11px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.compare-side .c-value {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.compare-side p {
+    font-size: 11.5px;
+    line-height: 1.5;
+    margin-top: 4px;
+    color: #333;
+}
+.compare-vs {
+    align-self: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #888;
+}
+
+/* 키워드 태그 */
+.keyword-box {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.keyword-tag {
+    background: #1a3a6c;
+    color: white;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+/* 캡션 */
+.ig-caption {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #666;
+    text-align: center;
+    line-height: 1.5;
+    padding: 4px;
+}
+.ig-caption strong { color: #c0392b; }
+
+/* TOP 버튼 */
+.top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(26, 58, 108, 0.4);
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+}
+.top-btn.visible { display: flex; }
+
+/* 푸터 */
+.footer-note {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .data-table td { background: #232730; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table tr:nth-child(even) td { background: #1c1f26; }
+    .section-divider { color: #6da3e8; border-color: #2d3340; }
+    .bar-chart .label { color: #aaa; }
+    .bar-chart .bar-wrap { background: #2d3340; }
+    .compare-side p { color: #c8ccd4; }
+    .footer-note { color: #777; }
+}
+
+/* 큰 화면 (태블릿+) */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 헤더 -->
+<div class="top-bar">
+    <div>
+        <div class="title">📰 오늘의 신문 요약</div>
+    </div>
+    <div class="date">2026.04.29</div>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">D A I L Y &nbsp; B R I E F</div>
+    <h1>오늘의 신문 요약</h1>
+    <div class="subtitle">주요 경제·산업·국제 뉴스 한눈에</div>
+    <div class="date-info">2026년 4월 29일 수요일</div>
+    <div class="stat-row">
+        <div class="stat">
+            <span class="num">20</span>
+            <span class="lbl">총 기사</span>
+        </div>
+        <div class="stat">
+            <span class="num">5</span>
+            <span class="lbl">섹션</span>
+        </div>
+        <div class="stat">
+            <span class="num">~10분</span>
+            <span class="lbl">읽기 시간</span>
+        </div>
+    </div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 오늘의 헤드라인</h2>
+    <a href="#a1" class="toc-item"><span class="toc-num">1</span><span>UAE, OPEC 떠난다…석유동맹 균열</span></a>
+    <a href="#a2" class="toc-item"><span class="toc-num">2</span><span>4대 금융 '회수 어려운 부실대출' 역대최대</span></a>
+    <a href="#a3" class="toc-item"><span class="toc-num">3</span><span>같은 디올백인데…면세점 815만원 vs 백화점 750만원</span></a>
+    <a href="#a4" class="toc-item"><span class="toc-num">4</span><span>넷플릭스코리아, 법인세 불복소송 승소…687억원 안내도 된다</span></a>
+    <a href="#a5" class="toc-item"><span class="toc-num">5</span><span>공공 계약직 먼저 '공정수당' 도입</span></a>
+    <a href="#a6" class="toc-item"><span class="toc-num">6</span><span>제미나이-韓기업, AI 전방위 협력…HBM 이어 피지컬AI로 확대</span></a>
+    <a href="#a7" class="toc-item"><span class="toc-num">7</span><span>중국, AI패권 흔들기…딥시크 75% 덤핑, AI 가격전쟁 불붙였다</span></a>
+    <a href="#a8" class="toc-item"><span class="toc-num">8</span><span>'강한 캐나다' 펀드 출범…脫미국 속도낸다</span></a>
+    <a href="#a9" class="toc-item"><span class="toc-num">9</span><span>트럼프 "이란, 붕괴상태라고 알려와"</span></a>
+    <a href="#a10" class="toc-item"><span class="toc-num">10</span><span>나프타로 만든 새 플라스틱, 30% 이상 줄인다</span></a>
+    <a href="#a11" class="toc-item"><span class="toc-num">11</span><span>최태원 "글로벌 3강 AI전략, 3S에 달렸다"</span></a>
+    <a href="#a12" class="toc-item"><span class="toc-num">12</span><span>삼성, 가전사업 대수술…저수익 제품 OEM 전환</span></a>
+    <a href="#a13" class="toc-item"><span class="toc-num">13</span><span>한국전력기술, 쇄빙선용 SMR 개발 착수</span></a>
+    <a href="#a14" class="toc-item"><span class="toc-num">14</span><span>K커피 프랜차이즈, 동남아 찍고 美·日로</span></a>
+    <a href="#a15" class="toc-item"><span class="toc-num">15</span><span>리뉴얼 전략 속도내는 롯데백화점 인천점 식품 강화로 매출 1조 겨냥</span></a>
+    <a href="#a16" class="toc-item"><span class="toc-num">16</span><span>'K자 코스피' 대형주 34% 오를때 소형주 14% 그쳐</span></a>
+    <a href="#a17" class="toc-item"><span class="toc-num">17</span><span>코스닥은 중형주 상승률이 대형주 앞질러</span></a>
+    <a href="#a18" class="toc-item"><span class="toc-num">18</span><span>로봇 뭉칫돈·유통 찬바람…회사채 양극화</span></a>
+    <a href="#a19" class="toc-item"><span class="toc-num">19</span><span>중국수출통제법 충격 오나 美반도체장비, 랠리서 소외</span></a>
+    <a href="#a20" class="toc-item"><span class="toc-num">20</span><span>서울 외곽 전세 고갈…집 사는 사람 늘었다</span></a>
+</div>
+
+<!-- ===== 국제·외교 ===== -->
+<div class="section-divider">━ 국 제 · 외 교 ━</div>
+
+<!-- 기사 1 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">No. 1</span>
+        <h3>UAE, OPEC 떠난다…석유동맹 균열</h3>
+    </div>
+    <div class="body">
+        <p>중동의 주요 산유국인 아랍에미리트(UAE)가 다음 달 1일부터 석유수출국기구(OPEC)와 OPEC+를 전격 탈퇴하기로 했습니다. 이란 전쟁으로 경제적 타격을 입은 UAE가 자국 이익 극대화를 위해 독자적인 에너지 노선을 걷겠다고 선언한 것으로, 60년간 이어진 산유국 간 '석유 동맹'에 균열이 생기면서 국제 유가는 물론 중동 정세 전반이 격랑에 휩싸일 전망입니다.</p>
+        <p>UAE 정부는 OPEC이 부과하는 생산량 의무에서 벗어나 유연성을 갖게 됐다고 밝혔습니다. 이는 이란 전쟁 여파로 유가가 고공행진 중인 상황에서, 감산 대신 증산을 통해 수익을 극대화하려는 전략으로 풀이됩니다. 시장에서는 사우디 등 다른 산유국의 연쇄 이탈 가능성도 거론됩니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⛽ UAE 탈퇴 핵심 정보</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">OPEC 동맹 지속</div>
+                <div class="stat-value">60년</div>
+                <div class="stat-sub">5월 1일부 UAE 전격 탈퇴</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">원·달러 환율선</div>
+                <div class="stat-value">1,500원+</div>
+                <div class="stat-sub">중동 정세 악화 영향</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">UAE 전략</div>
+                <div class="stat-value">증산 선택</div>
+                <div class="stat-sub">감산 대신 이익 극대화</div>
+            </div>
+        </div>
+        <div class="ig-caption">👉 이란 전쟁 여파로 <strong>독자 노선</strong> 선언, 산유국 동맹 흔들</div>
+    </div>
+</article>
+
+<!-- 기사 8 위치 변경 - 1번 그룹 다음에 배치하지만 번호는 8 유지하므로 순서대로 진행 -->
+
+<!-- 기사 2 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">No. 2</span>
+        <h3>4대 금융 '회수 어려운 부실대출' 역대최대</h3>
+    </div>
+    <div class="body">
+        <p>KB·신한·하나·우리 등 4대 금융지주의 부실 대출이 지난 1분기에 역대 최대치를 기록했습니다. 금융지주들이 사상 최대 이익을 내며 순항하고 있지만, 건전성 악화라는 '경고음'이 커지고 있다는 평가가 나옵니다. 회수가 사실상 어려운 대출을 뜻하는 '고정이하여신(NPL)' 잔액이 13조 6203억 원으로 집계됐는데, 이는 2019년 4대 금융지주 체제가 자리 잡은 이후 가장 많은 규모입니다.</p>
+        <p>NPL 급증의 원인은 중소기업과 자영업자 등 취약 계층의 부실률이 빠르게 증가했기 때문입니다. 카드·캐피털·저축은행 등 2금융권의 어려움도 가중되고 있어, 금융지주 건전성이 더욱 약화될 가능성이 커졌다는 우려가 제기됩니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 1분기 NPL 잔액 — 사상 최대</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-red">
+                <div class="stat-label">고정이하여신 잔액</div>
+                <div class="stat-value">13.6조</div>
+                <div class="stat-sub">2019년 체제 이후 최대</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">비은행 NPL 비중</div>
+                <div class="stat-value">62.7%</div>
+                <div class="stat-sub">2021년 35.7% → 급증</div>
+            </div>
+        </div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">2021년 1Q</div><div class="bar-wrap"><div class="bar bar-blue" style="width:35.7%;">35.7%</div></div></div>
+            <div class="row"><div class="label">2026년 1Q</div><div class="bar-wrap"><div class="bar bar-red" style="width:62.7%;">62.7%</div></div></div>
+        </div>
+        <div class="ig-caption">👉 카드·캐피털·저축은행 등 2금융권 부실 가중</div>
+    </div>
+</article>
+
+<!-- 기사 3 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">No. 3</span>
+        <h3>같은 디올백인데…면세점 815만원 vs 백화점 750만원</h3>
+    </div>
+    <div class="body">
+        <p>중동 정세 악화로 원·달러 환율이 1500원을 넘나드는 고환율이 지속되면서, 백화점과 면세점 간 가격 역전 현상이 나타나고 있습니다. 달러로 가격을 책정해 원화로 환산하는 면세점이 원화로 가격을 정하는 백화점보다 오히려 비싸지는 상황이 발생한 것입니다. 디올 미니 레이디백은 면세점에서 815만 원이지만 백화점에서는 750만 원에 판매되고 있습니다.</p>
+        <p>이에 따라 면세업계에서는 1979년 도입된 달러 가격 제도를 폐지하고 원화 기준으로 바꿔야 한다는 목소리가 커지고 있습니다. 반면 백화점은 명품 매출이 132% 급증하는 등 외국인 관광객 수요까지 흡수하며 호실적을 거두고 있습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">💼 백화점보다 비싼 면세점 물품<span class="ig-unit">환율 1달러당 1,482.9원 기준</span></div>
+        <table class="data-table">
+            <thead><tr><th>품목</th><th>면세가</th><th>백화점가</th></tr></thead>
+            <tbody>
+                <tr><td>디올 미니 레이디백</td><td class="highlight">815만</td><td>750만</td></tr>
+                <tr><td>디올 스몰 레이디백</td><td class="highlight">926만</td><td>840만</td></tr>
+                <tr><td>루이비통 캐리올PM</td><td class="highlight">443만</td><td>434만</td></tr>
+                <tr><td>보테가베네타 명함지갑</td><td class="highlight">86만</td><td>82만</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">👉 롯데백화점 외국인 매출 26년 1Q <strong>전년 대비 +100%</strong></div>
+    </div>
+</article>
+
+<!-- 기사 4 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">No. 4</span>
+        <h3>넷플릭스코리아, 법인세 불복소송 승소…687억원 안내도 된다</h3>
+    </div>
+    <div class="body">
+        <p>법원이 넷플릭스 한국법인을 콘텐츠 사업의 주체가 아닌 단순 중개업자로 해석하면서, 국내에서 논의 중인 '망 사용료 의무화' 입법에도 영향을 줄 수 있다는 관측이 나옵니다. 서울행정법원은 넷플릭스서비시스코리아가 종로세무서장 등을 상대로 낸 법인세 부과 처분 취소 청구소송에서 원고 일부 승소로 판결했습니다. 이에 따라 약 762억 원 중 687억 원을 취소하라고 명령했습니다.</p>
+        <p>쟁점은 넷플릭스 한국법인이 네덜란드 본사에 지급한 금액이 저작권 사용료인지 여부였습니다. 재판부는 이를 사업 소득으로 보아야 한다며 넷플릭스 측 손을 들어줬습니다. 한편 미국 무역대표부(USTR)도 한국의 망 사용료 정책에 불만을 드러내고 있습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚖️ 법인세 분쟁 단계별 금액</div>
+        <div class="line-chart">
+            <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg">
+                <line x1="40" y1="20" x2="480" y2="20" stroke="#eee"/>
+                <line x1="40" y1="55" x2="480" y2="55" stroke="#eee"/>
+                <line x1="40" y1="90" x2="480" y2="90" stroke="#eee"/>
+                <polyline points="100,15 250,40 400,80" fill="none" stroke="#138d75" stroke-width="3"/>
+                <circle cx="100" cy="15" r="6" fill="#c0392b"/>
+                <circle cx="250" cy="40" r="6" fill="#d68910"/>
+                <circle cx="400" cy="80" r="6" fill="#138d75"/>
+                <text x="100" y="9" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="700">800억</text>
+                <text x="250" y="34" text-anchor="middle" font-size="13" fill="#d68910" font-weight="700">762억</text>
+                <text x="400" y="74" text-anchor="middle" font-size="13" fill="#138d75" font-weight="700">687억 취소</text>
+                <text x="100" y="115" text-anchor="middle" font-size="11" fill="#777">2021 부과</text>
+                <text x="250" y="115" text-anchor="middle" font-size="11" fill="#777">2023 심판</text>
+                <text x="400" y="115" text-anchor="middle" font-size="11" fill="#777">2026 판결</text>
+            </svg>
+        </div>
+        <div class="ig-caption">👉 넷플릭스 일부 승소, <strong>망 사용료 입법</strong>에 영향 가능성</div>
+    </div>
+</article>
+
+<!-- 기사 5 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">No. 5</span>
+        <h3>공공 계약직 먼저 '공정수당' 도입</h3>
+    </div>
+    <div class="body">
+        <p>고용노동부는 내년부터 공공기관의 1년 미만 계약직 노동자가 퇴직할 때 '공정수당'을 지급하겠다고 28일 이재명 대통령에게 보고했습니다. 기간제 노동자에게 근무 기간에 따라 최소 38만 원부터 최대 249만 원까지 일종의 보상금을 지급하는 제도입니다. 계약 기간이 짧을수록 고용 불안정성이 높다고 판단해 더 높은 보상률을 적용하는 방식입니다.</p>
+        <p>이 대통령이 경기지사 시절 직접 고안했던 공정수당이 전국 공공 부문으로 확대되는 것으로, 정부가 비정규직 문제 해소에 고삐를 당기기 시작했다는 분석이 제기됩니다. 향후 사회적 대화 프로세스를 거쳐 민간 전반으로 확산시키겠다는 의도로 풀이됩니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">💵 공정수당 핵심 금액</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#e8f8f5;">
+                <div class="c-label" style="color:#138d75;">📉 최소 보상금</div>
+                <div class="c-value" style="color:#138d75;">38만원</div>
+                <p>계약 기간이 길수록</p>
+            </div>
+            <div class="compare-vs">→</div>
+            <div class="compare-side" style="background:#fadbd8;">
+                <div class="c-label" style="color:#c0392b;">📈 최대 보상금</div>
+                <div class="c-value" style="color:#c0392b;">249만원</div>
+                <p>계약 기간이 짧을수록</p>
+            </div>
+        </div>
+        <div class="ig-caption">기준금액 <strong>254만 5,000원</strong> (최저임금 대비 118%) · 적용 대상: 1년 미만 기간제</div>
+    </div>
+</article>
+
+<!-- ===== AI·산업 ===== -->
+<div class="section-divider">━ A I · 산 업 ━</div>
+
+<!-- 기사 6 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">No. 6</span>
+        <h3>제미나이-韓기업, AI 전방위 협력…HBM 이어 피지컬AI로 확대</h3>
+    </div>
+    <div class="body">
+        <p>구글 인공지능(AI) 모델 제미나이를 만드는 구글 딥마인드의 데미스 허사비스 최고경영자(CEO)와 국내 4대 그룹 총수가 28일 연쇄 회동을 가지면서 구글과 한국의 AI 분야 협력이 더욱 강해질 전망입니다. 구글은 자체 개발한 AI 가속기 텐서처리장치(TPU)로 엔비디아 독주 체제에 균열을 내고 있으며, 이를 위해 삼성과 SK의 고대역폭메모리(HBM)가 필수적입니다.</p>
+        <p>특히 현대차와 LG는 구글이 미래로 보는 '피지컬 AI' 분야에서 핵심 파트너로 떠오르고 있습니다. 현대차 자회사 보스턴다이내믹스는 휴머노이드 로봇 '아틀라스'에 제미나이를 탑재해 개발 중이며, LG도 홈 로봇 '클로이드'에 제미나이를 적용했습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🤝 구글 딥마인드 × 국내 4대 그룹</div>
+        <table class="data-table">
+            <tbody>
+                <tr><td style="background:#1428a0; color:white; font-weight:700;">SAMSUNG</td><td>구글에 메모리·HBM 공급, 갤럭시에 제미나이 탑재, SDS 클라우드 협력</td></tr>
+                <tr><td style="background:#002c5f; color:white; font-weight:700;">HYUNDAI</td><td>보스턴다이내믹스 휴머노이드 개발, 자율주행차 협력</td></tr>
+                <tr><td style="background:#e85518; color:white; font-weight:700;">SK</td><td>구글에 메모리·HBM 공급, AI 연구 협력 가능성</td></tr>
+                <tr><td style="background:#a50034; color:white; font-weight:700;">LG</td><td>홈 로봇 클로이드 협력, LG 가전에 제미나이 탑재</td></tr>
+            </tbody>
+        </table>
+        <div class="keyword-box">
+            <span class="keyword-tag">#피지컬 AI</span>
+            <span class="keyword-tag">#TPU 독립선언</span>
+            <span class="keyword-tag">#HBM 동맹</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 7 -->
+<article class="article" id="a7">
+    <div class="article-header">
+        <span class="num">No. 7</span>
+        <h3>중국, AI패권 흔들기…딥시크 75% 덤핑, AI 가격전쟁 불붙였다</h3>
+    </div>
+    <div class="body">
+        <p>미국과 인공지능(AI) 패권 경쟁을 벌이고 있는 중국이 민관에서 잇따라 반격 카드를 꺼냈습니다. 중국 생성형 AI 기업 딥시크가 전 모델의 가격을 대폭 인하하며 가성비를 앞세워 시장 점유율 확보에 나섰고, 중국 정부는 메타의 중국계 AI 기업 인수에 제동을 걸었습니다. 딥시크는 최신 AI 모델 '딥시크 V4' 프리뷰 버전을 공개하며 입력 캐시 적중 비용을 기존 대비 10분의 1 수준으로 인하했습니다.</p>
+        <p>이는 미국 경쟁사 오픈AI의 'GPT-5.5'와 비교해 32분의 1 수준에 불과합니다. 한편 중국 당국은 메타의 마누스 인수를 불허하며 거래 철회를 요구해, 미·중 기술 갈등이 한층 격화되는 양상입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">💰 딥시크 V4 vs GPT-5.5 가격 비교<span class="ig-unit">토큰 100만 개당 (캐시 적중)</span></div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#e3eaf5;">
+                <div class="c-label" style="color:#2a5ca8;">🇨🇳 DEEPSEEK V4</div>
+                <div class="c-value" style="color:#2a5ca8;">$0.0036</div>
+                <p>75% 추가 할인 시</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:#fadbd8;">
+                <div class="c-label" style="color:#c0392b;">🇺🇸 GPT-5.5</div>
+                <div class="c-value" style="color:#c0392b;">$0.5</div>
+                <p>기존 가격</p>
+            </div>
+        </div>
+        <div class="ig-caption">👉 딥시크 가격 = GPT-5.5의 <strong>1/138 수준</strong> · 중국 당국, 메타의 마누스 인수 차단</div>
+    </div>
+</article>
+
+<!-- 기사 8 -->
+<article class="article" id="a8">
+    <div class="article-header">
+        <span class="num">No. 8</span>
+        <h3>'강한 캐나다' 펀드 출범…脫미국 속도낸다</h3>
+    </div>
+    <div class="body">
+        <p>마크 카니 캐나다 총리가 27일 첫 국부펀드인 '캐나다 스트롱 펀드'의 출범을 발표했습니다. 미국의 통상 압박에 대응하는 동시에 경제 구조를 다변화하고 투자를 확대하기 위한 조치로 풀이됩니다. 초기 자본금은 250억 캐나다달러(약 27조 원)로, 정부는 청정·기존 에너지, 핵심 광물, 농업, 인프라 분야에 집중 출자할 계획입니다.</p>
+        <p>올해 들어 한국·스페인·인도네시아 등 각국이 잇달아 국부펀드 도입을 발표하며, 인공지능(AI)·에너지 등 전략 산업 육성을 위한 '국부펀드 설립 경쟁'이 가속화되고 있습니다. 한국도 이재명 대통령 지시로 20조 원 규모의 '한국형 국부펀드' 설립을 추진하고 있습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🏦 국부펀드 신설 나선 국가들</div>
+        <table class="data-table">
+            <thead><tr><th>국가</th><th>초기 규모</th><th>핵심 분야</th></tr></thead>
+            <tbody>
+                <tr><td>🇨🇦 캐나다</td><td class="highlight">27조원</td><td>에너지·광업·농업·기술</td></tr>
+                <tr><td>🇪🇸 스페인</td><td class="highlight">18조원</td><td>AI 등, 1200억유로 목표</td></tr>
+                <tr><td>🇮🇩 인도네시아</td><td class="highlight">30조원</td><td>국영기업 7개 지분 편입</td></tr>
+                <tr><td>🇰🇷 한국</td><td class="highlight">20조원</td><td>반도체·방산·AI</td></tr>
+                <tr><td>🇺🇸 미국</td><td>미정</td><td>2025년 트럼프 행정명령</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">👉 글로벌 <strong>국부펀드 설립 경쟁</strong> 가속화</div>
+    </div>
+</article>
+
+<!-- 기사 9 -->
+<article class="article" id="a9">
+    <div class="article-header">
+        <span class="num">No. 9</span>
+        <h3>트럼프 "이란, 붕괴상태라고 알려와"</h3>
+    </div>
+    <div class="body">
+        <p>미국과 이란 간 종전 협상이 교착 상태에 빠진 가운데, 미국이 호르무즈 해협의 자유로운 항행을 위해 '해양자유연합' 창설을 제안했습니다. 그러나 이란은 이에 대해 "미국의 봉쇄가 불법"이라며 반대했습니다. 이란 전쟁이 발발한 지 두 달이 넘었지만 종전의 실마리를 찾기 어려운 분위기입니다.</p>
+        <p>한편 28일 도널드 트럼프 미국 대통령은 자신의 SNS 트루스소셜에서 "이란 측으로부터 현재 붕괴 상태에 처해 있다는 통보를 받았다"고 주장했습니다. 그는 "이란이 지도 체제 문제를 수습하는 동안 가능한 한 빨리 호르무즈 해협을 개방해줄 것을 우리에게 요청했다"고 덧붙였습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚔️ 美·이란 협상 교착 핵심</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#e3eaf5;">
+                <div class="c-label" style="color:#2a5ca8;">🇺🇸 미국</div>
+                <p>'해양자유연합' 창설 제안<br/>호르무즈 해협 항행 자유<br/>이란 붕괴 상태 주장</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:#fadbd8;">
+                <div class="c-label" style="color:#c0392b;">🇮🇷 이란</div>
+                <p>"미국 봉쇄는 불법"<br/>해양자유연합 반대<br/>해협 개방 요청 부인</p>
+            </div>
+        </div>
+        <div class="ig-caption">⛽ 이란 전쟁 발발 <strong>2개월+</strong>, 종전 실마리 안 보여</div>
+    </div>
+</article>
+
+<!-- 기사 10 -->
+<article class="article" id="a10">
+    <div class="article-header">
+        <span class="num">No. 10</span>
+        <h3>나프타로 만든 새 플라스틱, 30% 이상 줄인다</h3>
+    </div>
+    <div class="body">
+        <p>정부가 중동 전쟁을 계기로 석유에 의존하는 플라스틱 경제에서 벗어나기 위한 '탈(脫)플라스틱 로드맵'을 발표했습니다. 2030년까지 나프타를 이용해 만드는 신재(新材) 플라스틱을 30% 이상 감축하는 게 목표입니다. 이를 위해 폴리에틸렌(PE), 폴리프로필렌(PP) 등 소재에 재생원료 사용을 의무화했을 때 신재와 재생원료 간 가격 차이를 보전하는 방안을 구상하고 있습니다.</p>
+        <p>또한 일회용품 폐기 부담금을 인상하고, 재생원료 사용 시에는 감면 혜택을 확대할 계획입니다. 종량제 봉투에 재생원료 사용 설비 구축을 위해 138억 원을 투입하며, 장례식장 다회용기 전환도 확대해 나갑니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">♻️ 폐플라스틱 발생량 추이<span class="ig-unit">단위: 만톤</span></div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">2021년</div><div class="bar-wrap"><div class="bar bar-teal" style="width:85%;">852</div></div></div>
+            <div class="row"><div class="label">2022년</div><div class="bar-wrap"><div class="bar bar-teal" style="width:90%;">906</div></div></div>
+            <div class="row"><div class="label">2023년</div><div class="bar-wrap"><div class="bar bar-orange" style="width:97%;">978</div></div></div>
+            <div class="row"><div class="label">2024년</div><div class="bar-wrap"><div class="bar bar-red" style="width:100%;">1,006</div></div></div>
+        </div>
+        <table class="data-table" style="margin-top:10px;">
+            <tbody>
+                <tr><td style="background:#138d75; color:white; font-weight:700;">①</td><td>플라스틱 사용 감량 (택배 과대포장 제한)</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700;">②</td><td>일회용 플라스틱 축소 (장례식장 다회용기)</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700;">③</td><td>재활용 산업 기반 (페트병 재생원료 30%)</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700;">④</td><td>신재 30% 감축 (138억원 설비 투자)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</article>
+
+<!-- 기사 11 -->
+<article class="article" id="a11">
+    <div class="article-header">
+        <span class="num">No. 11</span>
+        <h3>최태원 "글로벌 3강 AI전략, 3S에 달렸다"</h3>
+    </div>
+    <div class="body">
+        <p>최태원 대한상공회의소 회장 겸 SK그룹 회장이 인공지능(AI) 시대 대한민국의 경쟁력 확보를 위한 핵심 전략으로 '3S(스피드·스케일·세이프티)'를 제시했습니다. 28일 국회 의원회관에서 열린 정책 세미나에서 그는 "AI 경쟁은 알고리즘 싸움이 아니라 자금, 전력, GPU, 메모리 등 인프라와 자원의 총력전"이라며 인프라 중심의 선제 투자와 국가 차원의 전략 수립 필요성을 강조했습니다.</p>
+        <p>최 회장은 한국이 'AI 네이티브 국가'로 빠르게 전환할 잠재력이 충분하다고 평가했습니다. 또한 AI 확산이 가져올 사회적 충격에 대응해 사회적 가치를 측정하고 보상하는 '소셜 밸류 이코노미' 개념도 강조했습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🚧 AI 산업 4대 병목</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-red">
+                <div class="stat-label">자금</div>
+                <div class="stat-value">74조원</div>
+                <div class="stat-sub">데이터센터 1곳당 ($500억)</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">전력</div>
+                <div class="stat-value">원전 1기</div>
+                <div class="stat-sub">데이터센터 운영 수준</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">GPU</div>
+                <div class="stat-value">엔비디아</div>
+                <div class="stat-sub">독점 공급 한계</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">메모리</div>
+                <div class="stat-value">HBM 부족</div>
+                <div class="stat-sub">AI 성능 의존도 ↑</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#SPEED</span>
+            <span class="keyword-tag">#SCALE</span>
+            <span class="keyword-tag">#SAFETY</span>
+            <span class="keyword-tag">#AI 네이티브 국가</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 12 -->
+<article class="article" id="a12">
+    <div class="article-header">
+        <span class="num">No. 12</span>
+        <h3>삼성, 가전사업 대수술…저수익 제품 OEM 전환</h3>
+    </div>
+    <div class="body">
+        <p>삼성전자가 가전사업 체질을 바꾸기 위한 구조 개편에 착수했습니다. 수익성이 낮은 제품은 외주 생산으로 과감히 전환하고, 경쟁력이 높은 핵심 제품에 역량을 모으는 '선택과 집중' 전략입니다. 식기세척기·전자레인지 등 일부 중소형 가전 생산라인을 단계적으로 축소하고, 해당 제품은 주문자상표부착생산(OEM)이나 제조자개발생산(ODM) 방식으로 돌리는 것이 핵심입니다.</p>
+        <p>저가형 가전을 생산해온 말레이시아 공장을 폐쇄하고, 중국 내 가전·TV 판매 사업도 철수합니다. 대신 냉장고·세탁기·에어컨 등 고부가가치 제품과 AI 프리미엄 가전, 냉난방 공조, 기업 간 거래(B2B), 구독 등 고성장 분야에 투자를 확대할 계획입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚙️ 삼성전자 가전사업 재편</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#e3eaf5;">
+                <div class="c-label" style="color:#2a5ca8;">📉 축소·폐지</div>
+                <p>저가 TV·전자레인지 OEM/ODM<br/>말레이시아 공장 폐쇄<br/>중국 판매 철수</p>
+            </div>
+            <div class="compare-vs">→</div>
+            <div class="compare-side" style="background:#fdebd0;">
+                <div class="c-label" style="color:#d68910;">📈 유지·확대</div>
+                <p>냉장고·세탁기·에어컨<br/>공조(HVAC)·B2B·구독<br/>프리미엄·AI 가전</p>
+            </div>
+        </div>
+        <div class="ig-caption">👉 <strong>선택과 집중</strong> 전략 — 고부가가치·고성장 분야 집중</div>
+    </div>
+</article>
+
+<!-- 기사 13 -->
+<article class="article" id="a13">
+    <div class="article-header">
+        <span class="num">No. 13</span>
+        <h3>한국전력기술, 쇄빙선용 SMR 개발 착수</h3>
+    </div>
+    <div class="body">
+        <p>한국전력기술(한기)이 10년 내 상용화를 목표로 해상 소형모듈원자로(SMR) 개발에 본격 착수했습니다. 한화오션 등 국내 주요 조선사와 협업해 해상 SMR을 쇄빙선 동력원으로 활용하는 방안을 구체화하고 있습니다. 자체 연료 공급이 어려운 극지방 쇄빙선 특성상 SMR이 최적의 대안으로 꼽히기 때문입니다.</p>
+        <p>김태균 한기 사장은 한화오션과 두 차례 회의를 갖고 쇄빙선에 해상 SMR을 도입하는 방안을 집중 논의 중이라고 밝혔습니다. 김 사장은 "다른 SMR 대비 작고, 경제성이 있고, 안전하며, 유지 보수가 쉬운 해상 SMR '반디'를 설계하고 있다"고 말했습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚛️ 해상 SMR '반디' 4대 강점</div>
+        <table class="data-table">
+            <tbody>
+                <tr><td style="background:#138d75; color:white; font-weight:700; text-align:center;">小</td><td>다른 SMR 대비 소형 설계</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700; text-align:center;">$</td><td>경제성 확보</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700; text-align:center;">✓</td><td>안전성</td></tr>
+                <tr><td style="background:#138d75; color:white; font-weight:700; text-align:center;">⚡</td><td>유지 보수 용이</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">🚢 한화오션과 협업, <strong>10년 내 상용화</strong> 목표</div>
+    </div>
+</article>
+
+<!-- ===== 유통·소비 ===== -->
+<div class="section-divider">━ 유 통 · 소 비 ━</div>
+
+<!-- 기사 14 -->
+<article class="article" id="a14">
+    <div class="article-header">
+        <span class="num">No. 14</span>
+        <h3>K커피 프랜차이즈, 동남아 찍고 美·日로</h3>
+    </div>
+    <div class="body">
+        <p>K커피 프랜차이즈들이 동남아시아에 이어 미국·일본 해외 진출을 빠르게 확대하고 있습니다. 더벤티가 올해 미국 라스베이거스 매장 오픈을 예고한 가운데 빽다방·메가MGC커피 등도 미국 시장 진출을 검토하고 있습니다. 국내 커피 프랜차이즈 시장이 성숙기에 접어들었다는 평가가 나오는 가운데, 주요 업체들이 K푸드 붐을 타고 해외에서 돌파구를 찾고 있는 것입니다.</p>
+        <p>특히 매머드커피는 일본에서 저가·대용량 전략으로 빠르게 자리 잡고 있습니다. 도쿄 주요 상권 매장에서는 940밀리리터 대용량 아메리카노를 400엔 수준에 판매하며 가성비 전략으로 현지 브랜드에 대응하고 있습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">☕ K커피 해외 점포 현황</div>
+        <table class="data-table">
+            <thead><tr><th>브랜드</th><th>현재 점포</th><th>올해 출점 계획</th></tr></thead>
+            <tbody>
+                <tr><td>더벤티</td><td class="highlight">7</td><td>미국 1호점</td></tr>
+                <tr><td>빽다방</td><td class="highlight">18</td><td>미국·중국 검토</td></tr>
+                <tr><td>이디야</td><td class="highlight">3</td><td>라오스</td></tr>
+                <tr><td>메가MGC</td><td class="highlight">8</td><td>일본·캄보디아</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">🇰🇷 서울 커피 점포 <strong>2024년 21,096 → 2025년 20,677</strong> (포화)</div>
+    </div>
+</article>
+
+<!-- 기사 15 -->
+<article class="article" id="a15">
+    <div class="article-header">
+        <span class="num">No. 15</span>
+        <h3>리뉴얼 전략 속도내는 롯데백화점 인천점 식품 강화로 매출 1조 겨냥</h3>
+    </div>
+    <div class="body">
+        <p>롯데백화점이 리뉴얼을 통해 매출을 끌어올리는 전략에 속도를 내는 가운데, 수도권 서부 거점인 인천점이 리뉴얼을 마무리하고 '수도권 서부 첫 1조 원 백화점'을 향한 도전에 나섭니다. 수도권 거점 점포에 체험형 매장을 늘려 고객층을 확대하려는 전략으로 풀이됩니다. 인천점의 작년 매출은 8300억 원이었으며 올해는 1조 원 돌파가 가능할 것으로 전망됩니다.</p>
+        <p>올해 하반기에는 인천종합버스터미널과의 연결 시설을 리뉴얼하는 공사도 진행해 고객 접근성을 높일 계획입니다. 롯데백화점은 올해 노원점, 청량리점, 강남점 등도 식품관과 체험형 콘텐츠를 강화하며 새로 단장합니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🏬 롯데백화점 인천점 연간 매출<span class="ig-unit">단위: 억원</span></div>
+        <div class="line-chart">
+            <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg">
+                <line x1="40" y1="20" x2="480" y2="20" stroke="#eee"/>
+                <line x1="40" y1="55" x2="480" y2="55" stroke="#eee"/>
+                <line x1="40" y1="90" x2="480" y2="90" stroke="#eee"/>
+                <polyline points="80,90 165,85 250,75 335,55 420,15" fill="none" stroke="#c0392b" stroke-width="3"/>
+                <circle cx="80" cy="90" r="5" fill="#2a5ca8"/>
+                <circle cx="165" cy="85" r="5" fill="#2a5ca8"/>
+                <circle cx="250" cy="75" r="5" fill="#d68910"/>
+                <circle cx="335" cy="55" r="5" fill="#d68910"/>
+                <circle cx="420" cy="15" r="6" fill="#c0392b"/>
+                <text x="80" y="108" text-anchor="middle" font-size="11" fill="#555">7,400</text>
+                <text x="165" y="78" text-anchor="middle" font-size="11" fill="#555">7,500</text>
+                <text x="250" y="68" text-anchor="middle" font-size="11" fill="#d68910">7,800</text>
+                <text x="335" y="48" text-anchor="middle" font-size="11" fill="#d68910" font-weight="700">8,300</text>
+                <text x="420" y="9" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="700">10,000+</text>
+                <text x="80" y="125" text-anchor="middle" font-size="10" fill="#777">2022</text>
+                <text x="165" y="125" text-anchor="middle" font-size="10" fill="#777">2023</text>
+                <text x="250" y="125" text-anchor="middle" font-size="10" fill="#777">2024</text>
+                <text x="335" y="125" text-anchor="middle" font-size="10" fill="#777">2025</text>
+                <text x="420" y="125" text-anchor="middle" font-size="10" fill="#777">2026목표</text>
+            </svg>
+        </div>
+        <div class="ig-caption">👉 수도권 서부 <strong>첫 1조원 백화점</strong> 도전</div>
+    </div>
+</article>
+
+<!-- ===== 증시·금융 ===== -->
+<div class="section-divider">━ 증 시 · 금 융 ━</div>
+
+<!-- 기사 16 -->
+<article class="article" id="a16">
+    <div class="article-header">
+        <span class="num">No. 16</span>
+        <h3>'K자 코스피' 대형주 34% 오를때 소형주 14% 그쳐</h3>
+    </div>
+    <div class="body">
+        <p>중동발 지정학적 리스크 완화와 함께 상승 탄력을 받은 코스피가 연일 사상 최고치를 갈아치우며 7000선 고지를 넘보고 있습니다. 하지만 지수 급등의 과실이 시가총액 상위 대형주에만 집중되는 'K자형' 양극화 장세가 고착화되면서, 소외 종목들과 벌어진 격차는 여전한 모습입니다. 이달 들어 28일까지 코스피 대형주 지수는 34% 넘게 치솟은 반면 중형주는 23%, 소형주는 14% 오르는 데 그쳤습니다.</p>
+        <p>특히 삼성전자와 SK하이닉스 두 종목 합계가 코스피 시총의 약 43%를 차지하고 있습니다. 거래 유동성도 대형주로 쏠려 상장사 종목 중 일평균 거래대금이 10억 원에도 못 미치는 곳이 42%에 달합니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 코스피 규모별 4월 상승률<span class="ig-unit">단위: %</span></div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">대형주</div><div class="bar-wrap"><div class="bar bar-red" style="width:100%;">34</div></div></div>
+            <div class="row"><div class="label">코스피</div><div class="bar-wrap"><div class="bar bar-orange" style="width:94%;">32</div></div></div>
+            <div class="row"><div class="label">중형주</div><div class="bar-wrap"><div class="bar bar-orange" style="width:68%;">23</div></div></div>
+            <div class="row"><div class="label">소형주</div><div class="bar-wrap"><div class="bar bar-blue" style="width:41%;">14</div></div></div>
+        </div>
+        <table class="data-table" style="margin-top:10px;">
+            <thead><tr><th>28일 주요 종목</th><th>상승률</th></tr></thead>
+            <tbody>
+                <tr><td>포스코홀딩스</td><td class="highlight">+11.74%</td></tr>
+                <tr><td>현대오토에버</td><td class="highlight">+8.39%</td></tr>
+                <tr><td>현대차</td><td class="highlight">+5.92%</td></tr>
+                <tr><td>SK하이닉스</td><td>+0.62%</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">⚠️ 삼전·SK하닉 두 종목이 코스피 시총 <strong>43%</strong> 차지</div>
+    </div>
+</article>
+
+<!-- 기사 17 -->
+<article class="article" id="a17">
+    <div class="article-header">
+        <span class="num">No. 17</span>
+        <h3>코스닥은 중형주 상승률이 대형주 앞질러</h3>
+    </div>
+    <div class="body">
+        <p>연초 이후 대형주가 쥐고 있던 코스닥 시장 주도권이 이달 들어 중형주와 개별 테마주로 빠르게 넘어가고 있습니다. 정부의 코스닥 시장 활성화 정책 기대감이 코스닥150지수와 대형 바이오주, 패시브 상장지수펀드(ETF)에 집중됐지만, 최근에는 광통신 테마와 반도체 소부장(소재·부품·장비), 우주항공 등 중형 성장주로 관심이 확산되는 모습입니다.</p>
+        <p>4월 들어 28일까지 코스닥150지수가 12.59% 오르는 동안 전체 코스닥은 15.51% 상승해 코스닥150지수 수익률을 웃돌았습니다. 규모별로도 대형주는 12.03% 상승에 그친 반면 중형주와 소형주는 각각 23.04%, 16.58% 올랐습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔄 코스닥 등락률 — 주도권 이동<span class="ig-unit">단위: %</span></div>
+        <div style="font-size:11px; color:#666; font-weight:700; margin-bottom:6px;">▎1~2월 (대형주 우세)</div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">대형주</div><div class="bar-wrap"><div class="bar bar-blue" style="width:100%;">36.99</div></div></div>
+            <div class="row"><div class="label">중형주</div><div class="bar-wrap"><div class="bar bar-blue" style="width:76%;">28.04</div></div></div>
+            <div class="row"><div class="label">소형주</div><div class="bar-wrap"><div class="bar bar-blue" style="width:42%;">15.39</div></div></div>
+        </div>
+        <div style="font-size:11px; color:#666; font-weight:700; margin:10px 0 6px;">▎4월 (중형주 역전)</div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">중형주</div><div class="bar-wrap"><div class="bar bar-red" style="width:100%;">23.04</div></div></div>
+            <div class="row"><div class="label">소형주</div><div class="bar-wrap"><div class="bar bar-orange" style="width:72%;">16.58</div></div></div>
+            <div class="row"><div class="label">대형주</div><div class="bar-wrap"><div class="bar bar-blue" style="width:52%;">12.03</div></div></div>
+        </div>
+        <div class="ig-caption">👉 광통신·반도체 소부장·우주항공 등 <strong>중형 성장주</strong>로 관심 확산</div>
+    </div>
+</article>
+
+<!-- 기사 18 -->
+<article class="article" id="a18">
+    <div class="article-header">
+        <span class="num">No. 18</span>
+        <h3>로봇 뭉칫돈·유통 찬바람…회사채 양극화</h3>
+    </div>
+    <div class="body">
+        <p>회사채 시장에서 업종별 양극화가 뚜렷해지고 있습니다. 로봇 등 성장 산업을 영위하는 기업의 경우 수요예측에 뭉칫돈이 몰리는 반면, 석유화학 등 업황이 불투명한 기업들은 자금 조달을 위해 시장금리보다 높은 이자를 감내해야 하는 상황입니다. 자동차 부품·로봇 사업을 영위하는 HL만도는 지난 21일 수요예측에서 1400억 원 모집에 총 1조 8950억 원의 주문이 몰렸습니다.</p>
+        <p>반면 성장 기대감이 덜한 업종은 정반대 흐름을 보였습니다. 롯데하이마트는 500억 원 모집에 660억 원 주문에 그쳤고, 롯데케미칼도 신용등급 'AAA'에도 불구하고 오버금리를 피하지 못했습니다. 하반기 금리 인상 전망까지 더해져 부진 기업의 부담은 커질 전망입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">💸 회사채 발행, 업종별 온도차<span class="ig-unit">단위: 억원</span></div>
+        <table class="data-table">
+            <thead><tr><th>기업</th><th>모집액</th><th>주문액</th></tr></thead>
+            <tbody>
+                <tr><td>HL만도 (로봇)</td><td>1,400</td><td class="highlight">18,950 🔥</td></tr>
+                <tr><td>한온시스템</td><td>1,500</td><td class="highlight">16,150 🔥</td></tr>
+                <tr><td>롯데케미칼</td><td>3,000</td><td>5,750 ⚠️</td></tr>
+                <tr><td>롯데하이마트</td><td>500</td><td>660 ❄️</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">⚠️ 하반기 <strong>금리 인상 전망</strong>으로 부진 기업 부담 ↑</div>
+    </div>
+</article>
+
+<!-- 기사 19 -->
+<article class="article" id="a19">
+    <div class="article-header">
+        <span class="num">No. 19</span>
+        <h3>중국수출통제법 충격 오나 美반도체장비, 랠리서 소외</h3>
+    </div>
+    <div class="body">
+        <p>연일 사상 최고치를 경신하고 있는 미국 증시에서 주요 반도체 장비 기업들의 주가가 일제히 하락했습니다. 미국 의회가 강력한 대중 수출 통제 정책을 추진하면서, 주요 시장인 중국향 매출이 타격을 받을 수 있다는 우려 때문입니다. 27일 뉴욕증시에서 램리서치는 3.10% 하락한 259.47달러로 마감했고, 어플라이드 머티어리얼즈, ASML 등 글로벌 빅3 기업 주가가 모두 하락했습니다.</p>
+        <p>핵심은 지난 22일 미국 하원 외교위원회를 통과한 '하드웨어 기술 통제 다자 동조법(MATCH·매치법)'입니다. 이 법안은 동맹국에도 동일한 수준의 대중 수출 통제를 요구하며, 규제 범위를 저사양 범용(레거시) 반도체 장비로까지 확대했습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📉 美 반도체 장비주 등락률<span class="ig-unit">27일 기준 · 단위: %</span></div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">테라다인</div><div class="bar-wrap"><div class="bar bar-red" style="width:100%;">-3.85</div></div></div>
+            <div class="row"><div class="label">램리서치</div><div class="bar-wrap"><div class="bar bar-red" style="width:80%;">-3.10</div></div></div>
+            <div class="row"><div class="label">AMAT</div><div class="bar-wrap"><div class="bar bar-orange" style="width:76%;">-2.92</div></div></div>
+            <div class="row"><div class="label">KLA</div><div class="bar-wrap"><div class="bar bar-orange" style="width:47%;">-1.81</div></div></div>
+            <div class="row"><div class="label">ASML</div><div class="bar-wrap"><div class="bar bar-blue" style="width:39%;">-1.52</div></div></div>
+        </div>
+        <div class="ig-caption">⚠️ 美 <strong>'매치법(MATCH)'</strong> 통과 — 동맹국까지 대중 수출 통제 확대</div>
+    </div>
+</article>
+
+<!-- ===== 부동산 ===== -->
+<div class="section-divider">━ 부 동 산 ━</div>
+
+<!-- 기사 20 -->
+<article class="article" id="a20">
+    <div class="article-header">
+        <span class="num">No. 20</span>
+        <h3>서울 외곽 전세 고갈…집 사는 사람 늘었다</h3>
+    </div>
+    <div class="body">
+        <p>아파트 전세 매물이 바닥난 지역에 매매 거래가 몰린 것으로 나타났습니다. 토지거래허가구역 지정과 다주택자 세금·대출 규제로 전세 매물이 급감하면서, 실수요자가 매수로 돌아선 영향으로 풀이됩니다. 4월 서울 500가구 이상 단지의 전세 매물 현황을 분석한 결과, 전세 매물이 0~2건에 그친 단지가 많은 자치구일수록 매매 거래도 늘어나는 경향을 보였습니다.</p>
+        <p>전세 매물이 0~2건에 그친 단지는 노원구가 63곳으로 가장 많았고, 이달 아파트 매매 거래도 노원구가 420건으로 최다였습니다. 전셋값 상승이 집값을 밀어 올리는 패턴이 시작됐다는 분석이 나옵니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🏘️ 서울 4월 전세 부족 vs 매매 거래</div>
+        <div style="font-size:11px; color:#666; font-weight:700; margin-bottom:6px;">▎전세 매물 2건 이하 단지 (개)</div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">노원구</div><div class="bar-wrap"><div class="bar bar-blue" style="width:100%;">63</div></div></div>
+            <div class="row"><div class="label">성북구</div><div class="bar-wrap"><div class="bar bar-blue" style="width:64%;">40</div></div></div>
+            <div class="row"><div class="label">구로구</div><div class="bar-wrap"><div class="bar bar-blue" style="width:57%;">36</div></div></div>
+            <div class="row"><div class="label">강동구</div><div class="bar-wrap"><div class="bar bar-blue" style="width:44%;">28</div></div></div>
+            <div class="row"><div class="label">강서구</div><div class="bar-wrap"><div class="bar bar-blue" style="width:43%;">27</div></div></div>
+        </div>
+        <div style="font-size:11px; color:#666; font-weight:700; margin:10px 0 6px;">▎아파트 매매 거래 (건)</div>
+        <div class="bar-chart">
+            <div class="row"><div class="label">노원구</div><div class="bar-wrap"><div class="bar bar-red" style="width:100%;">420</div></div></div>
+            <div class="row"><div class="label">강서구</div><div class="bar-wrap"><div class="bar bar-red" style="width:53%;">224</div></div></div>
+            <div class="row"><div class="label">송파구</div><div class="bar-wrap"><div class="bar bar-red" style="width:49%;">205</div></div></div>
+            <div class="row"><div class="label">중랑구</div><div class="bar-wrap"><div class="bar bar-red" style="width:48%;">203</div></div></div>
+            <div class="row"><div class="label">구로구</div><div class="bar-wrap"><div class="bar bar-red" style="width:46%;">192</div></div></div>
+        </div>
+        <div class="ig-caption">👉 <strong>전셋값 → 집값</strong> 밀어올리는 패턴 시작</div>
+    </div>
+</article>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 본 뉴스레터는 2026년 4월 29일자 신문 기사 20건을<br/>요약·정리한 자료입니다.<br/><br/>
+    개인 학습·기록 목적으로 작성되었으며,<br/>원문 저작권은 각 언론사에 있습니다.
+</div>
+
+<!-- TOP 버튼 -->
+<button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+window.addEventListener('scroll', function() {
+    const btn = document.getElementById('topBtn');
+    if (window.scrollY > 400) btn.classList.add('visible');
+    else btn.classList.remove('visible');
+});
+</script>
+
+</body>
+</html>
