@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta name="theme-color" content="#1a3a6c">
 <title>가좌버핏 뉴스 · 2026.04.29</title>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
@@ -435,6 +446,42 @@ body {
 @media (min-width: 600px) {
     body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
     .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ===== 공유 버튼 ===== */
+.article { position: relative; }
+.share-btn {
+    background: rgba(255,255,255,0.95);
+    border: 1px solid #d0d8e4;
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.2;
+}
+.share-btn:hover, .share-btn:active {
+    background: #f5f7fa;
+    border-color: #1a3a6c;
+    color: #1a3a6c;
+}
+.share-btn.top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+}
+.share-btn.bottom {
+    display: block;
+    margin: 0 18px 16px auto;
+}
+@media (prefers-color-scheme: dark) {
+    .share-btn { background: #2a2f38; border-color: #3a4150; color: #c0c5d0; }
+    .share-btn:hover, .share-btn:active { background: #353b46; color: #6da3e8; border-color: #6da3e8; }
 }
 </style>
 </head>
@@ -1100,6 +1147,47 @@ window.addEventListener('scroll', function() {
     const btn = document.getElementById('topBtn');
     if (window.scrollY > 400) btn.classList.add('visible');
     else btn.classList.remove('visible');
+});
+</script>
+
+<script>
+// 공유 버튼: Web Share API 사용, 미지원 환경에서는 클립보드 복사로 폴백
+async function shareArticle(id, title) {
+    const url = location.origin + location.pathname + '#' + id;
+    const data = { title: '가좌버핏 뉴스 - ' + title, text: title, url: url };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(url);
+            alert('링크가 복사되었습니다:\n' + url);
+        } catch (e) {
+            prompt('아래 링크를 복사해 주세요:', url);
+        }
+    }
+}
+// 각 기사 우상단/우하단에 공유 버튼 자동 주입
+document.querySelectorAll('article.article').forEach(article => {
+    const id = article.id;
+    if (!id) return;
+    const titleEl = article.querySelector('h3');
+    const title = titleEl ? titleEl.textContent.trim() : '';
+
+    const top = document.createElement('button');
+    top.className = 'share-btn top';
+    top.type = 'button';
+    top.textContent = '📤 공유';
+    top.setAttribute('aria-label', '이 기사 공유하기');
+    top.addEventListener('click', () => shareArticle(id, title));
+    article.insertBefore(top, article.firstChild);
+
+    const bottom = document.createElement('button');
+    bottom.className = 'share-btn bottom';
+    bottom.type = 'button';
+    bottom.textContent = '📤 공유';
+    bottom.setAttribute('aria-label', '이 기사 공유하기');
+    bottom.addEventListener('click', () => shareArticle(id, title));
+    article.appendChild(bottom);
 });
 </script>
 
