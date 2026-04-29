@@ -1169,18 +1169,18 @@ async function shareArticle(id, title) {
     const dm = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
     const datePrefix = dm ? `[${dm[1]}/${dm[2]}/${dm[3]}] ` : '';
 
-    const text = `${datePrefix}${title}${firstSentence ? '\n\n' + firstSentence : ''}`;
-    const data = { title: '가좌버핏 뉴스 - ' + title, text: text, url: url };
+    // 메시지 본문 + URL을 하나의 text로 합침 (카톡이 url 필드를 분리해서 두 메시지로 보내는 것 방지)
+    const message = `${datePrefix}${title}${firstSentence ? '\n\n' + firstSentence : ''}\n\n${url}`;
+    const data = { title: '가좌버핏 뉴스 - ' + title, text: message };
 
     if (navigator.share) {
         try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
     } else {
-        const fallback = text + '\n\n' + url;
         try {
-            await navigator.clipboard.writeText(fallback);
-            alert('아래 내용이 복사되었습니다:\n\n' + fallback);
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
         } catch (e) {
-            prompt('아래 내용을 복사해 주세요:', fallback);
+            prompt('아래 내용을 복사해 주세요:', message);
         }
     }
 }
