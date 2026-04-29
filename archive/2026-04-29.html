@@ -449,7 +449,6 @@ body {
 }
 
 /* ===== 공유 버튼 ===== */
-.article { position: relative; }
 .share-btn {
     background: rgba(255,255,255,0.95);
     border: 1px solid #d0d8e4;
@@ -468,12 +467,6 @@ body {
     background: #f5f7fa;
     border-color: #1a3a6c;
     color: #1a3a6c;
-}
-.share-btn.top {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 1;
 }
 .share-btn.bottom {
     display: block;
@@ -1231,14 +1224,6 @@ document.querySelectorAll('article.article').forEach(article => {
     if (!id) return;
     const titleEl = article.querySelector('h3');
     const title = titleEl ? titleEl.textContent.trim() : '';
-
-    const top = document.createElement('button');
-    top.className = 'share-btn top';
-    top.type = 'button';
-    top.textContent = '📤 공유';
-    top.setAttribute('aria-label', '이 기사 공유하기');
-    top.addEventListener('click', () => shareArticle(id, title));
-    article.insertBefore(top, article.firstChild);
 
     const bottom = document.createElement('button');
     bottom.className = 'share-btn bottom';
