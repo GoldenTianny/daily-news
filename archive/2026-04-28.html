@@ -1365,7 +1365,7 @@ document.querySelectorAll('article.article').forEach(article => {
 
 async function shareQuote(q) {
     const url = location.origin + location.pathname;
-    const message = `💬 "${q.ko}"\n\n— ${q.author}\n\n[가좌버핏 뉴스]\n${url}`;
+    const message = `💬 "${q.ko}"\n\n"${q.en}"\n\n— ${q.author}\n\n[가좌버핏 뉴스]\n${url}`;
     const data = { title: '가좌버핏 뉴스 · 오늘의 한 줄', text: message };
     if (navigator.share) {
         try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
