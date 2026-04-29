@@ -4,3 +4,7 @@
 # Windows
 Thumbs.db
 desktop.ini
+
+# 명언 원본 데이터 (HTML에 인라인 임베드되어 있어 별도 커밋 불필요)
+assets/성공명언1001.md
+assets/quotes.json
