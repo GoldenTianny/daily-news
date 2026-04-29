@@ -1140,15 +1140,30 @@ window.addEventListener('scroll', function() {
 // 공유 버튼: Web Share API 사용, 미지원 환경에서는 클립보드 복사로 폴백
 async function shareArticle(id, title) {
     const url = location.origin + location.pathname + '#' + id;
-    const data = { title: '가좌버핏 뉴스 - ' + title, text: title, url: url };
+
+    // 본문 첫 문장 추출 (해당 기사의 .body 첫 <p>에서 첫 마침표까지)
+    const articleEl = document.getElementById(id);
+    const firstP = articleEl ? articleEl.querySelector('.body p') : null;
+    const bodyText = firstP ? firstP.textContent.trim() : '';
+    const sentMatch = bodyText.match(/^.+?[.!?](?=\s|$)/);
+    const firstSentence = sentMatch ? sentMatch[0] : bodyText.slice(0, 120);
+
+    // URL에서 날짜 추출 → [YYYY/MM/DD]
+    const dm = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})\.html$/);
+    const datePrefix = dm ? `[${dm[1]}/${dm[2]}/${dm[3]}] ` : '';
+
+    const text = `${datePrefix}${title}${firstSentence ? '\n\n' + firstSentence : ''}`;
+    const data = { title: '가좌버핏 뉴스 - ' + title, text: text, url: url };
+
     if (navigator.share) {
         try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
     } else {
+        const fallback = text + '\n\n' + url;
         try {
-            await navigator.clipboard.writeText(url);
-            alert('링크가 복사되었습니다:\n' + url);
+            await navigator.clipboard.writeText(fallback);
+            alert('아래 내용이 복사되었습니다:\n\n' + fallback);
         } catch (e) {
-            prompt('아래 링크를 복사해 주세요:', url);
+            prompt('아래 내용을 복사해 주세요:', fallback);
         }
     }
 }
