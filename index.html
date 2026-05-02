@@ -179,6 +179,18 @@ body {
     font-size: 12px;
     color: #888;
 }
+.section-header .more-link {
+    font-size: 12px;
+    color: #1a3a6c;
+    text-decoration: none;
+    font-weight: 600;
+}
+.section-header .more-link:hover, .section-header .more-link:active {
+    text-decoration: underline;
+}
+@media (prefers-color-scheme: dark) {
+    .section-header .more-link { color: #6da3e8; }
+}
 
 /* ===== 월별 그룹 ===== */
 .month-group { margin-bottom: 20px; }
@@ -420,6 +432,27 @@ body {
     </div>
 </div>
 
+<!-- 심층분석 섹션 -->
+<div class="archive-section">
+    <div class="section-header">
+        <h2>🔍 심층분석</h2>
+        <a href="analysis/" class="more-link">더보기 →</a>
+    </div>
+    <div class="archive-list">
+        <a href="analysis/2026-04-29_미토스쇼크.html" class="archive-item">
+            <div class="date-box">
+                <div class="day">29</div>
+                <div class="month">APR</div>
+            </div>
+            <div class="info">
+                <div class="title">'미토스 쇼크' — 괴물 AI가 해커가 됐다</div>
+                <div class="meta">DEEP DIVE · TECH · 약 6분 읽기</div>
+            </div>
+            <div class="arrow">›</div>
+        </a>
+    </div>
+</div>
+
 <!-- 푸터 -->
 <div class="footer">
     <div class="footer-logo">📰 가좌버핏 뉴스</div>
@@ -429,7 +462,8 @@ body {
 </div>
 
 <script>
-const count = document.querySelectorAll('.archive-item').length;
+// 일일브리프만 카운트 (심층분석 섹션의 archive-item은 제외)
+const count = document.querySelectorAll('.archive-item[href^="archive/"]').length;
 document.getElementById('archiveCount').textContent = `총 ${count}호`;
 </script>
 

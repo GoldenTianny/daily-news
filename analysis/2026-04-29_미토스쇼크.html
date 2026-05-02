@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>가좌버핏 뉴스 · 미토스 쇼크 심층분석</title>
+<meta name="description" content="앤트로픽 '클로드 미토스' 공개 후 글로벌 보안 산업 충격 — 쉽게 풀어쓴 심층분석">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · 미토스 쇼크 심층분석">
+<meta property="og:description" content="앤트로픽 '클로드 미토스' 공개 후 글로벌 보안 산업 충격 — 쉽게 풀어쓴 심층분석">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/analysis/2026-04-29_미토스쇼크.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 미토스 쇼크 심층분석">
+<meta name="twitter:description" content="앤트로픽 '클로드 미토스' 공개 후 글로벌 보안 산업 충격 — 쉽게 풀어쓴 심층분석">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 (단일 분석 공유) ===== */
+.share-section {
+    margin: 24px 16px 8px;
+    text-align: center;
+}
+.analysis-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.analysis-share-btn:hover { background: #15305c; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #2a5ca8; }
+    .analysis-share-btn:hover { background: #3a6cb8; }
+}
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #0d2444 0%, #1a3a6c 50%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,80,80,0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label {
+    font-size: 11px;
+    letter-spacing: 5px;
+    opacity: 0.85;
+    margin-bottom: 16px;
+    position: relative;
+}
+.cover h1 {
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    position: relative;
+}
+.cover h1 .highlight { color: #ff6b6b; }
+.cover .subtitle {
+    font-size: 14px;
+    opacity: 0.92;
+    margin-bottom: 6px;
+    position: relative;
+}
+.cover .date-info {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 8px;
+    position: relative;
+}
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 {
+    font-size: 16px;
+    color: #1a3a6c;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8edf5;
+}
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #1a3a6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 10px;
+    margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header {
+    padding: 16px 18px 12px;
+    border-left: 4px solid #1a3a6c;
+}
+.article .num {
+    display: inline-block;
+    background: #1a3a6c;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d2444;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+.article .body {
+    padding: 0 18px 16px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #2a2a2a;
+}
+.article .body p {
+    margin-bottom: 12px;
+    word-break: keep-all;
+}
+.article .body p:last-child { margin-bottom: 0; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #b9770e;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.easy-box p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #3a3a3a;
+    word-break: keep-all;
+    margin-bottom: 8px;
+}
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a3a6c;
+}
+.ig-unit {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+}
+
+/* 통계 카드 */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card {
+    background: linear-gradient(135deg, #f0f4fa, #e3eaf5);
+    border-left: 3px solid #1a3a6c;
+    padding: 10px 12px;
+    border-radius: 6px;
+}
+.stat-card .stat-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+}
+.stat-card .stat-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a3a6c;
+    line-height: 1.1;
+}
+.stat-card .stat-sub {
+    font-size: 10px;
+    color: #999;
+    margin-top: 2px;
+}
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+
+/* 데이터 표 */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    margin-top: 6px;
+}
+.data-table th {
+    background: #1a3a6c;
+    color: white;
+    padding: 8px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+}
+.data-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #e5e8ed;
+    background: white;
+    word-break: keep-all;
+}
+.data-table tr:nth-child(even) td { background: #f7f9fc; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+
+/* 비교 박스 */
+.compare-box {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+}
+.compare-side {
+    flex: 1;
+    padding: 10px 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+.compare-side .c-label {
+    font-size: 11px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.compare-side .c-value {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.compare-side p {
+    font-size: 11.5px;
+    line-height: 1.5;
+    margin-top: 4px;
+    color: #333;
+}
+.compare-vs {
+    align-self: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #888;
+}
+
+/* 키워드 태그 */
+.keyword-box {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.keyword-tag {
+    background: #1a3a6c;
+    color: white;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+/* 캡션 */
+.ig-caption {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #666;
+    text-align: center;
+    line-height: 1.5;
+    padding: 4px;
+}
+.ig-caption strong { color: #c0392b; }
+
+/* 흐름도 (전→후) */
+.flow-arrow-box {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 6px;
+    align-items: stretch;
+    margin: 8px 0;
+}
+.flow-cell {
+    padding: 12px 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 11.5px;
+    line-height: 1.5;
+}
+.flow-cell.before {
+    background: #eef1f6;
+    color: #555;
+    text-decoration: line-through;
+    text-decoration-color: #aaa;
+}
+.flow-cell.after {
+    background: linear-gradient(135deg, #fdf0ee, #fadbd8);
+    color: #1a1a1a;
+    font-weight: 600;
+    border-left: 3px solid #c0392b;
+}
+.flow-cell .ftitle {
+    font-size: 10.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-decoration: none;
+}
+.flow-cell.before .ftitle { color: #888; }
+.flow-cell.after .ftitle { color: #c0392b; }
+.flow-arrow-mid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c0392b;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+/* 타임라인 */
+.timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: #1a3a6c;
+}
+.tl-item {
+    position: relative;
+    padding-bottom: 12px;
+    padding-left: 14px;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #c0392b;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #1a3a6c;
+}
+.tl-date {
+    font-size: 11px;
+    font-weight: 700;
+    color: #c0392b;
+    margin-bottom: 2px;
+}
+.tl-text {
+    font-size: 12.5px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* 푸터 */
+.footer-note {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .data-table td { background: #232730; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table tr:nth-child(even) td { background: #1c1f26; }
+    .compare-side p { color: #c8ccd4; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+    .flow-cell.before { background: #2a2f38; color: #888; }
+    .tl-text { color: #c8ccd4; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 심층분석</a>
+    <span class="date">2026.04.29</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">DEEP DIVE · TECH</div>
+    <h1>'<span class="highlight">미토스 쇼크</span>'<br>괴물 AI가 해커가 됐다</h1>
+    <div class="subtitle">앤트로픽 '클로드 미토스' 공개 후 전 세계 보안업계 충격</div>
+    <div class="date-info">매경ECONOMY 기사 기반 · 쉽게 풀어쓰기</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>한 줄로 이해하기 — '미토스 쇼크'가 뭔가요?</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>괴물 AI 미토스, 뭐가 그렇게 다른가</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>왜 이게 그렇게 충격적인가 — '제로데이'의 의미</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>한국 정부·기업의 긴급 대응</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>보안 산업의 패러다임이 바뀐다</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>위협일까, 기회일까 — 종합 전망</span>
+    </a>
+</div>
+
+<!-- 기사 1: 한 줄 이해 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">No. 1</span>
+        <h3>한 줄로 이해하기 — '미토스 쇼크'가 뭔가요?</h3>
+    </div>
+    <div class="body">
+        <p>2026년 4월 7일, 미국 AI 기업 앤트로픽이 차세대 AI '클로드 미토스(Mythos)'를 공개한 직후 전 세계 정부와 금융권, 산업계가 발칵 뒤집혔습니다. 이유는 단 하나입니다. 이 AI가 사람 손을 빌리지 않고도 컴퓨터 시스템의 약점을 스스로 찾아내고, 그 약점을 파고드는 공격 시나리오까지 정교하게 만들어낼 수 있다는 사실이 확인됐기 때문입니다.</p>
+        <p>업계는 이 사건을 '미토스 쇼크'라 부릅니다. 2023년 영화 '미션 임파서블: 데드 레코닝'에 등장하는, 인간 통제를 벗어나 스스로 진화하는 AI '엔티티(Entity)'가 영화적 상상이 아니라 현실로 다가왔다는 평가까지 나옵니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>지금까지 컴퓨터 해킹은 <strong>전문 해커</strong>가 손으로 직접 하는 일이었습니다. 코드를 한 줄씩 들여다보고, 약점을 찾고, 공격 방법을 짜는 데 몇 주에서 몇 달이 걸렸죠.</p>
+        <p>그런데 미토스라는 AI는 이걸 <strong>몇 분~몇 시간 안에, 사람 도움 없이 혼자서</strong> 해냅니다. 그것도 매우 정교하게요. 마치 세계 최고 수준의 해커 100명이 24시간 쉬지 않고 일하는 것과 같은 효과를 낸다고 보면 됩니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📌 미토스 쇼크 핵심 3가지</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">공개일</div>
+                <div class="stat-value">4월 7일</div>
+                <div class="stat-sub">앤트로픽 발표</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">충격 강도</div>
+                <div class="stat-value">181번</div>
+                <div class="stat-sub">파이어폭스 침해 성공</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">대응 수준</div>
+                <div class="stat-value">긴급</div>
+                <div class="stat-sub">한미 정부 합동 점검</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#앤트로픽</span>
+            <span class="keyword-tag">#클로드_미토스</span>
+            <span class="keyword-tag">#자율_해킹AI</span>
+            <span class="keyword-tag">#사이버_보안</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 2: 미토스 특징 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">No. 2</span>
+        <h3>괴물 AI 미토스, 뭐가 그렇게 다른가</h3>
+    </div>
+    <div class="body">
+        <p>미토스가 기존 AI와 결정적으로 다른 점은 두 가지입니다. 첫째는 '완전 자율성'이고, 둘째는 '연쇄 공격 설계 능력'입니다. 기존 AI는 보안 영역에서 코드 작성을 돕거나 분석을 보조하는 수준에 머물렀습니다. 미토스는 코드 구조를 이해하고, 약점을 찾고, 분석하는 전 과정을 인간 개입 없이 끝까지 밀어붙일 수 있다는 평가를 받습니다.</p>
+        <p>앤트로픽이 공개한 실험 결과는 더욱 충격적입니다. 웹 브라우저 파이어폭스의 자바스크립트 엔진을 대상으로 약점 침투를 시도했을 때, 미토스는 무려 181번이나 성공했습니다. 반면 기존 최고 성능 모델인 '클로드 오퍼스 4.6'은 수백 차례 시도 끝에 단 두 번만 성공했습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>'완전 자율성'이란 말은, AI가 마치 사람처럼 <strong>스스로 판단하고 행동한다</strong>는 뜻입니다. 예를 들어 "이 건물에 침입해봐"라고 시켰을 때, 기존 AI는 "어디로 들어갈까요?"라고 묻지만, 미토스는 알아서 창문 잠금장치를 살펴보고, 경비 패턴을 분석하고, 가장 효율적인 침입 경로를 만들어냅니다.</p>
+        <p>'연쇄 공격'은 작은 약점 여러 개를 묶어 큰 공격으로 만드는 능력입니다. 자물쇠 하나는 약하지 않아도, 자물쇠 → 보안카메라 사각지대 → 환풍구를 순서대로 엮으면 결국 금고까지 들어갈 수 있는 식이죠. <strong>이건 원래 노련한 해커만 할 수 있던 일</strong>이었습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚔️ 미토스 vs 기존 AI 성능 비교</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#eef1f6;">
+                <div class="c-label" style="color:#666;">기존 최강 모델</div>
+                <div class="c-value" style="color:#888;">2번</div>
+                <p>클로드 오퍼스 4.6<br/>수백 차례 시도</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:#fadbd8;">
+                <div class="c-label" style="color:#c0392b;">신형 미토스</div>
+                <div class="c-value" style="color:#c0392b;">181번</div>
+                <p>클로드 미토스 프리뷰<br/>같은 실험 환경</p>
+            </div>
+        </div>
+        <div class="ig-caption">👉 <strong>약 90배 차이</strong> — 파이어폭스 자바스크립트 엔진 침해 실험 결과</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔬 미토스가 가진 두 가지 핵심 능력</div>
+        <table class="data-table">
+            <thead><tr><th>구분</th><th>기존 AI</th><th>미토스</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td><strong>자율성</strong></td>
+                    <td>코드 작성·보조 분석 수준</td>
+                    <td class="highlight">전 과정 무인 수행</td>
+                </tr>
+                <tr>
+                    <td><strong>공격 설계</strong></td>
+                    <td>단일 약점 탐지</td>
+                    <td class="highlight">여러 약점 연쇄 공격</td>
+                </tr>
+                <tr>
+                    <td><strong>훈련 목적</strong></td>
+                    <td>특화 보안 모델</td>
+                    <td class="highlight">범용(General) 모델</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">⚠️ 충격 포인트: 미토스는 <strong>보안 전용으로 훈련된 게 아닌</strong> 범용 AI</div>
+    </div>
+</article>
+
+<!-- 기사 3: 제로데이 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">No. 3</span>
+        <h3>왜 이게 그렇게 충격적인가 — '제로데이'의 의미</h3>
+    </div>
+    <div class="body">
+        <p>미토스가 보안 업계에 진짜 공포를 안긴 결정적 이유는 따로 있습니다. 바로 '제로데이' 약점을 스스로 찾아낸다는 점입니다. 제로데이란 개발자조차 아직 모르고 있는 보안 약점을 가리키는 말로, 이런 약점이 발견되면 패치(보완 프로그램)를 만들기 전까지는 사실상 무방비 상태가 됩니다. 실제로 미토스는 27년 넘게 발견되지 않았던 오픈소스 운영체제(BSD)의 약점을 찾아냈습니다.</p>
+        <p>지금까지 보안 산업은 '약점 발견 → CVE(공개된 보안 약점 목록) 등재 → 패치 제작 → 업데이트'라는 다소 수동적인 흐름으로 돌아갔습니다. 이 절차에는 짧게는 몇 주, 길게는 몇 달이 걸리는데, 미토스는 짧은 시간 안에 대량의 공격 시나리오를 만들어내며 공격과 방어 사이의 시간 격차를 극단적으로 벌려놓는다는 평가입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 제로데이가 뭐예요?</div>
+        <p>'제로데이(Zero-day)'는 직역하면 '0일'이라는 뜻인데, <strong>"패치가 나온 지 0일밖에 안 됐다"</strong>가 아니라 <strong>"개발자가 알아챈 지 0일 됐다"</strong>는 의미입니다. 즉, 만든 사람조차 아직 약점이 있는지 모르고 있는 상태죠.</p>
+        <p>예를 들어 자동차 회사가 모르는 결함이 있어서 누가 시동만 걸어도 폭발한다고 가정해봅시다. 차주는 그 사실을 모른 채 매일 운전합니다. 누군가 이 결함을 먼저 발견해 악용하면, 회사가 미처 손쓸 새도 없이 사고가 터집니다. <strong>제로데이 약점이 바로 이런 식</strong>으로 위험합니다.</p>
+        <p>미토스는 이런 '아무도 모르는 약점'을 스스로 찾아내고, 곧바로 <strong>그걸 공격하는 코드까지 만들어 줍니다.</strong> 이게 보안 업계가 발칵 뒤집힌 진짜 이유입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⏱️ 공격 vs 방어 — 시간 격차의 함정</div>
+        <table class="data-table">
+            <thead><tr><th>단계</th><th>기존 보안</th><th>미토스 시대</th></tr></thead>
+            <tbody>
+                <tr><td>약점 발견</td><td>몇 주~몇 달</td><td class="highlight">실시간</td></tr>
+                <tr><td>공격 코드 제작</td><td>전문가 필요</td><td class="highlight">AI가 자동</td></tr>
+                <tr><td>방어 패치</td><td>몇 주~몇 달</td><td>여전히 동일</td></tr>
+                <tr><td>대응 가능 시간</td><td>충분</td><td class="highlight">매우 짧음</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">⚠️ 공격은 빨라졌는데 방어 속도는 그대로 — <strong>'시간 비대칭' 문제</strong></div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🎯 미토스 공식 스펙 한눈에 보기</div>
+        <table class="data-table">
+            <tbody>
+                <tr><td><strong>모델명</strong></td><td>클로드 미토스 프리뷰</td></tr>
+                <tr><td><strong>공개일</strong></td><td>2026년 4월 7일 (현지 시간)</td></tr>
+                <tr><td><strong>제공 대상</strong></td><td class="highlight">12개 기업·40개 기관 한정</td></tr>
+                <tr><td><strong>주요 참여사</strong></td><td>구글·애플·MS·아마존·엔비디아 등</td></tr>
+                <tr><td><strong>최대 발견</strong></td><td class="highlight">27년 묵은 BSD 약점</td></tr>
+                <tr><td><strong>운영 방식</strong></td><td>'프로젝트 글래스윙' 비공개 운영</td></tr>
+            </tbody>
+        </table>
+        <div class="ig-caption">앤트로픽은 <strong>일반 공개를 보류</strong>하고 소수 글로벌 기업에만 제공 중</div>
+    </div>
+</article>
+
+<!-- 기사 4: 한국 정부 대응 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">No. 4</span>
+        <h3>한국 정부·기업의 긴급 대응</h3>
+    </div>
+    <div class="body">
+        <p>미토스 출현 직후 한국 정부도 빠르게 움직였습니다. 과학기술정보통신부는 4월 14일 통신 3사와 네이버·카카오·쿠팡 등 주요 플랫폼 기업을 긴급 소집해 AI 기반 보안 위협 대응 회의를 열었습니다. 각 회사 최고보안책임자(CISO)에게 긴급 보안 점검을 요청했고, 이상 공격 발생 시 한국인터넷진흥원(KISA)과 신속한 정보 공유도 당부했습니다.</p>
+        <p>하루 뒤인 4월 15일에는 금융위원회가 권대영 부위원장 주재로 금융감독원, 금융보안원, 은행·보험권 CISO를 긴급 소집해 리스크를 점검했습니다. 미토스 쇼크를 금융 시스템 리스크로 받아들인 셈입니다. 네이버·카카오는 자산 관리·취약점 점검·접근 통제·침해 탐지·로그 관리·백업·복구 등 기본 보안 원칙을 엄격히 운영하는 데 집중하고 있습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 왜 이렇게 빨리 움직이나요?</div>
+        <p>은행, 통신사, 포털 같은 곳은 우리 일상 그 자체입니다. 여기가 뚫리면 <strong>계좌가 털리고, 통화가 도청되고, 개인정보가 유출</strong>됩니다. 미토스 같은 AI가 악용되면 단 한 사람의 해커가 수백 명 몫의 공격을 동시에 할 수 있게 되니, 정부가 발등에 불 떨어진 듯 움직이는 것이죠.</p>
+        <p>특히 <strong>레거시 시스템</strong>(오래된 옛날 시스템)이 많은 금융·통신·교통 분야가 가장 취약합니다. 옛날 자물쇠는 신형 도구로 쉽게 따기 때문이죠.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🚨 한국 정부 긴급 대응 타임라인</div>
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-date">4월 7일</div>
+                <div class="tl-text">앤트로픽 '클로드 미토스' 공개 — 글로벌 충격</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">4월 14일</div>
+                <div class="tl-text">과기정통부, 통신 3사·네이버·카카오·쿠팡 긴급 소집</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">4월 15일</div>
+                <div class="tl-text">금융위, 권대영 부위원장 주재 금융권 CISO 긴급 회의</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">4월 16일</div>
+                <div class="tl-text">배경훈 부총리, 제7회 과학기술관계장관회의 — "예의 주시"</div>
+            </div>
+        </div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🏢 주요 기업·기관별 대응</div>
+        <table class="data-table">
+            <thead><tr><th>주체</th><th>대응 내용</th></tr></thead>
+            <tbody>
+                <tr><td><strong>네이버·카카오</strong></td><td>실시간 글로벌 보안 동향 추적, 내부 정보보호 체계 강화</td></tr>
+                <tr><td><strong>SKT·KT·LGU+</strong></td><td>취약점 분석·상시 모니터링·AI 기반 위협 대응</td></tr>
+                <tr><td><strong>LG유플러스</strong></td><td class="highlight">SOC에 AI 적용, 수십~수백만 통신장비 사전 점검</td></tr>
+                <tr><td><strong>금융권</strong></td><td>레거시·외부 접점 점검, 디지털금융안전법 논의 가속</td></tr>
+            </tbody>
+        </table>
+    </div>
+</article>
+
+<!-- 기사 5: 패러다임 변화 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">No. 5</span>
+        <h3>보안 산업의 패러다임이 바뀐다</h3>
+    </div>
+    <div class="body">
+        <p>전문가들은 미토스 쇼크를 계기로 보안 산업의 무게중심이 크게 이동할 것으로 내다봅니다. 지금까지 다수의 보안 기업은 이미 알려진 공격 패턴과 사전에 정의된 규칙을 기반으로 위협을 식별해왔습니다. 이런 정적·규칙 기반 방어 모델로는 미토스처럼 스스로 약점을 찾고 우회 경로를 설계하는 AI에 한계가 뚜렷하다는 지적입니다.</p>
+        <p>곽진 아주대 사이버보안학과 교수는 미토스 쇼크의 본질을 "취약점 탐지의 자동화와 보안 통제 주체의 변화"로 규정하며 국가기관망·은행망·교통 등 레거시 시스템이 집중된 분야를 약한 고리로 꼽았습니다. 미토스 공개 직후 글로벌 보안주인 크라우드스트라이크, 오카, 클라우드플레어, 센티넬원 등이 일제히 약세를 보인 것도 이런 산업 재편 우려가 반영된 결과입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 뭐가 바뀐다는 건가요?</div>
+        <p>지금까지 보안은 <strong>'도둑이 들어오면 잡는다'</strong>는 개념이었습니다. 알려진 도둑 얼굴(공격 패턴)을 데이터베이스에 넣어두고, CCTV에 그 얼굴이 잡히면 경보를 울리는 식이죠.</p>
+        <p>그런데 미토스는 <strong>매번 새 얼굴로, 새로운 변장으로</strong> 들어옵니다. 기존 시스템은 이걸 못 잡습니다. 그래서 보안의 방향이 <strong>"무조건 의심하고, 미리 찾고, 빠르게 복구한다"</strong>로 바뀌고 있는 것입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔄 보안 산업 패러다임 시프트</div>
+        <div class="flow-arrow-box">
+            <div class="flow-cell before">
+                <div class="ftitle">이전</div>
+                사후 탐지<br/>(터지면 대응)
+            </div>
+            <div class="flow-arrow-mid">→</div>
+            <div class="flow-cell after">
+                <div class="ftitle">앞으로</div>
+                상시 취약점 발굴<br/>(미리 찾기)
+            </div>
+        </div>
+        <div class="flow-arrow-box">
+            <div class="flow-cell before">
+                <div class="ftitle">이전</div>
+                인력 중심 대응<br/>(사람이 일일이)
+            </div>
+            <div class="flow-arrow-mid">→</div>
+            <div class="flow-cell after">
+                <div class="ftitle">앞으로</div>
+                AI 기반 자동화<br/>(AI vs AI)
+            </div>
+        </div>
+        <div class="flow-arrow-box">
+            <div class="flow-cell before">
+                <div class="ftitle">이전</div>
+                침입 차단<br/>(못 들어오게)
+            </div>
+            <div class="flow-arrow-mid">→</div>
+            <div class="flow-cell after">
+                <div class="ftitle">앞으로</div>
+                빠른 복구·복원력<br/>(뚫려도 빠르게 복구)
+            </div>
+        </div>
+        <div class="ig-caption">💡 키워드: <strong>제로 트러스트</strong>(아무도 안 믿기) · <strong>AI 오케스트레이션</strong>(통합 자동 운영)</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📉 글로벌 보안주 충격 — 미토스 발표 직후</div>
+        <div class="keyword-box">
+            <span class="keyword-tag" style="background:#c0392b;">▼ 크라우드스트라이크</span>
+            <span class="keyword-tag" style="background:#c0392b;">▼ 오카</span>
+            <span class="keyword-tag" style="background:#c0392b;">▼ 클라우드플레어</span>
+            <span class="keyword-tag" style="background:#c0392b;">▼ 센티넬원</span>
+        </div>
+        <div class="ig-caption">기존 규칙 기반 보안 모델의 한계가 드러나며 일제히 약세</div>
+    </div>
+</article>
+
+<!-- 기사 6: 종합 전망 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">No. 6</span>
+        <h3>위협일까, 기회일까 — 종합 전망</h3>
+    </div>
+    <div class="body">
+        <p>미토스를 위협으로만 볼 필요는 없다는 시각도 있습니다. 공격자에게는 취약점 탐지와 공격 자동화 수단이 되지만, 방어 측면에서는 사전에 약점을 찾아 대응 체계를 고도화할 기회가 될 수 있기 때문입니다. 이정민 엔키화이트햇 사업전략실장은 정부가 지금의 긴장감을 일회성 대응으로 끝내지 않고 중장기적으로 이어간다면 미토스 쇼크는 'K-보안' 위상을 높이는 전환점이 될 수 있다고 평가했습니다.</p>
+        <p>중장기적으로는 독자적인 한국형 AI 보안 모델 개발이 필수 과제로 떠오릅니다. 외부 모델 의존도를 낮추고 AI 보안 역량을 끌어올릴 투자와 R&D가 병행돼야 한다는 지적입니다. 황석진 동국대 국제정보보호대학원 교수는 "기술이 한 단계 도약할 때마다 기존 산업에는 리스크가 커지지만, 동시에 새로운 수요와 시장이 만들어진다"며 빠르게 약점을 찾고 효과적으로 대응하는 기업만이 살아남을 것이라고 진단했습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 결국 어떻게 되나요?</div>
+        <p>미토스는 <strong>'양날의 검'</strong>입니다. 공격자가 쓰면 무서운 무기지만, 방어자가 쓰면 우리 시스템의 약점을 미리 찾아주는 든든한 도우미가 됩니다.</p>
+        <p>핵심은 <strong>"누가 더 빠르게 AI를 잘 다루느냐"</strong>입니다. 한국 정부와 기업이 지금 분위기를 일시적인 호들갑이 아니라 장기 투자로 이어가면, 한국 보안 산업이 한 단계 도약할 기회가 될 수도 있습니다.</p>
+        <p>개인 입장에서는 ① 비밀번호 관리 철저히, ② 2단계 인증 켜기, ③ 출처 불명 링크 클릭 금지 같은 <strong>기본기가 더 중요해진 시대</strong>입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🎭 미토스 — 위협과 기회의 양면</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:#fadbd8;">
+                <div class="c-label" style="color:#c0392b;">⚠️ 위협 측면</div>
+                <p style="text-align:left;">· 자율 해킹 시대 개막<br/>· 제로데이 대량 발견<br/>· 기존 보안 무력화<br/>· 레거시 시스템 위험</p>
+            </div>
+            <div class="compare-vs">↔</div>
+            <div class="compare-side" style="background:#d1f2eb;">
+                <div class="c-label" style="color:#138d75;">✅ 기회 측면</div>
+                <p style="text-align:left;">· 사전 약점 탐지<br/>· K-보안 도약<br/>· AI 보안 신산업<br/>· 제로 트러스트 가속</p>
+            </div>
+        </div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🚀 향후 유망 분야</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-teal">
+                <div class="stat-label">사후 대응 산업</div>
+                <div class="stat-value">디지털 포렌식</div>
+                <div class="stat-sub">침해사고 대응·사이버 보험</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">예방 산업</div>
+                <div class="stat-value">제로 트러스트</div>
+                <div class="stat-sub">클라우드·데이터 보안</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#K보안</span>
+            <span class="keyword-tag">#AI오케스트레이션</span>
+            <span class="keyword-tag">#제로트러스트</span>
+            <span class="keyword-tag">#레드팀_테스트</span>
+            <span class="keyword-tag">#독자_AI모델</span>
+        </div>
+        <div class="ig-caption">💬 황석진 교수: "<strong>방어 성과와 신뢰</strong>로 평가받는 시대 — 입증하는 기업만 살아남는다"</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 분석 공유하기</button>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 매경ECONOMY 2026.4.29~5.5호 기사 기반<br>
+    가좌버핏 뉴스 · 심층분석 시리즈<br>
+    <span style="opacity:0.7; font-size:11px;">기사 본문은 원문을 바탕으로 일반 독자가 이해하기 쉽게 재구성했습니다.</span>
+</div>
+
+<script>
+// 분석 글 공유 — Web Share API + 클립보드 폴백 (카톡 한 메시지로 가도록 url 인라인)
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📊 [심층분석]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
+</script>
+
+</body>
+</html>

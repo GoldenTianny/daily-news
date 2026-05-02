@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>심층분석 · 가좌버핏 뉴스</title>
+<meta name="description" content="가좌버핏 뉴스 심층분석 — 경제·산업·국제 이슈 깊이 보기">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="가좌버핏 뉴스 · 심층분석">
+<meta property="og:description" content="경제·산업·국제 이슈를 깊이 다룬 기획 글">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/analysis/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 심층분석">
+<meta name="twitter:description" content="경제·산업·국제 이슈를 깊이 다룬 기획 글">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 상단 바 (홈 링크) */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.top-bar .home-link {
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+    transition: opacity 0.15s;
+}
+.top-bar .home-link:hover, .top-bar .home-link:active { opacity: 1; }
+.top-bar .brand {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: auto;
+    opacity: 0.9;
+}
+
+/* 헤더 */
+.hero {
+    background: linear-gradient(135deg, #1a3a6c 0%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero h1 {
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    position: relative;
+}
+.hero .subtitle {
+    font-size: 14px;
+    opacity: 0.92;
+    position: relative;
+    word-break: keep-all;
+}
+
+/* 분석 섹션 */
+.list-section {
+    margin: 24px 12px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px 12px;
+    border-bottom: 2px solid #d0d8e4;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 18px;
+    color: #1a3a6c;
+    font-weight: 700;
+}
+.section-header .count {
+    font-size: 12px;
+    color: #888;
+}
+
+/* 분석 카드 */
+.analysis-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.analysis-item {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+    border-left: 3px solid #1a3a6c;
+}
+.analysis-item:active {
+    transform: scale(0.99);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.analysis-item .meta {
+    font-size: 11.5px;
+    color: #888;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+.analysis-item .title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d2444;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    word-break: keep-all;
+}
+.analysis-item .preview {
+    font-size: 13.5px;
+    color: #555;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+/* 빈 상태 */
+.empty-state {
+    background: white;
+    border-radius: 12px;
+    padding: 50px 24px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    line-height: 1.7;
+}
+.empty-state .em-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 14px;
+    opacity: 0.5;
+}
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 40px 20px 30px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+.footer .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 8px;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .analysis-item, .empty-state {
+        background: #232730;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .analysis-item { border-left-color: #6da3e8; }
+    .analysis-item .title { color: #f0f4fa; }
+    .analysis-item .preview { color: #aaa; }
+    .section-header { border-bottom-color: #2d3340; }
+    .section-header h2 { color: #6da3e8; }
+    .footer-logo { color: #6da3e8 !important; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 바 -->
+<div class="top-bar">
+    <a href="../" class="home-link">← 홈으로</a>
+    <span class="brand">📰 가좌버핏 뉴스</span>
+</div>
+
+<!-- 헤더 -->
+<div class="hero">
+    <h1>🔍 심층분석</h1>
+    <div class="subtitle">경제·산업·국제 이슈를 깊이 다룬 기획 글</div>
+</div>
+
+<!-- 분석 목록 -->
+<div class="list-section">
+    <div class="section-header">
+        <h2>📚 전체 분석</h2>
+        <span class="count" id="analysisCount">총 0건</span>
+    </div>
+
+    <!-- 빈 상태 (콘텐츠 추가 시 .analysis-list로 교체) -->
+    <div class="empty-state" id="emptyState">
+        <span class="em-icon">📝</span>
+        심층분석 콘텐츠가 곧 올라옵니다.<br/>
+        <span style="font-size:12px; opacity:0.8;">첫 번째 글을 준비하고 있어요</span>
+    </div>
+
+    <!-- 분석 카드 목록 (콘텐츠 생기면 여기에 .analysis-item 추가) -->
+    <div class="analysis-list" id="analysisList" hidden>
+        <a href="2026-04-29_미토스쇼크.html" class="analysis-item">
+            <div class="meta">2026.04.29 · DEEP DIVE · TECH</div>
+            <div class="title">'미토스 쇼크' — 괴물 AI가 해커가 됐다</div>
+            <div class="preview">앤트로픽 '클로드 미토스' 공개 후 글로벌 보안업계가 받은 충격을 쉽게 풀어쓴 심층분석</div>
+        </a>
+
+        <!--
+        ★★★ 새 분석 추가 시 여기에 복사해서 사용 ★★★
+        <a href="YYYY-MM-DD_주제슬러그.html" class="analysis-item">
+            <div class="meta">2026.MM.DD · 카테고리</div>
+            <div class="title">분석 제목</div>
+            <div class="preview">한두 문장 미리보기...</div>
+        </a>
+        -->
+    </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
+    개인 학습·기록 목적의 사이트<br/>
+    <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
+</div>
+
+<script>
+// 분석 글 개수 자동 카운트 + 빈 상태 토글
+const items = document.querySelectorAll('.analysis-item');
+if (items.length > 0) {
+    document.getElementById('emptyState').hidden = true;
+    document.getElementById('analysisList').hidden = false;
+    document.getElementById('analysisCount').textContent = `총 ${items.length}건`;
+}
+</script>
+
+</body>
+</html>
