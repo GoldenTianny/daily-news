@@ -588,6 +588,32 @@ body {
     .quote-card .quote-en { color: #b0a89a; }
     .quote-card .quote-author { color: #aaa; }
 }
+
+/* ===== 발행분 전체 공유 버튼 ===== */
+.share-section {
+    margin: 24px 16px 8px;
+    text-align: center;
+}
+.issue-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.issue-share-btn:hover { background: #15305c; }
+.issue-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .issue-share-btn { background: #2a5ca8; }
+    .issue-share-btn:hover { background: #3a6cb8; }
+}
 </style>
 </head>
 <body>
@@ -1234,6 +1260,11 @@ body {
     </div>
 </article>
 
+<!-- 발행분 전체 공유 버튼 -->
+<div class="share-section">
+    <button class="issue-share-btn" type="button" id="shareIssueBtn">📤 이 뉴스 공유하기</button>
+</div>
+
 <!-- 푸터 -->
 <div class="footer-note">
     📰 본 뉴스레터는 2026년 4월 29일자 신문 기사 20건을<br/>요약·정리한 자료입니다.<br/><br/>
@@ -1434,6 +1465,57 @@ async function shareQuote(q) {
         }
     }
 }
+</script>
+
+
+<script>
+// 발행분 전체 공유 — 헤드라인 3개 + 랜덤 명언 + 더보기 링크 (한 메시지 형식)
+document.getElementById('shareIssueBtn').addEventListener('click', async () => {
+    const url = location.origin + location.pathname;
+
+    // 날짜 + 요일 추출
+    const dm = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})/);
+    const dateStr = dm ? `${dm[1]}.${dm[2]}.${dm[3]}` : '';
+    const dayKor = dm ? ['일','월','화','수','목','금','토'][new Date(`${dm[1]}-${dm[2]}-${dm[3]}`).getDay()] : '';
+
+    // 헤드라인 상위 3개
+    const headlines = Array.from(document.querySelectorAll('article.article h3'))
+        .slice(0, 3)
+        .map(h => h.textContent.trim().replace(/\s+/g, ' '));
+
+    // 랜덤 명언 (매 클릭마다 새로)
+    let quoteSection = '';
+    try {
+        const dataEl = document.getElementById('quotesData');
+        const quotes = dataEl ? JSON.parse(dataEl.textContent) : [];
+        if (quotes.length) {
+            const q = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteSection = `💬 오늘의 명언\n"${q.ko}"\n"${q.en}"\n— ${q.author}\n\n`;
+        }
+    } catch (e) {}
+
+    // 메시지 조립
+    let message = `📰 가좌버핏 뉴스 · ${dateStr} (${dayKor})\n\n`;
+    if (headlines.length) {
+        message += `오늘의 핵심 ${headlines.length}가지\n`;
+        headlines.forEach(h => { message += `• ${h}\n`; });
+        message += `\n`;
+    }
+    message += quoteSection;
+    message += `더보기 →\n${url}`;
+
+    const data = { title: `가좌버핏 뉴스 · ${dateStr}`, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
 </script>
 
 </body>
