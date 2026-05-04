@@ -1406,7 +1406,7 @@ document.querySelectorAll('article.article').forEach(article => {
 
     let dates = [];
     try {
-        const res = await fetch('../index.html', { cache: 'no-cache' });
+        const res = await fetch('index.html', { cache: 'no-cache' });
         const text = await res.text();
         const doc = new DOMParser().parseFromString(text, 'text/html');
         doc.querySelectorAll('.archive-item').forEach(a => {

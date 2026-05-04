@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>뉴스 · 가좌버핏 뉴스</title>
+<meta name="description" content="가좌버핏 뉴스 — 일일 경제·산업·국제 뉴스 요약 전체 목록">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="가좌버핏 뉴스 · 뉴스">
+<meta property="og:description" content="매일 발행되는 주요 경제·산업·국제 뉴스 요약">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/archive/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 뉴스">
+<meta name="twitter:description" content="매일 발행되는 주요 경제·산업·국제 뉴스 요약">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 상단 바 */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.top-bar .home-link {
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+    transition: opacity 0.15s;
+}
+.top-bar .home-link:hover, .top-bar .home-link:active { opacity: 1; }
+.top-bar .brand {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: auto;
+    opacity: 0.9;
+}
+
+/* 헤더 */
+.hero {
+    background: linear-gradient(135deg, #1a3a6c 0%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero h1 {
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    position: relative;
+}
+.hero .subtitle {
+    font-size: 14px;
+    opacity: 0.92;
+    position: relative;
+    word-break: keep-all;
+}
+
+/* 목록 섹션 */
+.list-section {
+    margin: 24px 12px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px 12px;
+    border-bottom: 2px solid #d0d8e4;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 18px;
+    color: #1a3a6c;
+    font-weight: 700;
+}
+.section-header .count {
+    font-size: 12px;
+    color: #888;
+}
+
+/* 월별 그룹 */
+.month-group { margin-bottom: 20px; }
+.month-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 600;
+    margin: 16px 6px 8px;
+    letter-spacing: 1px;
+}
+
+/* 아카이브 카드 */
+.archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.archive-item {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.archive-item:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.archive-item .date-box {
+    flex-shrink: 0;
+    width: 50px;
+    text-align: center;
+    background: #f0f4fa;
+    border-radius: 8px;
+    padding: 6px 0;
+}
+.archive-item .date-box .day {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a3a6c;
+    line-height: 1;
+}
+.archive-item .date-box .month {
+    font-size: 10px;
+    color: #888;
+    margin-top: 2px;
+    font-weight: 600;
+}
+.archive-item .info {
+    flex: 1;
+    min-width: 0;
+}
+.archive-item .title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d2444;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.archive-item .meta {
+    font-size: 11.5px;
+    color: #888;
+}
+.archive-item .arrow {
+    flex-shrink: 0;
+    color: #ccc;
+    font-size: 18px;
+}
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 40px 20px 30px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+.footer .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 8px;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .archive-item { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .archive-item .date-box { background: #2d3340; }
+    .archive-item .date-box .day { color: #6da3e8; }
+    .archive-item .title { color: #f0f4fa; }
+    .section-header { border-bottom-color: #2d3340; }
+    .section-header h2 { color: #6da3e8; }
+    .footer-logo { color: #6da3e8 !important; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 바 -->
+<div class="top-bar">
+    <a href="../" class="home-link">← 홈으로</a>
+    <span class="brand">📰 가좌버핏 뉴스</span>
+</div>
+
+<!-- 헤더 -->
+<div class="hero">
+    <h1>📰 뉴스</h1>
+    <div class="subtitle">매일 발행되는 주요 경제·산업·국제 뉴스 요약</div>
+</div>
+
+<!-- 뉴스 목록 -->
+<div class="list-section">
+    <div class="section-header">
+        <h2>📚 전체 뉴스</h2>
+        <span class="count" id="archiveCount">총 0호</span>
+    </div>
+
+    <!-- 2026년 5월 -->
+    <div class="month-group">
+        <div class="month-label">2026년 5월</div>
+        <div class="archive-list">
+            <a href="2026-05-04.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">04</div>
+                    <div class="month">MAY</div>
+                </div>
+                <div class="info">
+                    <div class="title">삼성맨 노조 탈퇴, 시니어 빚투, 트럼프 EU차관세 외</div>
+                    <div class="meta">월요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="2026-05-02.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">02</div>
+                    <div class="month">MAY</div>
+                </div>
+                <div class="info">
+                    <div class="title">양대노총 도심점령, 애플 칩 품귀, 삼성바이오 파업 외</div>
+                    <div class="meta">토요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="2026-05-01.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">01</div>
+                    <div class="month">MAY</div>
+                </div>
+                <div class="info">
+                    <div class="title">빅테크 1000조 투자, 삼성 메모리 73%, 파월 vs 트럼프 외</div>
+                    <div class="meta">금요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 2026년 4월 -->
+    <div class="month-group">
+        <div class="month-label">2026년 4월</div>
+        <div class="archive-list">
+            <a href="2026-04-30.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">30</div>
+                    <div class="month">APR</div>
+                </div>
+                <div class="info">
+                    <div class="title">쿠팡 총수 위기, 삼성 DX 적자, OPEC 균열 외</div>
+                    <div class="meta">목요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="2026-04-29.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">29</div>
+                    <div class="month">APR</div>
+                </div>
+                <div class="info">
+                    <div class="title">OPEC 균열, AI 가격전쟁, 디올백 격차 외</div>
+                    <div class="meta">수요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <a href="2026-04-28.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">28</div>
+                    <div class="month">APR</div>
+                </div>
+                <div class="info">
+                    <div class="title">부동산 K자, ETF 큰손, AI 용광로 외</div>
+                    <div class="meta">화요일 · 20개 기사 · 5개 섹션</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+
+            <!--
+            ★★★ 새 발행분 추가 시 여기에 복사해서 사용 ★★★
+            <a href="YYYY-MM-DD.html" class="archive-item">
+                <div class="date-box">
+                    <div class="day">DD</div>
+                    <div class="month">APR</div>
+                </div>
+                <div class="info">
+                    <div class="title">기사 미리보기 텍스트</div>
+                    <div class="meta">요일 · N개 기사</div>
+                </div>
+                <div class="arrow">›</div>
+            </a>
+            -->
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
+    개인 학습·기록 목적의 사이트<br/>
+    <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
+</div>
+
+<script>
+const count = document.querySelectorAll('.archive-item').length;
+document.getElementById('archiveCount').textContent = `총 ${count}호`;
+</script>
+
+</body>
+</html>
