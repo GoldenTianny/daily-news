@@ -596,6 +596,44 @@ body {
     .issue-share-btn { background: #2a5ca8; }
     .issue-share-btn:hover { background: #3a6cb8; }
 }
+
+/* ===== 쉽게 풀어보기 (용어/배경 설명 박스) ===== */
+.easy-box {
+    margin: 12px 18px 18px;
+    padding: 14px 16px;
+    background: #fef9e7;
+    border-radius: 8px;
+    border-left: 4px solid #d68910;
+}
+.easy-box .easy-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #9a6f0a;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+.easy-box p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #4a3f0e;
+    word-break: keep-all;
+}
+.easy-box strong {
+    color: #2a2204;
+    background: rgba(214, 137, 16, 0.18);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+}
+@media (prefers-color-scheme: dark) {
+    .easy-box {
+        background: #2a2418;
+        border-left-color: #e0a040;
+    }
+    .easy-box .easy-title { color: #f0c060; }
+    .easy-box p { color: #d0c898; }
+    .easy-box strong { color: #ffe080; background: rgba(224, 160, 64, 0.18); }
+}
 </style>
 </head>
 <body>
