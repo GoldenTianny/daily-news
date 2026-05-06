@@ -1480,7 +1480,7 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
 
     // 헤드라인 상위 3개
     const headlines = Array.from(document.querySelectorAll('article.article h3'))
-        .slice(0, 3)
+        .slice(0, 10)
         .map(h => h.textContent.trim().replace(/\s+/g, ' '));
 
     // 랜덤 명언 (매 클릭마다 새로)
