@@ -487,6 +487,26 @@ body {
     line-height: 1.4;
 }
 .date-btn:hover, .date-btn:active { background: rgba(255,255,255,0.22); }
+.top-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.top-share-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: inherit;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.4;
+    transition: background 0.15s;
+}
+.top-share-btn:hover, .top-share-btn:active { background: rgba(255,255,255,0.22); }
 .date-menu {
     position: absolute;
     top: calc(100% + 6px);
@@ -603,9 +623,12 @@ body {
 <!-- 상단 고정 헤더 -->
 <div class="top-bar">
     <a href="../index.html" class="title">📰 가좌버핏 뉴스</a>
-    <div class="date-dropdown">
+    <div class="top-bar-actions">
+        <button class="top-share-btn" id="topShareBtn" type="button" aria-label="이 뉴스 공유하기">📤 공유</button>
+        <div class="date-dropdown">
         <button class="date-btn" id="dateBtn" type="button" aria-haspopup="listbox" aria-expanded="false">2026.05.01 ▾</button>
         <ul class="date-menu" id="dateMenu" hidden></ul>
+    </div>
     </div>
 </div>
 
@@ -1542,6 +1565,11 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
         }
     }
 });
+</script>
+
+<script>
+// 상단바 공유 버튼 → 발행분 전체 공유 핸들러(#shareIssueBtn)로 위임
+document.getElementById('topShareBtn').addEventListener('click', () => document.getElementById('shareIssueBtn').click());
 </script>
 
 </body>
