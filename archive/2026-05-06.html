@@ -617,43 +617,391 @@ body {
     .issue-share-btn:hover { background: #3a6cb8; }
 }
 
-/* ===== 쉽게 풀어보기 (용어/배경 설명 박스) ===== */
-.easy-box {
-    margin: 12px 18px 18px;
-    padding: 14px 16px;
-    background: #fef9e7;
-    border-radius: 8px;
-    border-left: 4px solid #d68910;
+/* ===== 시장 한 컷 위젯 ===== */
+.market-snapshot {
+    margin: 16px 12px;
+    background: white;
+    border-radius: 12px;
+    padding: 18px 16px 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-.easy-box .easy-title {
-    font-size: 13px;
+.ms-header h2 {
+    font-size: 17px;
+    color: #1a3a6c;
+    margin-bottom: 4px;
+}
+.ms-header .ms-date {
+    font-size: 11px;
+    color: #888;
+    font-weight: 400;
+    margin-left: 6px;
+}
+.ms-header .ms-sub {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+.ms-section {
+    border-top: 1px solid #eef1f6;
+    padding: 8px 0;
+}
+.ms-section:first-of-type { border-top: none; }
+.ms-section summary {
+    cursor: pointer;
+    font-size: 14px;
     font-weight: 700;
-    color: #9a6f0a;
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
+    color: #0d2444;
+    padding: 6px 4px;
+    list-style: none;
+    position: relative;
+    padding-left: 22px;
 }
-.easy-box p {
-    font-size: 13.5px;
-    line-height: 1.7;
-    color: #4a3f0e;
+.ms-section summary::before {
+    content: "▸";
+    position: absolute;
+    left: 6px;
+    color: #1a3a6c;
+    font-size: 11px;
+    transition: transform 0.15s;
+}
+.ms-section[open] summary::before {
+    transform: rotate(90deg);
+}
+.ms-section summary::-webkit-details-marker { display: none; }
+.ms-count {
+    font-size: 11px;
+    background: #eef3fa;
+    color: #1a3a6c;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+    font-weight: 500;
+}
+.ms-unit-tag {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: 400;
+    margin-left: 4px;
+}
+.ms-table-wrap {
+    overflow-x: auto;
+    margin: 8px 0;
+    -webkit-overflow-scrolling: touch;
+}
+.ms-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 480px;
+}
+.ms-table th {
+    background: #f7f9fc;
+    color: #555;
+    padding: 6px 4px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 11px;
+    border-bottom: 1px solid #e3e8f0;
+}
+.ms-table th:first-child { text-align: left; padding-left: 8px; }
+.ms-table td {
+    padding: 7px 4px;
+    border-bottom: 1px solid #f3f4f7;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.ms-table td.ms-name {
+    text-align: left;
+    padding-left: 8px;
+    font-weight: 500;
+    color: #2a2a2a;
+    font-size: 12.5px;
+}
+.ms-table td.ms-name .ms-unit {
+    font-size: 9.5px;
+    color: #999;
+    font-weight: 400;
+}
+.ms-table td.ms-price {
+    font-weight: 700;
+    color: #0d2444;
+}
+.ms-table td.ms-up { color: #c0392b; font-weight: 600; }
+.ms-table td.ms-down { color: #2a5ca8; font-weight: 600; }
+.ms-table td.ms-neutral { color: #888; }
+.ms-table td.ms-spark { padding: 2px 4px; min-width: 100px; }
+.ms-tip {
+    font-size: 12px;
+    color: #555;
+    background: #fdf6e3;
+    border-left: 3px solid #d68910;
+    padding: 8px 10px;
+    margin: 4px 0 6px;
+    border-radius: 4px;
+    line-height: 1.6;
     word-break: keep-all;
 }
-.easy-box strong {
-    color: #2a2204;
-    background: rgba(214, 137, 16, 0.18);
-    padding: 1px 4px;
-    border-radius: 3px;
+.ms-tip strong { color: #b9770e; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    .market-snapshot, .dc-card { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .ms-header h2, .dc-header h2, .dc-title { color: #6da3e8; }
+    .ms-header .ms-sub, .dc-header .dc-sub, .ms-tip { color: #aaa; }
+    .ms-section { border-top-color: #2d3340; }
+    .ms-section summary { color: #f0f4fa; }
+    .ms-section summary::before { color: #6da3e8; }
+    .ms-count { background: #1c2330; color: #6da3e8; }
+    .ms-table th { background: #1c1f26; color: #aaa; border-bottom-color: #2d3340; }
+    .ms-table td { border-bottom-color: #2d3340; }
+    .ms-table td.ms-name { color: #c8ccd4; }
+    .ms-table td.ms-price { color: #f0f4fa; }
+    .ms-table td.ms-up { color: #ff6b6b; }
+    .ms-table td.ms-down { color: #4d8ad4; }
+    .ms-tip { background: #2a2520; border-left-color: #d68910; color: #d4cdb8; }
+    .ms-tip strong { color: #f4c264; }
+    .dc-title { border-bottom-color: #2d3340; }
+    .dc-legend { color: #aaa; }
+    .dc-axis, .dc-xlabel { fill: #999; }
+    .dc-value { fill: #6da3e8; }
+    .dc-readme { background: #1c2330; color: #c8ccd4; border-left-color: #6da3e8; }
+}
+
+
+/* ===== 정교한 차트 섹션 ===== */
+.detail-charts-v2 {
+    margin: 16px 12px;
+}
+.dcv2-header h2 {
+    font-size: 17px;
+    color: #1a3a6c;
+    margin-bottom: 4px;
+    padding: 0 4px;
+}
+.dcv2-header .dcv2-sub {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 12px;
+    padding: 0 4px;
+    line-height: 1.5;
+}
+.dcv2-card {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.dcv2-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    border-bottom: 2px solid #eef1f6;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+.dcv2-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0d2444;
+    line-height: 1.3;
+}
+.dcv2-title .dcv2-current {
+    font-size: 17px;
+    color: #c0392b;
+    font-weight: 800;
+    margin-left: 6px;
+    letter-spacing: -0.3px;
+}
+.dcv2-meta {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+}
+.dcv2-chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+.pro-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    min-width: 320px;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+/* 그리드 라인 */
+.pc-grid {
+    stroke: #eef1f6;
+    stroke-width: 1;
+    stroke-dasharray: 2,3;
+}
+.pc-axis-line {
+    stroke: #c0c8d4;
+    stroke-width: 1;
+}
+.pc-axis {
+    fill: #999;
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+}
+.pc-xlabel {
+    fill: #777;
+    font-size: 10.5px;
+    font-weight: 500;
+}
+.pc-xlabel-last {
+    fill: #1a3a6c;
     font-weight: 700;
 }
-@media (prefers-color-scheme: dark) {
-    .easy-box {
-        background: #2a2418;
-        border-left-color: #e0a040;
-    }
-    .easy-box .easy-title { color: #f0c060; }
-    .easy-box p { color: #d0c898; }
-    .easy-box strong { color: #ffe080; background: rgba(224, 160, 64, 0.18); }
+.pc-period-change {
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
 }
+.pc-bar {
+    transition: opacity 0.15s;
+    cursor: pointer;
+}
+.pc-bar:hover {
+    opacity: 1 !important;
+}
+.pc-hover-zone {
+    cursor: crosshair;
+}
+.pc-last-value {
+    fill: #c0392b;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.pc-last-value-box {
+    fill: white;
+    font-size: 10.5px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.dcv2-readme {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #444;
+    background: #f7f9fc;
+    border-left: 3px solid #1a3a6c;
+    padding: 9px 11px;
+    border-radius: 4px;
+    line-height: 1.65;
+    word-break: keep-all;
+}
+.dcv2-readme strong { color: #c0392b; }
+
+/* ===== 툴팁 (호버시 SVG 위에 떠올리기) ===== */
+.dcv2-card { position: relative; }
+.dcv2-tooltip {
+    position: absolute;
+    background: rgba(13, 36, 68, 0.95);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -100%);
+    transition: opacity 0.12s;
+    white-space: nowrap;
+    z-index: 100;
+    font-variant-numeric: tabular-nums;
+}
+.dcv2-tooltip.visible { opacity: 1; }
+.dcv2-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid rgba(13, 36, 68, 0.95);
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    .dcv2-card { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .dcv2-header h2 { color: #6da3e8; }
+    .dcv2-header .dcv2-sub { color: #aaa; }
+    .dcv2-title { color: #f0f4fa; }
+    .dcv2-title .dcv2-current { color: #ff6b6b; }
+    .dcv2-meta { color: #999; }
+    .dcv2-title-row { border-bottom-color: #2d3340; }
+    .pc-grid { stroke: #2d3340; }
+    .pc-axis-line { stroke: #444; }
+    .pc-axis { fill: #888; }
+    .pc-xlabel { fill: #aaa; }
+    .pc-xlabel-last { fill: #6da3e8; }
+    .pc-last-value { fill: #ff6b6b; }
+    .dcv2-readme { background: #1c1f26; color: #c8ccd4; border-left-color: #6da3e8; }
+    .dcv2-readme strong { color: #ff6b6b; }
+}
+
+
+/* ===== 출처/업데이트 시점 표기 ===== */
+.ms-source {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: linear-gradient(90deg, #f7f9fc 0%, #fdfdfe 100%);
+    border-left: 3px solid #1a3a6c;
+    border-radius: 4px;
+    font-size: 11.5px;
+    color: #555;
+}
+.ms-source-label {
+    background: #1a3a6c;
+    color: white;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+.ms-source-name {
+    font-weight: 700;
+    color: #0d2444;
+}
+.ms-source-en {
+    font-weight: 500;
+    color: #888;
+    font-size: 10.5px;
+}
+.ms-source-divider {
+    color: #ccc;
+    margin: 0 2px;
+}
+.ms-source-time {
+    color: #666;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+}
+@media (prefers-color-scheme: dark) {
+    .ms-source {
+        background: linear-gradient(90deg, #1c1f26 0%, #1f2330 100%);
+        border-left-color: #6da3e8;
+        color: #aaa;
+    }
+    .ms-source-label { background: #2a5ca8; }
+    .ms-source-name { color: #f0f4fa; }
+    .ms-source-en { color: #999; }
+    .ms-source-divider { color: #555; }
+    .ms-source-time { color: #aaa; }
+}
+
 </style>
 </head>
 <body>
@@ -703,7 +1051,681 @@ body {
     <a href="#a20" class="toc-item"><span class="toc-num">20</span><span>집값 오를수록…서울아파트 통계 격차 확대</span></a>
 </div>
 
-<!-- ===== 기사 본문 ===== -->
+<!-- 시장 한 컷 위젯 -->
+<div class="market-snapshot">
+  <div class="ms-header">
+    <h2>📊 시장 한 컷 <span class="ms-date">2026.05.04 종가 기준</span></h2>
+    <p class="ms-sub">전일·1주·1개월·3개월 변동률을 한눈에. 빨강은 상승, 파랑은 하락입니다.</p>
+    <div class="ms-source">
+      <span class="ms-source-label">출처</span>
+      <span class="ms-source-name">에프앤가이드 <span class="ms-source-en">(FnGuide)</span></span>
+      <span class="ms-source-divider">·</span>
+      <span class="ms-source-time">📅 업데이트 2026.05.06 11:55</span>
+    </div>
+  </div>
+  <details class="ms-section" open>
+    <summary>🌍 글로벌 증시 <span class="ms-count">8개</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>지수</th><th>현재가</th><th>전일</th><th>1주</th><th>1개월</th><th>3개월</th><th>추세</th></tr></thead><tbody>
+        <tr><td class="ms-name">🇰🇷 KOSPI</td><td class="ms-price">6,936.99</td><td class="ms-up">+5.12%</td><td class="ms-up">+4.87%</td><td class="ms-up">+29.01%</td><td class="ms-up">+29.15%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,26.9 50.0,7.0 73.5,7.2 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇰🇷 KOSDAQ</td><td class="ms-price">1,213.74</td><td class="ms-up">+1.79%</td><td class="ms-down">-1.01%</td><td class="ms-up">+14.10%</td><td class="ms-up">+5.59%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,13.5 26.5,27.0 50.0,3.0 73.5,7.4 97.0,4.6" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="4.6" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇺🇸 S&P500</td><td class="ms-price">7,259.22</td><td class="ms-down">-0.41%</td><td class="ms-up">+0.37%</td><td class="ms-up">+9.39%</td><td class="ms-up">+4.62%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,15.3 26.5,27.0 50.0,4.9 73.5,3.0 97.0,4.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="4.0" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇺🇸 NASDAQ</td><td class="ms-price">25,067.80</td><td class="ms-down">-0.19%</td><td class="ms-up">+0.73%</td><td class="ms-up">+14.57%</td><td class="ms-up">+9.44%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,18.7 26.5,27.0 50.0,4.5 73.5,3.0 97.0,3.3" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.3" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇺🇸 DOW30</td><td class="ms-price">48,941.90</td><td class="ms-down">-1.13%</td><td class="ms-down">-0.46%</td><td class="ms-up">+5.24%</td><td class="ms-down">-1.13%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,3.0 26.5,27.0 50.0,5.5 73.5,3.0 97.0,7.3" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="7.3" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇯🇵 NIKKEI225</td><td class="ms-price">59,513.12</td><td class="ms-up">+0.38%</td><td class="ms-down">-0.34%</td><td class="ms-up">+10.74%</td><td class="ms-up">+11.61%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,25.3 50.0,3.0 73.5,4.4 97.0,3.7" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.7" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇭🇰 HANG SENG</td><td class="ms-price">26,095.88</td><td class="ms-up">+1.24%</td><td class="ms-up">+0.66%</td><td class="ms-up">+3.90%</td><td class="ms-down">-2.80%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,3.0 26.5,27.0 50.0,15.4 73.5,17.5 97.0,13.0" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="13.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇬🇧 FTSE100</td><td class="ms-price">10,219.11</td><td class="ms-down">-0.14%</td><td class="ms-down">-0.15%</td><td class="ms-down">-0.01%</td><td class="ms-up">+1.37%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,5.2 50.0,3.0 73.5,3.2 97.0,5.4" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="5.4" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>코스피 7000선이 코앞</strong>입니다. 1개월 사이 +29%로 사상 최고 흐름이 이어지고 있습니다.</div>
+  </details>
+  <details class="ms-section">
+    <summary>💱 환율 (대달러) <span class="ms-count">5개</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>통화</th><th>현재</th><th>전일</th><th>1주</th><th>1개월</th><th>3개월</th><th>추세</th></tr></thead><tbody>
+        <tr><td class="ms-name">￦ 원/달러</td><td class="ms-price">1,469.00</td><td class="ms-down">-0.54%</td><td class="ms-down">-0.41%</td><td class="ms-down">-2.72%</td><td class="ms-up">+0.58%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,19.8 73.5,18.9 97.0,22.8" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="22.8" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">￥ 엔/달러</td><td class="ms-price">157.22</td><td class="ms-up">+0.20%</td><td class="ms-down">-1.39%</td><td class="ms-down">-1.49%</td><td class="ms-up">+0.22%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,4.4 73.5,26.7 97.0,23.9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="23.9" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">￥ 위안/달러</td><td class="ms-price">6.8300</td><td class="ms-up">+0.03%</td><td class="ms-up">+0.10%</td><td class="ms-down">-0.76%</td><td class="ms-down">-1.61%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,3.0 26.5,14.9 50.0,27.0 73.5,26.0 97.0,25.6" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="25.6" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">€ 유로/달러</td><td class="ms-price">0.8600</td><td class="ms-up">+0.40%</td><td class="ms-up">+0.25%</td><td class="ms-down">-1.50%</td><td class="ms-up">+0.98%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,19.9 73.5,21.4 97.0,17.5" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="17.5" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">￡ 파운드/달러</td><td class="ms-price">0.7400</td><td class="ms-up">+0.38%</td><td class="ms-up">+0.01%</td><td class="ms-down">-2.49%</td><td class="ms-up">+0.92%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,20.6 73.5,23.2 97.0,20.5" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="20.5" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>원/달러 1,469원</strong>. 1개월 새 -2.7% 떨어져(원화 강세) 해외 직구·여행이 조금 더 유리해진 구간입니다.</div>
+  </details>
+  <details class="ms-section">
+    <summary>🛢️ 원자재 <span class="ms-count">6개</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>품목</th><th>현재가</th><th>전일</th><th>1주</th><th>1개월</th><th>3개월</th><th>추세</th></tr></thead><tbody>
+        <tr><td class="ms-name">🛢️ WTI 원유<br><span class="ms-unit">달러/배럴</span></td><td class="ms-price">106.42</td><td class="ms-up">+4.39%</td><td class="ms-up">+10.43%</td><td class="ms-down">-4.59%</td><td class="ms-up">+63.37%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,8.3 73.5,6.2 97.0,4.6" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="4.6" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🛢️ 브렌트유<br><span class="ms-unit">달러/배럴</span></td><td class="ms-price">114.44</td><td class="ms-up">+5.80%</td><td class="ms-up">+5.74%</td><td class="ms-up">+4.96%</td><td class="ms-up">+64.76%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,4.8 50.0,5.1 73.5,5.1 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🛢️ 두바이유<br><span class="ms-unit">달러/배럴</span></td><td class="ms-price">102.84</td><td class="ms-down">-8.34%</td><td class="ms-down">-1.31%</td><td class="ms-down">-10.26%</td><td class="ms-up">+53.95%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,6.3 73.5,3.7 97.0,6.8" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="6.8" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🥇 금<br><span class="ms-unit">달러/온스</span></td><td class="ms-price">4,519.50</td><td class="ms-down">-2.38%</td><td class="ms-down">-3.33%</td><td class="ms-down">-2.84%</td><td class="ms-down">-8.15%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,3.0 26.5,18.6 50.0,17.2 73.5,20.0 97.0,27.0" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="27.0" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🥈 은<br><span class="ms-unit">달러/100온스</span></td><td class="ms-price">73.07</td><td class="ms-down">-3.79%</td><td class="ms-down">-2.57%</td><td class="ms-up">+0.46%</td><td class="ms-down">-13.18%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,3.0 26.5,27.0 50.0,21.7 73.5,19.5 97.0,26.2" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="26.2" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🔧 알루미늄<br><span class="ms-unit">달러/톤</span></td><td class="ms-price">3,525.50</td><td class="ms-down">-2.18%</td><td class="ms-down">-4.33%</td><td class="ms-down">-1.62%</td><td class="ms-up">+13.36%</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,6.7 50.0,3.0 73.5,5.9 97.0,8.9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="8.9" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>유가가 들썩</strong>입니다. 호르무즈 사태로 브렌트유는 전일 +5.8%, 3개월 누적 +64.8%까지 뛰었습니다. 곧 주유소 가격에 반영될 수 있습니다.</div>
+  </details>
+  <details class="ms-section">
+    <summary>📈 금리 <span class="ms-count">6개</span> <span class="ms-unit-tag">단위: bp(베이시스포인트, 0.01%p)</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>금리</th><th>현재(%)</th><th>전일</th><th>1주</th><th>1개월</th><th>3개월</th><th>추세</th></tr></thead><tbody>
+        <tr><td class="ms-name">🇰🇷 국고채 3년</td><td class="ms-price">3.413</td><td class="ms-up">+3.5bp</td><td class="ms-up">+3.5bp</td><td class="ms-up">+3.5bp</td><td class="ms-up">+36.9bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,5.3 50.0,5.3 73.5,5.3 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇰🇷 회사채 AA- 3년</td><td class="ms-price">4.070</td><td class="ms-up">+10.1bp</td><td class="ms-up">+10.1bp</td><td class="ms-up">+10.1bp</td><td class="ms-up">+52.5bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,7.6 50.0,7.6 73.5,7.6 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇺🇸 미국 국채 10년</td><td class="ms-price">4.446</td><td class="ms-up">+6.8bp</td><td class="ms-up">+11.0bp</td><td class="ms-up">+10.0bp</td><td class="ms-up">+16.8bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,17.3 50.0,18.7 73.5,12.7 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#c0392b"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇬🇧 영국 국채 10년</td><td class="ms-price">4.953</td><td class="ms-down">-1.6bp</td><td class="ms-down">-2.8bp</td><td class="ms-up">+10.7bp</td><td class="ms-up">+39.8bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,10.6 50.0,3.0 73.5,3.7 97.0,4.6" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="4.6" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇰🇷 CD 91일</td><td class="ms-price">2.820</td><td class="ms-neutral">0.0bp</td><td class="ms-neutral">0.0bp</td><td class="ms-neutral">0.0bp</td><td class="ms-up">+12.0bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,27.0 26.5,3.0 50.0,3.0 73.5,3.0 97.0,3.0" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="3.0" r="2.5" fill="#888"/>
+</svg></td></tr>
+        <tr><td class="ms-name">🇺🇸 SOFR (미)</td><td class="ms-price">3.630</td><td class="ms-down">-1.0bp</td><td class="ms-down">-3.0bp</td><td class="ms-down">-3.0bp</td><td class="ms-down">-2.0bp</td><td class="ms-spark"><svg width="100" height="30" viewBox="0 0 100 30" style="display:block;">
+<polyline points="3.0,11.0 26.5,3.0 50.0,3.0 73.5,19.0 97.0,27.0" fill="none" stroke="#2a5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+<circle cx="97.0" cy="27.0" r="2.5" fill="#2a5ca8"/>
+</svg></td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>금리는 빨강(상승)이 나쁜 신호</strong>입니다. 대출이자가 올라간다는 뜻이니까요. 미국 국채 10년이 한 달 새 +10bp(0.10%p) 올라 4.45%인데, 30년물은 별도로 5%를 돌파한 상태입니다.</div>
+  </details>
+  <details class="ms-section">
+    <summary>💰 증시 주변 자금 <span class="ms-count">4개</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>구분</th><th>현재</th><th>전일</th><th>1주</th><th>1개월</th><th>3개월</th></tr></thead><tbody>
+        <tr><td class="ms-name">고객예탁금</td><td class="ms-price">124.76조원</td><td class="ms-down">-4.97조</td><td class="ms-down">-1.28조</td><td class="ms-up">+13.68조</td><td class="ms-up">+18.73조</td></tr>
+        <tr><td class="ms-name">신용잔고</td><td class="ms-price">35.24조원</td><td class="ms-down">-3,560억</td><td class="ms-up">+5,890억</td><td class="ms-up">+3.08조</td><td class="ms-up">+5.34조</td></tr>
+        <tr><td class="ms-name">미수잔고</td><td class="ms-price">1.12조원</td><td class="ms-up">+910억</td><td class="ms-up">+1,185억</td><td class="ms-up">+148억</td><td class="ms-up">+942억</td></tr>
+        <tr><td class="ms-name">수익증권</td><td class="ms-price">358.18조원</td><td class="ms-down">-8,049억</td><td class="ms-up">+8.22조</td><td class="ms-up">+53.65조</td><td class="ms-up">+77.12조</td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>고객예탁금</strong>은 투자자가 증권사에 맡겨놓은 "출격 대기" 자금입니다. 124조 원으로 1개월 새 13.7조 늘었지만, 회전율은 떨어진 상태입니다(17번 기사 참고).</div>
+  </details>
+  <details class="ms-section">
+    <summary>👥 누가 사고 누가 팔았나 <span class="ms-count">코스피 누적 순매수</span></summary>
+    <div class="ms-table-wrap"><table class="ms-table">
+      <thead><tr><th>주체</th><th>전일</th><th>1주 누적</th><th>1개월 누적</th><th>3개월 누적</th></tr></thead><tbody>
+        <tr><td class="ms-name">외국인</td><td class="ms-down">-1.67조</td><td class="ms-up">+5,301억</td><td class="ms-up">+4.21조</td><td class="ms-down">-48.65조</td></tr>
+        <tr><td class="ms-name">개인</td><td class="ms-up">+1.74조</td><td class="ms-down">-2.53조</td><td class="ms-down">-12.96조</td><td class="ms-up">+18.38조</td></tr>
+        <tr><td class="ms-name">기관</td><td class="ms-down">-207억</td><td class="ms-up">+2.42조</td><td class="ms-up">+6.03조</td><td class="ms-up">+23.08조</td></tr>
+      </tbody></table></div>
+    <div class="ms-tip">💡 <strong>외국인이 돌아왔습니다.</strong> 1개월 +4.2조 원 순매수 중인데, 대부분 삼전닉스(삼성전자·SK하이닉스)에 쏠려 있습니다. 반대로 개인은 1개월 -13조 원 차익 실현 중입니다.</div>
+  </details>
+</div>
+
+
+
+<!-- 정교한 차트 섹션 -->
+<div class="detail-charts-v2">
+  <div class="dcv2-header">
+    <h2>📈 핵심 지표 추세 차트</h2>
+    <p class="dcv2-sub">실제 가격 흐름을 라인 차트로 확인하세요. 점에 마우스를 올리거나 터치하면 정확한 값이 표시됩니다.</p>
+    <div class="ms-source">
+      <span class="ms-source-label">출처</span>
+      <span class="ms-source-name">에프앤가이드 <span class="ms-source-en">(FnGuide)</span></span>
+      <span class="ms-source-divider">·</span>
+      <span class="ms-source-time">📅 업데이트 2026.05.06 11:55</span>
+    </div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🇰🇷 KOSPI <span class="dcv2-current">6,936.99pt</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_kospi_81120" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#c0392b" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#c0392b" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">2,274pt</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">4,083pt</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">5,891pt</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">7,700pt</text>
+  <polygon points="52.0,197.8 86.2,185.2 120.3,179.4 154.5,181.4 188.7,173.4 222.8,150.5 257.0,156.6 291.2,146.9 325.3,113.0 359.5,78.8 393.7,118.8 427.8,66.9 462.0,55.6 462.0,212.0 52.0,212.0" fill="url(#grad_kospi_81120)"/>
+  <polyline points="52.0,197.8 86.2,185.2 120.3,179.4 154.5,181.4 188.7,173.4 222.8,150.5 257.0,156.6 291.2,146.9 325.3,113.0 359.5,78.8 393.7,118.8 427.8,66.9 462.0,55.6" fill="none" stroke="#c0392b" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="197.8" r="2.5" fill="#c0392b"/>
+  <circle cx="86.2" cy="185.2" r="2.5" fill="#c0392b"/>
+  <circle cx="120.3" cy="179.4" r="2.5" fill="#c0392b"/>
+  <circle cx="154.5" cy="181.4" r="2.5" fill="#c0392b"/>
+  <circle cx="188.7" cy="173.4" r="2.5" fill="#c0392b"/>
+  <circle cx="222.8" cy="150.5" r="2.5" fill="#c0392b"/>
+  <circle cx="257.0" cy="156.6" r="2.5" fill="#c0392b"/>
+  <circle cx="291.2" cy="146.9" r="2.5" fill="#c0392b"/>
+  <circle cx="325.3" cy="113.0" r="2.5" fill="#c0392b"/>
+  <circle cx="359.5" cy="78.8" r="2.5" fill="#c0392b"/>
+  <circle cx="393.7" cy="118.8" r="2.5" fill="#c0392b"/>
+  <circle cx="427.8" cy="66.9" r="2.5" fill="#c0392b"/>
+  <circle cx="462.0" cy="55.6" r="5" fill="#c0392b" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="32.0" width="54" height="18" rx="3" fill="#c0392b"/>
+  <text x="435.0" y="44.5" class="pc-last-value-box" text-anchor="middle">6,937pt</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 2,698pt"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 3,072pt"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 3,245pt"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 3,186pt"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 3,425pt"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 4,108pt"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 3,927pt"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 4,214pt"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 5,224pt"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 6,244pt"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 5,052pt"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 6,599pt"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 6,937pt"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +157.1%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 2025년 5월 2,500선이던 KOSPI가 1년 만에 6,937pt로 약 2.5배 뛰었습니다. 1월부터 본격 급등해 4개월 만에 5,200 → 6,900대까지 올랐고, 7,000선 돌파가 임박했습니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🇺🇸 S&P500 <span class="dcv2-current">7,259.22pt</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_sp500_81120" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#2a5ca8" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#2a5ca8" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">5,777pt</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">6,352pt</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">6,927pt</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">7,502pt</text>
+  <polygon points="52.0,197.8 86.2,166.8 120.3,152.7 154.5,139.9 188.7,115.8 222.8,99.8 257.0,98.9 291.2,93.9 325.3,89.4 359.5,95.7 393.7,132.7 427.8,60.9 462.0,55.6 462.0,212.0 52.0,212.0" fill="url(#grad_sp500_81120)"/>
+  <polyline points="52.0,197.8 86.2,166.8 120.3,152.7 154.5,139.9 188.7,115.8 222.8,99.8 257.0,98.9 291.2,93.9 325.3,89.4 359.5,95.7 393.7,132.7 427.8,60.9 462.0,55.6" fill="none" stroke="#2a5ca8" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="197.8" r="2.5" fill="#2a5ca8"/>
+  <circle cx="86.2" cy="166.8" r="2.5" fill="#2a5ca8"/>
+  <circle cx="120.3" cy="152.7" r="2.5" fill="#2a5ca8"/>
+  <circle cx="154.5" cy="139.9" r="2.5" fill="#2a5ca8"/>
+  <circle cx="188.7" cy="115.8" r="2.5" fill="#2a5ca8"/>
+  <circle cx="222.8" cy="99.8" r="2.5" fill="#2a5ca8"/>
+  <circle cx="257.0" cy="98.9" r="2.5" fill="#2a5ca8"/>
+  <circle cx="291.2" cy="93.9" r="2.5" fill="#2a5ca8"/>
+  <circle cx="325.3" cy="89.4" r="2.5" fill="#2a5ca8"/>
+  <circle cx="359.5" cy="95.7" r="2.5" fill="#2a5ca8"/>
+  <circle cx="393.7" cy="132.7" r="2.5" fill="#2a5ca8"/>
+  <circle cx="427.8" cy="60.9" r="2.5" fill="#2a5ca8"/>
+  <circle cx="462.0" cy="55.6" r="5" fill="#2a5ca8" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="32.0" width="54" height="18" rx="3" fill="#2a5ca8"/>
+  <text x="435.0" y="44.5" class="pc-last-value-box" text-anchor="middle">7,259pt</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 5,912pt"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 6,205pt"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 6,339pt"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 6,460pt"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 6,688pt"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 6,840pt"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 6,849pt"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 6,896pt"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 6,939pt"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 6,879pt"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 6,529pt"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 7,209pt"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 7,259pt"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +22.8%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 미국 S&P500도 같은 기간 약 17% 상승. 다만 KOSPI(+155%)에 비하면 완만한 추세입니다. 3월 일시 조정(6,528) 이후 빠르게 회복해 7,259pt 사상 최고 수준입니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🇯🇵 NIKKEI 225 <span class="dcv2-current">59,513pt</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_nikkei_81120" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#138d75" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#138d75" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">35,810pt</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">45,004pt</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">54,198pt</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">63,392pt</text>
+  <polygon points="52.0,197.8 86.2,181.1 120.3,177.3 154.5,166.4 188.7,151.8 222.8,102.5 257.0,116.7 291.2,116.1 325.3,96.4 359.5,60.0 393.7,111.3 427.8,57.1 462.0,55.6 462.0,212.0 52.0,212.0" fill="url(#grad_nikkei_81120)"/>
+  <polyline points="52.0,197.8 86.2,181.1 120.3,177.3 154.5,166.4 188.7,151.8 222.8,102.5 257.0,116.7 291.2,116.1 325.3,96.4 359.5,60.0 393.7,111.3 427.8,57.1 462.0,55.6" fill="none" stroke="#138d75" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="197.8" r="2.5" fill="#138d75"/>
+  <circle cx="86.2" cy="181.1" r="2.5" fill="#138d75"/>
+  <circle cx="120.3" cy="177.3" r="2.5" fill="#138d75"/>
+  <circle cx="154.5" cy="166.4" r="2.5" fill="#138d75"/>
+  <circle cx="188.7" cy="151.8" r="2.5" fill="#138d75"/>
+  <circle cx="222.8" cy="102.5" r="2.5" fill="#138d75"/>
+  <circle cx="257.0" cy="116.7" r="2.5" fill="#138d75"/>
+  <circle cx="291.2" cy="116.1" r="2.5" fill="#138d75"/>
+  <circle cx="325.3" cy="96.4" r="2.5" fill="#138d75"/>
+  <circle cx="359.5" cy="60.0" r="2.5" fill="#138d75"/>
+  <circle cx="393.7" cy="111.3" r="2.5" fill="#138d75"/>
+  <circle cx="427.8" cy="57.1" r="2.5" fill="#138d75"/>
+  <circle cx="462.0" cy="55.6" r="5" fill="#138d75" stroke="white" stroke-width="2.5"/>
+  <rect x="402.0" y="32.0" width="60" height="18" rx="3" fill="#138d75"/>
+  <text x="432.0" y="44.5" class="pc-last-value-box" text-anchor="middle">59,513pt</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 37,965pt"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 40,487pt"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 41,070pt"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 42,718pt"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 44,933pt"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 52,411pt"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 50,254pt"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 50,339pt"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 53,323pt"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 58,850pt"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 51,064pt"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 59,285pt"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 59,513pt"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +56.8%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 일본 닛케이도 강세장. 1년 만에 약 +37% 상승했습니다. 일본 정부의 디플레이션 탈출과 엔화 약세가 주가를 밀어 올린 영향입니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🇺🇸 미국 국채 10년 금리 <span class="dcv2-current">4.405%</span></div>
+      <div class="dcv2-meta">최근 52주 · 주간 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_us10y_79328" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#922b21" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#922b21" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">3.91%</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">4.14%</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">4.37%</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">4.61%</text>
+  <polygon points="52.0,72.3 60.0,55.6 68.1,84.3 76.1,86.4 84.2,81.9 92.2,89.8 100.2,116.4 108.3,102.3 116.3,77.5 124.4,75.4 132.4,87.2 140.4,130.5 148.5,114.0 156.5,111.4 164.5,120.6 172.6,128.9 180.6,165.4 188.7,172.2 196.7,151.6 204.7,139.1 212.8,164.4 220.8,174.6 228.9,185.5 236.9,188.6 244.9,161.5 253.0,163.6 261.0,149.3 269.1,171.4 277.1,182.9 285.1,151.6 293.2,136.7 301.2,148.5 309.3,152.9 317.3,138.6 325.3,143.3 333.4,127.6 341.4,125.5 349.5,125.0 357.5,134.1 365.5,173.3 373.6,165.7 381.6,197.8 389.6,153.4 397.7,113.5 405.7,85.6 413.8,73.1 421.8,97.6 429.8,105.2 437.9,124.2 445.9,107.0 454.0,86.1 462.0,82.2 462.0,212.0 52.0,212.0" fill="url(#grad_us10y_79328)"/>
+  <polyline points="52.0,72.3 60.0,55.6 68.1,84.3 76.1,86.4 84.2,81.9 92.2,89.8 100.2,116.4 108.3,102.3 116.3,77.5 124.4,75.4 132.4,87.2 140.4,130.5 148.5,114.0 156.5,111.4 164.5,120.6 172.6,128.9 180.6,165.4 188.7,172.2 196.7,151.6 204.7,139.1 212.8,164.4 220.8,174.6 228.9,185.5 236.9,188.6 244.9,161.5 253.0,163.6 261.0,149.3 269.1,171.4 277.1,182.9 285.1,151.6 293.2,136.7 301.2,148.5 309.3,152.9 317.3,138.6 325.3,143.3 333.4,127.6 341.4,125.5 349.5,125.0 357.5,134.1 365.5,173.3 373.6,165.7 381.6,197.8 389.6,153.4 397.7,113.5 405.7,85.6 413.8,73.1 421.8,97.6 429.8,105.2 437.9,124.2 445.9,107.0 454.0,86.1 462.0,82.2" fill="none" stroke="#922b21" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="462.0" cy="82.2" r="5" fill="#922b21" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="58.2" width="54" height="18" rx="3" fill="#922b21"/>
+  <text x="435.0" y="70.7" class="pc-last-value-box" text-anchor="middle">4.41%</text>
+  <rect x="48.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-17 | 4.44%"/>
+  <rect x="56.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-24 | 4.51%"/>
+  <rect x="64.1" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 4.40%"/>
+  <rect x="72.1" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-07 | 4.39%"/>
+  <rect x="80.1" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-14 | 4.41%"/>
+  <rect x="88.2" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-21 | 4.38%"/>
+  <rect x="96.2" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-28 | 4.27%"/>
+  <rect x="104.3" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-05 | 4.33%"/>
+  <rect x="112.3" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-12 | 4.42%"/>
+  <rect x="120.3" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-19 | 4.43%"/>
+  <rect x="128.4" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-26 | 4.39%"/>
+  <rect x="136.4" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-02 | 4.22%"/>
+  <rect x="144.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-09 | 4.28%"/>
+  <rect x="152.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-16 | 4.29%"/>
+  <rect x="160.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-23 | 4.26%"/>
+  <rect x="168.6" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-30 | 4.23%"/>
+  <rect x="176.6" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-06 | 4.09%"/>
+  <rect x="184.6" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-13 | 4.06%"/>
+  <rect x="192.7" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-20 | 4.14%"/>
+  <rect x="200.7" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-27 | 4.19%"/>
+  <rect x="208.8" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-04 | 4.09%"/>
+  <rect x="216.8" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-11 | 4.05%"/>
+  <rect x="224.8" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-18 | 4.01%"/>
+  <rect x="232.9" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-25 | 4.00%"/>
+  <rect x="240.9" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-01 | 4.10%"/>
+  <rect x="249.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-08 | 4.09%"/>
+  <rect x="257.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-15 | 4.15%"/>
+  <rect x="265.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-22 | 4.06%"/>
+  <rect x="273.1" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-29 | 4.02%"/>
+  <rect x="281.1" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-06 | 4.14%"/>
+  <rect x="289.2" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-13 | 4.20%"/>
+  <rect x="297.2" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-20 | 4.15%"/>
+  <rect x="305.2" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-27 | 4.13%"/>
+  <rect x="313.3" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-03 | 4.19%"/>
+  <rect x="321.3" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-10 | 4.17%"/>
+  <rect x="329.4" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-17 | 4.23%"/>
+  <rect x="337.4" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-24 | 4.24%"/>
+  <rect x="345.4" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 4.24%"/>
+  <rect x="353.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-07 | 4.21%"/>
+  <rect x="361.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-14 | 4.06%"/>
+  <rect x="369.5" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-21 | 4.08%"/>
+  <rect x="377.6" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 3.96%"/>
+  <rect x="385.6" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-07 | 4.13%"/>
+  <rect x="393.7" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-14 | 4.29%"/>
+  <rect x="401.7" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-21 | 4.39%"/>
+  <rect x="409.7" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-28 | 4.44%"/>
+  <rect x="417.8" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-04 | 4.35%"/>
+  <rect x="425.8" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-11 | 4.32%"/>
+  <rect x="433.9" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-18 | 4.24%"/>
+  <rect x="441.9" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-25 | 4.31%"/>
+  <rect x="449.9" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-02 | 4.39%"/>
+  <rect x="458.0" y="30" width="8.0" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 4.41%"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="156.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="261.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="365.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#2a5ca8">기간 -0.9%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 1년 전 4.4% 수준이던 10년물 금리가 등락을 거듭하다 다시 4.4%대로 복귀. 9번 기사에 나온 30년물 5% 돌파와는 별개로, 10년물도 인플레이션 우려에 다시 상승세를 보이는 중입니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">💱 원/달러 환율 <span class="dcv2-current">1,469원</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_krw_82848" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#5b2c6f" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#5b2c6f" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">1,338원</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">1,405원</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">1,472원</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">1,539원</text>
+  <polygon points="52.0,170.7 86.2,197.8 120.3,160.5 154.5,165.3 188.7,150.5 222.8,128.1 257.0,93.3 291.2,118.7 325.3,108.7 359.5,117.4 393.7,55.6 427.8,87.8 462.0,93.3 462.0,212.0 52.0,212.0" fill="url(#grad_krw_82848)"/>
+  <polyline points="52.0,170.7 86.2,197.8 120.3,160.5 154.5,165.3 188.7,150.5 222.8,128.1 257.0,93.3 291.2,118.7 325.3,108.7 359.5,117.4 393.7,55.6 427.8,87.8 462.0,93.3" fill="none" stroke="#5b2c6f" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="170.7" r="2.5" fill="#5b2c6f"/>
+  <circle cx="86.2" cy="197.8" r="2.5" fill="#5b2c6f"/>
+  <circle cx="120.3" cy="160.5" r="2.5" fill="#5b2c6f"/>
+  <circle cx="154.5" cy="165.3" r="2.5" fill="#5b2c6f"/>
+  <circle cx="188.7" cy="150.5" r="2.5" fill="#5b2c6f"/>
+  <circle cx="222.8" cy="128.1" r="2.5" fill="#5b2c6f"/>
+  <circle cx="257.0" cy="93.3" r="2.5" fill="#5b2c6f"/>
+  <circle cx="291.2" cy="118.7" r="2.5" fill="#5b2c6f"/>
+  <circle cx="325.3" cy="108.7" r="2.5" fill="#5b2c6f"/>
+  <circle cx="359.5" cy="117.4" r="2.5" fill="#5b2c6f"/>
+  <circle cx="393.7" cy="55.6" r="2.5" fill="#5b2c6f"/>
+  <circle cx="427.8" cy="87.8" r="2.5" fill="#5b2c6f"/>
+  <circle cx="462.0" cy="93.3" r="5" fill="#5b2c6f" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="69.3" width="54" height="18" rx="3" fill="#5b2c6f"/>
+  <text x="435.0" y="81.8" class="pc-last-value-box" text-anchor="middle">1,469원</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 1,384원"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 1,354원"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 1,395원"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 1,390원"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 1,406원"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 1,431원"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 1,469원"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 1,441원"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 1,452원"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 1,442원"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 1,510원"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 1,475원"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 1,469원"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +6.2%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 작년 5월 1,384원이던 환율이 1,469원까지 올랐습니다(원화 약세). 다만 최근 1개월은 -2.7% 강세 흐름이라 직구·여행자에게 유리한 구간입니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🛢️ WTI 원유 <span class="dcv2-current">$106.42</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_wti_82912" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#d68910" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#d68910" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">53.10$</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">73.78$</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">94.46$</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">115.14$</text>
+  <polygon points="52.0,189.5 86.2,176.8 120.3,164.6 154.5,180.0 188.7,184.8 222.8,188.9 257.0,196.0 291.2,197.8 325.3,176.5 359.5,171.2 393.7,70.4 427.8,59.6 462.0,55.6 462.0,212.0 52.0,212.0" fill="url(#grad_wti_82912)"/>
+  <polyline points="52.0,189.5 86.2,176.8 120.3,164.6 154.5,180.0 188.7,184.8 222.8,188.9 257.0,196.0 291.2,197.8 325.3,176.5 359.5,171.2 393.7,70.4 427.8,59.6 462.0,55.6" fill="none" stroke="#d68910" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="189.5" r="2.5" fill="#d68910"/>
+  <circle cx="86.2" cy="176.8" r="2.5" fill="#d68910"/>
+  <circle cx="120.3" cy="164.6" r="2.5" fill="#d68910"/>
+  <circle cx="154.5" cy="180.0" r="2.5" fill="#d68910"/>
+  <circle cx="188.7" cy="184.8" r="2.5" fill="#d68910"/>
+  <circle cx="222.8" cy="188.9" r="2.5" fill="#d68910"/>
+  <circle cx="257.0" cy="196.0" r="2.5" fill="#d68910"/>
+  <circle cx="291.2" cy="197.8" r="2.5" fill="#d68910"/>
+  <circle cx="325.3" cy="176.5" r="2.5" fill="#d68910"/>
+  <circle cx="359.5" cy="171.2" r="2.5" fill="#d68910"/>
+  <circle cx="393.7" cy="70.4" r="2.5" fill="#d68910"/>
+  <circle cx="427.8" cy="59.6" r="2.5" fill="#d68910"/>
+  <circle cx="462.0" cy="55.6" r="5" fill="#d68910" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="32.0" width="54" height="18" rx="3" fill="#d68910"/>
+  <text x="435.0" y="44.5" class="pc-last-value-box" text-anchor="middle">106.42$</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 60.79$"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 65.11$"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 69.26$"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 64.01$"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 62.37$"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 60.98$"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 58.55$"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 57.95$"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 65.21$"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 67.02$"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 101.38$"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 105.07$"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 106.42$"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +75.1%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 1년 전 60달러대였던 WTI가 호르무즈 사태 이후 100달러를 돌파. 5번 기사 내용 그대로 곧 휘발유 가격에 반영될 가능성이 높습니다.</div>
+  </div>
+  <div class="dcv2-card">
+    <div class="dcv2-title-row">
+      <div class="dcv2-title">🥇 금 (스팟) <span class="dcv2-current">$4,519.50</span></div>
+      <div class="dcv2-meta">최근 13개월 · 월말 종가</div>
+    </div>
+    <div class="dcv2-chart-wrap">
+<svg viewBox="0 0 480 240" class="pro-chart" preserveAspectRatio="xMidYMid meet" role="img">
+  <defs><linearGradient id="grad_gold_82912" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#b9770e" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#b9770e" stop-opacity="0.02"/>
+  </linearGradient></defs>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-grid"/>
+  <text x="46" y="215.0" class="pc-axis" text-anchor="end">3,095$</text>
+  <line x1="52" y1="151.3" x2="462" y2="151.3" class="pc-grid"/>
+  <text x="46" y="154.3" class="pc-axis" text-anchor="end">3,923$</text>
+  <line x1="52" y1="90.7" x2="462" y2="90.7" class="pc-grid"/>
+  <text x="46" y="93.7" class="pc-axis" text-anchor="end">4,752$</text>
+  <line x1="52" y1="30.0" x2="462" y2="30.0" class="pc-grid"/>
+  <text x="46" y="33.0" class="pc-axis" text-anchor="end">5,580$</text>
+  <polygon points="52.0,197.8 86.2,197.4 120.3,197.5 154.5,184.2 188.7,157.4 222.8,147.0 257.0,129.7 291.2,118.6 325.3,93.4 359.5,55.6 393.7,98.3 427.8,100.7 462.0,107.7 462.0,212.0 52.0,212.0" fill="url(#grad_gold_82912)"/>
+  <polyline points="52.0,197.8 86.2,197.4 120.3,197.5 154.5,184.2 188.7,157.4 222.8,147.0 257.0,129.7 291.2,118.6 325.3,93.4 359.5,55.6 393.7,98.3 427.8,100.7 462.0,107.7" fill="none" stroke="#b9770e" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="52.0" cy="197.8" r="2.5" fill="#b9770e"/>
+  <circle cx="86.2" cy="197.4" r="2.5" fill="#b9770e"/>
+  <circle cx="120.3" cy="197.5" r="2.5" fill="#b9770e"/>
+  <circle cx="154.5" cy="184.2" r="2.5" fill="#b9770e"/>
+  <circle cx="188.7" cy="157.4" r="2.5" fill="#b9770e"/>
+  <circle cx="222.8" cy="147.0" r="2.5" fill="#b9770e"/>
+  <circle cx="257.0" cy="129.7" r="2.5" fill="#b9770e"/>
+  <circle cx="291.2" cy="118.6" r="2.5" fill="#b9770e"/>
+  <circle cx="325.3" cy="93.4" r="2.5" fill="#b9770e"/>
+  <circle cx="359.5" cy="55.6" r="2.5" fill="#b9770e"/>
+  <circle cx="393.7" cy="98.3" r="2.5" fill="#b9770e"/>
+  <circle cx="427.8" cy="100.7" r="2.5" fill="#b9770e"/>
+  <circle cx="462.0" cy="107.7" r="5" fill="#b9770e" stroke="white" stroke-width="2.5"/>
+  <rect x="408.0" y="83.7" width="54" height="18" rx="3" fill="#b9770e"/>
+  <text x="435.0" y="96.2" class="pc-last-value-box" text-anchor="middle">4,520$</text>
+  <rect x="34.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-05-31 | 3,289$"/>
+  <rect x="69.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-06-30 | 3,294$"/>
+  <rect x="103.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-07-31 | 3,293$"/>
+  <rect x="137.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-08-31 | 3,474$"/>
+  <rect x="171.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-09-30 | 3,841$"/>
+  <rect x="205.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-10-31 | 3,982$"/>
+  <rect x="239.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-11-30 | 4,218$"/>
+  <rect x="274.1" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2025-12-31 | 4,370$"/>
+  <rect x="308.2" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-01-31 | 4,714$"/>
+  <rect x="342.4" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-02-28 | 5,230$"/>
+  <rect x="376.6" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-03-31 | 4,648$"/>
+  <rect x="410.8" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-04-30 | 4,615$"/>
+  <rect x="444.9" y="30" width="34.2" height="182" fill="transparent" class="pc-hover-zone" data-tooltip="2026-05-06 | 4,520$"/>
+  <text x="52.0" y="228.0" class="pc-xlabel" text-anchor="middle">5월</text>
+  <text x="86.2" y="228.0" class="pc-xlabel" text-anchor="middle">6월</text>
+  <text x="120.3" y="228.0" class="pc-xlabel" text-anchor="middle">7월</text>
+  <text x="154.5" y="228.0" class="pc-xlabel" text-anchor="middle">8월</text>
+  <text x="188.7" y="228.0" class="pc-xlabel" text-anchor="middle">9월</text>
+  <text x="222.8" y="228.0" class="pc-xlabel" text-anchor="middle">10월</text>
+  <text x="257.0" y="228.0" class="pc-xlabel" text-anchor="middle">11월</text>
+  <text x="291.2" y="228.0" class="pc-xlabel" text-anchor="middle">12월</text>
+  <text x="325.3" y="228.0" class="pc-xlabel" text-anchor="middle">'26.1</text>
+  <text x="359.5" y="228.0" class="pc-xlabel" text-anchor="middle">2월</text>
+  <text x="393.7" y="228.0" class="pc-xlabel" text-anchor="middle">3월</text>
+  <text x="427.8" y="228.0" class="pc-xlabel" text-anchor="middle">4월</text>
+  <text x="462.0" y="228.0" class="pc-xlabel pc-xlabel-last" text-anchor="middle">5월</text>
+  <line x1="52" y1="212.0" x2="462" y2="212.0" class="pc-axis-line"/>
+  <text x="52" y="20" class="pc-period-change" fill="#c0392b">기간 +37.4%</text>
+</svg>
+    </div>
+    <div class="dcv2-readme">📖 안전자산 금이 1년 만에 3,289 → 4,520달러로 약 +37% 급등. 지정학 불확실성과 인플레이션 헤지 수요가 동시에 작용했습니다. 다만 최근 1개월은 -2.8% 단기 조정 중입니다.</div>
+  </div>
+</div>
+
+<!-- ===== 국제·외교 ===== -->
 
 <!-- 기사 1 -->
 <article class="article" id="a1">
@@ -714,10 +1736,6 @@ body {
     <div class="body">
         <p>도널드 트럼프 미국 대통령이 호르무즈 해협에 묶여 있던 한국 해운사 HMM의 화물선 나무호 화재를 이란의 공격으로 단정하고, 한국이 해협 개방을 위한 군사작전 '프로젝트 프리덤'에 동참할 것을 거듭 요구했습니다. 트럼프 대통령은 자신의 SNS인 트루스소셜에 "이란이 프로젝트 프리덤 작전의 선박 이동 문제와 관련해 한국 화물선 등 무관한 국가들을 향해 몇 차례 발포했다"며 합류를 압박했습니다.</p>
         <p>한국 정부는 원인 규명이 우선이라는 신중한 입장입니다. 강훈식 대통령비서실장은 청와대 긴급회의를 열고 나무호를 인근 두바이항으로 이동시켜 안전 검사와 원인 규명에 나서기로 했습니다. 청와대 관계자는 "항행의 자유 원칙과 한반도 대비 태세, 국내법 절차 등을 감안해 검토 중"이라며 프로젝트 프리덤 합류 요청에는 신중한 태도를 유지했습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>호르무즈 해협</strong>은 페르시아만의 좁은 입구로, 전 세계 해상 원유의 약 1/5이 지나가는 핵심 통로입니다. 이곳이 막히면 유가가 바로 출렁입니다. <strong>프로젝트 프리덤</strong>은 미국이 봉쇄된 자국·우방국 선박을 빼내기 위해 시작한 군사작전으로, 트럼프 대통령은 한국에도 군함 파견을 요구해 왔습니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">⚓ 호르무즈 사태 일지<span class="ig-unit">한국 정부 대응 흐름</span></div>
@@ -744,10 +1762,6 @@ body {
         <p>미국과 이란의 전쟁 장기화로 세계 경제 불확실성이 커진 가운데 국제통화기금(IMF)과 월스트리트 거물들의 전망이 극명하게 엇갈렸습니다. 4일(현지시간) 미국 LA에서 열린 밀컨 글로벌 콘퍼런스에서 크리스탈리나 게오르기에바 IMF 총재는 "전쟁이 단기적 위기로 가벼운 영향을 미칠 것이라는 예상은 더 이상 유효하지 않다"며 "현재 상황이 두 달 정도 지속된다는 비관적 시나리오를 염두에 두고 있다"고 밝혔습니다.</p>
         <p>반면 월가 투자 거물들은 지금이 투자 적기라는 입장입니다. 블랙스톤의 존 그레이 CEO는 "코로나 팬데믹, 우크라이나 전쟁, SVB 파산 등 위기를 미국과 세계 경제는 시장을 통해 매번 돌파해왔고 앞으로도 그럴 것"이라고 자신했고, 칼라일과 UAE 국부펀드 무바달라 측도 종전 이후 글로벌 경제가 V자형으로 강하게 반등할 것이라고 강조했습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>밀컨 콘퍼런스</strong>는 매년 LA에서 열리는 세계 최대 투자 콘퍼런스로, 전 세계 큰손들이 모이는 자리입니다. <strong>V자 반등</strong>은 경제가 급락한 뒤 곧바로 강하게 회복하는 모양을 말합니다. 같은 사건을 두고 IMF는 12개월 내 비료 30~40%, 식품 3~6% 상승을 우려한 반면, 월가는 위기를 매수 기회로 보고 있습니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">📊 비관 vs 낙관 전망 한눈에<span class="ig-unit">밀컨 글로벌 콘퍼런스 2026</span></div>
         <div class="compare-box">
@@ -767,6 +1781,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 정책·금융 ===== -->
+
 <!-- 기사 3 -->
 <article class="article" id="a3">
     <div class="article-header">
@@ -776,10 +1792,6 @@ body {
     <div class="body">
         <p>5세대 실손의료보험이 6일 본격 출시됐습니다. 도수치료와 비급여 주사제 등 과잉 진료 항목을 보장에서 대폭 제외해 보험료를 기존보다 최대 절반 이하로 낮춘 것이 특징입니다. 비중증 비급여 본인부담률은 30%에서 50%로 오르고, 연간 보장 한도도 5000만 원에서 1000만 원으로 줄어듭니다. 반면 중증 환자 의료비 부담은 상급병원 입원 자기부담 한도를 500만 원으로 신설해 완화했습니다.</p>
         <p>금융위원회에 따르면 1세대 실손에 가입한 60대 여성의 월 평균 보험료가 17만 8489원에서 5세대 전환 시 4만 2539원으로 크게 낮아집니다. 11월부터는 1·2세대 가입자 약 1700만 명을 대상으로 '선택형 할인 특약'과 '계약 전환 할인' 제도도 시행됩니다. 청년층은 6개월 이내 청약 철회가 가능하므로 가입 후에도 신중히 검토할 수 있습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>실손의료보험</strong>은 병원에서 쓴 의료비를 돌려받는 보험입니다. 같은 도수치료라도 4세대까지는 적당히 보장해줬는데, 일부 가입자가 매주 도수치료를 받으며 보험금을 과도하게 청구해 보험사 적자가 누적됐습니다. 그래서 5세대는 도수치료·비급여 주사제 같은 "쇼핑성 진료"는 빼고, 진짜 큰 병이 났을 때만 강력하게 보장해주는 구조로 바뀌었습니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">💊 4세대 vs 5세대 비급여 비교<span class="ig-unit">자료=금융위</span></div>
@@ -808,6 +1820,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 시장·투자 ===== -->
+
 <!-- 기사 4 -->
 <article class="article" id="a4">
     <div class="article-header">
@@ -817,10 +1831,6 @@ body {
     <div class="body">
         <p>미국에서 비상장 주식을 토큰화해 24시간 거래하는 흐름이 빠르게 확산되고 있습니다. 국내 한 중견기업 직원 A씨는 IPO를 앞둔 스페이스X 공모주에 직접 청약할 수 없자, 보유한 USDT를 USDC로 바꿔 탈중앙화거래소(DEX) 주피터에서 스페이스X 주식 토큰을 5분 만에 매수했습니다. 코인 거래소를 통해 국가 간 투자 장벽이 사실상 무너지고 있는 셈입니다.</p>
         <p>RWA.xyz에 따르면 토큰화된 미국 국채 규모는 152억 달러(약 22조 4400억 원)로 올해만 70% 급증했고, 스탠다드차타드는 글로벌 실물연계자산(RWA) 시장이 2028년 2조 달러까지 성장할 것으로 전망했습니다. 다만 토큰은 의결권·배당·법적 소유권이 없는 SPV 기반 권리에 불과하며, SPV가 부실화하면 손실 위험이 있어 주의가 필요합니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>토큰화 주식</strong>은 비상장 회사 지분을 블록체인 위의 디지털 토큰으로 만들어 24시간 사고팔 수 있게 한 상품입니다. <strong>SPV(특수목적법인)</strong>가 실제 주식을 보유하고, 투자자는 그 SPV의 경제적 수익에 대한 청구권만 받습니다. 의결권은 없고, SPV가 부도나면 손실을 떠안을 수 있습니다. 한국에서는 아직 허용되지 않습니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🚀 글로벌 RWA(실물연계자산) 시장<span class="ig-unit">단위: 달러, 자료=스탠다드차타드</span></div>
@@ -854,10 +1864,6 @@ body {
         <p>미국이 호르무즈 해협 봉쇄로 발이 묶인 선박을 빼내는 '프로젝트 프리덤'에 착수하자 그나마 유지되던 휴전마저 사실상 무너졌습니다. 이란이 걸프 국가 공격을 재개하면서 UAE 국방부는 이란발 미사일과 드론 19발을 요격했다고 밝혔는데, 이 과정에서 3명이 중경상을 입었고 푸자이라 석유산업지대(FOIZ)에서 화재가 발생했습니다. FOIZ는 호르무즈 해협을 우회할 수 있는 원유 수출 터미널이 있는 곳입니다.</p>
         <p>중동 긴장이 다시 고조되며 7월 인도분 브렌트유 선물은 배럴당 114.44달러로 5.8% 상승했고, WTI도 4.39% 올랐습니다. 반면 뉴욕 증시 다우지수는 1.13%, S&P500은 0.41%, 나스닥은 0.19% 동반 하락하며 위험 회피 심리를 반영했습니다. 에너지 가격 급등은 인플레이션 우려를 자극할 수 있습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>FOIZ(푸자이라 석유산업지대)</strong>는 UAE의 핵심 정유·수출 단지로, 호르무즈 해협이 막혀도 원유를 외부로 내보낼 수 있는 우회 통로입니다. 이란이 이곳을 공격한 것은 미국 주도 작전에 대한 경고 메시지로 해석됩니다. 결과적으로 유가 5.8% 급등은 그 자체로 한국 같은 수입국 물가에 직격탄이 됩니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">📈 5월 5일 시장 반응<span class="ig-unit">유가 급등 · 뉴욕증시 하락</span></div>
         <table class="data-table">
@@ -874,6 +1880,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 기술·반도체·AI ===== -->
+
 <!-- 기사 6 -->
 <article class="article" id="a6">
     <div class="article-header">
@@ -883,10 +1891,6 @@ body {
     <div class="body">
         <p>젠슨 황 엔비디아 CEO가 4일(현지시간) 밀컨 글로벌 콘퍼런스에서 "중국이 최신 반도체를 가져야 하는 것은 아니다"면서도 "글로벌 차원에서 경쟁해야 하고, 그래야 수출을 극대화할 수 있다"고 말했습니다. 중국의 반도체 굴기를 차단하기 위해서라도 미국산 고성능 칩을 중국에 적극 수출해야 한다는 주장입니다. 칩과 인프라·애플리케이션까지 함께 수출하는 것이 오히려 중국의 자체 기술 개발 속도를 늦추는 전략이라는 설명입니다.</p>
         <p>황 CEO는 AI와 일자리 충돌에 대해 "AI는 미국이 다시 산업화할 수 있는 최고의 기회"라고 주장했습니다. 지난해 스타트업에 투자된 1000억 달러는 인류 역사상 최대 규모이며, 그 돈은 결국 일자리로 갔다는 분석입니다. 또한 그는 "AI를 안전하고 유용하게 만들려는 사람이 차를 빠르게 만들려는 사람보다 10배 더 많다"며 안전성에 대한 자신감도 드러냈습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p>현재 엔비디아는 미국 정부의 수출 통제로 중국에 저사양 칩만 수출할 수 있습니다. 황 CEO 논리는 "어차피 막을 수 없는 중국 자체 개발을 막고 싶다면, 차라리 미국 칩을 팔아 중국 시장을 미국 표준에 묶어두는 게 낫다"는 것입니다. <strong>딥러닝 아버지</strong> 제프리 힌턴은 AI가 인류 20~30%에 영향을 미친다는 우려에 "많은 똑똑한 사람들이 노력하고 있다"며 황 CEO 주장에 힘을 실었습니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🔧 젠슨 황 핵심 발언 정리<span class="ig-unit">밀컨 글로벌 콘퍼런스 2026</span></div>
@@ -911,6 +1915,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 국제·사회 ===== -->
+
 <!-- 기사 7 -->
 <article class="article" id="a7">
     <div class="article-header">
@@ -920,10 +1926,6 @@ body {
     <div class="body">
         <p>백악관출입기자협회(WHCA) 만찬 도중 트럼프 대통령을 향한 총격 사건이 일어난 지 9일 만에 백악관 인근에서 또다시 발포 사태가 발생했습니다. 4일 오후 3시 30분(현지시간) 워싱턴 기념탑 인근 교차로에서 신원 미상의 무장 남성이 보행자들로 붐비는 지역에서 총격을 가해 15세 청소년 한 명이 부상을 입었고, 비밀경호국 요원들이 즉각 응사해 용의자를 제압했습니다. 이 사건은 JD 밴스 부통령 차량 행렬이 지나간 직후 발생했습니다.</p>
         <p>비밀경호국은 "행정부 청사 내 특정 인물을 표적으로 삼았다는 징후는 없다"고 밝혔지만, 트럼프 대통령은 백악관에서 행사를 진행 중이었으며 사건 직후 오후 3시 45분께 비밀경호국은 취재진을 백악관 북쪽 잔디밭에서 기자회견장으로 긴급 대피시켰습니다. 반년 새 워싱턴DC 도심에서 고위급 관련 총격이 세 차례나 발생해 美 최고위급 위해 우려가 고조되고 있습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>비밀경호국(USSS)</strong>은 미국 대통령과 부통령, 가족, 외국 정상의 경호를 전담하는 기관입니다. 작년 11월 26일에도 백악관에서 2블록 떨어진 곳에서 주방위군 요원 2명이 피격당해 여성 요원이 사망한 바 있습니다. 6개월 사이 워싱턴DC 중심부에서 세 차례 총격은 이례적이며, 트럼프 행정부가 지난해 워싱턴DC 경찰권을 장악한 뒤 8월부터 주방위군 수백 명을 추가 배치한 상태입니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🚨 반년새 워싱턴DC 고위급 관련 총격<span class="ig-unit">3차례 발생</span></div>
@@ -948,10 +1950,6 @@ body {
     <div class="body">
         <p>글로벌 보호무역주의 장벽이 높아지는 가운데 호주가 역설적으로 자유무역협정(FTA) 챔피언으로 부상하고 있다고 영국 파이낸셜타임스(FT)가 5일 보도했습니다. 영국과 호주의 FTA 덕에 영국산 '퍼시 피그(Percy Pig)' 사탕이 호주 소매점에서 품절 대란을 일으키고 있고, 양국 교역액은 전년 대비 약 14% 증가한 28억 파운드(약 5조 6000억 원)를 기록했습니다. 호주는 인도, UAE, 인도네시아, 홍콩, 페루, EU 등과 잇따라 협정을 마무리했습니다.</p>
         <p>이는 트럼프발 관세 압박과 중국의 보복성 관세에 대응한 시장 다변화 전략입니다. 중국은 2020년 호주가 코로나19 기원 조사를 촉구하자 와인·석탄·보리 등에 관세를 부과하며 경제 보복했고, 트럼프는 최근 호주 제약 부문에 100% 관세를 매기며 압박했습니다. 한편 호주중앙은행(RBA)은 호르무즈 해협 봉쇄에 따른 유가 급등과 물가 상승 압력을 고려해 기준금리를 4.10%에서 4.35%로 0.25%포인트 인상하며 3회 연속 금리 인상을 단행했습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>FTA(자유무역협정)</strong>는 두 나라가 서로 관세를 낮추거나 없애 무역을 자유롭게 하는 약속입니다. 호주는 미국과 중국 사이에 끼어 양쪽에서 압박받자, 다른 나라들과 잇따라 FTA를 맺어 시장을 분산시키는 전략을 택했습니다. 영국산 사탕 품귀는 그 결과로 일어난 작지만 상징적인 현상입니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🌏 호주 FTA 영토 확장<span class="ig-unit">2020년 이후 체결국</span></div>
@@ -991,12 +1989,8 @@ body {
         <p>미국 30년물 국채금리가 '파멸(doom)의 문'으로 불리는 5% 선을 돌파하며 글로벌 인플레이션 우려가 재점화됐습니다. 5일 인베스팅닷컴에 따르면 30년물 국채금리는 4일 5.01%로 거래를 마쳤는데, 30년물 금리가 5% 선을 넘은 것은 2025년 5월 18일 이후 약 1년 만입니다. 호르무즈 해협 군사 대결로 에너지 가격이 급등하면서 장기 금리 상승을 자극했고, 주담대(모기지) 금리 부담 가중과 한계기업 도산 위기를 키울 수 있다는 분석이 나옵니다.</p>
         <p>한국과 영국의 3년물 금리도 0.45~0.6%포인트 상승했습니다. 다만 아시아개발은행(ADB)은 "한국이 중동전쟁으로 성장이 둔화되겠지만, 반도체 사이클 영향으로 비교적 견조한 성장을 보일 것"이라고 진단했습니다. 한국 1분기 성장률은 전년 동기 대비 3.6%, 전 분기 대비 1.7% 성장했고 대만은 13.69% 깜짝 성장을 기록했습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>30년물 국채금리</strong>는 미국 정부가 30년 동안 빌리는 돈에 매기는 이자율로, 모기지(주택담보대출)와 직결됩니다. 5%를 넘으면 집을 사려는 사람들의 이자 부담이 커지고 빚이 많은 한계기업은 도산 위기에 몰릴 수 있어 "파멸의 문"이라 불립니다. 위험자산인 주식·부동산은 이보다 훨씬 높은 수익률을 내야 투자 가치가 발생합니다.</p>
-    </div>
     <div class="infographic">
-        <div class="ig-title">📊 주요국 3년물 국채금리<span class="ig-unit">2/27 → 5/4, 단위: %</span></div>
+        <div class="ig-title">📊 주요국 국채금리 (미국 30년물 · 기타 3년물)<span class="ig-unit">2/27 → 5/4, 단위: %</span></div>
         <table class="data-table">
             <thead><tr><th>국가</th><th>2/27 (전쟁 전)</th><th>5/4</th><th>변동</th></tr></thead>
             <tbody>
@@ -1021,10 +2015,6 @@ body {
         <p>오픈AI가 차세대 AI 모델 GPT-5.5를 공개하며 생성형 AI 시장 주도권 경쟁이 다시 불붙고 있습니다. GPT-5.5는 아키텍처 단계에서 '추론 전용 레이어'를 통합해 답변 전 스스로 논리를 점검함으로써 환각을 획기적으로 줄였습니다. 구글 나노 바나나2, 앤스로픽 클로드4.7, 알리바바 큐웬3 등도 다단계 문제 해결과 정확도에 초점을 맞춘 추론 모델로 경쟁에 뛰어들었습니다. 속도와 지식량 대신 '무결점'이 새로운 척도가 된 것입니다.</p>
         <p>고품질 학습 데이터 부족과 막대한 연산 비용이 추론 모델 부상의 배경입니다. 옥스퍼드·케임브리지대 연구진은 "AI가 생성한 데이터로만 반복 학습할 경우 모델 붕괴 현상이 일어날 수 있다"고 경고한 바 있어, 빅테크들은 추론 단계 강화로 방향을 틀었습니다. 오픈AI 연산 비용은 1년 새 5배로 늘어 2025년 추론 비용(80억 달러)이 학습 비용(83억 달러)과 거의 같아졌습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>추론 모델</strong>은 사람이 어려운 문제를 풀 때 잠시 멈춰 생각하는 것처럼, AI가 답변하기 전 스스로 논리를 점검하며 단계적으로 사고하는 방식입니다. 빠르게 답하지만 자주 틀리는 기존 챗봇과 달리, 시간이 좀 걸려도 정확한 답을 내놓는 게 핵심입니다. 샘 올트먼 CEO는 "더 이상 챗봇을 만들지 않는다"며 <strong>일하는 AI(에이전트)</strong>로의 진화를 선언했습니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">🤖 오픈AI 학습 vs 추론 비용<span class="ig-unit">단위: 억 달러, 자료=스탠퍼드 HAI</span></div>
         <div class="bar-chart">
@@ -1047,10 +2037,6 @@ body {
         <p>추론 중심 AI 패러다임에서 기업들이 직면한 가장 큰 과제는 막대한 전기료와 발열입니다. 사용자의 명령을 스스로 판단하고 실행하는 에이전틱 AI는 답변 전 수많은 추론 과정을 거쳐 연산량을 폭증시키고 있습니다. 젠슨 황 엔비디아 CEO도 "AI 추론 비용이 매년 10배씩 낮아져야 에이전트 AI가 비즈니스적으로 성립할 수 있다"고 지적해, K반도체가 빅테크의 핵심 인프라 파트너로 급부상하고 있습니다.</p>
         <p>SK하이닉스가 지난달 양산을 발표한 192GB 소캠2(SOCAMM2)는 전력 효율을 75% 개선해 엔비디아 차세대 추론 전용 플랫폼 베라 루빈의 필수 파트너로 낙점됐습니다. 삼성전자도 GPU와 고대역폭 메모리(HBM) 없이 저전력 추론이 가능한 전용 가속기 마하-2를 개발해 GPU 의존도를 낮출 대안을 제시했습니다. '지능의 단가'를 낮추는 전략적 파트너로서 한국 반도체의 기회가 열린 셈입니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>HBM(고대역폭 메모리)</strong>은 일반 메모리보다 데이터 전송 속도가 훨씬 빠른 고급 메모리로, AI 학습에 필수입니다. 그러나 비싸고 전력 소모가 큽니다. 삼성의 <strong>마하-2</strong>는 HBM과 GPU 없이도 추론 작업을 저전력으로 수행할 수 있는 전용 칩으로, 엔비디아 의존도를 낮추려는 MS·메타 등 빅테크에게 매력적인 대안입니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">⚡ K반도체 AI 추론 솔루션<span class="ig-unit">엔비디아 의존도 낮추기</span></div>
         <div class="stat-grid" style="margin-top:0;">
@@ -1069,6 +2055,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 산업·반도체 ===== -->
+
 <!-- 기사 12 -->
 <article class="article" id="a12">
     <div class="article-header">
@@ -1078,10 +2066,6 @@ body {
     <div class="body">
         <p>원자재 공급망 리스크가 큰 리튬이온배터리의 대안으로 주목받는 나트륨이온배터리 상용화에 속도가 붙고 있습니다. 세계 최대 배터리 업체 중국 CATL이 지난달 베이징 하이퍼스트롱과 3년간 60GWh 규모 ESS용 나트륨이온배터리 공급 계약을 체결하며 시장 전환점을 만든 가운데, 국내 배터리 3사도 포트폴리오 다변화를 위한 기술 개발에 박차를 가하고 있습니다. 나트륨은 매장량이 풍부해 가격 안정성이 높고 공급망 부담이 작은 것이 장점입니다.</p>
         <p>퓨처마켓인사이트에 따르면 나트륨이온배터리 시장은 올해 29억 달러(약 4조 2820억 원)에서 2031년 62억 달러로 두 배 이상 확대될 전망입니다. LG에너지솔루션은 ESS 중심으로 기술 검증 중이고 삼성SDI는 AI 데이터센터 UPS 시장을 핵심 타깃으로 양산 계획을 검토하고 있습니다. SK온은 "2027년 시제품 개발 완료를 목표로 한다"며 LFP·바나듐이온배터리에 이어 사업 구조를 다변화한다는 계획입니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>나트륨이온배터리</strong>는 리튬이온배터리와 같은 원리지만 비싸고 공급이 불안한 리튬 대신 흔한 나트륨(소금 성분)을 쓴 배터리입니다. 에너지 밀도가 낮아 전기차에는 부적합하지만, 큰 부피가 문제되지 않고 안정성이 중요한 <strong>ESS(에너지저장장치)</strong>나 데이터센터 UPS에 안성맞춤입니다. 가격이 저렴해 "가성비 배터리"로 불립니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🔋 나트륨이온배터리 글로벌 시장<span class="ig-unit">단위: 억 달러, 자료=퓨처마켓인사이트</span></div>
@@ -1111,10 +2095,6 @@ body {
     <div class="body">
         <p>애플이 아이폰과 맥에 탑재되는 자체 반도체 생산을 사실상 독점해 온 대만 TSMC에 대한 의존도를 낮추기 위해 인텔 및 삼성전자와의 협력 가능성을 검토하고 있습니다. AI 수요 확대로 TSMC가 AI용 반도체 생산에 집중하자 애플이 대안을 찾아 나선 것으로 풀이됩니다. 블룸버그에 따르면 애플 경영진은 텍사스주 테일러에 건설 중인 삼성 팹을 방문했지만 논의는 아직 초기 단계로, 기술력과 생산 안정성에 대한 우려도 여전히 존재합니다.</p>
         <p>AI 데이터센터 확대와 온디바이스 AI 수요 증가로 첨단 공정 칩 공급이 빠듯해지자 팀 쿡 애플 CEO도 최근 실적 발표에서 "공급망 유연성이 예전보다 떨어졌다"며 "칩 부족이 제품 성장의 제약 요인"이라고 밝혔습니다. TSMC 첨단 공정 가격이 매년 오르고 있어 비용 부담도 커진 상황이며, 삼성전자는 애플을 고객으로 확보할 경우 의미가 큽니다. 2016년 애플 핵심 반도체 위탁생산을 TSMC에 빼앗긴 이후 다시 가져오는 것이기 때문입니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>파운드리</strong>는 다른 회사가 설계한 반도체를 위탁받아 생산해주는 공장입니다. 현재 첨단 공정에서는 대만 TSMC가 압도적 1위, 삼성전자가 2위입니다. 애플은 칩 설계는 직접 하지만 생산은 외주에 맡기는데, 그 외주가 거의 다 TSMC였습니다. AI 붐으로 TSMC 공장이 다 차자 애플도 다른 곳을 찾기 시작한 것입니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🏭 애플의 공급망 다변화 시도<span class="ig-unit">TSMC 의존도 낮추기</span></div>
@@ -1152,10 +2132,6 @@ body {
         <p>오픈AI와 앤스로픽이 한국에서 다양한 오프라인 행사를 지원하며 국내 사용자 커뮤니티 공략에 집중하고 있습니다. AI 코딩 에이전트 경쟁이 가속화되면서 핵심 고객층인 개발자들을 각 사 생태계로 포섭하기 위한 모습이 두드러집니다. 새로운 기술에 개방적이고 디지털 수용성이 높은 한국 이용자에게 러브콜을 보내고 있는 것입니다.</p>
         <p>오픈AI는 코딩 에이전트 도구 '코덱스'를 알리는 코덱스 커뮤니티 밋업을 3월부터 수도권 중심으로 운영하며 활용법과 네트워킹 기회를 제공하고 있습니다. 앤스로픽도 자사 AI인 클로드를 활용한 '클로드 커뮤니티' 행사를 국내에서 지원하며, 클로드 코드 활용법과 전방 배치 엔지니어(FDE) 직군 행사 등 다양한 성격의 밋업을 개최하고 있습니다. 두 기업 모두 앰배서더 프로그램을 전 세계에서 운영 중입니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>AI 코딩 에이전트</strong>는 개발자가 자연어로 명령을 내리면 AI가 직접 코드를 작성·수정·실행해주는 도구입니다. 오픈AI의 <strong>코덱스</strong>와 앤스로픽의 <strong>클로드 코드</strong>가 대표적입니다. 한국은 개발자들의 신기술 수용 속도가 빨라 두 회사 모두 핵심 시장으로 보고 있습니다. <strong>FDE(전방 배치 엔지니어)</strong>는 고객사에 직접 파견돼 AI 도입을 돕는 직군으로 최근 부상 중입니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">🤝 한국 개발자 잡기 — 빅2 전략<span class="ig-unit">밋업 · 앰배서더 · 커뮤니티</span></div>
         <table class="data-table">
@@ -1171,6 +2147,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 유통·소비 ===== -->
+
 <!-- 기사 15 -->
 <article class="article" id="a15">
     <div class="article-header">
@@ -1180,10 +2158,6 @@ body {
     <div class="body">
         <p>외국인 관광객 수요가 급증하면서 명동이 다시 패션·뷰티 격전지로 떠올랐습니다. 국내 패션 브랜드 마뗑킴은 명동점 매출 80% 이상이 외국인에게서 발생했고, 이랜드그룹의 신발 브랜드 뉴발란스 명동점도 비슷한 상황입니다. 마르디 메크르디는 100평 이상 1호 로드숍을, 마리떼 프랑소와 저버는 2호점을 연내 명동에 낼 예정이며, 일리고와 닥터포헤어, 어노브도 명동에서 팝업스토어를 준비 중입니다.</p>
         <p>지난해 외국인 관광객은 1894만 명으로 사상 최대를 기록했습니다. 뉴발란스 명동점은 외국인 인기에 힘입어 매출이 2년 연속 상승 중이며 2024년 17%, 2025년 46% 증가했습니다. 명동 외국인은 국가별로 중국 45%, 일본 22%, 대만 9%, 미국 6%, 싱가포르 5% 순입니다. 올리브영 명동타운은 매출 96%가 외국인에게서 나왔고, 명동에 9개 매장을 둔 올리브영은 주말이면 모든 매장이 외국인으로 가득 찬다는 게 회사 설명입니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p>명동은 한때 사드 사태와 코로나로 외국인이 끊기며 공실 상가가 즐비했지만, 외국인 관광객 폭증으로 다시 1순위 핵심 관광지로 복귀했습니다. <strong>K패션·K뷰티</strong>가 한류와 결합해 폭발적 인기를 얻으면서, 외국인을 잡으려는 브랜드들이 명동에 1호점·플래그십 매장을 내며 격전을 벌이고 있는 것입니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">📈 외국인 관광객 추이 & 명동 매출<span class="ig-unit">단위: 만명, 자료=한국관광공사</span></div>
@@ -1223,10 +2197,6 @@ body {
         <p>C(중국)커머스의 인기가 한풀 꺾였습니다. 1분기 중국 직구액 증가율이 6년여 만에 최저치를 기록했고, 알리익스프레스와 테무 같은 중국 온라인몰 국내 이용자도 줄었습니다. 유통업계는 "고환율(원화 약세)이 지속돼 구입비 부담이 높아진 데다 품질 등에 대한 염려도 작용하고 있다"고 분석합니다. 1분기 중국 직구액은 1조 2276억 원으로 작년 동기 대비 0.6% 증가에 그쳤는데, 이는 2019년 4분기(-4.0%) 이후 가장 낮은 수준입니다.</p>
         <p>특히 패션·의류 부문이 9.4% 줄며 역성장을 주도했고, 화장품 직구도 지난해 4분기 0.2% 감소에 이어 올해 1분기 15.8% 줄었습니다. 와이즈앱·리테일에 따르면 알리익스프레스의 1분기 평균 월별 이용자(MAU)는 약 850만 명, 테무는 약 800만 명으로 집계됐고, 지난해 같은 기간과 비교하면 알리는 약 49만 명, 테무는 약 12만 명 줄었습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>직구(직접구매)</strong>는 한국 소비자가 중국 등 해외 사이트에서 상품을 직접 사는 것을 말합니다. 한때 알리익스프레스와 테무는 가격이 저렴해 폭발적으로 성장했지만, 원화 약세로 같은 가격이라도 결제 금액이 커지고, 품질·짝퉁 문제까지 겹치면서 인기가 식었습니다. 6년 만에 가장 낮은 0.6% 증가율은 사실상 정체 신호입니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">📉 中 직구 증가율 추이<span class="ig-unit">전년 동기 대비, %</span></div>
         <div class="bar-chart">
@@ -1251,6 +2221,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 자본시장 ===== -->
+
 <!-- 기사 17 -->
 <article class="article" id="a17">
     <div class="article-header">
@@ -1260,10 +2232,6 @@ body {
     <div class="body">
         <p>국내 증시가 연일 고공 행진을 이어가며 코스피 7000선이 가시권에 들어왔습니다. 돌아온 외국인이 '삼전닉스'(삼성전자·SK하이닉스)에 화력을 집중하는 사이, 개인 투자자는 한 달 새 약 18조 원어치를 팔아치우며 차익 실현에 나섰습니다. 코스피 7000선이 가까워지자 리스크 관리 모드로 진입한 것으로 풀이됩니다. 한국거래소에 따르면 4월 3일~5월 4일 코스피에서 개인은 17조 7640억 원어치를 순매도한 반면, 외국인은 4조 9160억 원어치를 순매수했습니다.</p>
         <p>투자자예탁금은 124조 7591억 원으로 130조 원에 못 미치고, 예탁금 회전율도 1월 44%대에서 3월 36.37%, 4월 36.84%로 떨어졌습니다. 신용잔고율 역시 코스피에서 둔화돼 4월 0.73%로 정체 양상입니다. 외국인 매수가 반도체에 집중된 만큼, 삼성전자(2조 7900억 원)와 SK하이닉스(3조 760억 원)를 제외하면 외국인은 오히려 1조 원 가까이 순매도한 셈이어서 비반도체 종목은 주의해야 한다는 조언이 나옵니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>코스피 7000선(7천피)</strong>은 한국 주식시장 사상 가장 높은 영역입니다. <strong>예탁금 회전율</strong>은 투자자 자금이 얼마나 활발히 매매에 쓰이는지 나타내는 지표로, 떨어진다는 것은 거래 열기가 식고 있다는 뜻입니다. 외국인은 사고 개인은 파는 구도가 되면, 외국인이 등 돌릴 때 떠받칠 매수 주체가 부족해 변동성이 커질 수 있습니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">💰 최근 1개월 주체별 매매 (4/3~5/4)<span class="ig-unit">자료=한국거래소</span></div>
@@ -1303,10 +2271,6 @@ body {
         <p>전기차와 인공지능(AI)발 배터리 수요가 가파르게 늘어날 것이라는 전망이 커지는 가운데 배터리 양극재 주요 원료인 리튬 공급 부족 우려가 다시 불거지면서 리튬주가 급등하고 있습니다. 한국거래소에 따르면 최근 한 달간(4/6~5/4) 포스코홀딩스 주가는 43.84% 뛰었고, 같은 기간 후성과 포스코엠텍 주가도 각각 42.73%, 12.40% 상승했습니다. 모두 리튬주로 묶입니다. 트레이딩 이코노믹스에 따르면 중국산 탄산리튬 가격은 t당 17만 7000위안을 기록하며 연초 11만 8500위안 대비 49.36%나 상승했습니다.</p>
         <p>수요 측면에서는 에너지저장장치(ESS) 폭발적 성장이 리튬 수요를 견인하고 있습니다. ESS는 AI에 중요한 인프라인 데이터센터향 수요가 폭증했고, 전기차 산업이 캐즘(일시적 수요 정체) 구간을 지나 회복기에 진입했다는 분석도 리튬 수요를 자극하는 요소입니다. 공급 부족이 해소되지 않는 가운데 수요만 늘어나는 구조가 이어지고 있습니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>리튬</strong>은 거의 모든 충전식 배터리의 핵심 원료입니다. AI 데이터센터가 늘면 정전 대비 ESS가 필요하고, ESS는 또 거대한 배터리 덩어리이기 때문에 결국 리튬 수요가 폭발합니다. 포스코홀딩스는 리튬 생산 사업을 키우고 있는 대표 기업이라 가격이 오를수록 주가가 같이 오릅니다. <strong>캐즘</strong>은 새 기술이 초기 열풍 후 잠시 식는 구간을 뜻합니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">🔋 리튬 관련주 한 달 수익률<span class="ig-unit">4/6 → 5/4 기준</span></div>
         <div class="bar-chart">
@@ -1340,10 +2304,6 @@ body {
         <p>지난달 국내 증시 급등세에도 불구하고 개인 투자자들이 시장 하락에 베팅하는 곱버스(인버스 2배) 상품을 대거 사들인 것으로 나타났습니다. 코스콤 ETF체크에 따르면 최근 1개월간 개인 투자자 순매수 1위 상장지수펀드(ETF)는 'KODEX 200선물인버스2X'였고, 같은 기간 개인은 5425억 원어치를 순매수했습니다. 4월 한 달간 코스피가 30% 넘게 급등하는 강세장을 보였음에도 개인은 지수 방향과 정반대로 움직이는 투자 전략을 고수했습니다.</p>
         <p>그러나 코스피가 7000선 돌파를 시야에 두는 등 상승세가 꺾이지 않으면서 KODEX 200선물인버스2X 최근 1개월 수익률은 -43.91%를 기록해 사실상 반토막 났습니다. 더 큰 문제는 상품 자체가 사라질 위기에 처했다는 점입니다. 코스피200 선물인버스 2X ETF 5종은 모두 -40%대 수익률을 기록했고 RISE·KIWOOM·PLUS 등 3종은 순자산이 50억 원 미만으로 급감해 상장폐지 가능성까지 거론됩니다.</p>
     </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>곱버스(인버스 2X)</strong>는 코스피가 1% 떨어지면 2% 수익을 얻는 상품입니다. 거꾸로 코스피가 1% 오르면 2%씩 손실이 누적됩니다. 4월 한 달간 코스피가 30% 올랐는데 곱버스에 베팅했다면 거의 반토막입니다. 일부 ETF는 가격이 100원대로 떨어져 강제 청산(상장폐지) 위기에 처했습니다. 지정학 불확실성과 '5월에는 팔고 떠나라(Sell in May)' 격언만 믿고 투자한 결과입니다.</p>
-    </div>
     <div class="infographic">
         <div class="ig-title">📉 곱버스 ETF 1개월 수익률<span class="ig-unit">자료=코스콤</span></div>
         <div class="bar-chart">
@@ -1367,6 +2327,8 @@ body {
     </div>
 </article>
 
+<!-- ===== 부동산 ===== -->
+
 <!-- 기사 20 -->
 <article class="article" id="a20">
     <div class="article-header">
@@ -1376,10 +2338,6 @@ body {
     <div class="body">
         <p>주택시장을 진단하는 한국부동산원과 KB부동산의 주간 통계 격차가 빠르게 벌어지고 있습니다. 매일경제가 두 기관의 주간 아파트 매매가격지수를 동일 기준(2026년 2월 2일=100)으로 재산정한 결과, 서울에서 두 지표 간 격차가 확대되고 있는 것으로 나타났습니다. 2월 둘째주 0.1 수준에 불과했던 두 지수 간 격차는 3월 첫째주(0.613), 둘째주(1.048), 4월 첫째주(1.591), 둘째주(1.691), 셋째주(1.768), 넷째주(1.841) 등 갈수록 커지고 있습니다. 서울 아파트 평균 매매가격 차이도 2억 2547만 원에 달합니다.</p>
         <p>차이의 원인은 산정 방식입니다. KB부동산은 공인중개사가 입력한 호가와 시세를 기반으로 지수를 산출하는 '선행지표' 성격인 반면, 한국부동산원은 조사원이 실거래 사례 중심으로 가격을 책정하는 '후행지표' 성격이 강합니다. 권대중 한성대 석좌교수는 "가격 상승기에는 KB지수가 더 높고 하락기에는 더 낮게 나타나는 구조"라고 설명했습니다. 표본 수도 KB가 7만 1413가구로 한국부동산원 3만 5500가구보다 두 배 이상 많아 격차를 키우고 있습니다.</p>
-    </div>
-    <div class="easy-box">
-        <div class="easy-title">💡 쉽게 풀어보기</div>
-        <p><strong>매매가격지수</strong>는 집값이 얼마나 올랐는지 보여주는 숫자입니다. 같은 서울 아파트인데도 두 기관이 다른 결과를 내놓는 이유는 측정 방식이 다르기 때문입니다. <strong>KB부동산</strong>은 공인중개사가 보는 호가(부르는 값)를 빠르게 반영해 미래를 앞서 보여주고, <strong>한국부동산원</strong>은 실거래가만 보기 때문에 한 박자 늦게 반영됩니다. 집값이 오를 때는 KB가 먼저 뛰고 한국부동산원은 천천히 따라가는 셈입니다.</p>
     </div>
     <div class="infographic">
         <div class="ig-title">🏘️ 한국부동산원 vs KB부동산<span class="ig-unit">서울 아파트 매매지수 격차 추이</span></div>
@@ -1661,6 +2619,48 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
         }
     }
 });
+</script>
+
+
+<script>
+// 차트 막대/호버존 툴팁
+(function setupChartTooltips() {
+    document.querySelectorAll('.dcv2-card').forEach(card => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'dcv2-tooltip';
+        card.appendChild(tooltip);
+        
+        const targets = card.querySelectorAll('.pc-bar, .pc-hover-zone');
+        targets.forEach(el => {
+            el.addEventListener('mouseenter', e => {
+                const text = el.getAttribute('data-tooltip');
+                if (!text) return;
+                tooltip.textContent = text;
+                tooltip.classList.add('visible');
+            });
+            el.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                tooltip.style.left = (e.clientX - rect.left) + 'px';
+                tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+            });
+            el.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+            // 모바일 터치
+            el.addEventListener('touchstart', e => {
+                const text = el.getAttribute('data-tooltip');
+                if (!text) return;
+                const rect = card.getBoundingClientRect();
+                const touch = e.touches[0];
+                tooltip.textContent = text;
+                tooltip.style.left = (touch.clientX - rect.left) + 'px';
+                tooltip.style.top = (touch.clientY - rect.top - 10) + 'px';
+                tooltip.classList.add('visible');
+                setTimeout(() => tooltip.classList.remove('visible'), 1800);
+            }, {passive: true});
+        });
+    });
+})();
 </script>
 
 <script>
