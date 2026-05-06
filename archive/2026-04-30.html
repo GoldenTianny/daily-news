@@ -1479,7 +1479,7 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
     // 메시지 조립
     let message = `📰 가좌버핏 뉴스 · ${dateStr} (${dayKor})\n\n`;
     if (headlines.length) {
-        message += `오늘의 핵심 ${headlines.length}가지\n`;
+        message += `오늘의 핵심뉴스\n`;
         headlines.forEach(h => { message += `• ${h}\n`; });
         message += `\n`;
     }
