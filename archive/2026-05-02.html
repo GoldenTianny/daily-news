@@ -1596,10 +1596,42 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
     const dateStr = dm ? `${dm[1]}.${dm[2]}.${dm[3]}` : '';
     const dayKor = dm ? ['일','월','화','수','목','금','토'][new Date(`${dm[1]}-${dm[2]}-${dm[3]}`).getDay()] : '';
 
-    // 헤드라인 상위 3개
+    // 헤드라인 상위 10개
     const headlines = Array.from(document.querySelectorAll('article.article h3'))
         .slice(0, 10)
         .map(h => h.textContent.trim().replace(/\s+/g, ' '));
+
+    // 주요 지표 현황 (대시보드 표가 페이지에 있는 경우에만)
+    function getIndicator(sectionTitle, rowMatch, displayLabel) {
+        const sections = document.querySelectorAll('details.ms-section');
+        for (const s of sections) {
+            const summary = s.querySelector('summary');
+            if (!summary || !summary.textContent.includes(sectionTitle)) continue;
+            for (const r of s.querySelectorAll('tbody tr')) {
+                const nameCell = r.querySelector('.ms-name');
+                if (!nameCell) continue;
+                if (!nameCell.textContent.replace(/\s+/g,'').includes(rowMatch.replace(/\s+/g,''))) continue;
+                const cells = r.querySelectorAll('td');
+                const price = cells[1] ? cells[1].textContent.trim() : '';
+                const change = cells[2] ? cells[2].textContent.trim() : '';
+                return `${displayLabel} ${price} (${change})`;
+            }
+        }
+        return null;
+    }
+    const indicators = [
+        getIndicator('글로벌 증시', 'KOSPI', '🇰🇷 KOSPI'),
+        getIndicator('글로벌 증시', 'S&P500', '🇺🇸 S&P500'),
+        getIndicator('환율', '원/달러', '￦ 원/달러'),
+        getIndicator('원자재', 'WTI', '🛢️ WTI'),
+        getIndicator('금리', '미국 국채 10년', '🇺🇸 미국 10년'),
+    ].filter(Boolean);
+    let indicatorSection = '';
+    if (indicators.length) {
+        indicatorSection = '📊 주요 지표 현황\n';
+        indicators.forEach(i => { indicatorSection += `• ${i}\n`; });
+        indicatorSection += '\n';
+    }
 
     // 랜덤 명언 (매 클릭마다 새로)
     let quoteSection = '';
@@ -1614,6 +1646,7 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
 
     // 메시지 조립
     let message = `📰 가좌버핏 뉴스 · ${dateStr} (${dayKor})\n\n`;
+    message += indicatorSection;
     if (headlines.length) {
         message += `오늘의 핵심뉴스\n`;
         headlines.forEach(h => { message += `• ${h}\n`; });
