@@ -1596,7 +1596,7 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
 
     // 헤드라인 상위 10개
     const headlines = Array.from(document.querySelectorAll('article.article h3'))
-        .slice(0, 10)
+        .slice(0, 5)
         .map(h => h.textContent.trim().replace(/\s+/g, ' '));
 
     // 주요 지표 현황 (대시보드 표가 페이지에 있는 경우에만)
@@ -1631,16 +1631,8 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
         indicatorSection += '\n';
     }
 
-    // 랜덤 명언 (매 클릭마다 새로)
+    // 명언 섹션 제외 (사용자 결정)
     let quoteSection = '';
-    try {
-        const dataEl = document.getElementById('quotesData');
-        const quotes = dataEl ? JSON.parse(dataEl.textContent) : [];
-        if (quotes.length) {
-            const q = quotes[Math.floor(Math.random() * quotes.length)];
-            quoteSection = `💬 오늘의 명언\n"${q.ko}"\n"${q.en}"\n— ${q.author}\n\n`;
-        }
-    } catch (e) {}
 
     // 메시지 조립
     let message = `📰 가좌버핏 뉴스 · ${dateStr} (${dayKor})\n\n`;
