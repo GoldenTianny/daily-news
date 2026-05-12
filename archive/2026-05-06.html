@@ -1002,6 +1002,59 @@ body {
     .ms-source-time { color: #aaa; }
 }
 
+
+
+/* ===== 미니 위젯 (날씨 + 좋은글) ===== */
+.intro-widgets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 12px 16px;
+}
+.mini-weather, .mini-good {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+    word-break: keep-all;
+}
+.mini-weather {
+    background: linear-gradient(135deg, #e0f0ff 0%, #c8e0f5 100%);
+    color: #0d2444;
+}
+.mini-good {
+    background: linear-gradient(135deg, #fdf6ec 0%, #f5ead0 100%);
+    color: #5a3e28;
+    border-left: 3px solid #b89878;
+}
+.mini-weather .head, .mini-good .head {
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 11.5px;
+    opacity: 0.85;
+    letter-spacing: 0.3px;
+}
+.mini-weather .body { font-weight: 700; color: #1a3a6c; font-size: 14px; }
+.mini-weather .tip { color: #4a5a70; font-size: 11px; margin-top: 4px; }
+.mini-good .title { font-weight: 700; font-size: 13px; color: #5a3e28; line-height: 1.4; }
+.mini-good .preview { color: #6a5848; font-size: 11.5px; margin-top: 4px; line-height: 1.5; }
+.mini-good .more { color: #6b4f3a; font-size: 11px; font-weight: 700; margin-top: 6px; display: inline-block; text-decoration: none; }
+.mini-good .more:hover { text-decoration: underline; }
+@media (max-width: 380px) {
+    .intro-widgets { grid-template-columns: 1fr; }
+}
+@media (prefers-color-scheme: dark) {
+    .mini-weather { background: linear-gradient(135deg, #2a3a52 0%, #1a2a40 100%); color: #e0e8f0; }
+    .mini-weather .body { color: #6da3e8; }
+    .mini-weather .tip { color: #a8b8d0; }
+    .mini-good { background: linear-gradient(135deg, #2a2520 0%, #2e2823 100%); color: #f0e8d8; border-left-color: #d4b88c; }
+    .mini-good .title { color: #f0e8d8; }
+    .mini-good .preview { color: #c0b598; }
+    .mini-good .more { color: #d4b88c; }
+}
+
 </style>
 </head>
 <body>
@@ -1049,6 +1102,16 @@ body {
     <a href="#a18" class="toc-item"><span class="toc-num">18</span><span>리튬 품귀에 포스코홀딩스·후성 '불기둥'</span></a>
     <a href="#a19" class="toc-item"><span class="toc-num">19</span><span>'5천억 베팅' 곱버스 개미…뜨거운 코스피에 속탄다</span></a>
     <a href="#a20" class="toc-item"><span class="toc-num">20</span><span>집값 오를수록…서울아파트 통계 격차 확대</span></a>
+</div>
+
+<!-- 미니 위젯: 날씨 + 좋은글 -->
+<div class="intro-widgets">
+    <div class="mini-weather" id="miniWeather">
+        🌤️ 날씨 불러오는 중...
+    </div>
+    <div class="mini-good" id="miniGood">
+        ✨ 좋은글 불러오는 중...
+    </div>
 </div>
 
 <!-- 시장 한 컷 위젯 -->
@@ -2691,6 +2754,84 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
 <script>
 // 상단바 공유 버튼 → 발행분 전체 공유 핸들러(#shareIssueBtn)로 위임
 document.getElementById('topShareBtn').addEventListener('click', () => document.getElementById('shareIssueBtn').click());
+</script>
+
+
+<!-- 미니 위젯 (날씨 + 좋은글) -->
+<script>
+(function() {
+    const W_MAP = {0:['☀️','맑음'],1:['🌤️','대체로 맑음'],2:['⛅','구름 조금'],3:['☁️','흐림'],45:['🌫️','안개'],48:['🌫️','짙은 안개'],51:['🌦️','이슬비'],53:['🌦️','이슬비'],55:['🌧️','강한 이슬비'],61:['🌧️','약한 비'],63:['🌧️','비'],65:['🌧️','강한 비'],71:['🌨️','약한 눈'],73:['🌨️','눈'],75:['❄️','강한 눈'],80:['🌦️','소나기'],81:['🌧️','소나기'],82:['⛈️','강한 소나기'],95:['⛈️','천둥번개']};
+
+    // 홈페이지의 위치 동의를 공유: 같은 localStorage 키 읽기
+    const DEFAULT_LOC = { lat: 37.566, lon: 126.978, name: '서울' };
+    function resolveLoc() {
+        try {
+            const pref = localStorage.getItem('gjb_geo_pref');
+            const mode = localStorage.getItem('gjb_view_mode');
+            if (mode === 'default' || pref !== 'granted') return DEFAULT_LOC;
+            const c = JSON.parse(localStorage.getItem('gjb_geo_coords') || 'null');
+            if (c && typeof c.lat === 'number' && typeof c.lon === 'number') {
+                return { lat: c.lat, lon: c.lon, name: c.name || '내 위치' };
+            }
+        } catch (e) { /* 무시 */ }
+        return DEFAULT_LOC;
+    }
+
+    (async function loadMiniWeather() {
+        const el = document.getElementById('miniWeather');
+        if (!el) return;
+        const loc = resolveLoc();
+        try {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + loc.lat + '&longitude=' + loc.lon + '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1');
+            const d = await r.json();
+            const code = d.current.weather_code;
+            const [emoji, text] = W_MAP[code] || ['🌤️', '날씨'];
+            const temp = Math.round(d.current.temperature_2m);
+            const max = Math.round(d.daily.temperature_2m_max[0]);
+            const min = Math.round(d.daily.temperature_2m_min[0]);
+            const rain = d.daily.precipitation_probability_max[0] ?? 0;
+            const range = max - min;
+            let tip;
+            if (rain >= 60) tip = '☔ 우산 챙기세요';
+            else if (max >= 33) tip = '🥵 폭염주의';
+            else if (min < 0) tip = '🥶 영하 추위';
+            else if (range >= 10) tip = '🌡️ 일교차 ↑';
+            else if (max >= 25 && code <= 3) tip = '🌳 산책 좋음';
+            else tip = '평온한 날씨';
+            el.innerHTML =
+                '<div class="head">🌤️ ' + loc.name + ' 오늘</div>' +
+                '<div class="body">' + emoji + ' ' + temp + '° ' + text + '</div>' +
+                '<div class="tip">↑' + max + '° ↓' + min + '° · 💧' + rain + '% · ' + tip + '</div>';
+        } catch (e) {
+            el.innerHTML = '<div class="head">🌤️ 날씨</div><div class="tip">정보를 가져오지 못했어요</div>';
+        }
+    })();
+
+    (async function loadMiniGood() {
+        const el = document.getElementById('miniGood');
+        if (!el) return;
+        function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        try {
+            const r = await fetch('../article/articles.json', { cache: 'force-cache' });
+            const articles = await r.json();
+            if (!articles || !articles.length) throw new Error('empty');
+            // 페이지 URL 날짜를 시드로 → 같은 페이지엔 항상 같은 글 (공유·재방문 일관성)
+            const dm = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})/);
+            let seed = dm ? parseInt(dm[1] + dm[2] + dm[3], 10) : (Date.now() & 0xffffffff);
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            const pick = articles[seed % articles.length];
+            const preview = (pick.body || '').slice(0, 50).replace(/\s+/g, ' ');
+            const cont = pick.body && pick.body.length > 50 ? '...' : '';
+            el.innerHTML =
+                '<div class="head">✨ 오늘의 좋은글</div>' +
+                '<div class="title">' + escapeHtml(pick.title) + '</div>' +
+                '<div class="preview">' + escapeHtml(preview) + cont + '</div>' +
+                '<a href="../article/#' + pick.id + '" class="more">전문 보기 →</a>';
+        } catch (e) {
+            el.innerHTML = '<div class="head">✨ 좋은글</div><div class="preview">정보를 가져오지 못했어요</div>';
+        }
+    })();
+})();
 </script>
 
 </body>
