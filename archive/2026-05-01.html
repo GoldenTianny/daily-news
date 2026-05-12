@@ -1706,6 +1706,10 @@ document.getElementById('topShareBtn').addEventListener('click', () => document.
                 '<div class="head">🌤️ ' + loc.name + ' 오늘</div>' +
                 '<div class="body">' + emoji + ' ' + temp + '° ' + text + '</div>' +
                 '<div class="tip">↑' + max + '° ↓' + min + '° · 💧' + rain + '% · ' + tip + '</div>';
+            // 카드 클릭 시 홈페이지의 시간대별 예보 모달로 이동
+            el.style.cursor = 'pointer';
+            el.title = '시간대별 예보 보기 →';
+            el.onclick = function() { location.href = '../#weather-detail'; };
         } catch (e) {
             el.innerHTML = '<div class="head">🌤️ 날씨</div><div class="tip">정보를 가져오지 못했어요</div>';
         }

@@ -940,6 +940,12 @@ body {
 
         // 모달에서 사용할 수 있도록 마지막 데이터 저장
         currentWeatherData = { w, air, loc };
+
+        // URL 해시(#weather-detail)로 진입했으면 모달 자동 오픈
+        // (일일브리프 미니 위젯에서 이동해 왔을 때)
+        if (location.hash === '#weather-detail') {
+            setTimeout(openWeatherModal, 100);
+        }
     }
 
     let currentWeatherData = null;
@@ -1109,6 +1115,10 @@ body {
     function closeWeatherModal() {
         document.getElementById('wModal').classList.remove('show');
         document.body.style.overflow = '';
+        // 해시 정리 — 새로고침/공유 시 모달이 다시 안 열리도록
+        if (location.hash === '#weather-detail') {
+            history.replaceState(null, '', location.pathname + location.search);
+        }
     }
 
     document.getElementById('wModalClose').addEventListener('click', closeWeatherModal);
