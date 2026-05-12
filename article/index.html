@@ -305,13 +305,31 @@ body {
 .modal-body {
     padding: 18px 22px;
     overflow-y: auto;
+    flex: 1;
+}
+.modal-body .article-text {
     font-size: 15px;
     line-height: 1.85;
     color: #3d2e22;
     white-space: pre-line;
     word-break: keep-all;
-    flex: 1;
 }
+
+/* 모달 이미지 (랜덤 풍경) */
+.article-img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #f0ead8;
+    display: block;
+    transition: opacity 0.3s;
+    box-shadow: 0 2px 8px rgba(107,79,58,0.12);
+}
+.article-img.top { margin-bottom: 18px; }
+.article-img.bottom { margin-top: 18px; }
+.article-img.error { display: none; }
+.article-img:not([src]) { opacity: 0; }
 .modal-footer {
     padding: 12px 22px 16px;
     border-top: 1px solid #f0ead8;
@@ -402,7 +420,8 @@ body {
     .article-card .card-title { color: #f0e8d8; }
     .article-card .card-preview { color: #c0b598; }
     .modal-header .title { color: #f0e8d8; }
-    .modal-body { color: #d8cdb8; }
+    .modal-body .article-text { color: #d8cdb8; }
+    .article-img { background: #2a2520; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
     .modal-header { border-bottom-color: #3d3528; }
     .modal-footer { border-top-color: #3d3528; }
     .modal-header .close { background: #3d3528; color: #d8cdb8; }
@@ -484,7 +503,11 @@ body {
             <div class="title" id="modalTitle">제목</div>
             <button class="close" id="modalClose" type="button">×</button>
         </div>
-        <div class="modal-body" id="modalBody">본문</div>
+        <div class="modal-body" id="modalBody">
+            <img class="article-img top" id="modalImgTop" alt="" loading="lazy">
+            <div class="article-text" id="modalText"></div>
+            <img class="article-img bottom" id="modalImgBottom" alt="" loading="lazy">
+        </div>
         <div class="modal-footer">
             <span class="meta" id="modalMeta">날짜</span>
             <div class="actions">
@@ -529,6 +552,35 @@ if (!fp) {
 
 // 좋아요 슬러그 형식: article_<id>
 function articleSlug(id) { return 'article_' + id; }
+
+// ==== 풍경/꽃 이미지 (Picsum, 큐레이션 ID) ====
+// Picsum CDN — API 키 불필요. 글 ID를 시드로 → 같은 글은 항상 같은 2장
+const NATURE_IMAGES = [
+    10, 11, 13, 14, 15, 16, 17, 18, 19,
+    25, 27, 28, 29, 30, 31, 36, 37, 38,
+    42, 47, 49, 50, 53, 54, 56, 57, 58, 60,
+    65, 67, 76, 100, 101, 110, 122, 130, 134, 142, 165
+];
+
+function hashCode(s) {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+        h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    }
+    return h >>> 0;
+}
+
+function pickImages(articleId) {
+    const seed = hashCode(articleId);
+    const rand = seededRandom(seed);
+    // Fisher-Yates shuffle (시드 고정 → 결정적)
+    const arr = NATURE_IMAGES.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, 2).map(id => `https://picsum.photos/id/${id}/800/500`);
+}
 
 async function fetchLikeCount(slug) {
     try {
@@ -764,7 +816,19 @@ let currentArticle = null;
 async function openModal(article) {
     currentArticle = article;
     modalTitle.textContent = article.title;
-    modalBody.textContent = article.body;
+
+    // 본문 텍스트 + 위/아래 풍경 이미지 (글 ID 시드로 결정적 — 같은 글 = 같은 이미지)
+    document.getElementById('modalText').textContent = article.body;
+    const [imgUrl1, imgUrl2] = pickImages(article.id);
+    const imgTop = document.getElementById('modalImgTop');
+    const imgBottom = document.getElementById('modalImgBottom');
+    imgTop.classList.remove('error');
+    imgBottom.classList.remove('error');
+    imgTop.src = imgUrl1;
+    imgBottom.src = imgUrl2;
+    imgTop.onerror = () => imgTop.classList.add('error');
+    imgBottom.onerror = () => imgBottom.classList.add('error');
+
     modalMeta.textContent = '';
 
     // URL 해시로 ID 반영 (공유·뒤로가기 지원)
