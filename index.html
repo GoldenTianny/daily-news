@@ -337,9 +337,37 @@ body {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: flex-start;
+    gap: 8px;
 }
-.weather-greet .loc-label { font-size: 11.5px; opacity: 0.8; font-weight: 500; }
+.weather-greet .loc-area {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.weather-greet .loc-label { font-size: 11.5px; opacity: 0.85; font-weight: 500; }
+.geo-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(26,58,108,0.15);
+    color: #1a3a6c;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.2;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.geo-btn:hover { background: rgba(255,255,255,0.85); border-color: rgba(26,58,108,0.3); }
+.geo-btn:disabled { opacity: 0.6; cursor: wait; }
+@media (prefers-color-scheme: dark) {
+    .geo-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #c8d8f0; }
+    .geo-btn:hover { background: rgba(255,255,255,0.15); }
+}
 .weather-main {
     display: flex;
     align-items: center;
@@ -558,20 +586,93 @@ body {
     <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
 </div>
 
-<!-- 날씨 위젯 (Open-Meteo + Korean AQI) -->
+<!-- 날씨 위젯 (Open-Meteo + Korean AQI + Geolocation) -->
 <script>
 (function() {
-    const LAT = 37.566, LON = 126.978;  // 서울시청
-    const LOC_NAME = '서울';
-    const CACHE_KEY = 'gjb_weather_v1';
-    const CACHE_TTL = 10 * 60 * 1000;  // 10분
+    const DEFAULT_LOC = { lat: 37.566, lon: 126.978, name: '서울' };  // 서울시청
+    const CACHE_TTL = 10 * 60 * 1000;        // 날씨 캐시 10분
+    const COORDS_TTL = 24 * 60 * 60 * 1000;  // 위치 정보 캐시 24시간
+    const GEO_PREF_KEY = 'gjb_geo_pref';     // 'granted' | 'denied' | null
+    const GEO_COORDS_KEY = 'gjb_geo_coords'; // {lat, lon, name, t}
+    const cacheKeyFor = (lat, lon) => `gjb_weather_v2_${lat.toFixed(2)}_${lon.toFixed(2)}`;
 
-    const W_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
-        '&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m' +
-        '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-        '&timezone=Asia%2FSeoul&forecast_days=1';
-    const A_URL = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}` +
-        '&current=korean_aqi&timezone=Asia%2FSeoul';
+    function buildWeatherUrl(lat, lon) {
+        return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+            '&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m' +
+            '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
+            '&timezone=Asia%2FSeoul&forecast_days=1';
+    }
+    function buildAirUrl(lat, lon) {
+        return `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
+            '&current=korean_aqi&timezone=Asia%2FSeoul';
+    }
+
+    // ==== 위치 가져오기 ====
+    async function reverseGeocode(lat, lon) {
+        try {
+            const r = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`
+            );
+            if (!r.ok) throw new Error('rev geo ' + r.status);
+            const d = await r.json();
+            if (d.city && d.locality && d.locality !== d.city) {
+                return d.city.replace(/특별시|광역시|특별자치시|도$/, '') + ' ' + d.locality;
+            }
+            return (d.city || d.locality || d.principalSubdivision || '내 위치')
+                .replace(/특별시|광역시|특별자치시$/, '');
+        } catch (e) {
+            return '내 위치';
+        }
+    }
+
+    function getCurrentPositionPromise() {
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                timeout: 8000,
+                maximumAge: 600000
+            });
+        });
+    }
+
+    // 사용자 위치 요청 (버튼 클릭 시) → 권한 상태 저장
+    async function requestUserLocation() {
+        if (!navigator.geolocation) throw new Error('geolocation unsupported');
+        const pos = await getCurrentPositionPromise();
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const name = await reverseGeocode(lat, lon);
+        const result = { lat, lon, name, t: Date.now() };
+        localStorage.setItem(GEO_PREF_KEY, 'granted');
+        localStorage.setItem(GEO_COORDS_KEY, JSON.stringify(result));
+        return result;
+    }
+
+    // 현재 사용할 위치 결정 (캐시 → 동의했으면 fetch → 폴백 서울)
+    async function resolveLocation() {
+        const pref = localStorage.getItem(GEO_PREF_KEY);
+        if (pref !== 'granted') return DEFAULT_LOC;
+
+        // 캐시된 좌표 우선
+        try {
+            const c = JSON.parse(localStorage.getItem(GEO_COORDS_KEY) || 'null');
+            if (c && (Date.now() - c.t) < COORDS_TTL) return c;
+        } catch (e) { /* 무시 */ }
+
+        // 캐시 만료 → 다시 가져오기 (조용히 실패하면 서울)
+        try {
+            const pos = await getCurrentPositionPromise();
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const name = await reverseGeocode(lat, lon);
+            const result = { lat, lon, name, t: Date.now() };
+            localStorage.setItem(GEO_COORDS_KEY, JSON.stringify(result));
+            return result;
+        } catch (e) {
+            // 권한이 취소된 경우(브라우저 설정 변경 등)
+            if (e && e.code === 1) localStorage.setItem(GEO_PREF_KEY, 'denied');
+            return DEFAULT_LOC;
+        }
+    }
 
     // WMO weather code → emoji + 한글
     const W_MAP = {
@@ -638,7 +739,7 @@ body {
         return '🌤️ 평온한 하루 보내세요';
     }
 
-    function render(w, air) {
+    function render(w, air, loc) {
         const aqi = air?.current?.korean_aqi;
         const aqiInfo = aqiText(aqi);
         const code = w.current.weather_code;
@@ -653,12 +754,22 @@ body {
             ? `<div>미세 <span class="hl" style="color:${aqiInfo[1]};">${aqiInfo[0]}</span></div>`
             : '';
 
+        // 동의 안 받은 첫 사용자에게만 위치 버튼 노출
+        const pref = localStorage.getItem(GEO_PREF_KEY);
+        const showGeoBtn = pref === null && navigator.geolocation;
+        const geoBtnHtml = showGeoBtn
+            ? '<button class="geo-btn" id="geoBtn" type="button">📍 내 위치 날씨로 보기</button>'
+            : '';
+
         const card = document.getElementById('weatherCard');
         card.classList.remove('loading', 'err');
         card.innerHTML = `
             <div class="weather-greet">
                 <span>☕ ${greeting()}</span>
-                <span class="loc-label">${LOC_NAME} · ${dateLabel()}</span>
+                <div class="loc-area">
+                    <span class="loc-label">${loc.name} · ${dateLabel()}</span>
+                    ${geoBtnHtml}
+                </div>
             </div>
             <div class="weather-main">
                 <div class="weather-icon">${emoji}</div>
@@ -684,31 +795,58 @@ body {
     }
 
     async function loadWeather() {
+        const loc = await resolveLocation();
+        const cacheKey = cacheKeyFor(loc.lat, loc.lon);
+
         // 캐시 우선
         try {
-            const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+            const c = JSON.parse(localStorage.getItem(cacheKey) || 'null');
             if (c && (Date.now() - c.t) < CACHE_TTL) {
-                render(c.w, c.air);
+                render(c.w, c.air, loc);
                 return;
             }
         } catch (e) { /* 무시 */ }
 
         try {
             const [wRes, aRes] = await Promise.all([
-                fetch(W_URL),
-                fetch(A_URL).catch(() => null)  // 미세먼지 실패해도 날씨는 표시
+                fetch(buildWeatherUrl(loc.lat, loc.lon)),
+                fetch(buildAirUrl(loc.lat, loc.lon)).catch(() => null)  // 미세먼지 실패해도 날씨는 표시
             ]);
             if (!wRes.ok) throw new Error('weather ' + wRes.status);
             const w = await wRes.json();
             const air = aRes && aRes.ok ? await aRes.json() : null;
 
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), w, air }));
-            render(w, air);
+            localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), w, air }));
+            render(w, air, loc);
         } catch (e) {
             console.error('weather fetch failed', e);
             showErr();
         }
     }
+
+    // 위치 버튼 클릭 → 권한 요청 → 재로드 (이벤트 위임)
+    document.getElementById('weatherCard').addEventListener('click', async (e) => {
+        const btn = e.target.closest('.geo-btn');
+        if (!btn) return;
+        btn.disabled = true;
+        const orig = btn.textContent;
+        btn.textContent = '위치 확인 중...';
+        try {
+            await requestUserLocation();
+            await loadWeather();
+        } catch (err) {
+            console.warn('geolocation request failed', err);
+            if (err && err.code === 1) {
+                // 사용자가 거부 → 더 이상 묻지 않음
+                localStorage.setItem(GEO_PREF_KEY, 'denied');
+                btn.textContent = '권한이 거부되었어요';
+            } else {
+                btn.textContent = '위치 가져오기 실패';
+            }
+            // 잠시 후 재렌더 (버튼 상태 갱신/제거)
+            setTimeout(() => loadWeather(), 1800);
+        }
+    });
 
     loadWeather();
 })();
