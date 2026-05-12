@@ -317,11 +317,30 @@ body {
 .weather-card {
     background: linear-gradient(135deg, #e0f0ff 0%, #c8e0f5 100%);
     border-radius: 14px;
-    padding: 16px 18px;
+    padding: 16px 18px 10px;
     box-shadow: 0 2px 10px rgba(26,58,108,0.08);
     color: #0d2444;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.weather-card.clickable:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,58,108,0.12); }
+.weather-card.clickable:active { transform: scale(0.99); }
+.weather-card.loading, .weather-card.err { cursor: default; }
+.weather-card.loading:hover, .weather-card.err:hover { transform: none; box-shadow: 0 2px 10px rgba(26,58,108,0.08); }
+.weather-detail-link {
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #1a3a6c;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(26,58,108,0.2);
+    opacity: 0.8;
+}
+@media (prefers-color-scheme: dark) {
+    .weather-detail-link { color: #c8d8f0; border-top-color: rgba(255,255,255,0.15); }
 }
 .weather-card.loading, .weather-card.err {
     text-align: center;
@@ -410,6 +429,106 @@ body {
     .weather-card.err { background: #232730; color: #888; }
 }
 
+/* ===== 날씨 상세 모달 ===== */
+.w-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 200;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    animation: fadeIn 0.2s;
+}
+.w-modal-overlay.show { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.w-modal {
+    background: white;
+    border-radius: 14px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.w-modal-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #e8edf5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+.w-modal-header .title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d2444;
+}
+.w-modal-header .close {
+    background: #f0f4fa;
+    color: #1a3a6c;
+    border: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    font-family: inherit;
+}
+.w-modal-header .close:hover { background: #d0d8e4; }
+.w-modal-body {
+    padding: 14px 18px 18px;
+    overflow-y: auto;
+}
+.w-chart-section { margin-bottom: 18px; }
+.w-chart-section:last-child { margin-bottom: 0; }
+.w-chart-section h3 {
+    font-size: 13px;
+    color: #1a3a6c;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.w-chart-section h3 .sub { font-size: 10.5px; color: #888; font-weight: 500; }
+.w-chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #f7f9fc;
+    border-radius: 8px;
+    padding: 4px 0;
+}
+.w-summary {
+    background: #f0f4fa;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: #1a3a6c;
+    line-height: 1.7;
+}
+.w-summary strong { color: #c0392b; font-weight: 700; }
+.w-summary .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+.w-summary .row + .row { border-top: 1px dashed #d0d8e4; padding-top: 6px; margin-top: 4px; }
+@media (prefers-color-scheme: dark) {
+    .w-modal { background: #232730; }
+    .w-modal-header { border-bottom-color: #2d3340; }
+    .w-modal-header .title { color: #f0f4fa; }
+    .w-modal-header .close { background: #2d3340; color: #c8ccd4; }
+    .w-modal-header .close:hover { background: #3a4150; }
+    .w-chart-section h3 { color: #6da3e8; }
+    .w-chart-svg { background: #1c1f26; }
+    .w-summary { background: #1c1f26; color: #c8d8f0; }
+    .w-summary .row + .row { border-top-color: #2d3340; }
+}
+
 /* 큰 화면 */
 @media (min-width: 600px) {
     body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
@@ -441,6 +560,30 @@ body {
 <div class="weather-section">
     <div class="weather-card loading" id="weatherCard">
         <span class="weather-spin">🌍</span> 날씨 정보를 가져오는 중...
+    </div>
+</div>
+
+<!-- 날씨 상세 모달 -->
+<div class="w-modal-overlay" id="wModal">
+    <div class="w-modal">
+        <div class="w-modal-header">
+            <div class="title" id="wModalTitle">시간대별 예보</div>
+            <button class="close" id="wModalClose" type="button" aria-label="닫기">×</button>
+        </div>
+        <div class="w-modal-body">
+            <div class="w-chart-section">
+                <h3>💧 강수 확률 <span class="sub">앞으로 24시간</span></h3>
+                <svg id="wPrecipChart" class="w-chart-svg" viewBox="0 0 360 140" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div class="w-chart-section">
+                <h3>🌡️ 시간대별 기온 <span class="sub">앞으로 24시간</span></h3>
+                <svg id="wTempChart" class="w-chart-svg" viewBox="0 0 360 140" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+            <div class="w-chart-section">
+                <h3>📊 24시간 요약</h3>
+                <div class="w-summary" id="wSummary"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -594,13 +737,14 @@ body {
     const COORDS_TTL = 24 * 60 * 60 * 1000;  // 위치 정보 캐시 24시간
     const GEO_PREF_KEY = 'gjb_geo_pref';     // 'granted' | 'denied' | null
     const GEO_COORDS_KEY = 'gjb_geo_coords'; // {lat, lon, name, t}
-    const cacheKeyFor = (lat, lon) => `gjb_weather_v2_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+    const cacheKeyFor = (lat, lon) => `gjb_weather_v3_${lat.toFixed(2)}_${lon.toFixed(2)}`;
 
     function buildWeatherUrl(lat, lon) {
         return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
             '&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m' +
+            '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code' +
             '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
-            '&timezone=Asia%2FSeoul&forecast_days=1';
+            '&timezone=Asia%2FSeoul&forecast_days=2';
     }
     function buildAirUrl(lat, lon) {
         return `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
@@ -763,6 +907,7 @@ body {
 
         const card = document.getElementById('weatherCard');
         card.classList.remove('loading', 'err');
+        card.classList.add('clickable');
         card.innerHTML = `
             <div class="weather-greet">
                 <span>☕ ${greeting()}</span>
@@ -784,8 +929,189 @@ body {
                 </div>
             </div>
             <div class="weather-curation">💡 ${curationMsg}</div>
+            <div class="weather-detail-link">📊 시간대별 자세히 보기 →</div>
+        `;
+
+        // 모달에서 사용할 수 있도록 마지막 데이터 저장
+        currentWeatherData = { w, air, loc };
+    }
+
+    let currentWeatherData = null;
+
+    // ==== 시간대별 차트 ====
+    function findStartHourIdx(hourlyTimes) {
+        const now = new Date();
+        // ISO local string "YYYY-MM-DDTHH" 형식으로 만들어 매칭
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const target = `${yyyy}-${mm}-${dd}T${hh}`;
+        const idx = hourlyTimes.findIndex(t => t.startsWith(target));
+        return idx >= 0 ? idx : 0;
+    }
+
+    function drawPrecipChart(svg, hourly, startIdx, count) {
+        const data = hourly.precipitation_probability.slice(startIdx, startIdx + count);
+        const times = hourly.time.slice(startIdx, startIdx + count);
+        const W = 360, H = 140, PL = 30, PR = 8, PT = 14, PB = 22;
+        const innerW = W - PL - PR;
+        const innerH = H - PT - PB;
+        const n = data.length;
+        const barW = innerW / n;
+        const max = 100;
+
+        let s = '';
+        // 그리드 (50%, 100%)
+        [0, 0.5, 1].forEach(p => {
+            const y = PT + innerH * (1 - p);
+            s += `<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="#d0d8e4" stroke-dasharray="3 3" stroke-width="0.8"/>`;
+            s += `<text x="${PL-4}" y="${y+3}" text-anchor="end" font-size="9" fill="#888">${p*100}%</text>`;
+        });
+        // 바
+        data.forEach((p, i) => {
+            const v = p ?? 0;
+            const h = (v / max) * innerH;
+            const x = PL + i * barW + 1;
+            const y = H - PB - h;
+            const color = v >= 60 ? '#2980b9' : v >= 30 ? '#5dade2' : '#aed6f1';
+            s += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW-2).toFixed(1)}" height="${Math.max(h, 0.5).toFixed(1)}" fill="${color}" rx="1"/>`;
+            // 큰 값은 위에 숫자 표시
+            if (v >= 30) {
+                s += `<text x="${(x+barW/2-1).toFixed(1)}" y="${(y-3).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="#2980b9">${v}</text>`;
+            }
+        });
+        // X축 (3시간마다)
+        times.forEach((t, i) => {
+            if (i % 3 === 0 || i === n - 1) {
+                const x = PL + i * barW + barW/2;
+                const hr = parseInt(t.slice(11, 13), 10);
+                const labelDay = (hr === 0) ? '내일' : '';
+                s += `<text x="${x.toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#888">${labelDay}${hr}시</text>`;
+            }
+        });
+        svg.innerHTML = s;
+    }
+
+    function drawTempChart(svg, hourly, startIdx, count) {
+        const data = hourly.temperature_2m.slice(startIdx, startIdx + count);
+        const times = hourly.time.slice(startIdx, startIdx + count);
+        const W = 360, H = 140, PL = 30, PR = 14, PT = 18, PB = 22;
+        const innerW = W - PL - PR;
+        const innerH = H - PT - PB;
+        const n = data.length;
+        const rawMax = Math.max(...data);
+        const rawMin = Math.min(...data);
+        const max = Math.ceil(rawMax + 1);
+        const min = Math.floor(rawMin - 1);
+        const range = max - min || 1;
+
+        const x = i => PL + (i / (n-1)) * innerW;
+        const y = v => PT + ((max - v) / range) * innerH;
+
+        let s = '';
+        // 그리드 (3단)
+        [0, 0.5, 1].forEach(p => {
+            const yy = PT + innerH * p;
+            const labelVal = Math.round(max - range * p);
+            s += `<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="#d0d8e4" stroke-dasharray="3 3" stroke-width="0.8"/>`;
+            s += `<text x="${PL-4}" y="${yy+3}" text-anchor="end" font-size="9" fill="#888">${labelVal}°</text>`;
+        });
+
+        // 영역
+        let areaPath = `M${x(0)},${H-PB} `;
+        data.forEach((v, i) => { areaPath += `L${x(i).toFixed(1)},${y(v).toFixed(1)} `; });
+        areaPath += `L${x(n-1)},${H-PB} Z`;
+        s += `<path d="${areaPath}" fill="url(#wTempGrad)" opacity="0.4"/>`;
+
+        // 라인
+        let linePath = '';
+        data.forEach((v, i) => {
+            linePath += (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ',' + y(v).toFixed(1) + ' ';
+        });
+        s += `<path d="${linePath}" fill="none" stroke="#e67e22" stroke-width="2"/>`;
+
+        // 값 표시 (3시간마다)
+        data.forEach((v, i) => {
+            if (i % 3 === 0 || i === n - 1) {
+                s += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3" fill="#e67e22"/>`;
+                s += `<text x="${x(i).toFixed(1)}" y="${(y(v)-7).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="#e67e22">${Math.round(v)}°</text>`;
+            }
+        });
+
+        // X축
+        times.forEach((t, i) => {
+            if (i % 3 === 0 || i === n - 1) {
+                const hr = parseInt(t.slice(11, 13), 10);
+                const labelDay = (hr === 0) ? '내일' : '';
+                s += `<text x="${x(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#888">${labelDay}${hr}시</text>`;
+            }
+        });
+
+        s += `<defs><linearGradient id="wTempGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e67e22" stop-opacity="0.5"/><stop offset="100%" stop-color="#e67e22" stop-opacity="0"/></linearGradient></defs>`;
+        svg.innerHTML = s;
+    }
+
+    function buildSummary(hourly, startIdx, count) {
+        const precip = hourly.precipitation_probability.slice(startIdx, startIdx + count);
+        const temp = hourly.temperature_2m.slice(startIdx, startIdx + count);
+        const times = hourly.time.slice(startIdx, startIdx + count);
+
+        const maxPrecipIdx = precip.indexOf(Math.max(...precip));
+        const maxTempIdx = temp.indexOf(Math.max(...temp));
+        const minTempIdx = temp.indexOf(Math.min(...temp));
+
+        const fmtHour = (t) => {
+            const hr = parseInt(t.slice(11, 13), 10);
+            const today = new Date().toISOString().slice(0, 10);
+            const day = (t.slice(0, 10) === today) ? '오늘' : '내일';
+            return `${day} ${hr}시`;
+        };
+
+        const maxPrecipVal = precip[maxPrecipIdx] ?? 0;
+        const rainNote = maxPrecipVal >= 60
+            ? '<strong>비 가능성 높음</strong> · 우산 챙기세요'
+            : maxPrecipVal >= 30
+                ? '비 가능성 있음 · 우산 챙기면 안심'
+                : '대체로 맑은 흐름';
+
+        return `
+            <div class="row"><span>💧 비 확률 최고</span><span><strong>${maxPrecipVal}%</strong> (${fmtHour(times[maxPrecipIdx])})</span></div>
+            <div class="row"><span>🌡️ 최고 기온</span><span>${Math.round(temp[maxTempIdx])}° (${fmtHour(times[maxTempIdx])})</span></div>
+            <div class="row"><span>❄️ 최저 기온</span><span>${Math.round(temp[minTempIdx])}° (${fmtHour(times[minTempIdx])})</span></div>
+            <div class="row"><span>📌 한 줄 요약</span><span>${rainNote}</span></div>
         `;
     }
+
+    function openWeatherModal() {
+        if (!currentWeatherData) return;
+        const { w, loc } = currentWeatherData;
+        if (!w.hourly || !w.hourly.time) return;
+
+        const startIdx = findStartHourIdx(w.hourly.time);
+        const count = Math.min(24, w.hourly.time.length - startIdx);
+
+        document.getElementById('wModalTitle').textContent = `🌤️ ${loc.name} · 시간대별 예보`;
+        drawPrecipChart(document.getElementById('wPrecipChart'), w.hourly, startIdx, count);
+        drawTempChart(document.getElementById('wTempChart'), w.hourly, startIdx, count);
+        document.getElementById('wSummary').innerHTML = buildSummary(w.hourly, startIdx, count);
+
+        document.getElementById('wModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeWeatherModal() {
+        document.getElementById('wModal').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('wModalClose').addEventListener('click', closeWeatherModal);
+    document.getElementById('wModal').addEventListener('click', (e) => {
+        if (e.target.id === 'wModal') closeWeatherModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('wModal').classList.contains('show')) closeWeatherModal();
+    });
 
     function showErr(msg) {
         const card = document.getElementById('weatherCard');
@@ -824,28 +1150,34 @@ body {
         }
     }
 
-    // 위치 버튼 클릭 → 권한 요청 → 재로드 (이벤트 위임)
+    // 위젯 카드 클릭 (이벤트 위임):
+    //   - geo-btn 클릭이면 위치 권한 요청
+    //   - 그 외 영역 클릭이면 시간대별 예보 모달 열기
     document.getElementById('weatherCard').addEventListener('click', async (e) => {
+        // geo 버튼 우선 처리
         const btn = e.target.closest('.geo-btn');
-        if (!btn) return;
-        btn.disabled = true;
-        const orig = btn.textContent;
-        btn.textContent = '위치 확인 중...';
-        try {
-            await requestUserLocation();
-            await loadWeather();
-        } catch (err) {
-            console.warn('geolocation request failed', err);
-            if (err && err.code === 1) {
-                // 사용자가 거부 → 더 이상 묻지 않음
-                localStorage.setItem(GEO_PREF_KEY, 'denied');
-                btn.textContent = '권한이 거부되었어요';
-            } else {
-                btn.textContent = '위치 가져오기 실패';
+        if (btn) {
+            e.stopPropagation();
+            btn.disabled = true;
+            btn.textContent = '위치 확인 중...';
+            try {
+                await requestUserLocation();
+                await loadWeather();
+            } catch (err) {
+                console.warn('geolocation request failed', err);
+                if (err && err.code === 1) {
+                    localStorage.setItem(GEO_PREF_KEY, 'denied');
+                    btn.textContent = '권한이 거부되었어요';
+                } else {
+                    btn.textContent = '위치 가져오기 실패';
+                }
+                setTimeout(() => loadWeather(), 1800);
             }
-            // 잠시 후 재렌더 (버튼 상태 갱신/제거)
-            setTimeout(() => loadWeather(), 1800);
+            return;
         }
+        // 카드 본체 클릭 → 모달 열기 (clickable 상태일 때만)
+        const card = document.getElementById('weatherCard');
+        if (card.classList.contains('clickable')) openWeatherModal();
     });
 
     loadWeather();
