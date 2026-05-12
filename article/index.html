@@ -610,9 +610,8 @@ function renderToday() {
     container.innerHTML = '';
     today.forEach(a => container.appendChild(makeCard(a, true)));
 
-    const d = new Date();
-    document.getElementById('todayDateLabel').textContent =
-        `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    // 오늘 날짜 라벨도 제거 — '🌅 오늘의 좋은글' 헤더만으로 충분
+    document.getElementById('todayDateLabel').textContent = '';
 }
 
 // ==== 카드 생성 ====
@@ -626,10 +625,7 @@ function makeCard(article, isToday) {
 
     card.innerHTML =
         '<div class="card-title">' + escapeHtml(article.title) + '</div>' +
-        '<div class="card-preview">' + escapeHtml(preview) + '</div>' +
-        '<div class="card-meta">' +
-            '<span>' + formatDate(article.date) + '</span>' +
-        '</div>';
+        '<div class="card-preview">' + escapeHtml(preview) + '</div>';
 
     card.addEventListener('click', () => openModal(article));
     return card;
@@ -769,7 +765,7 @@ async function openModal(article) {
     currentArticle = article;
     modalTitle.textContent = article.title;
     modalBody.textContent = article.body;
-    modalMeta.textContent = formatDate(article.date);
+    modalMeta.textContent = '';
 
     // URL 해시로 ID 반영 (공유·뒤로가기 지원)
     history.replaceState(null, '', '#' + article.id);
