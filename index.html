@@ -737,6 +737,7 @@ body {
     const COORDS_TTL = 24 * 60 * 60 * 1000;  // 위치 정보 캐시 24시간
     const GEO_PREF_KEY = 'gjb_geo_pref';     // 'granted' | 'denied' | null
     const GEO_COORDS_KEY = 'gjb_geo_coords'; // {lat, lon, name, t}
+    const VIEW_MODE_KEY = 'gjb_view_mode';   // 'default' | null (null = 자동 = granted면 user, 아니면 default)
     const cacheKeyFor = (lat, lon) => `gjb_weather_v3_${lat.toFixed(2)}_${lon.toFixed(2)}`;
 
     function buildWeatherUrl(lat, lon) {
@@ -791,10 +792,14 @@ body {
         return result;
     }
 
-    // 현재 사용할 위치 결정 (캐시 → 동의했으면 fetch → 폴백 서울)
+    // 현재 사용할 위치 결정
+    //   1. mode === 'default' (사용자가 명시적으로 서울 선택) → 서울 폴백
+    //   2. pref !== 'granted' (동의 안 함) → 서울 폴백
+    //   3. 그 외: 캐시된 사용자 좌표 → fetch → 실패 시 서울
     async function resolveLocation() {
         const pref = localStorage.getItem(GEO_PREF_KEY);
-        if (pref !== 'granted') return DEFAULT_LOC;
+        const mode = localStorage.getItem(VIEW_MODE_KEY);
+        if (mode === 'default' || pref !== 'granted') return DEFAULT_LOC;
 
         // 캐시된 좌표 우선
         try {
@@ -898,11 +903,12 @@ body {
             ? `<div>미세 <span class="hl" style="color:${aqiInfo[1]};">${aqiInfo[0]}</span></div>`
             : '';
 
-        // 동의 안 받은 첫 사용자에게만 위치 버튼 노출
-        const pref = localStorage.getItem(GEO_PREF_KEY);
-        const showGeoBtn = pref === null && navigator.geolocation;
-        const geoBtnHtml = showGeoBtn
-            ? '<button class="geo-btn" id="geoBtn" type="button">📍 내 위치 날씨로 보기</button>'
+        // 위치 토글 버튼 — 항상 노출, 현재 위치에 따라 라벨 전환
+        const isShowingDefault = (Math.abs(loc.lat - DEFAULT_LOC.lat) < 0.001 &&
+                                  Math.abs(loc.lon - DEFAULT_LOC.lon) < 0.001);
+        const geoBtnLabel = isShowingDefault ? '📍 내 위치 보기' : '🏙️ 서울 보기';
+        const geoBtnHtml = navigator.geolocation
+            ? `<button class="geo-btn" id="geoBtn" type="button">${geoBtnLabel}</button>`
             : '';
 
         const card = document.getElementById('weatherCard');
@@ -1151,34 +1157,67 @@ body {
     }
 
     // 위젯 카드 클릭 (이벤트 위임):
-    //   - geo-btn 클릭이면 위치 권한 요청
+    //   - geo-btn 클릭이면 위치 토글 (서울 ↔ 내 위치)
     //   - 그 외 영역 클릭이면 시간대별 예보 모달 열기
     document.getElementById('weatherCard').addEventListener('click', async (e) => {
-        // geo 버튼 우선 처리
         const btn = e.target.closest('.geo-btn');
         if (btn) {
             e.stopPropagation();
-            btn.disabled = true;
-            btn.textContent = '위치 확인 중...';
-            try {
-                await requestUserLocation();
-                await loadWeather();
-            } catch (err) {
-                console.warn('geolocation request failed', err);
-                if (err && err.code === 1) {
-                    localStorage.setItem(GEO_PREF_KEY, 'denied');
-                    btn.textContent = '권한이 거부되었어요';
-                } else {
-                    btn.textContent = '위치 가져오기 실패';
-                }
-                setTimeout(() => loadWeather(), 1800);
-            }
+            await handleGeoToggle(btn);
             return;
         }
         // 카드 본체 클릭 → 모달 열기 (clickable 상태일 때만)
         const card = document.getElementById('weatherCard');
         if (card.classList.contains('clickable')) openWeatherModal();
     });
+
+    async function handleGeoToggle(btn) {
+        const currentLoc = currentWeatherData?.loc || DEFAULT_LOC;
+        const isShowingDefault = (Math.abs(currentLoc.lat - DEFAULT_LOC.lat) < 0.001 &&
+                                  Math.abs(currentLoc.lon - DEFAULT_LOC.lon) < 0.001);
+
+        btn.disabled = true;
+
+        if (!isShowingDefault) {
+            // 내 위치 → 서울로 전환 (pref는 유지, 다음에 다시 토글 가능)
+            btn.textContent = '서울 불러오는 중...';
+            localStorage.setItem(VIEW_MODE_KEY, 'default');
+            await loadWeather();
+            return;
+        }
+
+        // 서울 → 내 위치로 전환
+        const pref = localStorage.getItem(GEO_PREF_KEY);
+        if (pref === 'granted') {
+            // 이미 동의했으면 mode만 풀고 재로드
+            btn.textContent = '내 위치 불러오는 중...';
+            localStorage.removeItem(VIEW_MODE_KEY);
+            await loadWeather();
+            return;
+        }
+
+        // 동의 안 됨 (null이거나 denied) → 권한 요청 시도
+        // denied 상태에서도 다시 시도할 수 있게 명시적으로 요청
+        btn.textContent = '위치 확인 중...';
+        try {
+            await requestUserLocation();
+            localStorage.removeItem(VIEW_MODE_KEY);
+            await loadWeather();
+        } catch (err) {
+            console.warn('geolocation request failed', err);
+            if (err && err.code === 1) {
+                // 영구 거부된 경우: 브라우저 설정 안내
+                localStorage.setItem(GEO_PREF_KEY, 'denied');
+                btn.textContent = '브라우저 설정에서 위치 권한 허용 필요';
+            } else if (err && err.code === 3) {
+                btn.textContent = '시간초과 — 다시 시도해주세요';
+            } else {
+                btn.textContent = '위치 가져오기 실패';
+            }
+            // 안내 메시지 잠깐 보여주고 재렌더 (버튼 라벨 원복)
+            setTimeout(() => loadWeather(), 2200);
+        }
+    }
 
     loadWeather();
 })();
