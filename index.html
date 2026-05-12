@@ -310,6 +310,78 @@ body {
     .footer-logo { color: #6da3e8 !important; }
 }
 
+/* ===== 날씨 위젯 ===== */
+.weather-section {
+    margin: 16px 12px 8px;
+}
+.weather-card {
+    background: linear-gradient(135deg, #e0f0ff 0%, #c8e0f5 100%);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(26,58,108,0.08);
+    color: #0d2444;
+    position: relative;
+    overflow: hidden;
+}
+.weather-card.loading, .weather-card.err {
+    text-align: center;
+    color: #6a7a90;
+    font-size: 13px;
+    padding: 18px;
+}
+.weather-card.err { background: #f5f5f5; }
+.weather-greet {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5a70;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.weather-greet .loc-label { font-size: 11.5px; opacity: 0.8; font-weight: 500; }
+.weather-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+.weather-icon { font-size: 42px; flex-shrink: 0; line-height: 1; }
+.weather-temp { flex: 1; min-width: 0; }
+.temp-now { font-size: 28px; font-weight: 800; color: #1a3a6c; line-height: 1; }
+.temp-cond { font-size: 13px; color: #4a5a70; margin-top: 4px; word-break: keep-all; }
+.weather-detail {
+    text-align: right;
+    font-size: 11.5px;
+    color: #4a5a70;
+    line-height: 1.6;
+    flex-shrink: 0;
+}
+.weather-detail .hl { font-weight: 600; }
+.weather-curation {
+    font-size: 12.5px;
+    color: #1a3a6c;
+    background: rgba(255,255,255,0.55);
+    padding: 8px 12px;
+    border-radius: 8px;
+    line-height: 1.5;
+    word-break: keep-all;
+}
+.weather-spin { display: inline-block; animation: weatherSpin 1.5s linear infinite; }
+@keyframes weatherSpin { to { transform: rotate(360deg); } }
+
+@media (prefers-color-scheme: dark) {
+    .weather-card {
+        background: linear-gradient(135deg, #2a3a52 0%, #1a2a40 100%);
+        color: #e0e8f0;
+    }
+    .weather-greet { color: #a8b8d0; }
+    .temp-now { color: #6da3e8; }
+    .temp-cond, .weather-detail { color: #a8b8d0; }
+    .weather-curation { background: rgba(0,0,0,0.25); color: #c8d8f0; }
+    .weather-card.err { background: #232730; color: #888; }
+}
+
 /* 큰 화면 */
 @media (min-width: 600px) {
     body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
@@ -335,6 +407,13 @@ body {
         </div>
         <span class="read-btn">읽기 →</span>
     </a>
+</div>
+
+<!-- 날씨 위젯 -->
+<div class="weather-section">
+    <div class="weather-card loading" id="weatherCard">
+        <span class="weather-spin">🌍</span> 날씨 정보를 가져오는 중...
+    </div>
 </div>
 
 <!-- 좋은글 섹션 (헤드라인 바로 아래) -->
@@ -478,6 +557,162 @@ body {
     <span style="font-size:10px; opacity:0.4; margin: 0 6px;">·</span>
     <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
 </div>
+
+<!-- 날씨 위젯 (Open-Meteo + Korean AQI) -->
+<script>
+(function() {
+    const LAT = 37.566, LON = 126.978;  // 서울시청
+    const LOC_NAME = '서울';
+    const CACHE_KEY = 'gjb_weather_v1';
+    const CACHE_TTL = 10 * 60 * 1000;  // 10분
+
+    const W_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+        '&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m' +
+        '&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code' +
+        '&timezone=Asia%2FSeoul&forecast_days=1';
+    const A_URL = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${LAT}&longitude=${LON}` +
+        '&current=korean_aqi&timezone=Asia%2FSeoul';
+
+    // WMO weather code → emoji + 한글
+    const W_MAP = {
+        0:['☀️','맑음'], 1:['🌤️','대체로 맑음'], 2:['⛅','구름 조금'], 3:['☁️','흐림'],
+        45:['🌫️','안개'], 48:['🌫️','짙은 안개'],
+        51:['🌦️','약한 이슬비'], 53:['🌦️','이슬비'], 55:['🌧️','강한 이슬비'],
+        56:['🌧️','얼어붙는 이슬비'], 57:['🌧️','얼어붙는 강한 이슬비'],
+        61:['🌧️','약한 비'], 63:['🌧️','비'], 65:['🌧️','강한 비'],
+        66:['🌧️','얼어붙는 비'], 67:['🌧️','얼어붙는 강한 비'],
+        71:['🌨️','약한 눈'], 73:['🌨️','눈'], 75:['❄️','강한 눈'], 77:['❄️','눈싸락'],
+        80:['🌦️','약한 소나기'], 81:['🌧️','소나기'], 82:['⛈️','강한 소나기'],
+        85:['🌨️','약한 눈 소나기'], 86:['🌨️','강한 눈 소나기'],
+        95:['⛈️','천둥번개'], 96:['⛈️','천둥번개·우박'], 99:['⛈️','강한 천둥번개·우박']
+    };
+    const codeInfo = (c) => W_MAP[c] || ['🌤️', '날씨 정보'];
+
+    function aqiText(aqi) {
+        if (aqi == null) return null;
+        if (aqi <= 50) return ['좋음', '#1e8449'];
+        if (aqi <= 100) return ['보통', '#5dade2'];
+        if (aqi <= 250) return ['나쁨', '#e67e22'];
+        return ['매우나쁨', '#c0392b'];
+    }
+
+    function greeting() {
+        const h = new Date().getHours();
+        if (h < 5)  return '평온한 새벽이에요';
+        if (h < 12) return '좋은 아침이에요';
+        if (h < 18) return '좋은 오후 되세요';
+        if (h < 22) return '편안한 저녁 보내세요';
+        return '좋은 밤 되세요';
+    }
+
+    function dateLabel() {
+        const d = new Date();
+        const days = ['일','월','화','수','목','금','토'];
+        return `${d.getMonth()+1}/${d.getDate()} (${days[d.getDay()]})`;
+    }
+
+    // 큐레이션: 우선순위 높은 것부터
+    function curate(w, aqi) {
+        const code = w.daily.weather_code[0];
+        const max = w.daily.temperature_2m_max[0];
+        const min = w.daily.temperature_2m_min[0];
+        const rain = w.daily.precipitation_probability_max[0] ?? 0;
+        const range = max - min;
+
+        // 위험·중요한 것 먼저
+        if (code >= 95) return '⛈️ 천둥번개 — 외출 시 주의하세요';
+        if ((code >= 71 && code <= 77) || code === 85 || code === 86) return '❄️ 눈이 와요 · 미끄러움 조심';
+        if (rain >= 70 || (code >= 61 && code <= 67) || code >= 80 && code <= 82) return '☔ 우산 챙기세요';
+        if (aqi != null && aqi >= 251) return '😷 미세먼지 매우나쁨 · 외출 자제';
+        if (aqi != null && aqi >= 101) return '😷 미세먼지 나쁨 · 마스크 챙기세요';
+        if (rain >= 40) return '🌂 우산 챙기면 안심이에요';
+        if (max >= 33) return '🥵 폭염주의 · 충분한 수분 섭취';
+        if (min < 0) return '🥶 영하 추위 · 두툼하게 입으세요';
+        if (min < 5) return '🧥 쌀쌀해요 · 두툼한 외투 필수';
+        if (range >= 12) return '🌡️ 일교차 큼 · 겉옷 챙기세요';
+        if (range >= 8) return '👕 일교차 있어요 · 얇은 겉옷 추천';
+        if (max >= 25 && code <= 3) return '🌳 맑고 따뜻해요 · 산책하기 좋은 날';
+        if (max >= 20 && code <= 3) return '☀️ 좋은 날씨예요';
+        if (code <= 3) return '✨ 쾌청한 하루';
+        if (code === 45 || code === 48) return '🌫️ 안개주의 · 운전 시 조심';
+        return '🌤️ 평온한 하루 보내세요';
+    }
+
+    function render(w, air) {
+        const aqi = air?.current?.korean_aqi;
+        const aqiInfo = aqiText(aqi);
+        const code = w.current.weather_code;
+        const [emoji, condText] = codeInfo(code);
+        const tempNow = Math.round(w.current.temperature_2m);
+        const tempMax = Math.round(w.daily.temperature_2m_max[0]);
+        const tempMin = Math.round(w.daily.temperature_2m_min[0]);
+        const rain = w.daily.precipitation_probability_max[0] ?? 0;
+        const curationMsg = curate(w, aqi);
+
+        const aqiHtml = aqiInfo
+            ? `<div>미세 <span class="hl" style="color:${aqiInfo[1]};">${aqiInfo[0]}</span></div>`
+            : '';
+
+        const card = document.getElementById('weatherCard');
+        card.classList.remove('loading', 'err');
+        card.innerHTML = `
+            <div class="weather-greet">
+                <span>☕ ${greeting()}</span>
+                <span class="loc-label">${LOC_NAME} · ${dateLabel()}</span>
+            </div>
+            <div class="weather-main">
+                <div class="weather-icon">${emoji}</div>
+                <div class="weather-temp">
+                    <div class="temp-now">${tempNow}°</div>
+                    <div class="temp-cond">${condText}</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="hl">↑ ${tempMax}° / ↓ ${tempMin}°</div>
+                    <div>💧 ${rain}%</div>
+                    ${aqiHtml}
+                </div>
+            </div>
+            <div class="weather-curation">💡 ${curationMsg}</div>
+        `;
+    }
+
+    function showErr(msg) {
+        const card = document.getElementById('weatherCard');
+        card.classList.remove('loading');
+        card.classList.add('err');
+        card.textContent = '⚠️ ' + (msg || '날씨 정보를 가져오지 못했어요');
+    }
+
+    async function loadWeather() {
+        // 캐시 우선
+        try {
+            const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+            if (c && (Date.now() - c.t) < CACHE_TTL) {
+                render(c.w, c.air);
+                return;
+            }
+        } catch (e) { /* 무시 */ }
+
+        try {
+            const [wRes, aRes] = await Promise.all([
+                fetch(W_URL),
+                fetch(A_URL).catch(() => null)  // 미세먼지 실패해도 날씨는 표시
+            ]);
+            if (!wRes.ok) throw new Error('weather ' + wRes.status);
+            const w = await wRes.json();
+            const air = aRes && aRes.ok ? await aRes.json() : null;
+
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), w, air }));
+            render(w, air);
+        } catch (e) {
+            console.error('weather fetch failed', e);
+            showErr();
+        }
+    }
+
+    loadWeather();
+})();
+</script>
 
 </body>
 </html>
