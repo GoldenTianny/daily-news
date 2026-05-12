@@ -424,8 +424,21 @@ async function callRPC(name, params) {
 // 슬러그 → 페이지 정보 파싱
 // '2026-05-12_a1' → { date, articleId, url, label }
 function parseSlug(slug) {
+    // 좋은글 패턴: article_YYYYMMDD_NN
+    let m = slug.match(/^article_(\d{8}_\d+)$/);
+    if (m) {
+        const id = m[1];
+        const dateStr = id.slice(0, 4) + '-' + id.slice(4, 6) + '-' + id.slice(6, 8);
+        return {
+            kind: 'article',
+            date: dateStr,
+            articleId: id,
+            url: '../article/#' + id,
+            label: '좋은글 · ' + dateStr.slice(2).replace(/-/g, '.')
+        };
+    }
     // 일일브리프 패턴: YYYY-MM-DD_aN
-    let m = slug.match(/^(\d{4}-\d{2}-\d{2})_(a\d+)$/);
+    m = slug.match(/^(\d{4}-\d{2}-\d{2})_(a\d+)$/);
     if (m) {
         return {
             kind: 'archive',

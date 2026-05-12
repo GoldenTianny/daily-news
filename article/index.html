@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>좋은글 · 가좌버핏 뉴스</title>
+<meta name="description" content="가좌버핏 뉴스 — 마음을 따뜻하게 데우는 좋은글 모음 (1,200여 편)">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="가좌버핏 뉴스 · 좋은글">
+<meta property="og:description" content="마음을 따뜻하게 데우는 글 1,200여 편">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/article/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 좋은글">
+<meta name="twitter:description" content="마음을 따뜻하게 데우는 글 1,200여 편">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f5f1ea;  /* 따뜻한 베이지 톤 */
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 상단 바 */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #6b4f3a;  /* 따뜻한 갈색 */
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.top-bar .home-link {
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+.top-bar .home-link:hover, .top-bar .home-link:active { opacity: 1; }
+.top-bar .brand {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: auto;
+    opacity: 0.9;
+}
+
+/* 헤더 */
+.hero {
+    background: linear-gradient(135deg, #8b6f4e 0%, #b89878 100%);
+    color: white;
+    padding: 44px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero h1 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    position: relative;
+}
+.hero .subtitle {
+    font-size: 13.5px;
+    opacity: 0.92;
+    position: relative;
+    word-break: keep-all;
+}
+
+.section {
+    margin: 24px 12px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px 12px;
+    border-bottom: 2px solid #d8c8b0;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 17px;
+    color: #6b4f3a;
+    font-weight: 700;
+}
+.section-header .meta { font-size: 12px; color: #8b7a60; }
+.section-header .action-btn {
+    background: white;
+    border: 1px solid #b89878;
+    color: #6b4f3a;
+    padding: 5px 11px;
+    border-radius: 14px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.section-header .action-btn:hover { background: #b89878; color: white; }
+
+/* 글 카드 (오늘의 글 + 목록 공용) */
+.article-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 6px rgba(107,79,58,0.08);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    border-left: 3px solid #b89878;
+}
+.article-card:active {
+    transform: scale(0.99);
+    box-shadow: 0 1px 3px rgba(107,79,58,0.05);
+}
+.article-card .card-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #5a3e28;
+    margin-bottom: 8px;
+    word-break: keep-all;
+    line-height: 1.4;
+}
+.article-card .card-preview {
+    font-size: 13.5px;
+    color: #6a5848;
+    line-height: 1.7;
+    white-space: pre-line;
+    word-break: keep-all;
+    /* 3줄 말줄임 */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.article-card .card-meta {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #a08868;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.article-card .card-id { font-variant-numeric: tabular-nums; }
+
+/* 오늘의 글 — 살짝 강조 (왼쪽 라인 진하게) */
+.today-card { border-left-color: #c0392b; border-left-width: 4px; }
+.today-card .card-title { color: #5a3e28; }
+
+/* 목록 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 0;
+    flex-wrap: wrap;
+}
+.pagination button {
+    background: white;
+    border: 1px solid #d8c8b0;
+    color: #6b4f3a;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    min-width: 36px;
+    transition: all 0.15s;
+}
+.pagination button:hover:not(:disabled) { background: #b89878; color: white; border-color: #b89878; }
+.pagination button.active { background: #6b4f3a; color: white; border-color: #6b4f3a; }
+.pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+.pagination .page-info { color: #8b7a60; font-size: 12px; padding: 0 4px; }
+
+/* 검색창 */
+.search-box {
+    background: white;
+    border: 1px solid #d8c8b0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    background: transparent;
+    color: inherit;
+}
+.search-box .search-icon { color: #b89878; }
+.search-box .clear-btn {
+    background: #d8c8b0;
+    color: #6b4f3a;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* 모달 (글 상세 보기) */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 200;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    animation: fadeIn 0.2s;
+}
+.modal-overlay.show { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+    background: white;
+    border-radius: 14px;
+    padding: 0;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+.modal-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #f0ead8;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+.modal-header .title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #5a3e28;
+    line-height: 1.4;
+    word-break: keep-all;
+    flex: 1;
+}
+.modal-header .close {
+    background: #f5f1ea;
+    color: #6b4f3a;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    line-height: 1;
+    font-family: inherit;
+}
+.modal-header .close:hover { background: #d8c8b0; }
+.modal-body {
+    padding: 18px 22px;
+    overflow-y: auto;
+    font-size: 15px;
+    line-height: 1.85;
+    color: #3d2e22;
+    white-space: pre-line;
+    word-break: keep-all;
+    flex: 1;
+}
+.modal-footer {
+    padding: 12px 22px 16px;
+    border-top: 1px solid #f0ead8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.modal-footer .meta { font-size: 11.5px; color: #a08868; }
+.modal-footer .actions { display: flex; gap: 8px; }
+
+/* 좋아요 버튼 (모달용) */
+.like-btn {
+    background: #fdf3f1;
+    color: #c0392b;
+    border: 1px solid #f2c4be;
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+    word-break: keep-all;
+    line-height: 1.2;
+}
+.like-btn:hover, .like-btn:active { background: #fadbd8; border-color: #c0392b; }
+.like-btn:disabled { opacity: 0.6; cursor: wait; }
+.like-btn.liked { background: #c0392b; color: white; border-color: #c0392b; cursor: default; }
+.like-btn.pulse { animation: likePulse 0.4s; }
+.like-btn .count { font-weight: 800; margin-left: 2px; }
+@keyframes likePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
+.share-btn-modal {
+    background: white;
+    color: #555;
+    border: 1px solid #d0d8e4;
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+.share-btn-modal:hover { background: #f5f7fa; border-color: #1a3a6c; color: #1a3a6c; }
+
+/* 빈 상태 / 로딩 */
+.loading, .empty {
+    background: white;
+    border-radius: 12px;
+    padding: 50px 24px;
+    text-align: center;
+    color: #8b7a60;
+    font-size: 14px;
+    line-height: 1.7;
+}
+.loading .spin { font-size: 28px; display: inline-block; animation: spin 1.5s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty .em-icon { font-size: 32px; display: block; margin-bottom: 10px; opacity: 0.5; }
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #8b7a60;
+    line-height: 1.7;
+}
+.footer .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #6b4f3a;
+    margin-bottom: 6px;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #1a1814; color: #e0d8c8; }
+    .article-card, .modal, .loading, .empty, .search-box {
+        background: #2a2520;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .article-card .card-title { color: #f0e8d8; }
+    .article-card .card-preview { color: #c0b598; }
+    .modal-header .title { color: #f0e8d8; }
+    .modal-body { color: #d8cdb8; }
+    .modal-header { border-bottom-color: #3d3528; }
+    .modal-footer { border-top-color: #3d3528; }
+    .modal-header .close { background: #3d3528; color: #d8cdb8; }
+    .pagination button { background: #2a2520; color: #d8cdb8; border-color: #3d3528; }
+    .pagination button.active { background: #b89878; color: white; }
+    .section-header h2 { color: #d4b88c; }
+    .section-header { border-bottom-color: #3d3528; }
+    .footer-logo { color: #d4b88c !important; }
+    .search-box { border-color: #3d3528; }
+    .search-box input { color: #e0d8c8; }
+    .like-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .like-btn:hover { background: #3a2528; border-color: #ff8a80; }
+    .like-btn.liked { background: #c0392b; color: white; border-color: #c0392b; }
+    .share-btn-modal { background: #2a2f38; color: #c0c5d0; border-color: #3a4150; }
+    .today-card { border-left-color: #ff6b5b; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 바 -->
+<div class="top-bar">
+    <a href="../" class="home-link">← 홈으로</a>
+    <span class="brand">📰 가좌버핏 뉴스</span>
+</div>
+
+<!-- 헤더 -->
+<div class="hero">
+    <h1>✨ 좋은글</h1>
+    <div class="subtitle">마음을 따뜻하게 데우는 글 모음</div>
+</div>
+
+<!-- 오늘의 글 3개 -->
+<div class="section">
+    <div class="section-header">
+        <h2>🌅 오늘의 좋은글</h2>
+        <span class="meta" id="todayDateLabel">--</span>
+    </div>
+    <div id="todayList">
+        <div class="loading">
+            <span class="spin">✨</span><br>
+            글을 불러오는 중...
+        </div>
+    </div>
+</div>
+
+<!-- 전체 목록 -->
+<div class="section">
+    <div class="section-header">
+        <h2>📜 전체 목록</h2>
+        <button class="action-btn" id="randomBtn">🎲 랜덤 보기</button>
+    </div>
+
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="키워드로 검색 (제목/본문)" autocomplete="off">
+        <button class="clear-btn" id="clearBtn" hidden>×</button>
+    </div>
+
+    <div id="listArea">
+        <div class="loading">
+            <span class="spin">📚</span><br>
+            전체 목록을 준비하고 있어요...
+        </div>
+    </div>
+
+    <div class="pagination" id="pagination" hidden></div>
+</div>
+
+<!-- 모달 (글 상세) -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="title" id="modalTitle">제목</div>
+            <button class="close" id="modalClose" type="button">×</button>
+        </div>
+        <div class="modal-body" id="modalBody">본문</div>
+        <div class="modal-footer">
+            <span class="meta" id="modalMeta">날짜</span>
+            <div class="actions">
+                <button class="share-btn-modal" id="modalShare" type="button">📤 공유</button>
+                <button class="like-btn" id="modalLike" type="button">
+                    <span class="heart">❤️</span>
+                    <span class="label">좀 더 자세히 알고 싶어요</span>
+                    <span class="count" hidden></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
+    <a href="../" style="color:#6b4f3a; font-weight:600;">← 홈으로 돌아가기</a><br/>
+    <span style="font-size:10px; opacity:0.7; display:inline-block; margin-top:8px;">Powered by GitHub Pages · Supabase</span>
+</div>
+
+<script>
+// ============================================================
+// 좋은글 게시판 — Supabase 좋아요 통합
+// ============================================================
+
+// ==== Supabase 설정 ====
+const SB_URL = 'https://ujpelcnigrryjprztzhf.supabase.co';
+const SB_KEY = 'sb_publishable_T7clvSByrkZhWml7W_Oh6Q_qtm0Rj6p';
+const SB_HEADERS = {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+};
+
+let fp = localStorage.getItem('gjb_fp');
+if (!fp) {
+    fp = (crypto.randomUUID && crypto.randomUUID()) ||
+         ('fp_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+    localStorage.setItem('gjb_fp', fp);
+}
+
+// 좋아요 슬러그 형식: article_<id>
+function articleSlug(id) { return 'article_' + id; }
+
+async function fetchLikeCount(slug) {
+    try {
+        const r = await fetch(SB_URL + '/rest/v1/rpc/gjbuffet_get_like_count', {
+            method: 'POST', headers: SB_HEADERS,
+            body: JSON.stringify({ p_slug: slug })
+        });
+        const v = await r.json();
+        return (typeof v === 'number') ? v : 0;
+    } catch (e) { return 0; }
+}
+
+async function addLike(slug) {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/gjbuffet_add_like', {
+        method: 'POST', headers: SB_HEADERS,
+        body: JSON.stringify({ p_slug: slug, p_fp: fp })
+    });
+    if (!r.ok) throw new Error('add_like failed: ' + r.status);
+    return await r.json();
+}
+
+// ==== 데이터 로드 ====
+let ALL = [];        // 모든 글 배열
+let FILTERED = [];   // 검색 필터 결과
+const PAGE_SIZE = 20;
+let currentPage = 1;
+
+async function loadArticles() {
+    try {
+        const res = await fetch('articles.json', { cache: 'force-cache' });
+        ALL = await res.json();
+        FILTERED = ALL;
+        renderToday();
+        renderList();
+    } catch (e) {
+        console.error('articles.json 로드 실패', e);
+        document.getElementById('todayList').innerHTML =
+            '<div class="empty"><span class="em-icon">⚠️</span>글을 불러오지 못했어요.</div>';
+        document.getElementById('listArea').innerHTML =
+            '<div class="empty"><span class="em-icon">⚠️</span>전체 목록을 불러오지 못했어요.</div>';
+    }
+}
+
+// ==== 오늘의 글 3개 (날짜 시드 기반) ====
+function todaySeed() {
+    const d = new Date();
+    return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+// 시드 고정 LCG (Linear Congruential Generator)
+function seededRandom(seed) {
+    let x = seed >>> 0;
+    return function() {
+        x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
+        return x / 4294967296;
+    };
+}
+
+function pickToday(arr, n) {
+    const rand = seededRandom(todaySeed());
+    const total = arr.length;
+    const picked = new Set();
+    let safety = 0;
+    while (picked.size < n && safety < n * 50) {
+        picked.add(Math.floor(rand() * total));
+        safety++;
+    }
+    return [...picked].slice(0, n).map(i => arr[i]);
+}
+
+function formatDate(yyyymmdd) {
+    if (!yyyymmdd) return '';
+    return yyyymmdd.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1.$2.$3');
+}
+
+function renderToday() {
+    const today = pickToday(ALL, 3);
+    const container = document.getElementById('todayList');
+    container.innerHTML = '';
+    today.forEach(a => container.appendChild(makeCard(a, true)));
+
+    const d = new Date();
+    document.getElementById('todayDateLabel').textContent =
+        `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ==== 카드 생성 ====
+function makeCard(article, isToday) {
+    const card = document.createElement('div');
+    card.className = 'article-card' + (isToday ? ' today-card' : '');
+    card.dataset.id = article.id;
+
+    // 본문 미리보기 (제목 제외)
+    const preview = (article.body || '').slice(0, 200);
+
+    card.innerHTML =
+        '<div class="card-title">' + escapeHtml(article.title) + '</div>' +
+        '<div class="card-preview">' + escapeHtml(preview) + '</div>' +
+        '<div class="card-meta">' +
+            '<span>' + formatDate(article.date) + '</span>' +
+            '<span class="card-id">#' + article.id + '</span>' +
+        '</div>';
+
+    card.addEventListener('click', () => openModal(article));
+    return card;
+}
+
+function escapeHtml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// ==== 전체 목록 (페이지네이션) ====
+function renderList() {
+    const list = document.getElementById('listArea');
+    list.innerHTML = '';
+
+    if (FILTERED.length === 0) {
+        list.innerHTML = '<div class="empty"><span class="em-icon">📭</span>일치하는 글이 없어요.</div>';
+        document.getElementById('pagination').hidden = true;
+        return;
+    }
+
+    const totalPages = Math.ceil(FILTERED.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const slice = FILTERED.slice(start, end);
+
+    slice.forEach(a => list.appendChild(makeCard(a, false)));
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pag = document.getElementById('pagination');
+    pag.innerHTML = '';
+    pag.hidden = false;
+
+    // 이전
+    const prev = document.createElement('button');
+    prev.textContent = '‹';
+    prev.disabled = currentPage === 1;
+    prev.addEventListener('click', () => { currentPage--; renderList(); window.scrollTo({top: 0, behavior: 'smooth'}); });
+    pag.appendChild(prev);
+
+    // 페이지 번호 (현재 ±2 + 처음/끝)
+    const pageNumbers = new Set([1, totalPages, currentPage]);
+    for (let i = -2; i <= 2; i++) {
+        const p = currentPage + i;
+        if (p > 0 && p <= totalPages) pageNumbers.add(p);
+    }
+    const sorted = [...pageNumbers].sort((a, b) => a - b);
+
+    let lastNum = 0;
+    sorted.forEach(p => {
+        if (p - lastNum > 1) {
+            const span = document.createElement('span');
+            span.className = 'page-info';
+            span.textContent = '…';
+            pag.appendChild(span);
+        }
+        const btn = document.createElement('button');
+        btn.textContent = p;
+        if (p === currentPage) btn.classList.add('active');
+        btn.addEventListener('click', () => { currentPage = p; renderList(); window.scrollTo({top: 0, behavior: 'smooth'}); });
+        pag.appendChild(btn);
+        lastNum = p;
+    });
+
+    // 다음
+    const next = document.createElement('button');
+    next.textContent = '›';
+    next.disabled = currentPage === totalPages;
+    next.addEventListener('click', () => { currentPage++; renderList(); window.scrollTo({top: 0, behavior: 'smooth'}); });
+    pag.appendChild(next);
+
+    // 글 수 정보
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    info.textContent = `총 ${FILTERED.length}편`;
+    pag.appendChild(info);
+}
+
+// ==== 검색 ====
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+
+let searchTimeout = null;
+searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const q = searchInput.value.trim().toLowerCase();
+        clearBtn.hidden = !q;
+        if (!q) {
+            FILTERED = ALL;
+        } else {
+            FILTERED = ALL.filter(a =>
+                a.title.toLowerCase().includes(q) ||
+                a.body.toLowerCase().includes(q)
+            );
+        }
+        currentPage = 1;
+        renderList();
+    }, 200);
+});
+
+clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.hidden = true;
+    FILTERED = ALL;
+    currentPage = 1;
+    renderList();
+});
+
+// ==== 랜덤 보기 ====
+document.getElementById('randomBtn').addEventListener('click', () => {
+    if (ALL.length === 0) return;
+    const idx = Math.floor(Math.random() * ALL.length);
+    openModal(ALL[idx]);
+});
+
+// ==== 모달 (글 상세) ====
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalMeta = document.getElementById('modalMeta');
+const modalLike = document.getElementById('modalLike');
+const modalShare = document.getElementById('modalShare');
+const modalClose = document.getElementById('modalClose');
+
+let currentArticle = null;
+
+async function openModal(article) {
+    currentArticle = article;
+    modalTitle.textContent = article.title;
+    modalBody.textContent = article.body;
+    modalMeta.textContent = formatDate(article.date) + ' · #' + article.id;
+
+    // URL 해시로 ID 반영 (공유·뒤로가기 지원)
+    history.replaceState(null, '', '#' + article.id);
+
+    // 좋아요 상태 초기화
+    const slug = articleSlug(article.id);
+    modalLike.classList.remove('liked', 'pulse');
+    modalLike.disabled = false;
+    modalLike.querySelector('.count').hidden = true;
+    modalLike.querySelector('.label').hidden = false;
+
+    if (localStorage.getItem('liked:' + slug)) {
+        modalLike.classList.add('liked');
+    }
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    // 비동기로 카운트 가져오기
+    const count = await fetchLikeCount(slug);
+    updateLikeDisplay(modalLike, count);
+}
+
+function updateLikeDisplay(btn, count) {
+    const countEl = btn.querySelector('.count');
+    if (count >= 5) {
+        countEl.textContent = '· ' + count;
+        countEl.hidden = false;
+    } else {
+        countEl.hidden = true;
+    }
+}
+
+modalLike.addEventListener('click', async () => {
+    if (!currentArticle) return;
+    if (modalLike.classList.contains('liked') || modalLike.disabled) return;
+    const slug = articleSlug(currentArticle.id);
+    modalLike.disabled = true;
+    try {
+        const newCount = await addLike(slug);
+        updateLikeDisplay(modalLike, newCount);
+        modalLike.classList.add('liked', 'pulse');
+        localStorage.setItem('liked:' + slug, '1');
+        setTimeout(() => modalLike.classList.remove('pulse'), 400);
+    } catch (e) {
+        console.error('좋아요 실패', e);
+        alert('좋아요 처리 중 오류가 발생했어요.');
+    } finally {
+        modalLike.disabled = false;
+    }
+});
+
+modalShare.addEventListener('click', async () => {
+    if (!currentArticle) return;
+    const url = location.origin + location.pathname + '#' + currentArticle.id;
+    const text = `✨ ${currentArticle.title}\n\n${currentArticle.body.slice(0, 200)}${currentArticle.body.length > 200 ? '...' : ''}\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const data = { title: currentArticle.title, text };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) {}
+    } else {
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('아래 내용이 복사되었습니다:\n\n' + text);
+        } catch (e) { prompt('복사해 주세요:', text); }
+    }
+});
+
+function closeModal() {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    currentArticle = null;
+    history.replaceState(null, '', location.pathname);
+}
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+});
+
+// ==== 초기화 ====
+loadArticles().then(() => {
+    // URL 해시에 ID가 있으면 해당 글 모달로 열기
+    const hash = location.hash.slice(1);
+    if (hash) {
+        const found = ALL.find(a => a.id === hash);
+        if (found) openModal(found);
+    }
+});
+</script>
+
+</body>
+</html>
