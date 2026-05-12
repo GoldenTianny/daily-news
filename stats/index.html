@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>통계 · 가좌버핏 뉴스</title>
+<meta name="description" content="가좌버핏 뉴스 — 가장 사랑받은 기사와 좋아요 통계">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="가좌버핏 뉴스 · 통계">
+<meta property="og:description" content="가장 사랑받은 기사와 좋아요 추이">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/stats/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 통계">
+<meta name="twitter:description" content="가장 사랑받은 기사와 좋아요 추이">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 상단 바 */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.top-bar .home-link {
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+.top-bar .home-link:hover, .top-bar .home-link:active { opacity: 1; }
+.top-bar .brand {
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: auto;
+    opacity: 0.9;
+}
+
+/* 헤더 */
+.hero {
+    background: linear-gradient(135deg, #1a3a6c 0%, #2a5ca8 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero h1 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    position: relative;
+}
+.hero .subtitle {
+    font-size: 13.5px;
+    opacity: 0.92;
+    position: relative;
+    word-break: keep-all;
+}
+
+.list-section {
+    margin: 24px 12px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px 12px;
+    border-bottom: 2px solid #d0d8e4;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 17px;
+    color: #1a3a6c;
+    font-weight: 700;
+}
+.section-header .meta {
+    font-size: 11.5px;
+    color: #888;
+}
+
+/* 통계 카드 (2x2 그리드) */
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 14px;
+    border-left: 4px solid #1a3a6c;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.summary-card.accent { border-left-color: #c0392b; }
+.summary-card .label {
+    font-size: 11.5px;
+    color: #888;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+}
+.summary-card .value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a3a6c;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.summary-card.accent .value { color: #c0392b; }
+.summary-card .sub {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+/* TOP 리스트 */
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.top-item {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.top-item:active {
+    transform: scale(0.99);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.top-item .rank {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: #f0f4fa;
+    color: #1a3a6c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+}
+.top-item .rank.medal-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #5a3a00; }
+.top-item .rank.medal-2 { background: linear-gradient(135deg, #d8d8d8, #b0b0b0); color: #333; }
+.top-item .rank.medal-3 { background: linear-gradient(135deg, #d8a070, #b87a44); color: white; }
+.top-item .info {
+    flex: 1;
+    min-width: 0;
+}
+.top-item .title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0d2444;
+    margin-bottom: 2px;
+    word-break: keep-all;
+    line-height: 1.4;
+}
+.top-item .meta {
+    font-size: 11px;
+    color: #888;
+}
+.top-item .like-count {
+    flex-shrink: 0;
+    background: #fdf3f1;
+    color: #c0392b;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* 빈 상태 */
+.empty-state {
+    background: white;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    line-height: 1.7;
+}
+.empty-state .em-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+/* 차트 */
+.chart-box {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 12px 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.chart-svg text {
+    font-family: inherit;
+    font-size: 9px;
+    fill: #888;
+}
+
+/* 정보 박스 */
+.info-note {
+    background: #eef3fb;
+    border-left: 3px solid #2a5ca8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 16px 12px;
+    font-size: 12px;
+    color: #1a3a6c;
+    line-height: 1.6;
+}
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+.footer .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 6px;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .summary-card, .top-item, .empty-state, .chart-box {
+        background: #232730;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .summary-card .value { color: #6da3e8; }
+    .summary-card.accent .value { color: #ff8a80; }
+    .top-item .rank { background: #2d3340; color: #6da3e8; }
+    .top-item .title { color: #f0f4fa; }
+    .top-item .like-count { background: #3a2528; color: #ff8a80; }
+    .section-header { border-bottom-color: #2d3340; }
+    .section-header h2 { color: #6da3e8; }
+    .footer-logo { color: #6da3e8 !important; }
+    .info-note { background: #1c2538; color: #a8c5ed; border-left-color: #6da3e8; }
+    .chart-svg text { fill: #aaa; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .summary-grid { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 바 -->
+<div class="top-bar">
+    <a href="../" class="home-link">← 홈으로</a>
+    <span class="brand">📰 가좌버핏 뉴스</span>
+</div>
+
+<!-- 헤더 -->
+<div class="hero">
+    <h1>📊 통계</h1>
+    <div class="subtitle">독자분들이 가장 더 알고 싶어 한 주제</div>
+</div>
+
+<div class="info-note">
+    💡 "❤️ 좀 더 자세히 알고 싶어요" 클릭 데이터를 기반으로 합니다.
+    많이 받은 주제는 향후 <strong>심층분석</strong>으로 발전시킬 후보가 됩니다.
+</div>
+
+<!-- 요약 통계 -->
+<div class="list-section">
+    <div class="section-header">
+        <h2>📈 요약</h2>
+        <span class="meta" id="updatedAt">--</span>
+    </div>
+    <div class="summary-grid">
+        <div class="summary-card accent">
+            <div class="label">총 좋아요</div>
+            <div class="value" id="totalLikes">--</div>
+            <div class="sub">누적</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">반응 받은 기사</div>
+            <div class="value" id="articleCount">--</div>
+            <div class="sub">건</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">최근 7일</div>
+            <div class="value" id="weekLikes">--</div>
+            <div class="sub">좋아요</div>
+        </div>
+        <div class="summary-card">
+            <div class="label">평균 좋아요</div>
+            <div class="value" id="avgLikes">--</div>
+            <div class="sub">건당</div>
+        </div>
+    </div>
+</div>
+
+<!-- TOP 10 -->
+<div class="list-section">
+    <div class="section-header">
+        <h2>🔥 인기 기사 TOP 10</h2>
+    </div>
+    <div class="top-list" id="topList">
+        <div class="empty-state" id="topEmpty">
+            <span class="em-icon">⏳</span>
+            데이터 불러오는 중...
+        </div>
+    </div>
+</div>
+
+<!-- 일자별 차트 -->
+<div class="list-section">
+    <div class="section-header">
+        <h2>📅 최근 30일 추이</h2>
+    </div>
+    <div class="chart-box">
+        <svg id="dailyChart" class="chart-svg" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet">
+            <text x="180" y="100" text-anchor="middle">데이터 불러오는 중...</text>
+        </svg>
+    </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
+    <a href="../" style="color:#1a3a6c; font-weight:600;">← 홈으로 돌아가기</a><br/>
+    <span style="font-size:10px; opacity:0.7; display:inline-block; margin-top:8px;">Powered by GitHub Pages · Supabase</span>
+</div>
+
+<script>
+// ============================================================
+// Supabase 통계 페이지
+// ============================================================
+const SB_URL = 'https://ujpelcnigrryjprztzhf.supabase.co';
+const SB_KEY = 'sb_publishable_T7clvSByrkZhWml7W_Oh6Q_qtm0Rj6p';
+const SB_HEADERS = {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+};
+
+async function callRPC(name, params) {
+    const r = await fetch(SB_URL + '/rest/v1/rpc/' + name, {
+        method: 'POST',
+        headers: SB_HEADERS,
+        body: JSON.stringify(params || {})
+    });
+    if (!r.ok) {
+        const text = await r.text();
+        throw new Error(name + ' (' + r.status + '): ' + text);
+    }
+    return await r.json();
+}
+
+// 슬러그 → 페이지 정보 파싱
+// '2026-05-12_a1' → { date, articleId, url, label }
+function parseSlug(slug) {
+    // 일일브리프 패턴: YYYY-MM-DD_aN
+    let m = slug.match(/^(\d{4}-\d{2}-\d{2})_(a\d+)$/);
+    if (m) {
+        return {
+            kind: 'archive',
+            date: m[1],
+            articleId: m[2],
+            url: '../archive/' + m[1] + '.html#' + m[2],
+            label: m[1].slice(2).replace(/-/g, '.') + ' · ' + m[2].slice(1) + '번 기사'
+        };
+    }
+    // 심층분석/기업분석 패턴: YYYY-MM-DD_slug
+    m = slug.match(/^(\d{4}-\d{2}-\d{2})_(.+)$/);
+    if (m) {
+        return {
+            kind: 'longform',
+            date: m[1],
+            articleId: m[2],
+            url: '#', // 어느 폴더(analysis/companies)인지 알 수 없어서 일단 #
+            label: m[1].slice(2).replace(/-/g, '.') + ' · ' + m[2]
+        };
+    }
+    return { kind: 'unknown', date: '', articleId: slug, url: '#', label: slug };
+}
+
+// 제목 캐시 (24시간)
+const TITLE_CACHE_KEY = 'gjb_title_cache_v1';
+const titleCache = (() => {
+    try { return JSON.parse(localStorage.getItem(TITLE_CACHE_KEY) || '{}'); }
+    catch (e) { return {}; }
+})();
+const TITLE_TTL = 24 * 60 * 60 * 1000;
+
+async function fetchArticleTitle(slug) {
+    const cached = titleCache[slug];
+    if (cached && (Date.now() - cached.t) < TITLE_TTL) {
+        return cached.v;
+    }
+    const info = parseSlug(slug);
+    if (info.kind !== 'archive') return null;
+    try {
+        const res = await fetch('../archive/' + info.date + '.html', { cache: 'force-cache' });
+        if (!res.ok) return null;
+        const html = await res.text();
+        const re = new RegExp('<article[^>]*id="' + info.articleId + '"[^>]*>[\\s\\S]*?<h3[^>]*>([^<]+)<\\/h3>', 'i');
+        const m = html.match(re);
+        const title = m ? m[1].trim() : null;
+        if (title) {
+            titleCache[slug] = { v: title, t: Date.now() };
+            try { localStorage.setItem(TITLE_CACHE_KEY, JSON.stringify(titleCache)); } catch (e) {}
+        }
+        return title;
+    } catch (e) {
+        return null;
+    }
+}
+
+// 일자별 차트 그리기
+function drawDailyChart(daily) {
+    const svg = document.getElementById('dailyChart');
+    if (!daily || !daily.length) {
+        svg.innerHTML = '<text x="180" y="100" text-anchor="middle" font-size="12">아직 데이터가 없어요</text>';
+        return;
+    }
+
+    // 최근 30일 빈 날짜 채우기 (좋아요 0인 날도 표시)
+    const dataMap = {};
+    daily.forEach(d => { dataMap[d.day] = Number(d.likes) || 0; });
+
+    const days = [];
+    const today = new Date();
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0, 10);
+        days.push({ day: key, likes: dataMap[key] || 0 });
+    }
+
+    const W = 360, H = 200, PAD_L = 32, PAD_R = 12, PAD_T = 16, PAD_B = 24;
+    const innerW = W - PAD_L - PAD_R;
+    const innerH = H - PAD_T - PAD_B;
+    const maxLikes = Math.max(...days.map(d => d.likes), 1);
+    const barWidth = innerW / days.length;
+
+    let svgContent = '';
+
+    // 그리드라인 (4개)
+    [0, 0.25, 0.5, 0.75, 1].forEach(p => {
+        const y = PAD_T + innerH * p;
+        const labelVal = Math.round(maxLikes * (1 - p));
+        svgContent += '<line x1="' + PAD_L + '" y1="' + y + '" x2="' + (W - PAD_R) + '" y2="' + y + '" stroke="#e8edf5" stroke-width="1" stroke-dasharray="3 3"/>';
+        if (p === 0 || p === 1) {
+            svgContent += '<text x="' + (PAD_L - 4) + '" y="' + (y + 3) + '" text-anchor="end">' + labelVal + '</text>';
+        }
+    });
+
+    // 바
+    days.forEach((d, i) => {
+        const barH = (d.likes / maxLikes) * innerH;
+        const x = PAD_L + i * barWidth + 1;
+        const y = H - PAD_B - barH;
+        const color = d.likes > 0 ? '#c0392b' : '#e8edf5';
+        svgContent += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + (barWidth - 2).toFixed(1) + '" height="' + Math.max(barH, 1).toFixed(1) + '" fill="' + color + '" opacity="0.85" rx="1"/>';
+        // 0이 아닌 값 위에 숫자
+        if (d.likes > 0 && d.likes >= maxLikes * 0.5) {
+            svgContent += '<text x="' + (x + barWidth/2 - 1).toFixed(1) + '" y="' + (y - 3).toFixed(1) + '" text-anchor="middle" font-weight="700" fill="#c0392b">' + d.likes + '</text>';
+        }
+    });
+
+    // X축 (5일 간격)
+    days.forEach((d, i) => {
+        if (i % 7 === 0 || i === days.length - 1) {
+            const x = PAD_L + i * barWidth + barWidth/2;
+            const label = d.day.slice(5).replace('-', '/');
+            svgContent += '<text x="' + x.toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + label + '</text>';
+        }
+    });
+
+    svg.innerHTML = svgContent;
+}
+
+// 메인 로드
+async function loadStats() {
+    let summary = [], daily = [];
+    try {
+        [summary, daily] = await Promise.all([
+            callRPC('gjbuffet_stats_summary'),
+            callRPC('gjbuffet_stats_daily', { p_days: 30 })
+        ]);
+    } catch (e) {
+        console.error('통계 로드 실패', e);
+        document.getElementById('topEmpty').innerHTML =
+            '<span class="em-icon">⚠️</span>통계 데이터를 불러오지 못했어요.<br/>' +
+            '<span style="font-size:11px; opacity:0.7;">' + e.message + '</span>';
+        document.getElementById('dailyChart').innerHTML =
+            '<text x="180" y="100" text-anchor="middle" font-size="12">불러오기 실패</text>';
+        return;
+    }
+
+    // 요약 카드
+    const totalLikes = summary.reduce((s, x) => s + Number(x.likes), 0);
+    const articleCount = summary.length;
+
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7);
+    const cutoffStr = cutoff.toISOString().slice(0, 10);
+    const weekLikes = daily
+        .filter(d => d.day >= cutoffStr)
+        .reduce((s, x) => s + Number(x.likes), 0);
+
+    const avg = articleCount ? (totalLikes / articleCount).toFixed(1) : '0';
+
+    document.getElementById('totalLikes').textContent = totalLikes.toLocaleString();
+    document.getElementById('articleCount').textContent = articleCount.toLocaleString();
+    document.getElementById('weekLikes').textContent = weekLikes.toLocaleString();
+    document.getElementById('avgLikes').textContent = avg;
+    document.getElementById('updatedAt').textContent = '업데이트: ' +
+        new Date().toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' });
+
+    // TOP 10
+    const top10 = summary.slice(0, 10);
+    const listEl = document.getElementById('topList');
+
+    if (top10.length === 0) {
+        document.getElementById('topEmpty').innerHTML =
+            '<span class="em-icon">📭</span>아직 좋아요 데이터가 쌓이지 않았어요.<br/>' +
+            '<span style="font-size:12px; opacity:0.8;">기사를 읽고 ❤️ 버튼을 눌러보세요</span>';
+    } else {
+        listEl.innerHTML = '';
+        top10.forEach((item, i) => {
+            const info = parseSlug(item.slug);
+            const rankClass = i < 3 ? 'medal-' + (i+1) : '';
+            const a = document.createElement('a');
+            a.className = 'top-item';
+            a.href = info.url;
+            a.innerHTML =
+                '<div class="rank ' + rankClass + '">' + (i+1) + '</div>' +
+                '<div class="info">' +
+                    '<div class="title" data-slug="' + item.slug + '">' + info.label + '</div>' +
+                    '<div class="meta">' + item.slug + '</div>' +
+                '</div>' +
+                '<div class="like-count">❤️ ' + item.likes + '</div>';
+            listEl.appendChild(a);
+        });
+
+        // 비동기로 진짜 제목 채우기
+        top10.forEach(async (item, i) => {
+            const title = await fetchArticleTitle(item.slug);
+            if (title) {
+                const titleEl = listEl.children[i].querySelector('.title');
+                if (titleEl) titleEl.textContent = title;
+            }
+        });
+    }
+
+    // 일자별 차트
+    drawDailyChart(daily);
+}
+
+loadStats();
+</script>
+
+</body>
+</html>
