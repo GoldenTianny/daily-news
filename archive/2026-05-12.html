@@ -3034,11 +3034,27 @@ document.getElementById('topShareBtn').addEventListener('click', () => document.
 (function() {
     const W_MAP = {0:['☀️','맑음'],1:['🌤️','대체로 맑음'],2:['⛅','구름 조금'],3:['☁️','흐림'],45:['🌫️','안개'],48:['🌫️','짙은 안개'],51:['🌦️','이슬비'],53:['🌦️','이슬비'],55:['🌧️','강한 이슬비'],61:['🌧️','약한 비'],63:['🌧️','비'],65:['🌧️','강한 비'],71:['🌨️','약한 눈'],73:['🌨️','눈'],75:['❄️','강한 눈'],80:['🌦️','소나기'],81:['🌧️','소나기'],82:['⛈️','강한 소나기'],95:['⛈️','천둥번개']};
 
+    // 홈페이지의 위치 동의를 공유: 같은 localStorage 키 읽기
+    const DEFAULT_LOC = { lat: 37.566, lon: 126.978, name: '서울' };
+    function resolveLoc() {
+        try {
+            const pref = localStorage.getItem('gjb_geo_pref');
+            const mode = localStorage.getItem('gjb_view_mode');
+            if (mode === 'default' || pref !== 'granted') return DEFAULT_LOC;
+            const c = JSON.parse(localStorage.getItem('gjb_geo_coords') || 'null');
+            if (c && typeof c.lat === 'number' && typeof c.lon === 'number') {
+                return { lat: c.lat, lon: c.lon, name: c.name || '내 위치' };
+            }
+        } catch (e) { /* 무시 */ }
+        return DEFAULT_LOC;
+    }
+
     (async function loadMiniWeather() {
         const el = document.getElementById('miniWeather');
         if (!el) return;
+        const loc = resolveLoc();
         try {
-            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.566&longitude=126.978&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1');
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + loc.lat + '&longitude=' + loc.lon + '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=1');
             const d = await r.json();
             const code = d.current.weather_code;
             const [emoji, text] = W_MAP[code] || ['🌤️', '날씨'];
@@ -3055,7 +3071,7 @@ document.getElementById('topShareBtn').addEventListener('click', () => document.
             else if (max >= 25 && code <= 3) tip = '🌳 산책 좋음';
             else tip = '평온한 날씨';
             el.innerHTML =
-                '<div class="head">🌤️ 서울 오늘</div>' +
+                '<div class="head">🌤️ ' + loc.name + ' 오늘</div>' +
                 '<div class="body">' + emoji + ' ' + temp + '° ' + text + '</div>' +
                 '<div class="tip">↑' + max + '° ↓' + min + '° · 💧' + rain + '% · ' + tip + '</div>';
         } catch (e) {
