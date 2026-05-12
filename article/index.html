@@ -630,12 +630,16 @@ function todaySeed() {
     return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
 }
 
-// 시드 고정 LCG (Linear Congruential Generator)
+// 시드 고정 PRNG (mulberry32) — 시드 차이가 작아도 출력이 크게 달라짐
+// 이전 LCG는 연속 날짜(20260512↔20260513)에서 첫 출력이 거의 같은 문제 있었음
 function seededRandom(seed) {
-    let x = seed >>> 0;
+    let a = seed | 0;
     return function() {
-        x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
-        return x / 4294967296;
+        a = (a + 0x6D2B79F5) | 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 }
 

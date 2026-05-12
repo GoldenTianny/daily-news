@@ -1785,8 +1785,14 @@ document.getElementById('topShareBtn').addEventListener('click', () => document.
             // 페이지 URL 날짜를 시드로 → 같은 페이지엔 항상 같은 글 (공유·재방문 일관성)
             const dm = location.pathname.match(/(\d{4})-(\d{2})-(\d{2})/);
             let seed = dm ? parseInt(dm[1] + dm[2] + dm[3], 10) : (Date.now() & 0xffffffff);
-            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
-            const pick = articles[seed % articles.length];
+            // mulberry32 mixing — 시드 차이 작아도 출력 분포 좋음 (LCG는 연속 시드 약점)
+            let a = seed | 0;
+            a = (a + 0x6D2B79F5) | 0;
+            let t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            const mixed = (t ^ (t >>> 14)) >>> 0;
+            const pick = articles[mixed % articles.length];
             const preview = (pick.body || '').slice(0, 50).replace(/\s+/g, ' ');
             const cont = pick.body && pick.body.length > 50 ? '...' : '';
             el.innerHTML =
