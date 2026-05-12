@@ -1028,6 +1028,51 @@ body {
 .easy-box p:last-child { margin-bottom: 0; }
 .easy-box strong { color: #b9770e; }
 
+
+
+/* ===== 좋아요 버튼 ===== */
+.like-section {
+    padding: 14px 18px 18px;
+    text-align: center;
+    border-top: 1px dashed #e8edf5;
+    margin-top: 8px;
+}
+.like-btn {
+    background: white;
+    color: #c0392b;
+    border: 1.5px solid #f2c4be;
+    border-radius: 22px;
+    padding: 9px 20px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+}
+.like-btn:hover { background: #fdf3f1; border-color: #e8a39a; }
+.like-btn:active { transform: scale(0.95); }
+.like-btn:disabled { opacity: 0.6; cursor: wait; }
+.like-btn.liked {
+    background: #fde9e7;
+    border-color: #c0392b;
+    cursor: default;
+}
+.like-btn.pulse { animation: likePulse 0.4s; }
+.like-btn .count { font-weight: 800; margin-left: 2px; }
+@keyframes likePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+@media (prefers-color-scheme: dark) {
+    .like-section { border-top-color: #2d3340; }
+    .like-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .like-btn:hover { background: #3a2528; border-color: #ff8a80; }
+    .like-btn.liked { background: #5a2620; color: #ff8a80; border-color: #ff8a80; }
+}
+
 </style>
 </head>
 <body>
@@ -1780,6 +1825,14 @@ body {
         </table>
         <div class="ig-caption">👉 12일까지 합의 실패 시 총파업 — 메모리반도체 공급망 영향 우려</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a1">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 2 -->
@@ -1808,6 +1861,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 건강보험료 기준 하위 70% 선별 — 카드·지역상품권·선불카드 중 선택</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a2">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -1838,6 +1899,14 @@ body {
         </table>
         <div class="ig-caption">👉 한국은 원천기술 보유하고도 규제 장벽에 묶여 발 동동</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a3">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 4 -->
@@ -1866,6 +1935,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 매물 잠김 풀려는 고육책 — 부정 청약 전수조사도 병행</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a4">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -1896,6 +1973,14 @@ body {
         </table>
         <div class="ig-caption">👉 미 대통령 9년 만의 방중 — 글로벌 경제·안보 변곡점</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a5">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 6 -->
@@ -1924,6 +2009,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 AI 인프라 전방위 투자 — 생태계 육성 vs 버블 논쟁</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a6">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -1954,6 +2047,14 @@ body {
         </table>
         <div class="ig-caption">👉 중동전쟁 장기화 + 루피화 약세 = 외환 비상</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a7">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 8 -->
@@ -1982,6 +2083,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 스타머 총리 사퇴 거부 — 정면돌파 시도</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a8">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2012,6 +2121,14 @@ body {
         </table>
         <div class="ig-caption">👉 하드웨어 경쟁 → 첨단두뇌(AI 모델) 경쟁으로 전환</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a9">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 10 -->
@@ -2040,6 +2157,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 나프타 가격 상승 효과 — 구조조정 통한 체질 개선 필요</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a10">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2070,6 +2195,14 @@ body {
         </table>
         <div class="ig-caption">👉 일본차 캐즘 대응 실패 = 한국 배터리 수주 차질</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a11">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 12 -->
@@ -2098,6 +2231,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 한화 지분 확대 가속 — 현대차·LIG도 인수 후보 거론</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a12">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2128,6 +2269,14 @@ body {
         </table>
         <div class="ig-caption">👉 K팝·K콘텐츠 효과 — 외국인 매출이 백화점 살렸다</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a13">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 14 -->
@@ -2156,6 +2305,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 한국, LVMH 글로벌 핵심 시장으로 부상</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a14">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2186,6 +2343,14 @@ body {
         </table>
         <div class="ig-caption">👉 AI·반도체 슈퍼사이클 — '만스피' 시대 현실화 전망</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a15">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 16 -->
@@ -2214,6 +2379,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 자산관리 강자 입지 + 외국인 역직구로 성장 가속</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a16">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2244,6 +2417,14 @@ body {
         </table>
         <div class="ig-caption">👉 반도체·원전·방산이 끌어올린 수익 — 세대 격차 뚜렷</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a17">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 18 -->
@@ -2272,6 +2453,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 SPC 우회 지원으로 처벌 회피 — 정부 실태조사 필요</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a18">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2302,6 +2491,14 @@ body {
         </table>
         <div class="ig-caption">👉 외곽 매물 쏟아짐 vs 서울 인근은 여전히 인기</div>
     </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a19">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
+    </div>
 </article>
 
 <!-- 기사 20 -->
@@ -2330,6 +2527,14 @@ body {
             </tbody>
         </table>
         <div class="ig-caption">👉 D램·HBM도 강화 — '1d' 6세대 7세대 개발 동시 진행</div>
+    </div>
+    <!-- 좋아요 -->
+    <div class="like-section" data-article="a20">
+        <button class="like-btn" type="button" aria-label="이 기사 좋아요">
+            <span class="heart">❤️</span>
+            <span class="label">좋아요</span>
+            <span class="count" hidden></span>
+        </button>
     </div>
 </article>
 
@@ -2659,6 +2864,94 @@ document.getElementById('shareIssueBtn').addEventListener('click', async () => {
 <script>
 // 상단바 공유 버튼 → 발행분 전체 공유 핸들러(#shareIssueBtn)로 위임
 document.getElementById('topShareBtn').addEventListener('click', () => document.getElementById('shareIssueBtn').click());
+</script>
+
+
+<!-- 좋아요 시스템 (Supabase) -->
+<script>
+(function() {
+    const SB_URL = 'https://ujpelcnigrryjprztzhf.supabase.co';
+    const SB_KEY = 'sb_publishable_T7clvSByrkZhWml7W_Oh6Q_qtm0Rj6p';
+    const pageSlug = (location.pathname.split('/').pop() || '').replace(/\.html$/, '') || 'index';
+
+    let fp = localStorage.getItem('gjb_fp');
+    if (!fp) {
+        fp = (crypto.randomUUID && crypto.randomUUID()) ||
+             ('fp_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+        localStorage.setItem('gjb_fp', fp);
+    }
+
+    const SB_HEADERS = {
+        'Content-Type': 'application/json',
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY
+    };
+
+    function makeSlug(articleId) { return pageSlug + '_' + articleId; }
+
+    function updateDisplay(btn, count) {
+        const countEl = btn.querySelector('.count');
+        const labelEl = btn.querySelector('.label');
+        if (count >= 5) {
+            countEl.textContent = count;
+            countEl.hidden = false;
+            labelEl.hidden = true;
+        } else {
+            countEl.hidden = true;
+            labelEl.hidden = false;
+        }
+    }
+
+    async function fetchCount(slug) {
+        try {
+            const r = await fetch(SB_URL + '/rest/v1/rpc/gjbuffet_get_like_count', {
+                method: 'POST', headers: SB_HEADERS,
+                body: JSON.stringify({ p_slug: slug })
+            });
+            const v = await r.json();
+            return (typeof v === 'number') ? v : 0;
+        } catch (e) { return 0; }
+    }
+
+    async function addLike(slug) {
+        const r = await fetch(SB_URL + '/rest/v1/rpc/gjbuffet_add_like', {
+            method: 'POST', headers: SB_HEADERS,
+            body: JSON.stringify({ p_slug: slug, p_fp: fp })
+        });
+        if (!r.ok) throw new Error('add_like failed: ' + r.status);
+        return await r.json();
+    }
+
+    document.querySelectorAll('.like-section').forEach(async (section) => {
+        const articleId = section.getAttribute('data-article');
+        if (!articleId) return;
+        const slug = makeSlug(articleId);
+        const btn = section.querySelector('.like-btn');
+        if (!btn) return;
+
+        if (localStorage.getItem('liked:' + slug)) btn.classList.add('liked');
+
+        const initialCount = await fetchCount(slug);
+        updateDisplay(btn, initialCount);
+
+        btn.addEventListener('click', async () => {
+            if (btn.classList.contains('liked') || btn.disabled) return;
+            btn.disabled = true;
+            try {
+                const newCount = await addLike(slug);
+                updateDisplay(btn, newCount);
+                btn.classList.add('liked', 'pulse');
+                localStorage.setItem('liked:' + slug, '1');
+                setTimeout(() => btn.classList.remove('pulse'), 400);
+            } catch (e) {
+                console.error('좋아요 실패', e);
+                alert('좋아요 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+})();
 </script>
 
 </body>
