@@ -590,18 +590,19 @@ body {
 <!-- 좋은글 섹션 (헤드라인 바로 아래) -->
 <div class="archive-section">
     <div class="section-header">
-        <h2>✨ 좋은글</h2>
+        <h2>✨ 오늘의 좋은글</h2>
         <a href="article/" class="more-link">더보기 →</a>
     </div>
-    <div class="archive-list">
+    <div class="archive-list" id="articleList">
+        <!-- JS 로드 전 임시 placeholder (로드 후 자동 교체) -->
         <a href="article/" class="archive-item" style="border-left: 3px solid #b89878;">
             <div class="date-box" style="background: #f5f1ea;">
                 <div class="day" style="color:#6b4f3a;">🌅</div>
                 <div class="month" style="color:#8b7a60;">TODAY</div>
             </div>
             <div class="info">
-                <div class="title">매일 바뀌는 오늘의 좋은글 3편</div>
-                <div class="meta">마음을 따뜻하게 데우는 글 · 1,258편 모음</div>
+                <div class="title">불러오는 중...</div>
+                <div class="meta">매일 바뀌는 오늘의 좋은글 3편</div>
             </div>
             <div class="arrow">›</div>
         </a>
@@ -728,6 +729,67 @@ body {
     <span style="font-size:10px; opacity:0.4; margin: 0 6px;">·</span>
     <span style="font-size:10px; opacity:0.7;">Powered by GitHub Pages</span>
 </div>
+
+<!-- 오늘의 좋은글 3편 (날짜 시드 → 매일 자동 변경) -->
+<script>
+(async function loadTodayArticles() {
+    const listEl = document.getElementById('articleList');
+    if (!listEl) return;
+
+    try {
+        const r = await fetch('article/articles.json', { cache: 'force-cache' });
+        const arts = await r.json();
+        if (!Array.isArray(arts) || !arts.length) return;
+
+        // 날짜 시드 (article/index.html과 동일 로직 → 같은 글이 픽됨)
+        const d = new Date();
+        const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+        let x = seed >>> 0;
+        const rand = () => {
+            x = (Math.imul(x, 1664525) + 1013904223) >>> 0;
+            return x / 4294967296;
+        };
+
+        // 3개 픽 (중복 없이)
+        const picked = new Set();
+        let safety = 0;
+        while (picked.size < 3 && picked.size < arts.length && safety < 60) {
+            picked.add(Math.floor(rand() * arts.length));
+            safety++;
+        }
+        const today3 = [...picked].slice(0, 3).map(i => arts[i]);
+        if (!today3.length) return;
+
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        listEl.innerHTML = '';
+        today3.forEach(art => {
+            const preview = (art.body || '').slice(0, 55).replace(/\s+/g, ' ');
+            const cont = art.body && art.body.length > 55 ? '...' : '';
+            const a = document.createElement('a');
+            a.href = 'article/#' + art.id;
+            a.className = 'archive-item';
+            a.style.borderLeft = '3px solid #b89878';
+            a.innerHTML =
+                '<div class="date-box" style="background: #f5f1ea;">' +
+                    '<div class="day" style="color:#6b4f3a;">✨</div>' +
+                    '<div class="month" style="color:#8b7a60;">PICK</div>' +
+                '</div>' +
+                '<div class="info">' +
+                    '<div class="title">' + esc(art.title) + '</div>' +
+                    '<div class="meta">' + esc(preview) + cont + '</div>' +
+                '</div>' +
+                '<div class="arrow">›</div>';
+            listEl.appendChild(a);
+        });
+    } catch (e) {
+        console.error('좋은글 로드 실패', e);
+        // placeholder 그대로 유지 (fallback)
+    }
+})();
+</script>
 
 <!-- 날씨 위젯 (Open-Meteo + Korean AQI + Geolocation) -->
 <script>
