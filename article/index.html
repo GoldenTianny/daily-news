@@ -629,7 +629,6 @@ function makeCard(article, isToday) {
         '<div class="card-preview">' + escapeHtml(preview) + '</div>' +
         '<div class="card-meta">' +
             '<span>' + formatDate(article.date) + '</span>' +
-            '<span class="card-id">#' + article.id + '</span>' +
         '</div>';
 
     card.addEventListener('click', () => openModal(article));
@@ -770,7 +769,7 @@ async function openModal(article) {
     currentArticle = article;
     modalTitle.textContent = article.title;
     modalBody.textContent = article.body;
-    modalMeta.textContent = formatDate(article.date) + ' · #' + article.id;
+    modalMeta.textContent = formatDate(article.date);
 
     // URL 해시로 ID 반영 (공유·뒤로가기 지원)
     history.replaceState(null, '', '#' + article.id);
