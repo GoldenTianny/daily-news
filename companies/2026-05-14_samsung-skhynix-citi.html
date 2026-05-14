@@ -226,7 +226,8 @@ body {
 .data-table .highlight { color: #c0392b; font-weight: 700; }
 .data-table .pos { color: #1e8449; font-weight: 700; }
 .data-table .neg { color: #c0392b; font-weight: 700; }
-.data-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table td.num, .data-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table td.center, .data-table th.center { text-align: center; }
 
 /* 비교 박스 */
 .compare-box { display: flex; gap: 8px; margin: 8px 0; }
@@ -371,8 +372,8 @@ body {
     <div class="infographic">
         <div class="ig-title">🎯 Citi의 새 목표주가 한눈에</div>
         <table class="data-table">
-            <tr><th style="width:32%;">구분</th><th>SK하이닉스</th><th>삼성전자</th></tr>
-            <tr><td>투자의견</td><td class="pos">Buy 유지</td><td class="pos">Buy + 90일 Watch</td></tr>
+            <tr><th style="width:32%;">구분</th><th class="num">SK하이닉스</th><th class="num">삼성전자</th></tr>
+            <tr><td>투자의견</td><td class="num pos">Buy 유지</td><td class="num pos">Buy + 90일 Watch</td></tr>
             <tr><td>현재가</td><td class="num">1,686,000원</td><td class="num">285,500원</td></tr>
             <tr><td>목표주가</td><td class="num pos">3,100,000원 ▲</td><td class="num pos">460,000원 ▲</td></tr>
             <tr><td>기존 목표가</td><td class="num">1,700,000원</td><td class="num">300,000원</td></tr>
@@ -1013,12 +1014,12 @@ body {
     <div class="infographic">
         <div class="ig-title">⚠️ 양사 공통 리스크</div>
         <table class="data-table">
-            <tr><th style="width:30%;">리스크</th><th style="width:20%;">강도</th><th>내용</th></tr>
-            <tr><td>AI 수요 둔화</td><td class="highlight">★★★★★</td><td>Anthropic·OpenAI 등 토큰 수요 의존도 높음</td></tr>
-            <tr><td>업사이클 조기 종료</td><td class="highlight">★★★★</td><td>경쟁사 공급 확대로 사이클 단축 가능성</td></tr>
-            <tr><td>환율 변동</td><td>★★★</td><td>원화 강세 시 수출 매출 감소</td></tr>
-            <tr><td>중국 메모리 자립</td><td>★★★</td><td>CXMT·YMTC 등 중국 메모리 진격 가속</td></tr>
-            <tr><td>경기 둔화</td><td>★★★</td><td>스마트폰·PC 수요 둔화 시 영향</td></tr>
+            <tr><th style="width:30%;">리스크</th><th class="center" style="width:20%;">강도</th><th>내용</th></tr>
+            <tr><td>AI 수요 둔화</td><td class="center highlight">★★★★★</td><td>Anthropic·OpenAI 등 토큰 수요 의존도 높음</td></tr>
+            <tr><td>업사이클 조기 종료</td><td class="center highlight">★★★★</td><td>경쟁사 공급 확대로 사이클 단축 가능성</td></tr>
+            <tr><td>환율 변동</td><td class="center">★★★</td><td>원화 강세 시 수출 매출 감소</td></tr>
+            <tr><td>중국 메모리 자립</td><td class="center">★★★</td><td>CXMT·YMTC 등 중국 메모리 진격 가속</td></tr>
+            <tr><td>경기 둔화</td><td class="center">★★★</td><td>스마트폰·PC 수요 둔화 시 영향</td></tr>
         </table>
         <div class="ig-caption">💡 가장 큰 변수는 <strong>'AI 토큰 수요'</strong> — 이 가정이 깨지면 시나리오 전체가 바뀜</div>
     </div>
