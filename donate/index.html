@@ -31,9 +31,6 @@
   gtag('config', 'G-4BP2MLV035');
 </script>
 
-<!-- QR 코드 라이브러리 -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
@@ -271,7 +268,7 @@ body {
     margin-top: 10px;
     border: 1px solid #e8e0d8;
 }
-.qr-box canvas { display: block; }
+.qr-box img { display: block; width: 160px; height: 160px; }
 .qr-placeholder {
     width: 140px; height: 140px;
     background: #f5f0e8;
@@ -409,14 +406,6 @@ body {
         </div>
     </div>
 
-    <!-- 토스 -->
-    <div class="donate-card toss">
-        <div class="card-head">
-            <span class="card-icon">🟦</span>
-            <span class="card-title">토스 송금</span>
-        </div>
-        <a href="#" class="donate-action toss-btn placeholder" id="tossLink">송금 링크 준비중</a>
-    </div>
 </div>
 
 <!-- 코인 후원 섹션 -->
@@ -440,7 +429,7 @@ body {
                 <span class="network-tag">⚠️ Bitcoin 메인넷만</span>
             </div>
             <div class="qr-placeholder" id="btcQrPlaceholder">QR 코드 준비중</div>
-            <div class="qr-box" id="btcQrBox" style="display:none;"><canvas id="btcQr"></canvas></div>
+            <div class="qr-box" id="btcQrBox" style="display:none;"><img id="btcQr" alt="BTC QR"></div>
         </div>
     </div>
 
@@ -458,7 +447,7 @@ body {
                 <span class="network-tag">⚠️ Ethereum (ERC20)</span>
             </div>
             <div class="qr-placeholder" id="ethQrPlaceholder">QR 코드 준비중</div>
-            <div class="qr-box" id="ethQrBox" style="display:none;"><canvas id="ethQr"></canvas></div>
+            <div class="qr-box" id="ethQrBox" style="display:none;"><img id="ethQr" alt="ETH QR"></div>
         </div>
     </div>
 
@@ -476,7 +465,7 @@ body {
                 <span class="network-tag">⚠️ ERC20 (Ethereum) 네트워크만</span>
             </div>
             <div class="qr-placeholder" id="usdtQrPlaceholder">QR 코드 준비중</div>
-            <div class="qr-box" id="usdtQrBox" style="display:none;"><canvas id="usdtQr"></canvas></div>
+            <div class="qr-box" id="usdtQrBox" style="display:none;"><img id="usdtQr" alt="USDT QR"></div>
         </div>
     </div>
 </div>
@@ -543,30 +532,27 @@ if (DONATE_CONFIG.bank.name) document.getElementById('bankName').textContent = D
 if (DONATE_CONFIG.bank.account) document.getElementById('bankAccount').textContent = DONATE_CONFIG.bank.account;
 if (DONATE_CONFIG.bank.holder) document.getElementById('bankHolder').textContent = DONATE_CONFIG.bank.holder;
 
-// 코인: 주소 + QR 렌더링
+// 코인: 주소 + QR 렌더링 (api.qrserver.com 이미지로 단순화)
 function renderCrypto(prefix, address) {
     if (!address) return;
     const addrEl = document.getElementById(prefix + 'Addr');
     const qrPlaceholder = document.getElementById(prefix + 'QrPlaceholder');
     const qrBox = document.getElementById(prefix + 'QrBox');
-    const qrCanvas = document.getElementById(prefix + 'Qr');
+    const qrImg = document.getElementById(prefix + 'Qr');
 
     addrEl.textContent = address;
     addrEl.classList.remove('placeholder');
 
-    // QR 생성
-    if (typeof QRCode !== 'undefined') {
-        QRCode.toCanvas(qrCanvas, address, {
-            width: 160,
-            margin: 1,
-            color: { dark: '#1a1a1a', light: '#ffffff' }
-        }, (err) => {
-            if (!err) {
-                qrPlaceholder.style.display = 'none';
-                qrBox.style.display = 'inline-block';
-            }
-        });
-    }
+    // QR 이미지 — 외부 API (라이브러리 의존성 X)
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=4&data=' + encodeURIComponent(address);
+    qrImg.onload = () => {
+        qrPlaceholder.style.display = 'none';
+        qrBox.style.display = 'inline-block';
+    };
+    qrImg.onerror = () => {
+        qrPlaceholder.textContent = '⚠️ QR 표시 실패 (주소는 위에서 확인하세요)';
+    };
+    qrImg.src = qrUrl;
 }
 
 renderCrypto('btc', DONATE_CONFIG.btc);
