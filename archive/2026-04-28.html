@@ -687,6 +687,56 @@ body {
     .mini-good .more { color: #d4b88c; }
 }
 
+
+/* ===== 후원 버튼 ===== */
+/* top-bar용 (작은 분홍 칩) */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+/* 하단 공유 옆 (메인 액션 사이즈) */
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+
 </style>
 </head>
 <body>
@@ -695,7 +745,7 @@ body {
 <div class="top-bar">
     <a href="../index.html" class="title">📰 가좌버핏 뉴스</a>
     <div class="top-bar-actions">
-        <button class="top-share-btn" id="topShareBtn" type="button" aria-label="이 뉴스 공유하기">📤 공유</button>
+        <a href="../donate/" class="top-donate-btn">💝 후원</a><button class="top-share-btn" id="topShareBtn" type="button" aria-label="이 뉴스 공유하기">📤 공유</button>
         <div class="date-dropdown">
         <button class="date-btn" id="dateBtn" type="button" aria-haspopup="listbox" aria-expanded="false">2026.04.28 ▾</button>
         <ul class="date-menu" id="dateMenu" hidden></ul>
@@ -1302,6 +1352,7 @@ body {
 <!-- 발행분 전체 공유 버튼 -->
 <div class="share-section">
     <button class="issue-share-btn" type="button" id="shareIssueBtn">📤 이 뉴스 공유하기</button>
+    <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
 </div>
 
 <!-- 푸터 -->

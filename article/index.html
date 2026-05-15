@@ -443,6 +443,30 @@ body {
 @media (min-width: 600px) {
     body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 }
+
+/* 후원 버튼 (좋은글 모달 footer용) */
+.donate-btn-modal {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1px solid #f4d3c4;
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+}
+.donate-btn-modal:hover { background: #ffe9d6; border-color: #c0392b; }
+@media (prefers-color-scheme: dark) {
+    .donate-btn-modal { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-btn-modal:hover { background: #3a2528; }
+}
+
 </style>
 </head>
 <body>
@@ -512,6 +536,7 @@ body {
             <span class="meta" id="modalMeta">날짜</span>
             <div class="actions">
                 <button class="share-btn-modal" id="modalShare" type="button">📤 공유</button>
+                <a href="../donate/" class="donate-btn-modal">💝 후원</a>
                 <button class="like-btn" id="modalLike" type="button" aria-label="이 글 좋아요">
                     <span class="heart">❤️</span>
                     <span class="label">좋아요</span>
