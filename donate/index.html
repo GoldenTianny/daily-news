@@ -393,14 +393,20 @@ body {
         <span class="meta">가장 편리해요</span>
     </div>
 
-    <!-- 카카오페이 -->
-    <div class="donate-card kakao">
+    <!-- 계좌이체 (가장 위로) -->
+    <div class="donate-card bank">
         <div class="card-head">
-            <span class="card-icon">💛</span>
-            <span class="card-title">카카오페이 송금</span>
+            <span class="card-icon">🏦</span>
+            <span class="card-title">계좌이체</span>
             <span class="card-tag recommend">추천</span>
         </div>
-        <a href="#" class="donate-action kakao-btn placeholder" id="kakaoLink">송금 링크 준비중</a>
+        <div class="bank-info">
+            <div class="bank-line"><strong id="bankName">○○은행</strong> <span id="bankAccount">○○○-○○○○-○○○○</span></div>
+            <div class="bank-line" style="font-size:13px; color:#777;">예금주: <span id="bankHolder">가좌버핏</span></div>
+        </div>
+        <div class="crypto-actions" style="margin-top:10px;">
+            <button class="copy-btn" data-copy="bankAccount">📋 계좌번호 복사</button>
+        </div>
     </div>
 
     <!-- 토스 -->
@@ -410,21 +416,6 @@ body {
             <span class="card-title">토스 송금</span>
         </div>
         <a href="#" class="donate-action toss-btn placeholder" id="tossLink">송금 링크 준비중</a>
-    </div>
-
-    <!-- 계좌이체 -->
-    <div class="donate-card bank">
-        <div class="card-head">
-            <span class="card-icon">🏦</span>
-            <span class="card-title">계좌이체</span>
-        </div>
-        <div class="bank-info">
-            <div class="bank-line"><strong id="bankName">○○은행</strong> <span id="bankAccount">○○○-○○○○-○○○○</span></div>
-            <div class="bank-line" style="font-size:13px; color:#777;">예금주: <span id="bankHolder">가좌버핏</span></div>
-        </div>
-        <div class="crypto-actions" style="margin-top:10px;">
-            <button class="copy-btn" data-copy="bankAccount">📋 계좌번호 복사</button>
-        </div>
     </div>
 </div>
 
@@ -513,12 +504,12 @@ body {
 // 후원 정보 설정 (실제 값으로 채우세요)
 // ============================================================
 const DONATE_CONFIG = {
-    kakaopay:   '',   // 예: 'https://qr.kakaopay.com/XXXXXXXXX'
+    kakaopay:   '',   // 사용 안 함 (프라이버시)
     toss:       '',   // 예: 'https://toss.me/USERNAME'
     bank: {
-        name:    '',  // 예: '국민은행'
-        account: '',  // 예: '123-456-789012'
-        holder:  ''   // 예: '홍길동'
+        name:    '카카오뱅크',
+        account: '79794044370',
+        holder:  '서**'
     },
     btc:  '387r71BPUWycZgzNxHHL1dVfzyRN9RWeaf',
     eth:  '0xb1eaa30dfbd935e4ce1cc24b89a96a9fa31ca10a',
