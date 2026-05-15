@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>후원하기 · 가좌버핏 뉴스</title>
+<meta name="description" content="가좌버핏 뉴스를 응원해주세요 — 카카오페이·토스·계좌이체·암호화폐 후원">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="가좌버핏 뉴스 · 후원하기">
+<meta property="og:description" content="가좌버핏 뉴스를 응원해주세요 — 카카오페이·토스·계좌이체·암호화폐">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/donate/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 후원하기">
+<meta name="twitter:description" content="가좌버핏 뉴스를 응원해주세요">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<!-- QR 코드 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fef7f3;  /* 따뜻한 살구색 톤 */
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* 상단 바 */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.top-bar .home-link {
+    color: inherit; text-decoration: none;
+    font-size: 13px; font-weight: 600; opacity: 0.9;
+}
+.top-bar .home-link:hover { opacity: 1; }
+.top-bar .brand {
+    font-size: 14px; font-weight: 700;
+    margin-left: auto; opacity: 0.9;
+}
+
+/* 헤더 */
+.hero {
+    background: linear-gradient(135deg, #ff8a65 0%, #ff7043 50%, #f4511e 100%);
+    color: white;
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero h1 {
+    font-size: 30px; font-weight: 900;
+    margin-bottom: 10px; letter-spacing: -1px;
+    line-height: 1.2; position: relative;
+}
+.hero .subtitle {
+    font-size: 14px; opacity: 0.95;
+    position: relative; word-break: keep-all;
+}
+
+/* 인사말 박스 */
+.intro-msg {
+    background: white;
+    margin: 20px 12px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(244,81,30,0.08);
+    border-left: 4px solid #ff7043;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #4a3a30;
+    word-break: keep-all;
+}
+.intro-msg strong { color: #c0392b; }
+
+/* 섹션 헤더 */
+.section {
+    margin: 28px 12px 16px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 6px 12px;
+    border-bottom: 2px solid #f4d3c4;
+    margin-bottom: 14px;
+}
+.section-header h2 {
+    font-size: 17px;
+    color: #c0392b;
+    font-weight: 700;
+}
+.section-header .meta {
+    font-size: 11.5px;
+    color: #b87a5a;
+    font-weight: 500;
+}
+
+/* 후원 카드 */
+.donate-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid #ddd;
+    position: relative;
+}
+.donate-card.kakao { border-left-color: #FFCD00; }
+.donate-card.toss { border-left-color: #0064FF; }
+.donate-card.bank { border-left-color: #555; }
+.donate-card.btc { border-left-color: #F7931A; }
+.donate-card.eth { border-left-color: #627EEA; }
+.donate-card.usdt { border-left-color: #26A17B; }
+
+.donate-card .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.donate-card .card-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.donate-card .card-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #2a2a2a;
+    flex: 1;
+}
+.donate-card .card-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    color: #777;
+    letter-spacing: 0.3px;
+}
+.donate-card .card-tag.recommend {
+    background: #e8f5e9;
+    color: #1e8449;
+}
+.donate-card .card-tag.cheap {
+    background: #fff8e1;
+    color: #b9770e;
+}
+
+/* 행동 버튼 (송금/링크) */
+.donate-action {
+    display: inline-block;
+    background: #2a3540;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-top: 4px;
+}
+.donate-action:hover { background: #1a3a6c; transform: translateY(-1px); }
+.donate-action.kakao-btn { background: #FFCD00; color: #3c1e1e; }
+.donate-action.kakao-btn:hover { background: #FFE066; }
+.donate-action.toss-btn { background: #0064FF; }
+.donate-action.toss-btn:hover { background: #1e7aff; }
+
+.donate-action.placeholder {
+    background: #d8d8d8;
+    color: #888;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 코인 주소 */
+.crypto-info {
+    background: #f8f7f4;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 8px;
+}
+.crypto-addr {
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 11.5px;
+    color: #2a2a2a;
+    word-break: break-all;
+    line-height: 1.5;
+    background: white;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #e8e0d8;
+    margin-bottom: 10px;
+}
+.crypto-addr.placeholder {
+    color: #aaa;
+    font-style: italic;
+    font-family: inherit;
+}
+.crypto-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.copy-btn {
+    background: white;
+    border: 1px solid #d8d0c8;
+    color: #6a5848;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.copy-btn:hover { background: #f5ead0; border-color: #b89878; color: #5a3e28; }
+.copy-btn.copied { background: #d4f1e0; border-color: #1e8449; color: #1e8449; }
+.network-tag {
+    font-size: 10.5px;
+    color: #888;
+    padding: 3px 8px;
+    background: #f0ead8;
+    border-radius: 8px;
+}
+.qr-box {
+    display: inline-block;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #e8e0d8;
+}
+.qr-box canvas { display: block; }
+.qr-placeholder {
+    width: 140px; height: 140px;
+    background: #f5f0e8;
+    border: 2px dashed #d8c8b0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* 계좌 정보 */
+.bank-info {
+    background: #f8f7f4;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.bank-info .bank-line {
+    margin-bottom: 4px;
+}
+.bank-info strong { color: #1a3a6c; }
+
+/* 감사 박스 */
+.thanks {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe9d6 100%);
+    margin: 24px 12px 12px;
+    padding: 22px 20px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #f4d3c4;
+}
+.thanks .icon { font-size: 32px; margin-bottom: 8px; display: block; }
+.thanks h3 {
+    font-size: 16px;
+    color: #c0392b;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.thanks p {
+    font-size: 13px;
+    color: #6a5848;
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+/* 푸터 */
+.footer {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #b87a5a;
+    line-height: 1.7;
+}
+.footer .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #c0392b;
+    margin-bottom: 6px;
+}
+.footer a { color: #c0392b; font-weight: 600; text-decoration: none; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #1c1815; color: #e0d8c8; }
+    .donate-card, .intro-msg, .qr-box { background: #2a2520; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .donate-card .card-title { color: #f0e8d8; }
+    .crypto-info, .bank-info { background: #1c1815; }
+    .crypto-addr { background: #15110d; color: #f0e8d8; border-color: #3d3528; }
+    .copy-btn { background: #2a2520; color: #d8cdb8; border-color: #3d3528; }
+    .copy-btn:hover { background: #3d3528; }
+    .network-tag { background: #3d3528; color: #d8cdb8; }
+    .section-header h2 { color: #ff8a65; }
+    .section-header { border-bottom-color: #3d3528; }
+    .footer-logo { color: #ff8a65 !important; }
+    .thanks { background: linear-gradient(135deg, #2d2820 0%, #261f17 100%); border-color: #3d3528; }
+    .thanks h3 { color: #ff8a65; }
+    .thanks p { color: #c0b598; }
+    .qr-placeholder { background: #1c1815; border-color: #3d3528; color: #888; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 고정 바 -->
+<div class="top-bar">
+    <a href="../" class="home-link">← 홈으로</a>
+    <span class="brand">📰 가좌버핏 뉴스</span>
+</div>
+
+<!-- 헤더 -->
+<div class="hero">
+    <h1>💝 후원하기</h1>
+    <div class="subtitle">가좌버핏 뉴스를 응원해주세요</div>
+</div>
+
+<!-- 인사말 -->
+<div class="intro-msg">
+    매일 아침 뉴스를 정리하고 인사이트를 담는 일은 <strong>꽤 많은 시간과 정성</strong>이 들어요.
+    여러분의 작은 마음이 다음 글을 쓰는 큰 동력이 됩니다.<br><br>
+    <span style="font-size:13px; opacity:0.85;">금액과 무관하게 모든 후원에 진심으로 감사드립니다 🙇</span>
+</div>
+
+<!-- 국내 송금 섹션 -->
+<div class="section">
+    <div class="section-header">
+        <h2>🇰🇷 국내 송금</h2>
+        <span class="meta">가장 편리해요</span>
+    </div>
+
+    <!-- 카카오페이 -->
+    <div class="donate-card kakao">
+        <div class="card-head">
+            <span class="card-icon">💛</span>
+            <span class="card-title">카카오페이 송금</span>
+            <span class="card-tag recommend">추천</span>
+        </div>
+        <a href="#" class="donate-action kakao-btn placeholder" id="kakaoLink">송금 링크 준비중</a>
+    </div>
+
+    <!-- 토스 -->
+    <div class="donate-card toss">
+        <div class="card-head">
+            <span class="card-icon">🟦</span>
+            <span class="card-title">토스 송금</span>
+        </div>
+        <a href="#" class="donate-action toss-btn placeholder" id="tossLink">송금 링크 준비중</a>
+    </div>
+
+    <!-- 계좌이체 -->
+    <div class="donate-card bank">
+        <div class="card-head">
+            <span class="card-icon">🏦</span>
+            <span class="card-title">계좌이체</span>
+        </div>
+        <div class="bank-info">
+            <div class="bank-line"><strong id="bankName">○○은행</strong> <span id="bankAccount">○○○-○○○○-○○○○</span></div>
+            <div class="bank-line" style="font-size:13px; color:#777;">예금주: <span id="bankHolder">가좌버핏</span></div>
+        </div>
+        <div class="crypto-actions" style="margin-top:10px;">
+            <button class="copy-btn" data-copy="bankAccount">📋 계좌번호 복사</button>
+        </div>
+    </div>
+</div>
+
+<!-- 코인 후원 섹션 -->
+<div class="section">
+    <div class="section-header">
+        <h2>🪙 암호화폐 후원</h2>
+        <span class="meta">글로벌 가능</span>
+    </div>
+
+    <!-- BTC -->
+    <div class="donate-card btc">
+        <div class="card-head">
+            <span class="card-icon">₿</span>
+            <span class="card-title">비트코인 (BTC)</span>
+            <span class="card-tag">Bitcoin</span>
+        </div>
+        <div class="crypto-info">
+            <div class="crypto-addr placeholder" id="btcAddr">지갑 주소 준비중...</div>
+            <div class="crypto-actions">
+                <button class="copy-btn" data-copy="btcAddr">📋 주소 복사</button>
+                <span class="network-tag">⚠️ Bitcoin 메인넷만</span>
+            </div>
+            <div class="qr-placeholder" id="btcQrPlaceholder">QR 코드 준비중</div>
+            <div class="qr-box" id="btcQrBox" style="display:none;"><canvas id="btcQr"></canvas></div>
+        </div>
+    </div>
+
+    <!-- ETH -->
+    <div class="donate-card eth">
+        <div class="card-head">
+            <span class="card-icon">Ξ</span>
+            <span class="card-title">이더리움 (ETH)</span>
+            <span class="card-tag">Ethereum</span>
+        </div>
+        <div class="crypto-info">
+            <div class="crypto-addr placeholder" id="ethAddr">지갑 주소 준비중...</div>
+            <div class="crypto-actions">
+                <button class="copy-btn" data-copy="ethAddr">📋 주소 복사</button>
+                <span class="network-tag">⚠️ Ethereum (ERC20)</span>
+            </div>
+            <div class="qr-placeholder" id="ethQrPlaceholder">QR 코드 준비중</div>
+            <div class="qr-box" id="ethQrBox" style="display:none;"><canvas id="ethQr"></canvas></div>
+        </div>
+    </div>
+
+    <!-- USDT -->
+    <div class="donate-card usdt">
+        <div class="card-head">
+            <span class="card-icon">₮</span>
+            <span class="card-title">테더 (USDT)</span>
+            <span class="card-tag cheap">수수료 ↓</span>
+        </div>
+        <div class="crypto-info">
+            <div class="crypto-addr placeholder" id="usdtAddr">지갑 주소 준비중...</div>
+            <div class="crypto-actions">
+                <button class="copy-btn" data-copy="usdtAddr">📋 주소 복사</button>
+                <span class="network-tag">⚠️ TRC20 (Tron) 네트워크만</span>
+            </div>
+            <div class="qr-placeholder" id="usdtQrPlaceholder">QR 코드 준비중</div>
+            <div class="qr-box" id="usdtQrBox" style="display:none;"><canvas id="usdtQr"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<!-- 감사 박스 -->
+<div class="thanks">
+    <span class="icon">🙇</span>
+    <h3>감사합니다</h3>
+    <p>
+        가좌버핏 뉴스를 사랑해주시는 여러분 덕분에<br>
+        매일 아침 새로운 글을 쓸 수 있습니다.<br>
+        앞으로도 더 좋은 콘텐츠로 보답하겠습니다.
+    </p>
+</div>
+
+<!-- 푸터 -->
+<div class="footer">
+    <div class="footer-logo">📰 가좌버핏 뉴스</div>
+    <a href="../">← 홈으로 돌아가기</a><br/>
+    <span style="font-size:10px; opacity:0.7; display:inline-block; margin-top:8px;">개인 학습·기록 목적의 사이트</span>
+</div>
+
+<script>
+// ============================================================
+// 후원 정보 설정 (실제 값으로 채우세요)
+// ============================================================
+const DONATE_CONFIG = {
+    kakaopay:   '',   // 예: 'https://qr.kakaopay.com/XXXXXXXXX'
+    toss:       '',   // 예: 'https://toss.me/USERNAME'
+    bank: {
+        name:    '',  // 예: '국민은행'
+        account: '',  // 예: '123-456-789012'
+        holder:  ''   // 예: '홍길동'
+    },
+    btc:  '',         // 예: 'bc1q...'
+    eth:  '',         // 예: '0x...'
+    usdt: ''          // 예: 'T...' (TRC20)
+};
+
+// ============================================================
+// 렌더링
+// ============================================================
+
+// 카카오페이
+if (DONATE_CONFIG.kakaopay) {
+    const el = document.getElementById('kakaoLink');
+    el.href = DONATE_CONFIG.kakaopay;
+    el.target = '_blank';
+    el.classList.remove('placeholder');
+    el.textContent = '카카오페이로 송금 →';
+}
+
+// 토스
+if (DONATE_CONFIG.toss) {
+    const el = document.getElementById('tossLink');
+    el.href = DONATE_CONFIG.toss;
+    el.target = '_blank';
+    el.classList.remove('placeholder');
+    el.textContent = '토스로 송금 →';
+}
+
+// 계좌
+if (DONATE_CONFIG.bank.name) document.getElementById('bankName').textContent = DONATE_CONFIG.bank.name;
+if (DONATE_CONFIG.bank.account) document.getElementById('bankAccount').textContent = DONATE_CONFIG.bank.account;
+if (DONATE_CONFIG.bank.holder) document.getElementById('bankHolder').textContent = DONATE_CONFIG.bank.holder;
+
+// 코인: 주소 + QR 렌더링
+function renderCrypto(prefix, address) {
+    if (!address) return;
+    const addrEl = document.getElementById(prefix + 'Addr');
+    const qrPlaceholder = document.getElementById(prefix + 'QrPlaceholder');
+    const qrBox = document.getElementById(prefix + 'QrBox');
+    const qrCanvas = document.getElementById(prefix + 'Qr');
+
+    addrEl.textContent = address;
+    addrEl.classList.remove('placeholder');
+
+    // QR 생성
+    if (typeof QRCode !== 'undefined') {
+        QRCode.toCanvas(qrCanvas, address, {
+            width: 160,
+            margin: 1,
+            color: { dark: '#1a1a1a', light: '#ffffff' }
+        }, (err) => {
+            if (!err) {
+                qrPlaceholder.style.display = 'none';
+                qrBox.style.display = 'inline-block';
+            }
+        });
+    }
+}
+
+renderCrypto('btc', DONATE_CONFIG.btc);
+renderCrypto('eth', DONATE_CONFIG.eth);
+renderCrypto('usdt', DONATE_CONFIG.usdt);
+
+// 복사 버튼
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-copy');
+        const text = document.getElementById(targetId)?.textContent?.trim() || '';
+        if (!text || text.includes('준비중')) return;
+        try {
+            await navigator.clipboard.writeText(text);
+            const orig = btn.textContent;
+            btn.textContent = '✓ 복사됨';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = orig;
+                btn.classList.remove('copied');
+            }, 1500);
+        } catch (e) {
+            alert('복사 실패: ' + text);
+        }
+    });
+});
+</script>
+
+</body>
+</html>
