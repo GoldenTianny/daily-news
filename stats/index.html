@@ -227,6 +227,71 @@ body {
     white-space: nowrap;
 }
 
+/* 날짜별 좋아요 */
+.date-list { display: flex; flex-direction: column; gap: 14px; }
+.date-group {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.date-group .date-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1.5px solid #eef0f3;
+}
+.date-group .date-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1a3a6c;
+}
+.date-group .date-total {
+    font-size: 12px;
+    font-weight: 700;
+    color: #c0392b;
+    background: #fdf3f1;
+    padding: 3px 10px;
+    border-radius: 11px;
+}
+.date-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    text-decoration: none;
+    color: inherit;
+}
+.date-item + .date-item { border-top: 1px dashed #f0f2f5; }
+.date-item .di-count {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 800;
+    color: #c0392b;
+    min-width: 38px;
+}
+.date-item .di-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0d2444;
+    word-break: keep-all;
+    line-height: 1.4;
+}
+.date-item .di-arrow { flex-shrink: 0; color: #ccc; font-size: 15px; }
+@media (prefers-color-scheme: dark) {
+    .date-group { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .date-group .date-head { border-bottom-color: #2d3340; }
+    .date-group .date-label { color: #6da3e8; }
+    .date-group .date-total { background: #3a2528; color: #ff8a80; }
+    .date-item .di-title { color: #f0f4fa; }
+    .date-item .di-count { color: #ff8a80; }
+    .date-item + .date-item { border-top-color: #2d3340; }
+}
+
 /* 빈 상태 */
 .empty-state {
     background: white;
@@ -364,13 +429,14 @@ body {
     </div>
 </div>
 
-<!-- TOP 10 -->
+<!-- 날짜별 좋아요 -->
 <div class="list-section">
     <div class="section-header">
-        <h2>🔥 인기 기사 TOP 10</h2>
+        <h2>📅 날짜별 좋아요</h2>
+        <span class="meta">최근 14일</span>
     </div>
-    <div class="top-list" id="topList">
-        <div class="empty-state" id="topEmpty">
+    <div class="date-list" id="dateList">
+        <div class="empty-state" id="dateEmpty">
             <span class="em-icon">⏳</span>
             데이터 불러오는 중...
         </div>
@@ -558,17 +624,27 @@ function drawDailyChart(daily) {
     svg.innerHTML = svgContent;
 }
 
+// 날짜 라벨 포맷 (YYYY-MM-DD → 'M월 D일 (요일)')
+function formatDateLabel(ymd) {
+    const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return ymd;
+    const d = new Date(+m[1], +m[2] - 1, +m[3]);
+    const days = ['일','월','화','수','목','금','토'];
+    return `${+m[2]}월 ${+m[3]}일 (${days[d.getDay()]})`;
+}
+
 // 메인 로드
 async function loadStats() {
-    let summary = [], daily = [];
+    let summary = [], daily = [], byDate = [];
     try {
-        [summary, daily] = await Promise.all([
+        [summary, daily, byDate] = await Promise.all([
             callRPC('gjbuffet_stats_summary'),
-            callRPC('gjbuffet_stats_daily', { p_days: 30 })
+            callRPC('gjbuffet_stats_daily', { p_days: 30 }),
+            callRPC('gjbuffet_stats_by_date', { p_days: 14 })
         ]);
     } catch (e) {
         console.error('통계 로드 실패', e);
-        document.getElementById('topEmpty').innerHTML =
+        document.getElementById('dateEmpty').innerHTML =
             '<span class="em-icon">⚠️</span>통계 데이터를 불러오지 못했어요.<br/>' +
             '<span style="font-size:11px; opacity:0.7;">' + e.message + '</span>';
         document.getElementById('dailyChart').innerHTML =
@@ -596,38 +672,54 @@ async function loadStats() {
     document.getElementById('updatedAt').textContent = '업데이트: ' +
         new Date().toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' });
 
-    // TOP 10
-    const top10 = summary.slice(0, 10);
-    const listEl = document.getElementById('topList');
-
-    if (top10.length === 0) {
-        document.getElementById('topEmpty').innerHTML =
+    // 날짜별 좋아요 — byDate를 날짜별로 그룹핑
+    const listEl = document.getElementById('dateList');
+    if (!byDate.length) {
+        document.getElementById('dateEmpty').innerHTML =
             '<span class="em-icon">📭</span>아직 좋아요 데이터가 쌓이지 않았어요.<br/>' +
             '<span style="font-size:12px; opacity:0.8;">기사를 읽고 ❤️ 버튼을 눌러보세요</span>';
     } else {
-        listEl.innerHTML = '';
-        top10.forEach((item, i) => {
-            const info = parseSlug(item.slug);
-            const rankClass = i < 3 ? 'medal-' + (i+1) : '';
-            const a = document.createElement('a');
-            a.className = 'top-item';
-            a.href = info.url;
-            a.innerHTML =
-                '<div class="rank ' + rankClass + '">' + (i+1) + '</div>' +
-                '<div class="info">' +
-                    '<div class="title" data-slug="' + item.slug + '">' + info.label + '</div>' +
-                    '<div class="meta">' + item.slug + '</div>' +
-                '</div>' +
-                '<div class="like-count">❤️ ' + item.likes + '</div>';
-            listEl.appendChild(a);
+        // {day: [{slug, likes}, ...]} 형태로 그룹핑 (byDate는 day desc, likes desc 정렬됨)
+        const groups = {};
+        const dayOrder = [];
+        byDate.forEach(row => {
+            if (!groups[row.day]) { groups[row.day] = []; dayOrder.push(row.day); }
+            groups[row.day].push(row);
         });
 
-        // 비동기로 진짜 제목 채우기
-        top10.forEach(async (item, i) => {
-            const title = await fetchArticleTitle(item.slug);
+        listEl.innerHTML = '';
+        const titleTargets = [];  // 제목 lazy-fetch 대상
+
+        dayOrder.forEach(day => {
+            const items = groups[day];
+            const dayTotal = items.reduce((s, x) => s + Number(x.likes), 0);
+
+            const group = document.createElement('div');
+            group.className = 'date-group';
+            let html = '<div class="date-head">' +
+                '<span class="date-label">' + formatDateLabel(day) + '</span>' +
+                '<span class="date-total">총 ' + dayTotal + '</span>' +
+                '</div>';
+            items.forEach(it => {
+                const info = parseSlug(it.slug);
+                html += '<a class="date-item" href="' + info.url + '">' +
+                    '<span class="di-count">❤️ ' + it.likes + '</span>' +
+                    '<span class="di-title" data-slug="' + it.slug + '">' + info.label + '</span>' +
+                    '<span class="di-arrow">›</span>' +
+                    '</a>';
+            });
+            group.innerHTML = html;
+            listEl.appendChild(group);
+            items.forEach(it => titleTargets.push(it.slug));
+        });
+
+        // 비동기로 진짜 제목 채우기 (중복 슬러그는 한 번만 fetch)
+        const uniqueSlugs = [...new Set(titleTargets)];
+        uniqueSlugs.forEach(async (slug) => {
+            const title = await fetchArticleTitle(slug);
             if (title) {
-                const titleEl = listEl.children[i].querySelector('.title');
-                if (titleEl) titleEl.textContent = title;
+                listEl.querySelectorAll('.di-title[data-slug="' + slug + '"]')
+                    .forEach(el => { el.textContent = title; });
             }
         });
     }
