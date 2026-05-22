@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>가좌버핏 뉴스 · AI 빅3 상장 레이스 심층분석</title>
+<meta name="description" content="스페이스X·오픈AI·앤스로픽이 동시에 증시로 — 'AI 자본조달 경쟁'을 쉽게 풀어쓴 심층분석">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · AI 빅3 상장 레이스 심층분석">
+<meta property="og:description" content="스페이스X·오픈AI·앤스로픽이 동시에 증시로 — 'AI 자본조달 경쟁'을 쉽게 풀어쓴 심층분석">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/analysis/2026-05-22_ai-ipo-race.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · AI 빅3 상장 레이스 심층분석">
+<meta name="twitter:description" content="스페이스X·오픈AI·앤스로픽이 동시에 증시로 — 'AI 자본조달 경쟁'을 쉽게 풀어쓴 심층분석">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 ===== */
+.share-section { margin: 24px 16px 8px; text-align: center; }
+.analysis-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.analysis-share-btn:hover { background: #15305c; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #2a5ca8; }
+    .analysis-share-btn:hover { background: #3a6cb8; }
+}
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #0d2444 0%, #1a3a6c 50%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,80,80,0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label { font-size: 11px; letter-spacing: 5px; opacity: 0.85; margin-bottom: 16px; position: relative; }
+.cover h1 { font-size: 30px; font-weight: 900; margin-bottom: 10px; letter-spacing: -1px; line-height: 1.25; position: relative; }
+.cover h1 .highlight { color: #ff6b6b; }
+.cover .subtitle { font-size: 14px; opacity: 0.92; margin-bottom: 6px; position: relative; }
+.cover .date-info { font-size: 13px; opacity: 0.8; margin-top: 8px; position: relative; }
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 { font-size: 16px; color: #1a3a6c; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e8edf5; }
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #1a3a6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 10px;
+    margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header { padding: 16px 18px 12px; border-left: 4px solid #1a3a6c; }
+.article .num {
+    display: inline-block;
+    background: #1a3a6c;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 { font-size: 17px; font-weight: 700; color: #0d2444; line-height: 1.4; word-break: keep-all; }
+.article .body { padding: 0 18px 16px; font-size: 14.5px; line-height: 1.75; color: #2a2a2a; }
+.article .body p { margin-bottom: 12px; word-break: keep-all; }
+.article .body p:last-child { margin-bottom: 0; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title { font-size: 12px; font-weight: 700; color: #b9770e; margin-bottom: 8px; letter-spacing: 1px; }
+.easy-box p { font-size: 13.5px; line-height: 1.7; color: #3a3a3a; word-break: keep-all; margin-bottom: 8px; }
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* ===== 인포그래픽 ===== */
+.infographic { margin: 0 18px 18px; padding: 14px; background: #f7f9fc; border-radius: 8px; border: 1px solid #e3e8f0; }
+.ig-title { font-size: 13px; font-weight: 700; color: #1a3a6c; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #1a3a6c; }
+.ig-unit { font-size: 10.5px; color: #888; font-weight: 400; display: block; margin-top: 2px; }
+
+/* 통계 카드 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card { background: linear-gradient(135deg, #f0f4fa, #e3eaf5); border-left: 3px solid #1a3a6c; padding: 10px 12px; border-radius: 6px; }
+.stat-card .stat-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.stat-card .stat-value { font-size: 18px; font-weight: 800; color: #1a3a6c; line-height: 1.1; }
+.stat-card .stat-sub { font-size: 10px; color: #999; margin-top: 2px; }
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+
+/* ===== SVG/CSS 차트 ===== */
+.chart-wrap { margin-top: 6px; }
+.chart-legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 8px; font-size: 11px; color: #555; }
+.chart-legend .lg { display: flex; align-items: center; gap: 5px; }
+.chart-legend .sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* CSS 막대차트 (가로) */
+.hbar-row { display: flex; align-items: center; margin-bottom: 9px; }
+.hbar-label { flex-shrink: 0; width: 78px; font-size: 11.5px; color: #444; font-weight: 600; text-align: right; padding-right: 8px; word-break: keep-all; }
+.hbar-track { flex: 1; background: #e7ebf2; border-radius: 5px; height: 22px; position: relative; overflow: hidden; }
+.hbar-fill { height: 100%; border-radius: 5px; display: flex; align-items: center; justify-content: flex-end; padding-right: 7px; font-size: 11px; font-weight: 700; color: white; min-width: 34px; }
+.hbar-blue { background: linear-gradient(90deg, #2a5ca8, #1a3a6c); }
+.hbar-red  { background: linear-gradient(90deg, #e05a4a, #c0392b); }
+.hbar-teal { background: linear-gradient(90deg, #19b48f, #138d75); }
+.hbar-gray { background: linear-gradient(90deg, #aab4c2, #8997a8); }
+
+.ig-caption { margin-top: 8px; font-size: 11.5px; color: #666; text-align: center; line-height: 1.5; padding: 4px; }
+.ig-caption strong { color: #c0392b; }
+
+/* 비교 박스 */
+.compare-box { display: flex; gap: 8px; margin: 8px 0; }
+.compare-side { flex: 1; padding: 10px 8px; border-radius: 6px; text-align: center; }
+.compare-side .c-label { font-size: 11px; margin-bottom: 4px; font-weight: 600; }
+.compare-side .c-value { font-size: 22px; font-weight: 800; line-height: 1.1; }
+.compare-side p { font-size: 11.5px; line-height: 1.5; margin-top: 4px; color: #333; }
+.compare-vs { align-self: center; font-size: 13px; font-weight: 700; color: #888; }
+.cmp-blue { background: linear-gradient(135deg, #eaf1fb, #d6e4f7); }
+.cmp-blue .c-value { color: #1a3a6c; }
+.cmp-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); }
+.cmp-red .c-value { color: #c0392b; }
+
+/* 키워드 태그 */
+.keyword-box { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.keyword-tag { background: #1a3a6c; color: white; padding: 4px 10px; font-size: 11.5px; border-radius: 12px; font-weight: 500; }
+
+/* 데이터 표 (보조용) */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+.data-table th { background: #1a3a6c; color: white; padding: 8px 8px; text-align: left; font-weight: 600; font-size: 12px; }
+.data-table td { padding: 7px 8px; border-bottom: 1px solid #e5e8ed; background: white; word-break: keep-all; }
+.data-table tr:nth-child(even) td { background: #f7f9fc; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+
+/* 타임라인 */
+.timeline { position: relative; padding-left: 20px; margin-top: 10px; }
+.timeline::before { content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: #1a3a6c; }
+.tl-item { position: relative; padding-bottom: 12px; padding-left: 14px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -18px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #c0392b; border: 2px solid white; box-shadow: 0 0 0 2px #1a3a6c; }
+.tl-date { font-size: 11px; font-weight: 700; color: #c0392b; margin-bottom: 2px; }
+.tl-text { font-size: 12.5px; color: #333; line-height: 1.5; }
+
+/* 푸터 */
+.footer-note { text-align: center; padding: 30px 20px; font-size: 12px; color: #888; line-height: 1.7; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .hbar-track { background: #2d3340; }
+    .chart-legend { color: #aaa; }
+    .data-table td { background: #232730; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table tr:nth-child(even) td { background: #1c1f26; }
+    .compare-side p { color: #c8ccd4; }
+    .cmp-blue { background: linear-gradient(135deg, #1f2942, #18203a); }
+    .cmp-blue .c-value { color: #6da3e8; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+    .tl-text { color: #c8ccd4; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+/* ===== 후원 버튼 ===== */
+/* top-bar용 (작은 분홍 칩) */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+/* 하단 공유 옆 (메인 액션 사이즈) */
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 심층분석</a>
+    <span class="date">2026.05.22</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">DEEP DIVE · AI · IPO</div>
+    <h1>AI 빅3, <span class="highlight">같은 주에 증시로</span><br>'쩐의 전쟁'이 시작됐다</h1>
+    <div class="subtitle">스페이스X · 오픈AI · 앤스로픽, 동시다발 상장 추진</div>
+    <div class="date-info">심층분석 · 쉽게 풀어쓰기</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>한 줄로 이해하기 — 왜 세 회사가 동시에 상장하나</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>스페이스X — 3000조원 몸값과 '머스크 리스크'</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>오픈AI — 1279조원 챗GPT, 속도전에 나선 이유</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>앤스로픽 — 첫 흑자 앞둔 1350조원 다크호스</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>세 회사 한눈에 비교 — 누가 진짜 강자인가</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>투자자가 꼭 알아야 할 것 — 종합 전망</span>
+    </a>
+</div>
+
+<!-- 기사 1 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">No. 1</span>
+        <h3>한 줄로 이해하기 — 왜 세 회사가 동시에 상장하나</h3>
+    </div>
+    <div class="body">
+        <p>2026년 5월, 인공지능(AI) 시대를 대표하는 세 거대 기업이 거의 동시에 미국 증시 입성 절차를 밟기 시작했습니다. 일론 머스크의 우주기업 <strong>스페이스X</strong>가 277쪽짜리 기업공개(IPO) 신청서를 미국 증권거래위원회(SEC)에 제출했고, 챗GPT를 만든 <strong>오픈AI</strong>도 곧 신청서를 낼 예정이며, AI 스타트업 <strong>앤스로픽</strong> 역시 올해 안에 상장을 추진하고 있습니다.</p>
+        <p>이들이 한꺼번에 증시로 향하는 이유는 분명합니다. AI 산업이 '누가 더 똑똑한 모델을 만드느냐'의 경쟁을 넘어, 데이터센터와 AI 반도체, 전력 확보에 들어가는 천문학적 비용을 누가 더 많이 끌어모으느냐의 '자본 조달 경쟁'으로 바뀌었기 때문입니다. 막대한 돈이 필요한 만큼, 가장 확실한 자금줄인 주식시장의 문을 두드리는 것입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>AI를 한 대 굴리려면 <strong>거대한 컴퓨터 공장(데이터센터)</strong>과 <strong>비싼 AI 칩</strong>, 그리고 막대한 <strong>전기</strong>가 필요합니다. 똑똑한 기술만으로는 안 되고, 결국 '돈싸움'이 됐다는 뜻입니다.</p>
+        <p>그래서 세 회사 모두 가장 큰 돈을 모을 수 있는 <strong>주식시장(상장)</strong>으로 나섭니다. 상장하면 일반 투자자에게 주식을 팔아 한 번에 수십조 원을 모을 수 있기 때문입니다. 'AI 쩐의 전쟁'이 본격화된 셈입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📌 AI 빅3 상장 일정</div>
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-date">5월 20일 (현지시간)</div>
+                <div class="tl-text">스페이스X, SEC에 277쪽 IPO 신청서(S-1) 제출</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">5월 22일 전후</div>
+                <div class="tl-text">오픈AI, IPO 신청서 제출 임박 (골드만삭스·모건스탠리 주관)</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">6월</div>
+                <div class="tl-text">스페이스X 나스닥 상장 예정 (종목코드 'SPCX')</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">9월</div>
+                <div class="tl-text">오픈AI 상장 목표</div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-date">10월</div>
+                <div class="tl-text">앤스로픽 상장 추진</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#AI상장레이스</span>
+            <span class="keyword-tag">#자본조달경쟁</span>
+            <span class="keyword-tag">#스페이스X</span>
+            <span class="keyword-tag">#오픈AI</span>
+            <span class="keyword-tag">#앤스로픽</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 2 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">No. 2</span>
+        <h3>스페이스X — 3000조원 몸값과 '머스크 리스크'</h3>
+    </div>
+    <div class="body">
+        <p>스페이스X는 다음 달 12일 나스닥에 'SPCX'로 상장을 추진하며, 기업가치는 최대 2조달러(약 3000조원)에 이를 것으로 예상됩니다. 24년간 베일에 가려져 있던 재무구조가 처음 공개됐는데, 지난해 매출은 187억달러로 전년보다 33% 늘었지만 49억달러 순손실을 내며 흑자에서 적자로 돌아섰습니다. 외형은 빠르게 커지지만 손실이 더 빠르게 늘어나는 'AI 투자형 적자' 구조입니다.</p>
+        <p>핵심은 위성인터넷 '스타링크'에서 번 현금을 우주 로켓과 xAI 데이터센터에 쏟아붓는 구조라는 점입니다. 전체 설비투자 101억달러 중 76%가 AI 인프라에 집중됐습니다. 신청서가 직접 명시한 최대 위험은 '머스크 리스크'입니다. 머스크가 테슬라·xAI·뉴럴링크 등을 함께 운영해 경영에 전념하지 못할 수 있고, 그에게 문제가 생기면 회사가 흔들릴 수 있다는 것입니다. 상장 후에도 머스크의 의결권은 85.1%에 달해 사실상 그의 개인 회사라는 평가가 나옵니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>스페이스X는 이제 '로켓 회사'가 아니라 <strong>AI 투자 회사</strong>에 가깝습니다. 스타링크(위성인터넷)로 번 돈을 거의 다 우주 사업과 AI에 쏟아붓고 있어서, 매출은 크게 늘어도 <strong>적자</strong>가 납니다.</p>
+        <p>또 하나 큰 위험은 <strong>'머스크 한 사람에게 너무 의존한다'</strong>는 점입니다. 회사 의결권의 85%를 머스크가 쥐고 있어서, 그가 다른 일에 정신이 팔리거나 사고가 나면 회사 전체가 휘청일 수 있다고 회사 스스로 인정한 것입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 스페이스X 매출 vs 순이익 추이 <span class="ig-unit">단위: 억달러</span></div>
+        <div class="chart-wrap">
+            <svg viewBox="0 0 320 200" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="스페이스X 매출과 순이익 추이 막대차트">
+                <!-- 0 기준선 -->
+                <line x1="40" y1="120" x2="310" y2="120" stroke="#9aa6b6" stroke-width="1.2"/>
+                <text x="34" y="124" text-anchor="end" font-size="9" fill="#888">0</text>
+                <!-- 2024 -->
+                <rect x="55"  y="48"  width="26" height="72" rx="3" fill="#bcd16a"/>
+                <text x="68" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#5a6b1f">140.1</text>
+                <rect x="84"  y="116" width="26" height="4"  rx="2" fill="#1a3a6c"/>
+                <text x="97" y="135" text-anchor="middle" font-size="9" fill="#1a3a6c">7.9</text>
+                <text x="82" y="155" text-anchor="middle" font-size="10" fill="#555">2024년</text>
+                <!-- 2025 -->
+                <rect x="140" y="24"  width="26" height="96" rx="3" fill="#bcd16a"/>
+                <text x="153" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#5a6b1f">186.7</text>
+                <rect x="169" y="120" width="26" height="50" rx="3" fill="#c0392b"/>
+                <text x="182" y="184" text-anchor="middle" font-size="9" font-weight="700" fill="#c0392b">-49.4</text>
+                <text x="167" y="155" text-anchor="middle" font-size="10" fill="#555">2025년</text>
+                <!-- 2026 1Q -->
+                <rect x="225" y="72"  width="26" height="48" rx="3" fill="#bcd16a"/>
+                <text x="238" y="68" text-anchor="middle" font-size="10" font-weight="700" fill="#5a6b1f">46.9</text>
+                <rect x="254" y="120" width="26" height="43" rx="3" fill="#c0392b"/>
+                <text x="267" y="177" text-anchor="middle" font-size="9" font-weight="700" fill="#c0392b">-42.7</text>
+                <text x="252" y="155" text-anchor="middle" font-size="9.5" fill="#555">26년 1Q</text>
+            </svg>
+            <div class="chart-legend">
+                <span class="lg"><span class="sw" style="background:#bcd16a"></span>매출</span>
+                <span class="lg"><span class="sw" style="background:#c0392b"></span>순손실</span>
+                <span class="lg"><span class="sw" style="background:#1a3a6c"></span>순이익</span>
+            </div>
+        </div>
+        <div class="ig-caption">매출은 매년 커지지만 <strong>2025년부터 대규모 적자</strong> 전환 · 자료: 미국 증권거래위원회(SEC)</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 설비투자 101억달러, 어디에 썼나</div>
+        <div class="chart-wrap">
+            <div class="hbar-row">
+                <div class="hbar-label">AI 인프라</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-red" style="width:76%">76%</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">그 외</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-gray" style="width:24%">24%</div></div>
+            </div>
+        </div>
+        <div class="ig-caption">설비투자의 <strong>4분의 3 이상이 AI 인프라</strong>에 집중 — 사실상 AI 베팅</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📌 상장 후 의결권 구조</div>
+        <div class="compare-box">
+            <div class="compare-side cmp-red">
+                <div class="c-label">머스크 (내부자)</div>
+                <div class="c-value">85.1%</div>
+                <p>클래스B<br>1주당 10표</p>
+            </div>
+            <div class="compare-vs">vs</div>
+            <div class="compare-side cmp-blue">
+                <div class="c-label">일반 투자자</div>
+                <div class="c-value">14.9%</div>
+                <p>클래스A<br>1주당 1표</p>
+            </div>
+        </div>
+        <div class="ig-caption">차등의결권 구조로 <strong>머스크 1인 지배력</strong> 유지 · 매출의 약 20%는 美 정부부처에서 발생</div>
+    </div>
+</article>
+
+<!-- 기사 3 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">No. 3</span>
+        <h3>오픈AI — 1279조원 챗GPT, 속도전에 나선 이유</h3>
+    </div>
+    <div class="body">
+        <p>생성형 AI 열풍을 이끈 오픈AI도 이르면 이번 주 IPO 신청에 나섭니다. 기업가치만 8520억달러(약 1279조원)에 달하며, 골드만삭스와 모건스탠리가 주관을 맡아 9월 전후 상장을 목표로 합니다. 시장에서는 이번 IPO를 'AI 산업 구조 변화의 상징적 사건'으로 봅니다. 챗GPT 등장 초기만 해도 '누가 더 뛰어난 모델을 내놓느냐'가 관건이었지만, 이제는 막대한 자본을 조달할 수 있는 기업만 살아남는 구조로 바뀌었기 때문입니다.</p>
+        <p>오픈AI가 상장 속도를 내는 데는 경쟁사 앤스로픽을 견제하려는 전략이 깔려 있습니다. AI 모델과 기업용 코딩 시장에서 맞붙는 앤스로픽보다 먼저 증시에 입성해 투자금을 유리하게 끌어오겠다는 것입니다. 다만 고민도 큽니다. 매출은 지난해 200억달러로 1년 만에 3배 이상 늘었지만, 비용이 더 빠르게 불어나고 있습니다. 지난해 현금 소진액만 80억달러에 달했고, 추가 투자 유치가 없으면 내년 중반 현금 부족 위기에 직면할 수 있다는 우려가 나옵니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>오픈AI는 챗GPT로 가장 유명한 회사지만, <strong>버는 돈보다 쓰는 돈이 더 빠르게 늘어나는</strong> 게 약점입니다. 1년에 80억달러(약 11조원)의 현금을 그냥 태워 없앴습니다.</p>
+        <p>그래서 <strong>경쟁사(앤스로픽)보다 먼저 상장</strong>해 돈을 끌어모으려고 서두르는 것입니다. 먼저 증시에 들어가 투자금을 선점하면, 추격하는 경쟁사보다 유리한 고지를 차지할 수 있기 때문입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 오픈AI 연매출 급증세 <span class="ig-unit">단위: 억달러</span></div>
+        <div class="chart-wrap">
+            <div class="hbar-row">
+                <div class="hbar-label">2024년</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-gray" style="width:21%">60</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">2025년</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-blue" style="width:70%">200</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">2030년(목표)</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-teal" style="width:100%">2840</div></div>
+            </div>
+        </div>
+        <div class="ig-caption">1년 만에 매출 <strong>3배 이상</strong> 성장 · 2030년 2840억달러 연매출 기대 (회사 내부 전망)</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚠️ 빛과 그림자</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-teal">
+                <div class="stat-label">지난해 매출</div>
+                <div class="stat-value">200억$</div>
+                <div class="stat-sub">전년比 3배+</div>
+            </div>
+            <div class="stat-card stat-red">
+                <div class="stat-label">지난해 현금 소진</div>
+                <div class="stat-value">80억$</div>
+                <div class="stat-sub">올해 170억$ 전망</div>
+            </div>
+        </div>
+        <div class="ig-caption">3월 1220억달러 조달 성공했으나, <strong>추가 유치 없으면 내년 중반 현금 부족</strong> 우려</div>
+    </div>
+</article>
+
+<!-- 기사 4 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">No. 4</span>
+        <h3>앤스로픽 — 첫 흑자 앞둔 1350조원 다크호스</h3>
+    </div>
+    <div class="body">
+        <p>연내 상장을 추진 중인 앤스로픽은 올해 2분기에 사상 처음으로 영업흑자를 기록할 전망입니다. 막대한 데이터센터 투자와 반도체 비용으로 AI 기업의 장기 적자가 불가피하다는 관측이 지배적이었는데, 앤스로픽이 이를 뒤집는 첫 사례가 될 수 있다는 평가가 나옵니다. 올해 2분기 매출은 109억달러(약 16조원)로 전망되는데, 1분기 48억달러와 비교하면 두 배 이상 늘어난 수치입니다.</p>
+        <p>현재 기업가치는 9000억달러(약 1353조원) 수준에서 300억달러 규모 신규 투자유치를 추진 중입니다. 이 라운드가 성사되면 기업가치 기준으로 경쟁사 오픈AI를 넘어설 가능성도 거론됩니다. 흑자 전환의 비결은 비용 관리입니다. 1분기에 매출 1달러당 71센트를 컴퓨팅 비용으로 썼지만, 2분기에는 이를 56센트까지 낮췄습니다. 엔비디아 GPU보다 상대적으로 싼 구글·아마존의 AI 칩을 적극 활용하고, 무료 이용자가 많은 오픈AI와 달리 기업고객 중심의 유료 사업 구조를 갖춘 점이 강점으로 꼽힙니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>AI 회사는 보통 '돈 먹는 하마'라 적자가 당연하게 여겨졌습니다. 그런데 앤스로픽은 <strong>AI 회사 중 처음으로 흑자</strong>를 낼 것으로 보입니다.</p>
+        <p>비결은 두 가지입니다. ① 비싼 엔비디아 칩 대신 <strong>구글·아마존의 더 싼 칩</strong>을 써서 비용을 줄였고, ② 공짜 이용자가 많은 오픈AI와 달리 <strong>돈 내는 기업 고객</strong> 위주로 장사를 합니다. 그래서 버는 만큼 남기는 구조를 만든 것입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 앤스로픽 분기 매출 + 비용 효율 개선</div>
+        <div class="chart-wrap">
+            <div class="hbar-row">
+                <div class="hbar-label">1분기 매출</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-gray" style="width:44%">48억$</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">2분기 매출</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-teal" style="width:100%">109억$</div></div>
+            </div>
+        </div>
+        <div class="compare-box" style="margin-top:12px">
+            <div class="compare-side cmp-red">
+                <div class="c-label">1분기 컴퓨팅 비용</div>
+                <div class="c-value">71¢</div>
+                <p>매출 1달러당</p>
+            </div>
+            <div class="compare-vs">▶</div>
+            <div class="compare-side cmp-blue">
+                <div class="c-label">2분기 컴퓨팅 비용</div>
+                <div class="c-value">56¢</div>
+                <p>매출 1달러당</p>
+            </div>
+        </div>
+        <div class="ig-caption">매출 1달러당 비용을 <strong>71센트 → 56센트</strong>로 절감 → 첫 흑자 전망의 핵심</div>
+    </div>
+</article>
+
+<!-- 기사 5 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">No. 5</span>
+        <h3>세 회사 한눈에 비교 — 누가 진짜 강자인가</h3>
+    </div>
+    <div class="body">
+        <p>세 회사는 사업 내용도, 강점도 제각각입니다. 스페이스X는 우주발사체와 위성통신, 오픈AI와 앤스로픽은 생성형 AI가 본업입니다. 기업가치는 스페이스X가 최대 2조달러로 가장 크지만, 이는 지난해 매출의 약 100배에 달하는 수준이어서 테슬라(15배)나 애플(7배)보다 훨씬 높게 평가받는 상황입니다.</p>
+        <p>주목할 점은 수익성입니다. 매출 규모가 가장 작은 앤스로픽이 가장 먼저 흑자를 낼 전망인 반면, 가장 유명한 오픈AI는 현금 소진 속도가 가장 빠릅니다. '몸집'과 '내실'이 꼭 비례하지는 않는다는 뜻입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 기업가치 비교 <span class="ig-unit">단위: 억달러</span></div>
+        <div class="chart-wrap">
+            <div class="hbar-row">
+                <div class="hbar-label">스페이스X</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-blue" style="width:100%">20,000</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">앤스로픽</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-teal" style="width:45%">9,000</div></div>
+            </div>
+            <div class="hbar-row">
+                <div class="hbar-label">오픈AI</div>
+                <div class="hbar-track"><div class="hbar-fill hbar-gray" style="width:43%">8,520</div></div>
+            </div>
+        </div>
+        <div class="ig-caption">스페이스X 몸값은 지난해 매출의 <strong>약 100배</strong> — 테슬라(15배)·애플(7배) 크게 웃돌아</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📋 AI 빅3 핵심 비교표</div>
+        <table class="data-table">
+            <tr>
+                <th>구분</th><th>스페이스X</th><th>오픈AI</th><th>앤스로픽</th>
+            </tr>
+            <tr>
+                <td>기업가치</td><td class="highlight">1.5~2조$</td><td>8,520억$</td><td>9,000억$</td>
+            </tr>
+            <tr>
+                <td>상장 예정</td><td>6월</td><td>9월</td><td>10월</td>
+            </tr>
+            <tr>
+                <td>사업 내용</td><td>우주·위성</td><td>생성형 AI</td><td>생성형 AI</td>
+            </tr>
+            <tr>
+                <td>수익성</td><td>적자</td><td class="highlight">적자(현금↓)</td><td class="highlight">흑자 전망</td>
+            </tr>
+        </table>
+        <div class="ig-caption">가장 작은 <strong>앤스로픽이 가장 먼저 흑자</strong> · 가장 유명한 오픈AI는 현금 소진 최다</div>
+    </div>
+</article>
+
+<!-- 기사 6 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">No. 6</span>
+        <h3>투자자가 꼭 알아야 할 것 — 종합 전망</h3>
+    </div>
+    <div class="body">
+        <p>AI 빅3의 동시 상장은 'AI 거품 논란'을 시험대에 올리는 사건이기도 합니다. 세 회사 모두 미래 성장성에 대한 기대로 막대한 가치를 인정받지만, 실제 이익은 아직 충분치 않거나 적자입니다. 특히 스페이스X는 지난해 매출의 100배에 달하는 몸값이, 오픈AI는 빠른 현금 소진이, 앤스로픽은 흑자 전환의 지속 가능성이 각각 시험대에 오릅니다.</p>
+        <p>일반 투자자 입장에서는 '유명한 회사'와 '돈을 잘 버는 회사'가 다를 수 있다는 점을 기억할 필요가 있습니다. 상장 직후의 높은 관심과 기대가 주가에 이미 반영돼 있을 가능성이 크기 때문에, 화제성만 보고 뛰어들기보다 각 회사의 매출·비용·수익 구조를 차분히 따져보는 자세가 중요합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 핵심 3줄 요약</div>
+        <p>① <strong>스페이스X</strong> — 몸값은 가장 크지만(3000조원) 적자에 머스크 1인 의존이 위험 요인.</p>
+        <p>② <strong>오픈AI</strong> — 가장 유명하지만 현금을 가장 빠르게 태우는 중, 그래서 상장 속도전.</p>
+        <p>③ <strong>앤스로픽</strong> — 가장 작지만 가장 먼저 흑자, '내실'로 주목받는 다크호스.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚠️ 투자 체크포인트</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">스페이스X 변수</div>
+                <div class="stat-value">머스크</div>
+                <div class="stat-sub">의결권 85.1% 집중</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">오픈AI 변수</div>
+                <div class="stat-value">현금</div>
+                <div class="stat-sub">내년 중반 부족 우려</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">앤스로픽 변수</div>
+                <div class="stat-value">지속성</div>
+                <div class="stat-sub">흑자 유지 여부</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#AI거품논란</span>
+            <span class="keyword-tag">#IPO투자주의</span>
+            <span class="keyword-tag">#수익성</span>
+            <span class="keyword-tag">#밸류에이션</span>
+        </div>
+        <div class="ig-caption">화제성보다 <strong>매출·비용·수익 구조</strong>를 따져보는 자세가 중요</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" onclick="shareAnalysis()">📤 이 분석 공유하기</button>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    가좌버핏 뉴스 · 심층분석<br>
+    2026년 5월 22일<br>
+    자료: 미국 증권거래위원회(SEC), WSJ, 디인포메이션 등<br>
+    본 분석은 정보 제공 목적이며 투자 권유가 아닙니다.
+</div>
+
+<script>
+function shareAnalysis() {
+    const shareData = {
+        title: '가좌버핏 뉴스 · AI 빅3 상장 레이스 심층분석',
+        text: '스페이스X·오픈AI·앤스로픽이 동시에 증시로 — AI 자본조달 경쟁 쉽게 풀어쓰기',
+        url: window.location.href
+    };
+    if (navigator.share) {
+        navigator.share(shareData).catch(()=>{});
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(()=>{
+            alert('링크가 복사되었습니다!');
+        });
+    }
+}
+</script>
+
+</body>
+</html>
