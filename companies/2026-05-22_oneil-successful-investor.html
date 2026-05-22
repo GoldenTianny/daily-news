@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>가좌버핏 뉴스 · 윌리엄 오닐 『성공하는 주식투자』</title>
+<meta name="description" content="윌리엄 오닐의 성공하는 주식투자 5단계 원칙 — 시장방향·3:1 손익비·CAN SLIM·매도원칙·포트폴리오 경영 완전정리">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · 윌리엄 오닐 『성공하는 주식투자』">
+<meta property="og:description" content="시장방향·3:1 손익비·CAN SLIM·매도원칙·포트폴리오 경영 — 오닐의 5단계 원칙 완전정리">
+<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:url" content="https://gjbuffet.kr/companies/2026-05-22_oneil-successful-investor.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 윌리엄 오닐 『성공하는 주식투자』">
+<meta name="twitter:description" content="시장방향·3:1 손익비·CAN SLIM·매도원칙·포트폴리오 경영 — 오닐의 5단계 원칙 완전정리">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 ===== */
+.share-section { margin: 24px 16px 8px; text-align: center; }
+.analysis-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.analysis-share-btn:hover { background: #15305c; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #2a5ca8; }
+    .analysis-share-btn:hover { background: #3a6cb8; }
+}
+
+/* ===== 후원 버튼 ===== */
+/* top-bar용 (작은 분홍 칩) */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+/* 하단 공유 옆 (메인 액션 사이즈) */
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+
+/* ===== 표지 (도서 리뷰: 딥블루·골드 톤) ===== */
+.cover {
+    background: linear-gradient(135deg, #14213d 0%, #1a3a6c 50%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(212,175,55,0.22) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label { font-size: 11px; letter-spacing: 5px; opacity: 0.85; margin-bottom: 16px; position: relative; }
+.cover h1 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.3;
+    position: relative;
+}
+.cover h1 .highlight { color: #f4d35e; }
+.cover .subtitle { font-size: 14px; opacity: 0.92; margin-bottom: 6px; position: relative; }
+.cover .date-info { font-size: 13px; opacity: 0.8; margin-top: 8px; position: relative; }
+.cover .book-meta {
+    position: relative;
+    margin-top: 14px;
+    display: inline-block;
+    font-size: 11.5px;
+    opacity: 0.9;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+}
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 { font-size: 16px; color: #1a3a6c; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e8edf5; }
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0; width: 24px; height: 24px;
+    background: #1a3a6c; color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    margin-right: 10px; margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header { padding: 16px 18px 12px; border-left: 4px solid #1a3a6c; }
+.article .num {
+    display: inline-block;
+    background: #1a3a6c; color: white;
+    font-size: 12px; font-weight: 700;
+    padding: 3px 9px; border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article .num.step { background: #b9870e; }
+.article h3 { font-size: 17px; font-weight: 700; color: #0d2444; line-height: 1.4; word-break: keep-all; }
+.article .body { padding: 0 18px 16px; font-size: 14.5px; line-height: 1.75; color: #2a2a2a; }
+.article .body p { margin-bottom: 12px; word-break: keep-all; }
+.article .body p:last-child { margin-bottom: 0; }
+.article .body strong { color: #14213d; }
+
+/* 인용구 박스 (오닐 어록) */
+.quote-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #eef2f9 0%, #e3eaf5 100%);
+    border-left: 4px solid #1a3a6c;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-style: italic;
+    font-size: 14px;
+    color: #243b5e;
+    line-height: 1.7;
+}
+.quote-box .q-mark { font-size: 22px; font-weight: 900; color: #2a5ca8; margin-right: 4px; }
+.quote-box .q-author { display: block; margin-top: 8px; font-style: normal; font-size: 12px; font-weight: 700; color: #888; text-align: right; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title { font-size: 12px; font-weight: 700; color: #b9770e; margin-bottom: 8px; letter-spacing: 1px; }
+.easy-box p { font-size: 13.5px; line-height: 1.7; color: #3a3a3a; word-break: keep-all; margin-bottom: 8px; }
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title { font-size: 13px; font-weight: 700; color: #1a3a6c; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #1a3a6c; }
+.ig-unit { font-size: 10.5px; color: #888; font-weight: 400; display: block; margin-top: 2px; }
+
+/* 통계 카드 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card { background: linear-gradient(135deg, #f0f4fa, #e3eaf5); border-left: 3px solid #1a3a6c; padding: 10px 12px; border-radius: 6px; }
+.stat-card .stat-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.stat-card .stat-value { font-size: 18px; font-weight: 800; color: #1a3a6c; line-height: 1.1; }
+.stat-card .stat-sub { font-size: 10px; color: #999; margin-top: 2px; }
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+.stat-blue { background: linear-gradient(135deg, #e3f0fc, #cde4f8); border-left-color: #2874a6; }
+.stat-blue .stat-value { color: #2874a6; }
+.stat-green { background: linear-gradient(135deg, #eafaf1, #d4f1e0); border-left-color: #1e8449; }
+.stat-green .stat-value { color: #1e8449; }
+
+/* 데이터 표 */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+.data-table th { background: #1a3a6c; color: white; padding: 8px 8px; text-align: left; font-weight: 600; font-size: 12px; }
+.data-table td { padding: 7px 8px; border-bottom: 1px solid #e5e8ed; background: white; word-break: keep-all; }
+.data-table tr:nth-child(even) td { background: #f7f9fc; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+.data-table .pos { color: #1e8449; font-weight: 700; }
+.data-table .neg { color: #c0392b; font-weight: 700; }
+.data-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table td.center { text-align: center; }
+
+/* 비교 박스 */
+.compare-box { display: flex; gap: 8px; margin: 8px 0; }
+.compare-side { flex: 1; padding: 10px 8px; border-radius: 6px; text-align: center; }
+.compare-side .c-label { font-size: 11px; margin-bottom: 4px; font-weight: 600; }
+.compare-side .c-value { font-size: 22px; font-weight: 800; line-height: 1.1; }
+.compare-side p { font-size: 11.5px; line-height: 1.5; margin-top: 4px; color: #333; }
+.compare-vs { align-self: center; font-size: 13px; font-weight: 700; color: #888; }
+
+/* 키워드 태그 */
+.keyword-box { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.keyword-tag { background: #1a3a6c; color: white; padding: 4px 10px; font-size: 11.5px; border-radius: 12px; font-weight: 500; }
+
+/* CAN SLIM 글자 배지 */
+.canslim-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid #eceff4; }
+.canslim-row:last-child { border-bottom: none; }
+.canslim-badge {
+    flex-shrink: 0; width: 30px; height: 30px;
+    background: linear-gradient(135deg, #1a3a6c, #2a5ca8);
+    color: #fff; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900;
+    box-shadow: 0 2px 5px rgba(26,58,108,0.3);
+}
+.canslim-text { font-size: 13px; line-height: 1.55; }
+.canslim-text .ct-title { font-weight: 700; color: #14213d; }
+
+/* 캡션 */
+.ig-caption { margin-top: 8px; font-size: 11.5px; color: #666; text-align: center; line-height: 1.5; padding: 4px; }
+.ig-caption strong { color: #c0392b; }
+
+/* ===== SVG 차트 공통 ===== */
+.chart-svg { width: 100%; height: auto; display: block; }
+.chart-svg text { font-family: inherit; font-size: 11px; fill: #444; }
+.chart-svg .axis-line { stroke: #c8d0dc; stroke-width: 1; }
+.chart-svg .grid-line { stroke: #e8edf5; stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-svg .value-label { font-weight: 700; font-size: 11px; }
+
+/* 푸터 */
+.footer-note { text-align: center; padding: 30px 20px; font-size: 12px; color: #888; line-height: 1.7; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .article .body strong { color: #f4d35e; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .data-table td { background: #232730; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table tr:nth-child(even) td { background: #1c1f26; }
+    .compare-side p { color: #c8ccd4; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+    .quote-box { background: linear-gradient(135deg, #1f2530, #1a1f2a); color: #b8c5dc; }
+    .quote-box .q-author { color: #888; }
+    .canslim-text .ct-title { color: #f0f4fa; }
+    .canslim-row { border-bottom-color: #2d3340; }
+    .chart-svg text { fill: #c8ccd4; }
+    .chart-svg .axis-line { stroke: #444b5a; }
+    .chart-svg .grid-line { stroke: #2d3340; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 책으로 배우는 투자</a>
+    <span class="date">2026.05.22</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">BOOK REVIEW · INVESTING CLASSIC</div>
+    <h1>윌리엄 오닐<br>'<span class="highlight">성공하는 주식투자의 5단계</span>'</h1>
+    <div class="subtitle">The Successful Investor — 시장방향·손익비·CAN SLIM·매도·포트폴리오</div>
+    <div class="book-meta">📖 윌리엄 오닐 지음 · 박정태 옮김 · 굿모닝북스</div>
+    <div class="date-info">책 한 권, 5단계로 완전정리</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a0">
+        <span class="toc-num">0</span>
+        <span>책의 큰 그림 — 왜 이 책이 필요한가</span>
+    </a>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>1단계 — 시장 전체는 어느 방향인가</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>2단계 — 이익폭과 손실폭의 비율을 3대 1로</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>3단계 — 최고의 주식을 최적의 타이밍에 (CAN SLIM)</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>4단계 — 언제 팔고 이익을 실현할 것인가</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>5단계 — 포트폴리오 경영</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>검증 결과와 한 줄 요약</span>
+    </a>
+</div>
+
+<!-- 기사 0: 서문 -->
+<article class="article" id="a0">
+    <div class="article-header">
+        <span class="num">서문</span>
+        <h3>책의 큰 그림 — 왜 이 책이 필요한가</h3>
+    </div>
+    <div class="body">
+        <p>이 책은 1984년 <strong>인베스터스 비즈니스 데일리(IBD)</strong>를 창간한 윌리엄 오닐이, 2000~2002년 대폭락(미국인 8,000만 명이 저축의 50~80%를 날린 시기)을 겪은 투자자들을 위해 쓴 실전 지침서입니다. 그는 45년의 투자 경험과 50년치 시장 데이터 연구를 바탕으로 성공 원칙을 <strong>5단계</strong>로 압축했습니다.</p>
+        <p>오닐은 1990년대 거품과 2000년 붕괴가 <strong>1920년대 호황·1929년 대공황</strong>, 멀게는 <strong>1636년 네덜란드 튤립 광풍</strong>과 본질적으로 똑같다고 봅니다. 손실의 규모는 전례 없었지만 손실을 부른 실수는 늘 똑같았다는 것입니다. 인간 본성(군중심리·희망·공포)이 변하지 않기 때문입니다.</p>
+    </div>
+    <div class="quote-box">
+        <span class="q-mark">"</span>주식시장은 당신이 누구인지, 무엇을 생각하고 바라는지 전혀 개의치 않는다. 시장은 야수다. 유일하게 따르는 규범은 수요와 공급의 법칙뿐이다.
+        <span class="q-author">— 윌리엄 오닐</span>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 핵심 한 문장</div>
+        <p>대부분의 투자자가 망하는 이유는 단순합니다 — <strong>① 매도 원칙이 없고, ② 시장 전체 방향에 무관심하고, ③ 리스크 관리를 안 하고, ④ 소문과 전문가 의견에 휘둘리기</strong> 때문입니다.</p>
+        <p>그래서 오닐의 결론은 이렇습니다 — <strong>"내 주관적 의견이 아니라, 시장이 실제로 무엇을 하고 있는지를 읽고 그것에 따라 움직여라."</strong> 이 한 문장이 5단계 전체를 꿰뚫습니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔑 차트는 의사의 X-레이다</div>
+        <p style="font-size:13px; line-height:1.7; color:#3a3a3a;">오닐은 차트를 거부하는 아마추어를 <strong>검사도 없이 진단하려는 의사</strong>에 비유합니다. 차트는 주가·거래량을 통해 시장이 지금 무슨 말을 하는지 한눈에 보여주는 도구라는 것입니다. 실제로 그는 엔론이 99% 폭락하기 전 차트만으로 위험을 미리 읽을 수 있었다고 강조합니다.</p>
+        <div class="keyword-box">
+            <span class="keyword-tag">#수요와공급</span>
+            <span class="keyword-tag">#인간본성</span>
+            <span class="keyword-tag">#군중심리</span>
+            <span class="keyword-tag">#차트는X레이</span>
+            <span class="keyword-tag">#CANSLIM</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 1: 1단계 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num step">STEP 1</span>
+        <h3>1단계 — 시장 전체는 어느 방향인가</h3>
+    </div>
+    <div class="body">
+        <p>가장 먼저 봐야 할 것은 개별 종목이 아니라 <strong>시장 전체의 방향</strong>입니다. 시장이 천정을 치면 아무리 우량한 주식도 <strong>4종목 중 3종목은 동반 하락</strong>하기 때문입니다. 오닐은 경제지표로 시장을 예측하는 전문가들이 거꾸로 간다고 지적합니다 — <strong>경제가 시장을 이끄는 게 아니라, 시장이 경제를 선행(先行)</strong>하기 때문입니다.</p>
+        <p>핵심 도구는 두 가지입니다. <strong>천정 신호인 '매물 출회(distribution)'</strong>와 <strong>바닥 신호인 '추세 전환일(follow-through day)'</strong>입니다. 둘 다 지수만 보지 말고 반드시 <strong>거래량</strong>과 함께 읽어야 합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 매물 출회 vs 물량 확보</div>
+        <p><strong>물량 확보(상승)</strong> = 기관이 사려는 양이 팔려는 양보다 많을 때 → 거래량 늘며 지수 상승<br><strong>매물 출회(천정)</strong> = 기관이 대규모로 팔 때 → <strong>거래량은 느는데 지수는 하락하는 날</strong></p>
+        <p>개인 몇 명이 아니라 <strong>기관(거래량의 약 75%)</strong>이 방향을 결정합니다. 그래서 "거래량 늘며 지수 하락하는 날"이 며칠인지 세는 게 핵심입니다.</p>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📉 천정 신호 vs 📈 바닥 신호</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:linear-gradient(135deg,#fdf0ee,#fadbd8);">
+                <div class="c-label" style="color:#c0392b;">천정 — 매물 출회</div>
+                <div class="c-value" style="color:#c0392b;">3~5일</div>
+                <p>2~4주 안에 '거래량↑·지수↓'인 날이 3~5일(최근엔 거의 5일) → 하락 전환</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:linear-gradient(135deg,#eafaf1,#d4f1e0);">
+                <div class="c-label" style="color:#1e8449;">바닥 — 추세 전환일</div>
+                <div class="c-value" style="color:#1e8449;">4~7일</div>
+                <p>반등 4~7일째 지수 +1.7%↑ & 거래량 급증 → 새 상승장 시작</p>
+            </div>
+        </div>
+        <div class="ig-caption">반등 <strong>첫날·둘째 날은 무시</strong> — 섣불리 속단 금지. 추세 전환 적중률 약 80%</div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🎯 오닐 시스템이 실제로 잡아낸 천정·바닥</div>
+        <table class="data-table">
+            <tr><th>시점</th><th>사건</th></tr>
+            <tr><td>1929년</td><td>사상 최고치 <span class="highlight">이틀 만에</span> 천정 포착</td></tr>
+            <tr><td>1962년</td><td>IBM 50% 폭락 전 전량 매도</td></tr>
+            <tr><td>1987년</td><td>블랙먼데이(-22%) 이전 전액 현금화</td></tr>
+            <tr><td>2000년 3월</td><td>버블 천정에서 현금 비중 대폭 확대</td></tr>
+            <tr><td>2003년 3월</td><td>이라크전 직전 바닥·상승장 시작 예측</td></tr>
+        </table>
+        <div class="ig-caption">에머슨 인용 — "<strong>어리석은 일관성은 편협한 마음의 작은 도깨비일 뿐</strong>". 시장이 방향을 바꾸면 즉시 자세를 바꿔라</div>
+    </div>
+</article>
+
+<!-- 기사 2: 2단계 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num step">STEP 2</span>
+        <h3>2단계 — 이익폭과 손실폭의 비율을 3대 1로</h3>
+    </div>
+    <div class="body">
+        <p>손실 방어 단계입니다. 2000~2002년 사람들이 망한 가장 큰 이유는 <strong>방어 기술(매도 원칙)이 없었기 때문</strong>입니다. 공격(매수)에는 능했지만, 산 주식이 하락할 때 언제 팔지에 대한 원칙이 전혀 없었습니다.</p>
+        <p>오닐의 처방은 단순합니다. <strong>-7~8% 떨어지면 예외 없이 손절매</strong>하고, <strong>+20~25% 오르면 이익 실현</strong>합니다. 즉 이익폭과 손실폭을 <strong>3 : 1</strong>로 유지하면, 3종목 중 1종목만 맞아도 살아남고 적중률이 절반만 돼도 상당한 수익이 납니다.</p>
+    </div>
+    <div class="quote-box">
+        <span class="q-mark">"</span>두려워해야 할 때 희망을 갖고, 희망을 가져야 할 때 두려워한다.
+        <span class="q-author">— 제시 리버모어 (오닐 인용)</span>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 손절은 '보험'이다</div>
+        <p>7%에서 자른 주식이 다시 올라도 후회할 필요 없습니다. 그건 <strong>70% 폭락을 막기 위해 치른 작은 보험료</strong>입니다. 집에 불이 안 났다고 화재보험 든 걸 후회하지 않는 것과 같습니다.</p>
+        <p>그리고 명심할 것 — <strong>"안전한 주식은 없다."</strong> 주가가 오르지 않으면 모든 주식은 나쁜 주식입니다. 좋은 주식인지는 사고 나서 올라봐야 압니다.</p>
+    </div>
+
+    <!-- 손실 회복 비대칭 차트 -->
+    <div class="infographic">
+        <div class="ig-title">⚠️ 손실 회복의 비대칭성 <span class="ig-unit">하락률 → 본전까지 필요한 상승률</span></div>
+        <svg class="chart-svg" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet">
+            <!-- 기준선/그리드 -->
+            <line class="grid-line" x1="60" y1="30" x2="340" y2="30"/>
+            <line class="grid-line" x1="60" y1="75" x2="340" y2="75"/>
+            <line class="grid-line" x1="60" y1="120" x2="340" y2="120"/>
+            <line class="axis-line" x1="60" y1="165" x2="340" y2="165"/>
+            <text x="52" y="34" text-anchor="end" font-size="9">300%</text>
+            <text x="52" y="79" text-anchor="end" font-size="9">200%</text>
+            <text x="52" y="124" text-anchor="end" font-size="9">100%</text>
+            <text x="52" y="168" text-anchor="end" font-size="9">0%</text>
+
+            <!-- 막대: 스케일 165 - (값/300)*135 -->
+            <!-- -7%→7.5% : y=165-(7.5/300)*135=161.6 / h=3.4 -->
+            <rect x="78" y="161" width="34" height="4" fill="#27ae60" rx="2"/>
+            <text x="95" y="156" text-anchor="middle" font-size="10" font-weight="800" fill="#27ae60">+7.5%</text>
+            <text x="95" y="178" text-anchor="middle" font-size="9.5">-7%</text>
+
+            <!-- -33%→50% : y=165-(50/300)*135=142.5 / h=22.5 -->
+            <rect x="138" y="143" width="34" height="22" fill="#f39c12" rx="2"/>
+            <text x="155" y="138" text-anchor="middle" font-size="10" font-weight="800" fill="#e67e22">+50%</text>
+            <text x="155" y="178" text-anchor="middle" font-size="9.5">-33%</text>
+
+            <!-- -50%→100% : y=165-(100/300)*135=120 / h=45 -->
+            <rect x="198" y="120" width="34" height="45" fill="#e67e22" rx="2"/>
+            <text x="215" y="115" text-anchor="middle" font-size="10" font-weight="800" fill="#d35400">+100%</text>
+            <text x="215" y="178" text-anchor="middle" font-size="9.5">-50%</text>
+
+            <!-- -75%→300% : y=30 / h=135 -->
+            <rect x="258" y="30" width="34" height="135" fill="#c0392b" rx="2"/>
+            <text x="275" y="25" text-anchor="middle" font-size="11" font-weight="800" fill="#c0392b">+300%</text>
+            <text x="275" y="178" text-anchor="middle" font-size="9.5" font-weight="700">-75%</text>
+        </svg>
+        <div class="ig-caption">80→50달러(-37.5%)면 +60% 올라야 본전. <strong>깊은 손실일수록 회복은 기하급수적으로 어렵다</strong></div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">💀 '안전한 블루칩'도 무너졌다 <span class="ig-unit">2000~2002 최고점 대비 하락률</span></div>
+        <table class="data-table">
+            <tr><th>종목</th><th class="center">최고점 대비 하락</th></tr>
+            <tr><td>코닝(Corning)</td><td class="center highlight">-99%</td></tr>
+            <tr><td>루슨트 테크놀러지</td><td class="center highlight">-98%</td></tr>
+            <tr><td>야후!(Yahoo!)</td><td class="center highlight">-97%</td></tr>
+            <tr><td>아마존</td><td class="center">-95%</td></tr>
+            <tr><td>시스코 시스템즈</td><td class="center">-90%</td></tr>
+            <tr><td>AT&amp;T</td><td class="center">-83%</td></tr>
+            <tr><td>인텔</td><td class="center">-83%</td></tr>
+        </table>
+        <div class="ig-caption">제럴드 룁: "<strong>광범위한 분산은 무지에 대한 헤지일 뿐</strong>" — 급락장엔 분산도 못 막는다</div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🛡️ 3대 1 손익비 핵심 규칙</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-red">
+                <div class="stat-label">손절 (무조건)</div>
+                <div class="stat-value">-7~8%</div>
+                <div class="stat-sub">예외 없이 즉시 매도</div>
+            </div>
+            <div class="stat-card stat-green">
+                <div class="stat-label">이익 실현</div>
+                <div class="stat-value">+20~25%</div>
+                <div class="stat-sub">대부분 종목 적용</div>
+            </div>
+        </div>
+        <div class="ig-caption">손실폭 : 이익폭 = <strong>1 : 3</strong> → 3번 중 1번만 맞아도 생존</div>
+    </div>
+</article>
+
+<!-- 기사 3: 3단계 CAN SLIM -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num step">STEP 3</span>
+        <h3>3단계 — 최고의 주식을 최적의 타이밍에 (CAN SLIM)</h3>
+    </div>
+    <div class="body">
+        <p>지난 50년간 100~1,000% 이상 오른 최고 종목들의 <strong>공통점</strong>에서 뽑아낸 매수 기준입니다. 핵심은 <strong>순이익이 폭발적으로 늘고, 가속화되며, 업종 1등이고, 기관이 사들이는 주식</strong>을 고르는 것입니다. 오닐은 이를 머리글자 <strong>CAN SLIM</strong>으로 정리했습니다.</p>
+        <p>그리고 '최적의 타이밍'은 <strong>차트의 모양</strong>으로 잡습니다. 가장 흔하고 강력한 패턴이 <strong>'손잡이 달린 컵(cup with handle)'</strong>입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — '1등 기업'의 진짜 의미</div>
+        <p>여기서 1등은 <strong>브랜드 인지도</strong>가 아니라 <strong>EPS 증가율·ROE·마진·매출·주가강도 등 핵심 수치 기준 1등</strong>입니다. 시어스가 아무리 유명해도 수치로 보면 소매업 1등이 아닐 수 있다는 것입니다.</p>
+        <p>또 하나 — <strong>"오르는 주식, 신고가 근처 고가주를 사라."</strong> 떨어져서 싸 보이는 저가주를 사지 말라는 게 오닐의 일관된 원칙입니다.</p>
+    </div>
+
+    <!-- CAN SLIM 배지 -->
+    <div class="infographic">
+        <div class="ig-title">🔤 CAN SLIM 7글자 풀이</div>
+        <div class="canslim-row">
+            <span class="canslim-badge">C</span>
+            <span class="canslim-text"><span class="ct-title">Current 분기 순이익</span> — 최근 분기 EPS가 전년 동기比 +25% 이상, 증가율 가속화</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">A</span>
+            <span class="canslim-text"><span class="ct-title">Annual 연간 순이익</span> — 최근 3년 매년 +25% 이상, ROE 17% 이상</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">N</span>
+            <span class="canslim-text"><span class="ct-title">New 신제품·신경영·신고가</span> — 새 동력 + 신고가 돌파 종목</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">S</span>
+            <span class="canslim-text"><span class="ct-title">Supply &amp; demand 수급</span> — 적정 발행주식수, 자사주 매입은 호재</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">L</span>
+            <span class="canslim-text"><span class="ct-title">Leader 주도주</span> — 강력한 업종의 1등주, 상대강도(RS) 80 이상</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">I</span>
+            <span class="canslim-text"><span class="ct-title">Institutional 기관 뒷받침</span> — 우량 펀드 보유 수가 분기마다 증가</span>
+        </div>
+        <div class="canslim-row">
+            <span class="canslim-badge">M</span>
+            <span class="canslim-text"><span class="ct-title">Market 시장 방향</span> — 강세장에서만 매수 (1단계와 연결)</span>
+        </div>
+    </div>
+
+    <!-- 손잡이 달린 컵 패턴 SVG -->
+    <div class="infographic">
+        <div class="ig-title">☕ 핵심 매수 패턴 — 손잡이 달린 컵</div>
+        <svg class="chart-svg" viewBox="0 0 360 190" preserveAspectRatio="xMidYMid meet">
+            <line class="axis-line" x1="30" y1="160" x2="345" y2="160"/>
+            <!-- 컵 곡선: 좌측고점(50,40) → 바닥 → 우측고점(230,55) → 손잡이 → 돌파 -->
+            <path d="M 50 40
+                     C 70 70, 90 130, 140 135
+                     C 175 138, 200 95, 230 55"
+                  fill="none" stroke="#2a5ca8" stroke-width="2.5"/>
+            <!-- 손잡이 (살짝 하락 후 돌파) -->
+            <path d="M 230 55 C 245 62, 258 78, 270 72"
+                  fill="none" stroke="#2a5ca8" stroke-width="2.5"/>
+            <!-- 돌파 상승 -->
+            <path d="M 270 72 L 300 38 L 322 22"
+                  fill="none" stroke="#c0392b" stroke-width="3"/>
+            <!-- 매수지점 점선 -->
+            <line x1="270" y1="72" x2="270" y2="160" stroke="#c0392b" stroke-width="1.2" stroke-dasharray="4 3"/>
+            <circle cx="270" cy="72" r="5" fill="#c0392b"/>
+            <text x="270" y="178" text-anchor="middle" font-size="10" font-weight="800" fill="#c0392b">매수지점(Pivot)</text>
+            <!-- 라벨 -->
+            <text x="50" y="32" text-anchor="middle" font-size="9.5" fill="#555">좌측 고점</text>
+            <text x="140" y="152" text-anchor="middle" font-size="9.5" fill="#555">둥근 바닥</text>
+            <text x="248" y="92" text-anchor="middle" font-size="9.5" fill="#555">손잡이</text>
+            <text x="320" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#c0392b">신고가↑</text>
+        </svg>
+        <div class="ig-caption">손잡이 완성 후 신고가 돌파 순간 매수 — 이때 <strong>거래량이 평균 대비 +50%↑</strong>(최고 종목은 100~300%)여야 진짜</div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📐 5가지 기본 패턴 & 실패 신호</div>
+        <table class="data-table">
+            <tr><th style="width:33%;">패턴</th><th>특징</th></tr>
+            <tr><td>손잡이 달린 컵</td><td>가장 강력. 컵 조정 25~40%</td></tr>
+            <tr><td>접시(Saucer)</td><td>더 얕고 더 길다</td></tr>
+            <tr><td>이중 바닥(W)</td><td>두 번째 저점이 약간 더 낮음</td></tr>
+            <tr><td>평평한 모양</td><td>10~15% 조정, 2차 상승 직전</td></tr>
+            <tr><td>오르막 모양</td><td>저점 높여가며 3차례 조정</td></tr>
+        </table>
+        <div class="ig-caption">❌ 실패 신호: <strong>쐐기형 상승 손잡이</strong>, 너무 넓고 깊은 모양(60%↑), 돌파일 거래량 부진, 모두에게 너무 뻔한 패턴</div>
+    </div>
+</article>
+
+<!-- 기사 4: 4단계 매도 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num step">STEP 4</span>
+        <h3>4단계 — 언제 팔고 이익을 실현할 것인가</h3>
+    </div>
+    <div class="body">
+        <p>오닐 본인이 1961년 6종목 모두 큰 평가이익을 냈다가 <strong>매도 원칙이 없어 다 까먹고 본전에 끝낸</strong> 경험에서 출발합니다. <strong>평가이익과 실현이익은 완전히 다릅니다.</strong> 기본은 +20~25%에서 이익 실현, -7~8%에서 손절입니다.</p>
+        <p>다만 <strong>홈런 종목은 예외</strong>입니다. CAN SLIM 조건을 모두 갖춘 종목이 모양 돌파 후 1~3주 만에 거래량을 동반해 +20% 오르면, 이건 잠재적 홈런이므로 <strong>최소 8주간 보유</strong>합니다.</p>
+    </div>
+    <div class="quote-box">
+        <span class="q-mark">"</span>큰 돈은 얼마나 오래 생각하느냐가 아니라, 얼마나 오래 앉아있느냐에 달려있다.
+        <span class="q-author">— 제시 리버모어 (오닐 인용)</span>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 모두가 흥분할 때 팔아라</div>
+        <p>가장 큰 수익을 주는 종목일수록 <strong>'최후의 정점(분출)'</strong>에서 끝납니다. 며칠 새 가장 빠르게 급등하고, 잡지 표지에 CEO가 등장하고, 모두가 "더 오른다"고 흥분할 때 — <strong>바로 그때가 매도 시점</strong>입니다.</p>
+        <p>그리고 <strong>"팔 때는 다 팔아라."</strong> 일부만 파는 영리한 척 하지 말고, 단순하게 행동하라는 게 오닐의 조언입니다.</p>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🔔 매도(천정) 신호 종합</div>
+        <table class="data-table">
+            <tr><th style="width:38%;">신호</th><th>내용</th></tr>
+            <tr><td>최후의 정점(분출)</td><td>며칠 새 최대 급등 + <span class="highlight">소진 갭</span> 발생</td></tr>
+            <tr><td>PER 100%↑ 확대</td><td>돌파 후 PER이 2배로 (AOL: 158→532)</td></tr>
+            <tr><td>추세선 상단 돌파</td><td>상단선 뚫으면 75~80% 천정</td></tr>
+            <tr><td>네 번째 모양</td><td>4번째 패턴은 거의 실패</td></tr>
+            <tr><td>상대강도(RS) 하락</td><td>RS 70 미만이면 매도 고려</td></tr>
+            <tr><td>과도한 주식분할</td><td>1→3·4·5주 분할은 천정 부근</td></tr>
+        </table>
+        <div class="ig-caption">보조 신호: <strong>잡지 표지 CEO 등장</strong>, 호화 신사옥 건설, 무리한 인수합병("사업다각화=사업심각화" — 피터 린치)</div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📊 기본 매도 vs 홈런 보유</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:linear-gradient(135deg,#e3f0fc,#cde4f8);">
+                <div class="c-label" style="color:#2874a6;">일반 종목</div>
+                <div class="c-value" style="color:#2874a6;">+20~25%</div>
+                <p>대부분 종목은 이 구간에서 이익 실현</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:linear-gradient(135deg,#fef5e7,#fdebd0);">
+                <div class="c-label" style="color:#d68910;">홈런 종목</div>
+                <div class="c-value" style="color:#d68910;">8주 보유</div>
+                <p>1~3주 만에 +20%면 최소 8주 들고 가기</p>
+            </div>
+        </div>
+        <div class="ig-caption">강력한 주도주 5종목 중 4종목은 <strong>'최후의 정점'으로 상승을 마무리</strong>한다</div>
+    </div>
+</article>
+
+<!-- 기사 5: 5단계 포트폴리오 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num step">STEP 5</span>
+        <h3>5단계 — 포트폴리오 경영</h3>
+    </div>
+    <div class="body">
+        <p>오닐은 포트폴리오를 <strong>정원 가꾸기</strong>에 비유합니다. 잡초(가장 적게 오르거나 떨어진 종목)는 뽑고, 꽃(가장 많이 오른 종목)에 집중하라는 것입니다. 어느 게 잡초인지는 <strong>시장이 알려줍니다</strong>.</p>
+        <p>그는 광범위한 분산보다 <strong>소수 종목 집중</strong>을 권합니다. "달걀을 몇 개 바구니에 담고 그 바구니를 면밀히 관찰하라"는 것입니다. 그리고 <strong>물타기는 절대 금지</strong> — 떨어지는 종목이 아니라 오르는 종목을 추가 매수합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 시간을 통한 분산</div>
+        <p>한 번에 전 재산을 넣지 말고, <strong>처음엔 절반만, 오르면 추가 매수(첫 매수가보다 2~2.5% 오른 뒤, 5% 넘으면 추격 자제)</strong>합니다. 추가 매수는 처음보다 적은 수량으로 — 내 판단이 맞았을 때만 돈을 더 넣는 방식입니다.</p>
+        <p>저가주(2~5달러)는 피합니다. <strong>"수량에 집착하지 말고 최고의 종목에 돈을 넣어라"</strong> — 좋은 주식 10주가 싸구려 주식 수백 주보다 낫습니다.</p>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🌿 포트폴리오 경영 핵심 원칙</div>
+        <table class="data-table">
+            <tr><th style="width:34%;">원칙</th><th>내용</th></tr>
+            <tr><td class="pos">집중 투자</td><td>소수 종목 집중, 보유 종목 수 미리 고정</td></tr>
+            <tr><td class="neg">물타기 금지</td><td>떨어지는 종목 추가매수 절대 금지</td></tr>
+            <tr><td>점진적 매수</td><td>오를 때만 추가, 추격은 강세장에서만</td></tr>
+            <tr><td>약세장 현금</td><td>현금·MMF 비중 확대로 방어</td></tr>
+            <tr><td class="neg">저가주 회피</td><td>2~5달러 저가주·소외주 회피</td></tr>
+            <tr><td>업종 한도</td><td>일반 투자자 한 업종 25~30%</td></tr>
+        </table>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🚫 오닐이 '하지 말라'는 것들</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-red">
+                <div class="stat-label">집착 금지</div>
+                <div class="stat-value">PER·배당</div>
+                <div class="stat-sub">장부가치도 무시</div>
+            </div>
+            <div class="stat-card stat-red">
+                <div class="stat-label">회피 대상</div>
+                <div class="stat-value">회사채</div>
+                <div class="stat-sub">안전하면 MMF·국채</div>
+            </div>
+            <div class="stat-card stat-red">
+                <div class="stat-label">회피 대상</div>
+                <div class="stat-value">해외주식</div>
+                <div class="stat-sub">미국에 좋은 기업 충분</div>
+            </div>
+            <div class="stat-card stat-red">
+                <div class="stat-label">과도 투자 금지</div>
+                <div class="stat-value">선물·옵션</div>
+                <div class="stat-sub">레버리지=파멸 위험</div>
+            </div>
+        </div>
+        <div class="ig-caption">최고 종목은 PER 높고 배당 거의 안 함 — 돈을 <strong>R&D·확장에 재투자</strong>하기 때문</div>
+    </div>
+</article>
+
+<!-- 기사 6: 검증 & 종합 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">종합</span>
+        <h3>검증 결과와 한 줄 요약</h3>
+    </div>
+    <div class="body">
+        <p>오닐의 시스템은 단순한 주장이 아닙니다. <strong>미국개인투자자협회(AAII)</strong>가 1998~2002년 동안 52개 다른 투자 시스템(피터 린치·워런 버핏 방식 포함)과 비교 검증한 결과, CAN SLIM은 <strong>강세장·약세장 통틀어 가장 안정적이고 높은 수익률</strong>을 낸 방식 중 하나로 판명됐습니다.</p>
+        <p>또한 책 말미의 <strong>2003년 3월 17일 시장 메모</strong>에서, 오닐은 이라크전 직전·나스닥 1,200선에서 대부분이 시장을 떠날 때 거래량 분석만으로 <strong>바닥과 새 상승장의 시작을 정확히 예측</strong>했습니다.</p>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📈 AAII 검증 — CAN SLIM 5년 성과</div>
+        <table class="data-table">
+            <tr><th>연도</th><th class="center">CAN SLIM 수익률</th></tr>
+            <tr><td>1998</td><td class="center pos">+28.2%</td></tr>
+            <tr><td>1999</td><td class="center pos">+36.6%</td></tr>
+            <tr><td>2000</td><td class="center pos">+38.0%</td></tr>
+            <tr><td>2001</td><td class="center pos">+54.4%</td></tr>
+            <tr><td>2002</td><td class="center pos">+20.7%</td></tr>
+            <tr><td><strong>5년 누적</strong></td><td class="center highlight">+350.3%</td></tr>
+        </table>
+        <div class="ig-caption">같은 기간 <strong>S&amp;P 500은 -8.3%</strong> (2년 강세장 + 3년 심각한 약세장 포함)</div>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">🎯 5단계 한눈에 — 흐름으로 기억하기</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-blue">
+                <div class="stat-label">STEP 1 · 시장</div>
+                <div class="stat-value" style="font-size:14px;">방향 먼저 읽기</div>
+                <div class="stat-sub">매물출회·추세전환일</div>
+            </div>
+            <div class="stat-card stat-red">
+                <div class="stat-label">STEP 2 · 방어</div>
+                <div class="stat-value" style="font-size:14px;">3:1 손익비</div>
+                <div class="stat-sub">-7~8% 손절 / +20~25% 실현</div>
+            </div>
+            <div class="stat-card stat-green">
+                <div class="stat-label">STEP 3 · 매수</div>
+                <div class="stat-value" style="font-size:14px;">CAN SLIM + 차트</div>
+                <div class="stat-sub">주도주를 최적 타이밍에</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">STEP 4 · 매도</div>
+                <div class="stat-value" style="font-size:14px;">오를 때 팔기</div>
+                <div class="stat-sub">최후의 정점 신호 포착</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">STEP 5 · 운용</div>
+                <div class="stat-value" style="font-size:14px;">정원 가꾸기</div>
+                <div class="stat-sub">집중·물타기 금지</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#윌리엄오닐</span>
+            <span class="keyword-tag">#CANSLIM</span>
+            <span class="keyword-tag">#3대1손익비</span>
+            <span class="keyword-tag">#손잡이달린컵</span>
+            <span class="keyword-tag">#매물출회</span>
+            <span class="keyword-tag">#성장주투자</span>
+        </div>
+        <div class="ig-caption">💬 한 줄 요약: "<strong>시장 방향을 먼저 읽고, 손실은 짧게 이익은 길게, 주도주를 타이밍에 사서 오를 때 팔고, 소수에 집중하라</strong> — 내 의견이 아니라 시장이 하는 말을 따르라"</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 정리 공유하기</button>
+    <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 가좌버핏 뉴스 · 책으로 배우는 투자 시리즈<br>
+    <span style="opacity:0.7; font-size:11px;">2026년 5월 22일 발행 · 윌리엄 오닐 『성공하는 주식투자(The Successful Investor)』(굿모닝북스, 박정태 옮김) 기반<br>일반 독자가 이해하기 쉽게 풀어쓴 요약 글이며, 투자 권유 목적이 아닙니다.</span>
+</div>
+
+<script>
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📚 [책으로 배우는 투자]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
