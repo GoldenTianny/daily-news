@@ -714,7 +714,7 @@ body {
 
 <!-- 공유 버튼 -->
 <div class="share-section">
-    <button class="analysis-share-btn" onclick="shareAnalysis()">📤 이 분석 공유하기</button>
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 분석 공유하기</button>
     <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
 </div>
 
@@ -727,20 +727,23 @@ body {
 </div>
 
 <script>
-function shareAnalysis() {
-    const shareData = {
-        title: '가좌버핏 뉴스 · AI 빅3 상장 레이스 심층분석',
-        text: '스페이스X·오픈AI·앤스로픽이 동시에 증시로 — AI 자본조달 경쟁 쉽게 풀어쓰기',
-        url: window.location.href
-    };
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📊 [심층분석]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
     if (navigator.share) {
-        navigator.share(shareData).catch(()=>{});
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
     } else {
-        navigator.clipboard.writeText(window.location.href).then(()=>{
-            alert('링크가 복사되었습니다!');
-        });
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
     }
-}
+});
 </script>
 
 </body>
