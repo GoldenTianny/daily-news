@@ -89,27 +89,27 @@ def make_gradient(pal):
 
 
 def draw_brand_badge(draw, pal, badge_text):
-    draw.text((60, 52), "가좌버핏 뉴스", font=fnt(36, WEIGHT_HEAVY), fill=(255, 255, 255))
+    draw.text((60, 48), "가좌버핏 뉴스", font=fnt(40, WEIGHT_HEAVY), fill=(255, 255, 255))
     # truncate badge to fit
-    if len(badge_text) > 30:
-        badge_text = badge_text[:29] + '…'
-    bw = draw.textlength(badge_text, font=fnt(28, WEIGHT_BOLD))
-    px_pad, py_pad = 22, 10
-    bx0, by0 = 60, 116
+    if len(badge_text) > 26:
+        badge_text = badge_text[:25] + '…'
+    bw = draw.textlength(badge_text, font=fnt(32, WEIGHT_BOLD))
+    px_pad, py_pad = 24, 12
+    bx0, by0 = 60, 118
     draw.rounded_rectangle(
-        [(bx0, by0), (bx0+bw+px_pad*2, by0+28+py_pad*2)],
-        radius=22, fill=pal['badge_bg'])
+        [(bx0, by0), (bx0+bw+px_pad*2, by0+32+py_pad*2)],
+        radius=24, fill=pal['badge_bg'])
     draw.text((bx0+px_pad, by0+py_pad-2), badge_text,
-              font=fnt(28, WEIGHT_BOLD), fill=pal['badge_fg'])
+              font=fnt(32, WEIGHT_BOLD), fill=pal['badge_fg'])
 
 
 def draw_footer(draw, pal, left_text, right_text="gjbuffet.kr"):
     fy = H - 78
     if left_text:
-        draw.text((60, fy), left_text, font=fnt(30, WEIGHT_BOLD), fill=pal['accent'])
+        draw.text((60, fy), left_text, font=fnt(34, WEIGHT_BOLD), fill=pal['accent'])
     if right_text:
-        rw = draw.textlength(right_text, font=fnt(30, WEIGHT_BOLD))
-        draw.text((W-60-rw, fy), right_text, font=fnt(30, WEIGHT_BOLD), fill=(255, 255, 255))
+        rw = draw.textlength(right_text, font=fnt(34, WEIGHT_BOLD))
+        draw.text((W-60-rw, fy), right_text, font=fnt(34, WEIGHT_BOLD), fill=(255, 255, 255))
     draw.rectangle([(0, H-8), (W, H)], fill=pal['accent'])
 
 
@@ -150,22 +150,22 @@ def gen_daily(filepath, html):
     dow = day_of_week_kr(fn)
 
     # big date
-    draw.text((60, 205), date_str, font=fnt(100, WEIGHT_HEAVY), fill=(255, 255, 255))
-    draw.text((60, 322), f"{dow} · 오늘의 핵심뉴스", font=fnt(34, WEIGHT_BOLD), fill=pal['accent'])
+    draw.text((60, 198), date_str, font=fnt(108, WEIGHT_HEAVY), fill=(255, 255, 255))
+    draw.text((60, 322), f"{dow} · 오늘의 핵심뉴스", font=fnt(40, WEIGHT_BOLD), fill=pal['accent'])
 
     # top 3 h3 headlines
     h3s = re.findall(r'<article[^>]*>.*?<h3[^>]*>(.*?)</h3>', html, re.S)
     headlines = []
     for h in h3s[:3]:
         clean = html_lib.unescape(re.sub(r'<[^>]+>', '', h)).strip()
-        if len(clean) > 28:
-            clean = clean[:27] + '…'
+        if len(clean) > 22:
+            clean = clean[:21] + '…'
         headlines.append(clean)
 
-    y = 395
+    y = 390
     for head in headlines:
-        draw.text((60, y), f"·  {head}", font=fnt(32, WEIGHT_MEDIUM), fill=(220, 230, 245))
-        y += 50
+        draw.text((60, y), f"·  {head}", font=fnt(38, WEIGHT_MEDIUM), fill=(220, 230, 245))
+        y += 56
 
     draw_footer(draw, pal, "")
     return img
@@ -193,22 +193,22 @@ def gen_titled(filepath, html, category):
     if len(h1_parts) >= 2:
         title_lines = h1_parts[:2]
     elif len(h1_parts) == 1:
-        title_lines = wrap_korean(h1_parts[0], 16)[:2]
+        title_lines = wrap_korean(h1_parts[0], 14)[:2]
     else:
         title_lines = ['']
 
-    # cap each line at ~18 chars (fits at 72pt)
-    title_lines = [(l[:18] + '…') if len(l) > 19 else l for l in title_lines]
+    # cap each line at ~16 chars (fits at 82pt)
+    title_lines = [(l[:16] + '…') if len(l) > 17 else l for l in title_lines]
 
     y = 225
     for line in title_lines:
-        draw.text((60, y), line, font=fnt(72, WEIGHT_HEAVY), fill=(255, 255, 255))
-        y += 92
+        draw.text((60, y), line, font=fnt(82, WEIGHT_HEAVY), fill=(255, 255, 255))
+        y += 104
 
     if sub_text:
-        if len(sub_text) > 36:
-            sub_text = sub_text[:35] + '…'
-        draw.text((60, y + 14), sub_text, font=fnt(30, WEIGHT_MEDIUM), fill=(210, 225, 245))
+        if len(sub_text) > 30:
+            sub_text = sub_text[:29] + '…'
+        draw.text((60, y + 16), sub_text, font=fnt(36, WEIGHT_MEDIUM), fill=(210, 225, 245))
 
     draw_footer(draw, pal, date_from_filename(os.path.basename(filepath)))
     return img
