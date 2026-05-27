@@ -89,27 +89,26 @@ def make_gradient(pal):
 
 
 def draw_brand_badge(draw, pal, badge_text):
-    draw.text((60, 48), "가좌버핏 뉴스", font=fnt(40, WEIGHT_HEAVY), fill=(255, 255, 255))
-    # truncate badge to fit
-    if len(badge_text) > 26:
-        badge_text = badge_text[:25] + '…'
-    bw = draw.textlength(badge_text, font=fnt(32, WEIGHT_BOLD))
-    px_pad, py_pad = 24, 12
-    bx0, by0 = 60, 118
+    # 브랜드 라벨은 빼고 카테고리 배지만 표시 (2026-05-27 결정)
+    if len(badge_text) > 24:
+        badge_text = badge_text[:23] + '…'
+    bw = draw.textlength(badge_text, font=fnt(34, WEIGHT_BOLD))
+    px_pad, py_pad = 26, 14
+    bx0, by0 = 60, 60
     draw.rounded_rectangle(
-        [(bx0, by0), (bx0+bw+px_pad*2, by0+32+py_pad*2)],
-        radius=24, fill=pal['badge_bg'])
+        [(bx0, by0), (bx0+bw+px_pad*2, by0+34+py_pad*2)],
+        radius=26, fill=pal['badge_bg'])
     draw.text((bx0+px_pad, by0+py_pad-2), badge_text,
-              font=fnt(32, WEIGHT_BOLD), fill=pal['badge_fg'])
+              font=fnt(34, WEIGHT_BOLD), fill=pal['badge_fg'])
 
 
 def draw_footer(draw, pal, left_text, right_text="gjbuffet.kr"):
-    fy = H - 78
+    fy = H - 80
     if left_text:
-        draw.text((60, fy), left_text, font=fnt(34, WEIGHT_BOLD), fill=pal['accent'])
+        draw.text((60, fy), left_text, font=fnt(36, WEIGHT_BOLD), fill=pal['accent'])
     if right_text:
-        rw = draw.textlength(right_text, font=fnt(34, WEIGHT_BOLD))
-        draw.text((W-60-rw, fy), right_text, font=fnt(34, WEIGHT_BOLD), fill=(255, 255, 255))
+        rw = draw.textlength(right_text, font=fnt(36, WEIGHT_BOLD))
+        draw.text((W-60-rw, fy), right_text, font=fnt(36, WEIGHT_BOLD), fill=(255, 255, 255))
     draw.rectangle([(0, H-8), (W, H)], fill=pal['accent'])
 
 
@@ -150,22 +149,24 @@ def gen_daily(filepath, html):
     dow = day_of_week_kr(fn)
 
     # big date
-    draw.text((60, 198), date_str, font=fnt(108, WEIGHT_HEAVY), fill=(255, 255, 255))
-    draw.text((60, 322), f"{dow} · 오늘의 핵심뉴스", font=fnt(40, WEIGHT_BOLD), fill=pal['accent'])
+    draw.text((60, 160), date_str, font=fnt(124, WEIGHT_HEAVY), fill=(255, 255, 255))
+    draw.text((60, 300), f"{dow} · 오늘의 핵심뉴스", font=fnt(44, WEIGHT_BOLD), fill=pal['accent'])
 
-    # top 3 h3 headlines
-    h3s = re.findall(r'<article[^>]*>.*?<h3[^>]*>(.*?)</h3>', html, re.S)
-    headlines = []
-    for h in h3s[:3]:
-        clean = html_lib.unescape(re.sub(r'<[^>]+>', '', h)).strip()
-        if len(clean) > 22:
-            clean = clean[:21] + '…'
-        headlines.append(clean)
+    # headlines: override meta 우선, 없으면 top 3 h3
+    override = re.search(r'<meta name="og-headlines-short" content="([^"]+)"', html)
+    if override:
+        headlines = [h.strip() for h in override.group(1).split('|') if h.strip()][:3]
+    else:
+        h3s = re.findall(r'<article[^>]*>.*?<h3[^>]*>(.*?)</h3>', html, re.S)
+        headlines = [html_lib.unescape(re.sub(r'<[^>]+>', '', h)).strip() for h in h3s[:3]]
 
-    y = 390
+    # safety truncate
+    headlines = [(h[:19] + '…') if len(h) > 20 else h for h in headlines]
+
+    y = 380
     for head in headlines:
-        draw.text((60, y), f"·  {head}", font=fnt(38, WEIGHT_MEDIUM), fill=(220, 230, 245))
-        y += 56
+        draw.text((60, y), f"·  {head}", font=fnt(42, WEIGHT_MEDIUM), fill=(220, 230, 245))
+        y += 60
 
     draw_footer(draw, pal, "")
     return img
@@ -179,11 +180,22 @@ def gen_titled(filepath, html, category):
     cov_sub = re.search(r'<div class="cover">.*?<div class="subtitle">([^<]+)</div>', html, re.S)
 
     label = html_lib.unescape(cov_lbl.group(1).strip()) if cov_lbl else category.upper()
-    # h1: split by <br> to preserve line structure
-    h1_raw = cov_h1.group(1) if cov_h1 else ''
-    h1_parts = [re.sub(r'<[^>]+>', '', p).strip() for p in re.split(r'<br\s*/?>', h1_raw)]
-    h1_parts = [html_lib.unescape(p) for p in h1_parts if p.strip()]
-    sub_text = html_lib.unescape(cov_sub.group(1).strip()) if cov_sub else ''
+
+    # OG-specific override metas (preferred) — fall back to cover h1/subtitle
+    override_title = re.search(r'<meta name="og-title-short" content="([^"]+)"', html)
+    override_sub = re.search(r'<meta name="og-subtitle-short" content="([^"]+)"', html)
+
+    if override_title:
+        h1_parts = [p.strip() for p in override_title.group(1).split('|') if p.strip()]
+    else:
+        h1_raw = cov_h1.group(1) if cov_h1 else ''
+        h1_parts = [re.sub(r'<[^>]+>', '', p).strip() for p in re.split(r'<br\s*/?>', h1_raw)]
+        h1_parts = [html_lib.unescape(p) for p in h1_parts if p.strip()]
+
+    if override_sub:
+        sub_text = html_lib.unescape(override_sub.group(1).strip())
+    else:
+        sub_text = html_lib.unescape(cov_sub.group(1).strip()) if cov_sub else ''
 
     img = make_gradient(pal)
     draw = ImageDraw.Draw(img)
@@ -193,22 +205,22 @@ def gen_titled(filepath, html, category):
     if len(h1_parts) >= 2:
         title_lines = h1_parts[:2]
     elif len(h1_parts) == 1:
-        title_lines = wrap_korean(h1_parts[0], 14)[:2]
+        title_lines = wrap_korean(h1_parts[0], 13)[:2]
     else:
         title_lines = ['']
 
-    # cap each line at ~16 chars (fits at 82pt)
-    title_lines = [(l[:16] + '…') if len(l) > 17 else l for l in title_lines]
+    # cap each line at ~14 chars (fits at 92pt)
+    title_lines = [(l[:14] + '…') if len(l) > 15 else l for l in title_lines]
 
-    y = 225
+    y = 190
     for line in title_lines:
-        draw.text((60, y), line, font=fnt(82, WEIGHT_HEAVY), fill=(255, 255, 255))
-        y += 104
+        draw.text((60, y), line, font=fnt(92, WEIGHT_HEAVY), fill=(255, 255, 255))
+        y += 118
 
     if sub_text:
-        if len(sub_text) > 30:
-            sub_text = sub_text[:29] + '…'
-        draw.text((60, y + 16), sub_text, font=fnt(36, WEIGHT_MEDIUM), fill=(210, 225, 245))
+        if len(sub_text) > 28:
+            sub_text = sub_text[:27] + '…'
+        draw.text((60, y + 18), sub_text, font=fnt(40, WEIGHT_MEDIUM), fill=(210, 225, 245))
 
     draw_footer(draw, pal, date_from_filename(os.path.basename(filepath)))
     return img
