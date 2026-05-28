@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>가좌버핏 뉴스 · K전력 전성시대 심층분석</title>
+<meta name="description" content="전기 먹는 AI가 키운 K전력 호황 — 데이터센터·노후 전력망·중동 재건 수요와 투자 전략을 쉽게 풀어쓴 심층분석">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 (카톡/SNS 등) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · K전력 전성시대 심층분석">
+<meta property="og:description" content="AI는 에너지 블랙홀 — 전력기기 빅3 32조 수주, K전력 호황의 배경과 투자 전략 · 쉽게 풀어쓴 심층분석">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/2026-05-28_k-power.png">
+<meta property="og:url" content="https://gjbuffet.kr/analysis/2026-05-28_k-power.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · K전력 전성시대 심층분석">
+<meta name="twitter:description" content="AI는 에너지 블랙홀 — 전력기기 빅3 32조 수주, K전력 호황의 배경과 투자 전략 · 쉽게 풀어쓴 심층분석">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/og/2026-05-28_k-power.png">
+
+<!-- OG 썸네일 전용 짧은 부제 (cover subtitle 38자라 OG에서 잘리지 않도록) -->
+<meta name="og-subtitle-short" content="전기 먹는 AI가 키운 K전력 호황">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 (단일 분석 공유) ===== */
+.share-section {
+    margin: 24px 16px 8px;
+    text-align: center;
+}
+.analysis-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.analysis-share-btn:hover { background: #15305c; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #2a5ca8; }
+    .analysis-share-btn:hover { background: #3a6cb8; }
+}
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #0d2444 0%, #1a3a6c 50%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,80,80,0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label {
+    font-size: 11px;
+    letter-spacing: 5px;
+    opacity: 0.85;
+    margin-bottom: 16px;
+    position: relative;
+}
+.cover h1 {
+    font-size: 30px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    position: relative;
+}
+.cover h1 .highlight { color: #ff6b6b; }
+.cover h1 .accent { color: #ffd166; }
+.cover .subtitle {
+    font-size: 14px;
+    opacity: 0.92;
+    margin-bottom: 6px;
+    position: relative;
+}
+.cover .date-info {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 8px;
+    position: relative;
+}
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 {
+    font-size: 16px;
+    color: #1a3a6c;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8edf5;
+}
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #1a3a6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 10px;
+    margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header {
+    padding: 16px 18px 12px;
+    border-left: 4px solid #1a3a6c;
+}
+.article .num {
+    display: inline-block;
+    background: #1a3a6c;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d2444;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+.article .body {
+    padding: 0 18px 16px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #2a2a2a;
+}
+.article .body p {
+    margin-bottom: 12px;
+    word-break: keep-all;
+}
+.article .body p:last-child { margin-bottom: 0; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #b9770e;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.easy-box p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #3a3a3a;
+    word-break: keep-all;
+    margin-bottom: 8px;
+}
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a3a6c;
+}
+.ig-unit {
+    font-size: 10.5px;
+    color: #888;
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+}
+.ig-caption {
+    font-size: 11.5px;
+    color: #666;
+    margin-top: 10px;
+    line-height: 1.55;
+    word-break: keep-all;
+}
+
+/* 통계 카드 */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card {
+    background: linear-gradient(135deg, #f0f4fa, #e3eaf5);
+    border-left: 3px solid #1a3a6c;
+    padding: 10px 12px;
+    border-radius: 6px;
+}
+.stat-card .stat-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+}
+.stat-card .stat-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a3a6c;
+    line-height: 1.2;
+}
+.stat-card .stat-sub {
+    font-size: 10.5px;
+    color: #888;
+    margin-top: 3px;
+}
+.stat-card.stat-red { background: linear-gradient(135deg, #fadbd8, #f5cac4); border-left-color: #c0392b; }
+.stat-card.stat-red .stat-value { color: #c0392b; }
+.stat-card.stat-orange { background: linear-gradient(135deg, #fdebd0, #fad7a0); border-left-color: #d68910; }
+.stat-card.stat-orange .stat-value { color: #b9770e; }
+.stat-card.stat-teal { background: linear-gradient(135deg, #d1f2eb, #abebc6); border-left-color: #138d75; }
+.stat-card.stat-teal .stat-value { color: #117a65; }
+.stat-card.stat-purple { background: linear-gradient(135deg, #e8daef, #d2b4de); border-left-color: #7d3c98; }
+.stat-card.stat-purple .stat-value { color: #6c3483; }
+
+/* ===== 막대 차트 (수평) ===== */
+.bar-chart { margin-top: 6px; }
+.bar-row {
+    margin-bottom: 10px;
+}
+.bar-row:last-child { margin-bottom: 0; }
+.bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #333;
+}
+.bar-label .bar-name { font-weight: 600; }
+.bar-label .bar-val { color: #1a3a6c; font-weight: 700; }
+.bar-track {
+    background: #e8edf5;
+    border-radius: 4px;
+    height: 18px;
+    overflow: hidden;
+    position: relative;
+}
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2a5ca8, #1a3a6c);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6px;
+    color: white;
+    font-size: 10.5px;
+    font-weight: 700;
+}
+.bar-fill.red { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+.bar-fill.orange { background: linear-gradient(90deg, #f39c12, #d68910); }
+.bar-fill.teal { background: linear-gradient(90deg, #16a085, #117a65); }
+.bar-fill.gray { background: linear-gradient(90deg, #95a5a6, #7f8c8d); }
+.bar-target-line {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 2px;
+    background: #c0392b;
+}
+.bar-target-label {
+    position: absolute;
+    top: -16px;
+    font-size: 9.5px;
+    color: #c0392b;
+    font-weight: 700;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+/* ===== 데이터 테이블 ===== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 12.5px;
+}
+.data-table th {
+    background: #1a3a6c;
+    color: white;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11.5px;
+}
+.data-table td {
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid #e8edf5;
+    background: white;
+}
+.data-table tr:nth-child(even) td { background: #f7f9fc; }
+.data-table .td-name { text-align: left; font-weight: 600; color: #1a3a6c; }
+.data-table .td-emp { font-weight: 700; color: #c0392b; }
+.data-table .td-pos { color: #138d75; font-weight: 700; }
+
+/* ===== 비교 박스 ===== */
+.compare-box {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: stretch;
+    margin-top: 6px;
+}
+.compare-side {
+    padding: 12px 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.compare-side .c-label {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+.compare-side p {
+    font-size: 12px;
+    line-height: 1.55;
+    color: #333;
+}
+.compare-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #888;
+}
+
+/* ===== 시나리오 카드 ===== */
+.scenario-card {
+    margin-top: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e3e8f0;
+}
+.scenario-card + .scenario-card { margin-top: 10px; }
+.scenario-head {
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.scenario-head .s-num {
+    background: rgba(255,255,255,0.25);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+.scenario-card.bad .scenario-head { background: #c0392b; }
+.scenario-card.good .scenario-head { background: #138d75; }
+.scenario-card.mid .scenario-head { background: #d68910; }
+.scenario-body {
+    padding: 12px;
+    background: white;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #333;
+}
+.scenario-body strong { color: #1a3a6c; }
+.scenario-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 4px;
+    margin-top: 4px;
+    font-weight: 700;
+}
+.scenario-tag.tag-bad { background: #fadbd8; color: #c0392b; }
+.scenario-tag.tag-good { background: #d1f2eb; color: #138d75; }
+.scenario-tag.tag-mid { background: #fdebd0; color: #b9770e; }
+
+/* ===== 키워드 박스 ===== */
+.keyword-box {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.keyword-tag {
+    background: #e8edf5;
+    color: #1a3a6c;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===== 흐름도 (영향 경로) ===== */
+.flow-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+}
+.flow-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e3e8f0;
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+.flow-step .f-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: #1a3a6c;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+.flow-step .f-text {
+    font-size: 12.5px;
+    color: #333;
+    line-height: 1.45;
+    flex-grow: 1;
+}
+.flow-step .f-text strong { color: #c0392b; }
+.flow-arrow {
+    text-align: center;
+    color: #1a3a6c;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* ===== 도넛 차트 (CSS) ===== */
+.donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+}
+.donut {
+    flex-shrink: 0;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient(
+        #c0392b 0% 27%,
+        #2a5ca8 27% 64.2%,
+        #d68910 64.2%
+    );
+}
+.donut::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    background: #f7f9fc;
+    border-radius: 50%;
+}
+.donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+    font-size: 10px;
+    color: #555;
+    line-height: 1.2;
+}
+.donut-center strong { display: block; font-size: 13px; color: #1a3a6c; }
+.donut-legend {
+    flex-grow: 1;
+    font-size: 11.5px;
+    color: #333;
+}
+.donut-legend .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.donut-legend .leg-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.donut-legend .leg-val {
+    margin-left: auto;
+    font-weight: 700;
+}
+
+/* ===== 타임라인 ===== */
+.timeline {
+    padding-left: 18px;
+    position: relative;
+    margin-top: 10px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: #1a3a6c;
+}
+.tl-item {
+    position: relative;
+    padding-bottom: 12px;
+    padding-left: 14px;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #c0392b;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px #1a3a6c;
+}
+.tl-date {
+    font-size: 11px;
+    font-weight: 700;
+    color: #c0392b;
+    margin-bottom: 2px;
+}
+.tl-text {
+    font-size: 12.5px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* 푸터 */
+.footer-note {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .data-table td { background: #232730; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table tr:nth-child(even) td { background: #1c1f26; }
+    .compare-side p { color: #c8ccd4; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+    .tl-text { color: #c8ccd4; }
+    .bar-track { background: #2d3340; }
+    .flow-step { background: #1c1f26; border-color: #2d3340; }
+    .flow-step .f-text { color: #c8ccd4; }
+    .scenario-body { background: #1c1f26; color: #c8ccd4; }
+    .donut::after { background: #1c1f26; }
+    .donut-center { color: #aaa; }
+    .donut-center strong { color: #6da3e8; }
+    .donut-legend { color: #c8ccd4; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ===== 후원 버튼 ===== */
+/* top-bar용 (작은 분홍 칩) */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+/* 하단 공유 옆 (메인 액션 사이즈) */
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 심층분석</a>
+    <span class="date">2026.05.28</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">DEEP DIVE · POWER</div>
+    <h1>AI는 <span class="accent">'에너지 블랙홀'</span><br><span class="highlight">K전력 32조</span> 수주의 시대</h1>
+    <div class="subtitle">전기 먹는 AI가 전력기기 몸값을 올렸다 — 호황의 배경과 투자 전략</div>
+    <div class="date-info">심층분석 · 쉽게 풀어쓰기</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>한 줄로 이해하기 — '갑을 관계가 바뀌었다'</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>전력기기 빅3, 얼마나 벌고 있나 — 32조 수주잔고</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>호황의 진짜 원인 ① AI 데이터센터 '전기 먹는 하마'</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>호황의 진짜 원인 ② 노후 전력망 교체 폭탄</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>호황의 진짜 원인 ③ 중동 재건과 신재생에너지</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>왜 하필 한국인가 — K전력의 경쟁력과 과제</span>
+    </a>
+    <a class="toc-item" href="#a7">
+        <span class="toc-num">7</span>
+        <span>투자, 지금 들어가도 될까 — 밸류 부담과 리스크</span>
+    </a>
+    <a class="toc-item" href="#a8">
+        <span class="toc-num">8</span>
+        <span>종합 전망 — 옥석 가릴 때, 무엇을 봐야 하나</span>
+    </a>
+</div>
+
+<!-- 기사 1 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">No. 1</span>
+        <h3>한 줄로 이해하기 — '갑을 관계가 바뀌었다'</h3>
+    </div>
+    <div class="body">
+        <p>"관세까지 우리가 낼 테니 제발 물건만 빨리 보내달라." 요즘 미국 전력 회사들이 한국 전력기기 업체에 하는 말입니다. 미국에 초고압 변압기를 수출하면 관세가 20% 붙는데, 그 부담을 기꺼이 떠안겠다는 뜻입니다. 사겠다는 곳은 줄을 섰는데 만들 곳이 부족하니, 파는 쪽이 칼자루를 쥐는 '갑을 역전'이 벌어진 셈입니다.</p>
+        <p>한때 사양 산업 취급을 받던 전력기기가 인공지능(AI) 시대의 새로운 효자로 떠올랐습니다. AI를 돌리는 데 필수인 데이터센터가 '전기 먹는 하마'처럼 전력을 빨아들이면서, 변압기와 송전망 같은 전력 인프라 수요가 폭발했기 때문입니다. HD현대일렉트릭, 효성중공업, LS일렉트릭 등 'K전력 빅3'가 역대급 수주를 쓸어 담고 있습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>AI는 똑똑해질수록 <strong>어마어마한 전기</strong>를 먹습니다. 그 전기를 안정적으로 보내주려면 변압기·송전선 같은 '전력 장비'가 꼭 필요한데, 전 세계가 한꺼번에 이 장비를 찾다 보니 <strong>물건이 동났습니다.</strong></p>
+        <p>그런데 이 장비를 제대로 만들 수 있는 나라가 몇 안 됩니다. 한국이 그중 하나라서, <strong>주문이 밀려들고 가격도 오르는</strong> 호황을 맞은 겁니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📌 K전력 호황 핵심 3가지</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">빅3 수주잔고</div>
+                <div class="stat-value">32조원</div>
+                <div class="stat-sub">올 1분기 합산·연내 40조 전망</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">수요 핵심</div>
+                <div class="stat-value">AI 전력</div>
+                <div class="stat-sub">데이터센터 폭증</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">시장 지위</div>
+                <div class="stat-value">갑을 역전</div>
+                <div class="stat-sub">파는 쪽이 우위</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#K전력</span>
+            <span class="keyword-tag">#전력기기빅3</span>
+            <span class="keyword-tag">#AI데이터센터</span>
+            <span class="keyword-tag">#그리드쇼티지</span>
+            <span class="keyword-tag">#초고압변압기</span>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 2 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">No. 2</span>
+        <h3>전력기기 빅3, 얼마나 벌고 있나 — 32조 수주잔고</h3>
+    </div>
+    <div class="body">
+        <p>국내 전력기기 3사의 올 1분기 합산 수주잔액은 약 32조원에 달합니다. 수주잔액이란 '이미 계약을 따내 앞으로 만들어 납품하면 받게 될 일감'을 뜻합니다. HD현대일렉트릭은 1분기에만 17억9700만달러(약 2조6500억원)를 신규 수주해 연간 목표의 43%를 한 분기에 달성했고, 수주잔액은 78억8800만달러(약 11조6200억원)로 사상 최대치를 경신했습니다.</p>
+        <p>효성중공업은 1분기 신규 수주 4조1745억원으로 수주잔액 15조원을 넘겼고, 765kV 초고압 변압기 단일 계약으로는 역대 최대인 7800억원 규모를 따냈습니다. LS일렉트릭의 수주잔고는 5조6425억원입니다. 실적도 가파릅니다. 효성중공업 1분기 영업이익은 1523억원(+48.8%), LS일렉트릭은 1266억원(+45%), HD현대일렉트릭은 2583억원(+18.4%)을 기록했습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 수주잔고가 왜 중요한가요?</div>
+        <p><strong>수주잔고</strong>는 식당으로 치면 '이미 예약이 꽉 찬 손님 명단'입니다. 명단이 길수록 앞으로 몇 년치 매출이 보장된다는 뜻이라, 투자자들이 가장 주목하는 숫자입니다.</p>
+        <p>빅3의 명단을 합치면 32조원어치. 업계에서는 <strong>4~5년 치 일감</strong>으로 봅니다. 그래서 '실적이 한동안 우상향할 것'이라는 기대가 큰 겁니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📊 전력기기 빅3 1분기 수주잔고<span class="ig-unit">단위: 원 · 막대 길이는 상대 규모</span></div>
+        <div class="bar-chart">
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">HD현대일렉트릭</span>
+                    <span class="bar-val" style="color:#c0392b;">11조6200억</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill teal" style="width: 77%;">11.6조 (78.9억$)</div>
+                </div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">효성중공업</span>
+                    <span class="bar-val" style="color:#c0392b;">15조원 +</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill red" style="width: 100%;">15조원 (역대 최대)</div>
+                </div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">LS일렉트릭</span>
+                    <span class="bar-val">5조6425억</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill orange" style="width: 37%;">5.6조원</div>
+                </div>
+            </div>
+        </div>
+        <div class="ig-caption">💬 합산 약 <strong>32조원</strong> · 현재 흐름이면 연내 <strong>40조원</strong> 돌파 관측 (자료: 각 사)</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📈 빅3 1분기 영업이익 (전년 동기 대비)</div>
+        <table class="data-table">
+            <tr><th>기업</th><th>영업이익</th><th>증가율</th></tr>
+            <tr><td>효성중공업</td><td class="highlight">1523억원</td><td class="highlight">+48.8%</td></tr>
+            <tr><td>LS일렉트릭</td><td>1266억원</td><td>+45.0%</td></tr>
+            <tr><td>HD현대일렉트릭</td><td>2583억원</td><td>+18.4%</td></tr>
+        </table>
+        <div class="ig-caption">전선까지 더하면 호황은 더 넓다 — LS전선·대한전선 합산 수주잔고 12조3270억원</div>
+    </div>
+</article>
+
+<!-- 기사 3 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">No. 3</span>
+        <h3>호황의 진짜 원인 ① AI 데이터센터 '전기 먹는 하마'</h3>
+    </div>
+    <div class="body">
+        <p>K전력 호황의 1차 원인은 AI 데이터센터입니다. AI는 반도체만으로 돌아가지 않습니다. 고성능 GPU 수만 대를 묶어 학습과 추론을 처리하는 데이터센터는 '전기 먹는 공장'에 가깝습니다. 전력이 끊기면 저장된 데이터가 사라질 수 있어, 24시간 끊김 없는 고품질 전력이 필수입니다.</p>
+        <p>국제에너지기구(IEA)에 따르면 전 세계 데이터센터 전력 소비는 2024년 415TWh(테라와트시)에서 2030년 945TWh로 두 배 이상 늘어날 전망입니다. 특히 미국은 같은 기간 183TWh에서 426TWh로 약 240TWh 증가하며, 미국과 중국이 글로벌 증가분의 약 80%를 차지할 것으로 예상됩니다. 이 막대한 전력을 감당하려면 변압기·송전망 같은 전력 인프라가 함께 깔려야 합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — TWh가 얼마나 큰 거예요?</div>
+        <p><strong>1TWh</strong>는 4인 가구 약 27만 가구가 1년간 쓰는 전기량입니다. 2030년 데이터센터가 쓸 945TWh는 어지간한 나라 하나가 1년에 쓰는 전기와 맞먹습니다.</p>
+        <p>즉 AI 산업이 커질수록 '나라 하나 분량의 전기'를 새로 만들고 보내야 하는데, 그 길목에 <strong>변압기·송전선이 반드시 필요</strong>하다는 뜻입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚡ 글로벌 데이터센터 전력 소비 전망<span class="ig-unit">단위: TWh · 자료: 국제에너지기구(IEA)</span></div>
+        <div class="bar-chart">
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">2024년 (전 세계)</span>
+                    <span class="bar-val">415</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill teal" style="width: 44%;">415</div>
+                </div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">2028년 (전 세계)</span>
+                    <span class="bar-val">725</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill orange" style="width: 77%;">725</div>
+                </div>
+            </div>
+            <div class="bar-row">
+                <div class="bar-label">
+                    <span class="bar-name">2030년 (전 세계)</span>
+                    <span class="bar-val" style="color:#c0392b;">945</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill red" style="width: 100%;">945 (2배 이상)</div>
+                </div>
+            </div>
+        </div>
+        <div class="ig-caption">💬 미국만 떼어 보면 <strong>183TWh(2024) → 426TWh(2030)</strong>, 약 240TWh 증가</div>
+    </div>
+</article>
+
+<!-- 기사 4 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">No. 4</span>
+        <h3>호황의 진짜 원인 ② 노후 전력망 교체 폭탄</h3>
+    </div>
+    <div class="body">
+        <p>두 번째 원인은 낡을 대로 낡은 전력망입니다. 미국 에너지부는 미국 송전선의 70% 이상이 설치된 지 25년을 넘긴 노후 설비라고 밝혔습니다. 1980~1990년대에 대규모로 깔린 변압기와 송전망이 교체 시기에 한꺼번에 도달한 것입니다. 전력 수요가 정체됐던 시기에는 교체 투자가 뒤로 밀렸지만, AI 수요 폭발로 더는 미룰 수 없게 됐습니다.</p>
+        <p>IEA는 2040년까지 전 세계적으로 8000만km 이상의 송·배전망을 새로 깔거나 교체해야 한다고 분석했습니다. 이는 현재 지구상에 깔린 전력망 전체에 맞먹는 규모입니다. 게다가 데이터센터가 전력망에 연결되기까지 미국 일부 지역에서는 3~7년이 걸려, 송전망이 데이터센터 건설보다 더 큰 병목으로 떠올랐습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 전력망도 수명이 있나요?</div>
+        <p>전력망은 한 번 깔면 수십 년 쓰지만, <strong>영원하지는 않습니다.</strong> 오래된 변압기·송전선은 고장이 잦고 효율도 떨어져, 때가 되면 갈아줘야 합니다.</p>
+        <p>지금 미국은 '낡은 전력망 교체'와 'AI용 새 전력망 건설'이 <strong>동시에 터진</strong> 상황입니다. 그래서 전력 장비를 만드는 한국 기업에 주문이 쏟아지는 겁니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🚦 왜 전력망이 '병목'이 됐나</div>
+        <div class="flow-box">
+            <div class="flow-step">
+                <span class="f-num">1</span>
+                <span class="f-text">미국 송전선의 <strong>70% 이상이 설치 25년 초과</strong> — 교체 시기 한꺼번에 도래</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <span class="f-num">2</span>
+                <span class="f-text">데이터센터 건설은 18~24개월, 전력망 연결은 <strong>3~7년</strong> — 전력망이 더 큰 병목</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <span class="f-num">3</span>
+                <span class="f-text">변압기·배전 설비 <strong>선확보 경쟁</strong> → K전력 수주 폭증</span>
+            </div>
+        </div>
+        <div class="ig-caption">💬 IEA: 2040년까지 전 세계 <strong>8000만km</strong> 송·배전망 신설·교체 필요 (지구 전체 전력망 규모)</div>
+    </div>
+</article>
+
+<!-- 기사 5 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">No. 5</span>
+        <h3>호황의 진짜 원인 ③ 중동 재건과 신재생에너지</h3>
+    </div>
+    <div class="body">
+        <p>세 번째 원인은 북미 바깥에 있습니다. 중동이 전력망 복구와 도시 인프라 투자라는 또 다른 성장 축으로 떠올랐습니다. 미국·이란 전쟁 종료 이후 재건 수요까지 기대되며 IEA는 중동·북아프리카(MENA) 지역 전력 수요가 2035년 지금보다 50% 늘어날 것으로 전망했습니다. HD현대일렉트릭은 지난해 사우디전력청에서만 전체 매출의 10.3%인 4212억원을 올렸습니다.</p>
+        <p>신재생에너지 확대도 전력기기 수요를 키웁니다. 태양광·풍력은 날씨에 따라 발전량이 들쭉날쭉하고 발전지가 수요지와 멀리 떨어진 경우가 많아, 전력망에 안정적으로 연결하려면 에너지저장장치(ESS), 초고압직류송전(HVDC), 계통 안정화 장비가 추가로 필요합니다. 한국 기업에는 전선과 전력기기 양쪽에서 기회가 생기는 구조입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 수요가 한 곳이 아니네요?</div>
+        <p>맞습니다. K전력 호황은 한 가지 이유가 아니라 <strong>여러 수요가 동시에 겹친</strong> 결과입니다. ①AI 데이터센터 ②노후 전력망 교체 ③중동 재건 ④신재생에너지 연결, 이렇게 네 개의 큰 수요가 한꺼번에 몰렸습니다.</p>
+        <p>수요 기둥이 여러 개라서 <strong>한두 개가 흔들려도 쉽게 무너지지 않는다</strong>는 점이 이번 호황의 강점입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🌍 K전력을 떠받치는 4대 수요 기둥</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-red">
+                <div class="stat-label">① AI 데이터센터</div>
+                <div class="stat-value">945TWh</div>
+                <div class="stat-sub">2030년 전 세계 전력 소비</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">② 노후 전력망</div>
+                <div class="stat-value">70%+</div>
+                <div class="stat-sub">미국 송전선 25년 초과</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">③ 중동 재건</div>
+                <div class="stat-value">+50%</div>
+                <div class="stat-sub">MENA 전력수요 2035년</div>
+            </div>
+            <div class="stat-card stat-purple">
+                <div class="stat-label">④ 신재생 연결</div>
+                <div class="stat-value">HVDC·ESS</div>
+                <div class="stat-sub">계통 안정화 장비 수요</div>
+            </div>
+        </div>
+        <div class="ig-caption">💬 HD현대일렉트릭, 사우디전력청서만 <strong>매출의 10.3%(4212억)</strong> 달성</div>
+    </div>
+</article>
+
+<!-- 기사 6 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">No. 6</span>
+        <h3>왜 하필 한국인가 — K전력의 경쟁력과 과제</h3>
+    </div>
+    <div class="body">
+        <p>전 세계가 전력 장비를 찾는데, 왜 한국 기업이 수혜를 볼까요. 핵심은 '검증된 공급사가 몇 안 된다'는 점입니다. 초고압 변압기와 전력케이블은 안전성·신뢰성이 중요해 납품 이력과 인증이 진입장벽으로 작용합니다. 한국은 765kV급 초고압 송전망 운영 경험과 원전 기반 대용량 변압기 기술을 동시에 갖춘 몇 안 되는 나라입니다. GE·지멘스에너지·히타치에너지·ABB 같은 전통 강자와 겨룰 만한 실력에, 상대적으로 빠른 납기와 맞춤 제작 능력을 앞세우고 있습니다.</p>
+        <p>현지 생산 기반도 강점입니다. HD현대일렉트릭은 미국 앨라배마, 효성중공업은 테네시에 생산 거점을 두고 증설 중입니다. 미국의 '바이 아메리칸' 자국 우선주의 장벽에 대응할 수 있는 기반입니다. 다만 전문가들은 단순 제품 공급을 넘어, 송배전·계통 장비와 운영 노하우를 묶은 '패키지형 솔루션'으로 진화해야 하며, 미국·유럽의 탄소·환경 규제와 공급망 재편 흐름을 넘어서야 한다고 지적합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 다른 나라는 못 만드나요?</div>
+        <p>초고압 변압기는 <strong>아무나 못 만드는 고난도 제품</strong>입니다. 잘못되면 대형 정전으로 이어지니, 발주처는 검증된 회사만 찾습니다. 그런 회사가 세계적으로 손에 꼽힐 정도인데 한국 빅3가 거기 듭니다.</p>
+        <p>다만 안심은 금물입니다. <strong>미국·유럽은 '자국에서 만들라', '환경 기준 맞춰라'</strong>며 문턱을 높이는 중이라, 단순 수출만으로는 한계가 있다는 게 전문가들의 조언입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🏭 K전력의 강점 vs 넘어야 할 과제</div>
+        <div class="compare-box">
+            <div class="compare-side" style="background:linear-gradient(135deg,#e8f8f5,#d1f2eb);">
+                <div class="c-label" style="color:#138d75;">강점</div>
+                <div class="c-value" style="color:#138d75; font-size:15px;">검증된 기술</div>
+                <p>765kV 운영 경험<br>현지 공장·빠른 납기</p>
+            </div>
+            <div class="compare-vs">VS</div>
+            <div class="compare-side" style="background:linear-gradient(135deg,#fdf0ee,#fadbd8);">
+                <div class="c-label" style="color:#c0392b;">과제</div>
+                <div class="c-value" style="color:#c0392b; font-size:15px;">진입장벽</div>
+                <p>미·EU 환경 규제<br>패키지 솔루션 전환</p>
+            </div>
+        </div>
+        <div class="ig-caption">💬 전문가: "단품 제조 경쟁이 아니라 <strong>송배전·계통 장비와 운영 노하우를 묶은 패키지</strong>로 승부해야"</div>
+    </div>
+</article>
+
+<!-- 기사 7 -->
+<article class="article" id="a7">
+    <div class="article-header">
+        <span class="num">No. 7</span>
+        <h3>투자, 지금 들어가도 될까 — 밸류 부담과 리스크</h3>
+    </div>
+    <div class="body">
+        <p>호황은 분명하지만, 주가는 다른 문제입니다. 전력기기·전선주로 구성된 'RISE AI전력인프라 ETF'는 고점 대비 23.6% 하락했습니다. 월가에서는 밸류에이션(주가 수준) 부담이 크다는 목소리가 나옵니다. LS일렉트릭의 2026년 예상 주가수익비율(PER)은 87.3배로, 슈나이더일렉트릭(26.7배)·히타치(25.3배) 등 글로벌 경쟁사보다 훨씬 높습니다. 맥쿼리는 LS일렉트릭 투자의견을 매도로, 목표주가를 종가보다 낮은 16만원으로 내리기도 했습니다.</p>
+        <p>실수요 둔화 가능성도 변수입니다. JP모건에 따르면 북미 데이터센터 건설 지연·취소 건수는 2023년 2건, 2024년 6건에서 2025년 25건으로 4배 이상 늘었습니다. 블룸버그는 올해 계획된 데이터센터 프로젝트의 절반이 지연·취소됐다고 전했습니다. 과거 닷컴버블 당시 통신 인프라 기업들이 과잉 설비로 수익성 악화에 직면했던 사례를 떠올리게 하는 대목입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — PER이 높으면 나쁜 건가요?</div>
+        <p><strong>PER</strong>은 '지금 주가가 이익의 몇 배냐'를 나타냅니다. 숫자가 높을수록 '미래 기대가 이미 주가에 많이 반영됐다'는 뜻이라, 기대에 못 미치면 크게 떨어질 수 있습니다.</p>
+        <p>LS일렉트릭 PER 87배는 경쟁사의 3배가 넘습니다. 호황은 진짜지만 <strong>'좋은 회사'와 '지금 사기 좋은 주가'는 다를 수 있다</strong>는 신호입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚠️ 투자 경고 신호 3가지</div>
+        <table class="data-table">
+            <tr><th>신호</th><th>수치</th><th>의미</th></tr>
+            <tr><td>ETF 조정</td><td class="highlight">-23.6%</td><td>RISE AI전력인프라 고점 대비</td></tr>
+            <tr><td>밸류 부담</td><td class="highlight">PER 87.3배</td><td>경쟁사(25~27배)의 3배+</td></tr>
+            <tr><td>건설 지연</td><td class="highlight">4배 ↑</td><td>북미 DC 지연·취소(25년 25건)</td></tr>
+        </table>
+        <div class="ig-caption">💬 닷컴버블 교훈 — 기대만큼 수요가 안 따라오면 '과잉 설비' 위험</div>
+    </div>
+</article>
+
+<!-- 기사 8 -->
+<article class="article" id="a8">
+    <div class="article-header">
+        <span class="num">No. 8</span>
+        <h3>종합 전망 — 옥석 가릴 때, 무엇을 봐야 하나</h3>
+    </div>
+    <div class="body">
+        <p>정리하면, K전력 호황의 큰 줄기는 단단합니다. AI 데이터센터, 노후 전력망 교체, 중동 재건, 신재생에너지라는 네 개의 수요 기둥이 동시에 받치고 있고, 빅3의 32조원 수주잔고는 4~5년 치 일감으로 단기간에 꺾이기 어렵습니다. 전선 부문(LS전선·대한전선)도 HVDC·해저케이블 중심으로 수년 치 일감을 확보했습니다. 구조적 성장 사이클이라는 평가가 나오는 이유입니다.</p>
+        <p>다만 투자 관점에서는 '옥석 가리기'가 필요한 시점입니다. 호황 기대가 이미 주가에 상당히 반영됐고, 데이터센터 건설 지연·밸류 부담·증설 후 공급 과잉 우려 같은 변수가 공존합니다. 산업의 성장성과 개별 종목의 주가 수준은 구분해서 봐야 합니다. 송전선로·변전소 인허가, 구리·전기강판 등 원자재 가격, 숙련 인력 확보도 점검 포인트입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면 — 무엇을 기억해야 할까요?</div>
+        <p><strong>좋은 점:</strong> 수요 기둥이 4개라 호황이 한동안 이어질 가능성이 높습니다. 일감(수주잔고)도 4~5년 치로 든든합니다.</p>
+        <p><strong>주의할 점:</strong> '산업이 좋다'와 '지금 주가가 싸다'는 다릅니다. 데이터센터 건설 지연 추이, 개별 기업의 PER과 수주 질을 함께 보고 <strong>옥석을 가려야</strong> 합니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⚖️ 한눈에 보는 기회와 리스크</div>
+        <div class="stat-grid">
+            <div class="stat-card stat-teal">
+                <div class="stat-label">구조적 기회</div>
+                <div class="stat-value">4대 수요</div>
+                <div class="stat-sub">DC·노후망·중동·신재생</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">점검 리스크</div>
+                <div class="stat-value">밸류·지연</div>
+                <div class="stat-sub">PER 부담·DC 건설 지연</div>
+            </div>
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#구조적사이클</span>
+            <span class="keyword-tag">#수주잔고</span>
+            <span class="keyword-tag">#옥석가리기</span>
+            <span class="keyword-tag">#밸류부담</span>
+            <span class="keyword-tag">#패키지솔루션</span>
+        </div>
+        <div class="ig-caption">💬 "전력 산업은 반도체와 함께 명백한 병목 현상이 나타나고 있다" — 증권가 진단</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 분석 공유하기</button>
+    <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 가좌버핏 뉴스 · 심층분석 시리즈<br>
+    <span style="opacity:0.7; font-size:11px;">2026년 5월 28일 발행 · 일반 독자가 이해하기 쉽게 풀어쓴 기획 글입니다. 투자 판단의 책임은 본인에게 있습니다.</span>
+</div>
+
+<script>
+// 분석 글 공유 — Web Share API + 클립보드 폴백 (카톡 한 메시지로 가도록 url 인라인)
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📊 [심층분석]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
