@@ -23,10 +23,13 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 REPO = Path(__file__).resolve().parent.parent
 OG_DIR = REPO / 'assets' / 'og'
-FONT = '/System/Library/Fonts/AppleSDGothicNeo.ttc'
+FONT_BOLD = str(REPO / 'assets' / 'fonts' / 'Pretendard-Bold.otf')
+FONT_MEDIUM = str(REPO / 'assets' / 'fonts' / 'Pretendard-Medium.otf')
+# Pretendard에 없는 한자(美·中·英 등)는 Apple SD Gothic Neo로 폴백.
+HANJA_FALLBACK = '/System/Library/Fonts/AppleSDGothicNeo.ttc'
 W, H = 1200, 630
 
-# AppleSDGothicNeo.ttc 인덱스 (TTC weights): 0=Thin..8=Heavy
+# Pretendard 단일 파일(weight별로 다른 파일). 의미별 weight 지정용 상수.
 WEIGHT_HEAVY, WEIGHT_BOLD, WEIGHT_MEDIUM, WEIGHT_REGULAR = 8, 6, 4, 3
 
 PALETTES = {
@@ -63,7 +66,60 @@ PALETTES = {
 
 
 def fnt(size, weight=WEIGHT_HEAVY):
-    return ImageFont.truetype(FONT, size, index=weight)
+    # Heavy/Bold → Pretendard-Bold, Medium/Regular → Pretendard-Medium
+    path = FONT_BOLD if weight >= WEIGHT_BOLD else FONT_MEDIUM
+    return ImageFont.truetype(path, size)
+
+
+def _hanja_fnt(size, weight):
+    """한자 폴백 폰트 (Apple SD Gothic Neo)."""
+    idx = 8 if weight >= WEIGHT_BOLD else 4
+    return ImageFont.truetype(HANJA_FALLBACK, size, index=idx)
+
+
+def _is_hanja(c):
+    return 0x4E00 <= ord(c) <= 0x9FFF or 0x3400 <= ord(c) <= 0x4DBF
+
+
+def _split_runs(text):
+    """텍스트를 한자/비한자 run으로 분할."""
+    if not text:
+        return []
+    runs = []
+    cur = [text[0]]
+    cur_is_hanja = _is_hanja(text[0])
+    for c in text[1:]:
+        h = _is_hanja(c)
+        if h == cur_is_hanja:
+            cur.append(c)
+        else:
+            runs.append((''.join(cur), cur_is_hanja))
+            cur = [c]
+            cur_is_hanja = h
+    runs.append((''.join(cur), cur_is_hanja))
+    return runs
+
+
+def draw_text_smart(draw, pos, text, size, weight, fill):
+    """한자 폴백 적용 텍스트 렌더링."""
+    x, y = pos
+    primary = fnt(size, weight)
+    fallback = _hanja_fnt(size, weight)
+    for run, is_hanja in _split_runs(text):
+        f = fallback if is_hanja else primary
+        draw.text((x, y), run, font=f, fill=fill)
+        x += draw.textlength(run, font=f)
+
+
+def textlength_smart(draw, text, size, weight):
+    """한자 폴백 고려한 전체 텍스트 폭."""
+    primary = fnt(size, weight)
+    fallback = _hanja_fnt(size, weight)
+    total = 0.0
+    for run, is_hanja in _split_runs(text):
+        f = fallback if is_hanja else primary
+        total += draw.textlength(run, font=f)
+    return total
 
 
 def make_gradient(pal):
@@ -92,23 +148,23 @@ def draw_brand_badge(draw, pal, badge_text):
     # 브랜드 라벨은 빼고 카테고리 배지만 표시 (2026-05-27 결정)
     if len(badge_text) > 24:
         badge_text = badge_text[:23] + '…'
-    bw = draw.textlength(badge_text, font=fnt(34, WEIGHT_BOLD))
+    bw = textlength_smart(draw, badge_text, 34, WEIGHT_BOLD)
     px_pad, py_pad = 26, 14
     bx0, by0 = 60, 60
     draw.rounded_rectangle(
         [(bx0, by0), (bx0+bw+px_pad*2, by0+34+py_pad*2)],
         radius=26, fill=pal['badge_bg'])
-    draw.text((bx0+px_pad, by0+py_pad-2), badge_text,
-              font=fnt(34, WEIGHT_BOLD), fill=pal['badge_fg'])
+    draw_text_smart(draw, (bx0+px_pad, by0+py_pad-2), badge_text,
+                    34, WEIGHT_BOLD, pal['badge_fg'])
 
 
 def draw_footer(draw, pal, left_text, right_text="gjbuffet.kr"):
     fy = H - 80
     if left_text:
-        draw.text((60, fy), left_text, font=fnt(36, WEIGHT_BOLD), fill=pal['accent'])
+        draw_text_smart(draw, (60, fy), left_text, 36, WEIGHT_BOLD, pal['accent'])
     if right_text:
-        rw = draw.textlength(right_text, font=fnt(36, WEIGHT_BOLD))
-        draw.text((W-60-rw, fy), right_text, font=fnt(36, WEIGHT_BOLD), fill=(255, 255, 255))
+        rw = textlength_smart(draw, right_text, 36, WEIGHT_BOLD)
+        draw_text_smart(draw, (W-60-rw, fy), right_text, 36, WEIGHT_BOLD, (255, 255, 255))
     draw.rectangle([(0, H-8), (W, H)], fill=pal['accent'])
 
 
@@ -149,8 +205,8 @@ def gen_daily(filepath, html):
     dow = day_of_week_kr(fn)
 
     # big date
-    draw.text((60, 160), date_str, font=fnt(124, WEIGHT_HEAVY), fill=(255, 255, 255))
-    draw.text((60, 300), f"{dow} · 오늘의 핵심뉴스", font=fnt(44, WEIGHT_BOLD), fill=pal['accent'])
+    draw_text_smart(draw, (60, 160), date_str, 124, WEIGHT_HEAVY, (255, 255, 255))
+    draw_text_smart(draw, (60, 300), f"{dow} · 오늘의 핵심뉴스", 44, WEIGHT_BOLD, pal['accent'])
 
     # headlines: override meta 우선, 없으면 top 3 h3
     override = re.search(r'<meta name="og-headlines-short" content="([^"]+)"', html)
@@ -165,7 +221,7 @@ def gen_daily(filepath, html):
 
     y = 380
     for head in headlines:
-        draw.text((60, y), f"·  {head}", font=fnt(42, WEIGHT_MEDIUM), fill=(220, 230, 245))
+        draw_text_smart(draw, (60, y), f"·  {head}", 42, WEIGHT_MEDIUM, (220, 230, 245))
         y += 60
 
     draw_footer(draw, pal, "")
@@ -214,13 +270,13 @@ def gen_titled(filepath, html, category):
 
     y = 190
     for line in title_lines:
-        draw.text((60, y), line, font=fnt(92, WEIGHT_HEAVY), fill=(255, 255, 255))
+        draw_text_smart(draw, (60, y), line, 92, WEIGHT_HEAVY, (255, 255, 255))
         y += 118
 
     if sub_text:
         if len(sub_text) > 28:
             sub_text = sub_text[:27] + '…'
-        draw.text((60, y + 18), sub_text, font=fnt(40, WEIGHT_MEDIUM), fill=(210, 225, 245))
+        draw_text_smart(draw, (60, y + 18), sub_text, 40, WEIGHT_MEDIUM, (210, 225, 245))
 
     draw_footer(draw, pal, date_from_filename(os.path.basename(filepath)))
     return img
