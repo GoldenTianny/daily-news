@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="가좌버핏 뉴스 · 좋은글">
 <meta property="og:description" content="마음을 따뜻하게 데우는 글 1,200여 편">
-<meta property="og:image" content="https://gjbuffet.kr/assets/title.png">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/article/01.jpg">
 <meta property="og:url" content="https://gjbuffet.kr/article/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="가좌버핏 뉴스 · 좋은글">
 <meta name="twitter:description" content="마음을 따뜻하게 데우는 글 1,200여 편">
-<meta name="twitter:image" content="https://gjbuffet.kr/assets/title.png">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/og/article/01.jpg">
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
@@ -913,7 +913,13 @@ modalLike.addEventListener('click', async () => {
 
 modalShare.addEventListener('click', async () => {
     if (!currentArticle) return;
-    const url = location.origin + location.pathname + '#' + currentArticle.id;
+    // 분단위 썸네일 로테이션: 공유 시각의 '분'으로 stub(s/NN.html)을 골라 공유한다.
+    // 카톡은 URL별로 미리보기를 캐싱하므로 stub마다 다른 풍경/꽃 사진이 뜬다.
+    // stub 개수 변경 시 tools/make_share_stubs.py 출력에 맞춰 STUB_COUNT 수정.
+    const STUB_COUNT = 12;
+    const slot = String(new Date().getMinutes() % STUB_COUNT + 1).padStart(2, '0');
+    const base = location.pathname.replace(/index\.html$/, '');
+    const url = location.origin + base + 's/' + slot + '.html?a=' + currentArticle.id;
     const text = `✨ ${currentArticle.title}\n\n${currentArticle.body.slice(0, 200)}${currentArticle.body.length > 200 ? '...' : ''}\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
     const data = { title: currentArticle.title, text };
     if (navigator.share) {
