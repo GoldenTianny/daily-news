@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#1a3a6c">
+<title>가좌버핏 뉴스 · [북리뷰] 시작의 기술 — 챕터별 리뷰</title>
+<meta name="description" content="개리 비숍 '시작의 기술' 챕터별 심층 리뷰 — 게으른 완벽주의자를 위한 7가지 자기 단언, 들어가는 말부터 나가는 말까지 전 챕터 분석">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · [북리뷰] 시작의 기술 — 챕터별 리뷰">
+<meta property="og:description" content="개리 비숍 '시작의 기술' 챕터별 심층 리뷰 — 게으른 완벽주의자를 위한 7가지 자기 단언, 들어가는 말부터 나가는 말까지 전 챕터 분석">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/2026-06-12_unfuk-yourself-book-review.png">
+<meta property="og:url" content="https://gjbuffet.kr/companies/2026-06-12_unfuk-yourself-book-review.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · [북리뷰] 시작의 기술 — 챕터별 리뷰">
+<meta name="twitter:description" content="개리 비숍 '시작의 기술' 챕터별 심층 리뷰 — 게으른 완벽주의자를 위한 7가지 자기 단언, 들어가는 말부터 나가는 말까지 전 챕터 분석">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/og/2026-06-12_unfuk-yourself-book-review.png">
+<meta name="og-title-short" content="시작의 기술|7가지 자기 단언">
+<meta name="og-subtitle-short" content="개리 비숍 — 게으른 완벽주의자를 위한 책">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #1a3a6c;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 ===== */
+.share-section { margin: 24px 16px 8px; text-align: center; }
+.analysis-share-btn {
+    background: #1a3a6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(26,58,108,0.25);
+}
+.analysis-share-btn:hover { background: #15305c; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #2a5ca8; }
+    .analysis-share-btn:hover { background: #3a6cb8; }
+}
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #0d2444 0%, #1a3a6c 50%, #2a5ca8 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(109,180,255,0.22) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label { font-size: 11px; letter-spacing: 5px; opacity: 0.85; margin-bottom: 16px; position: relative; }
+.cover h1 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.25;
+    position: relative;
+}
+.cover h1 .highlight { color: #6db4ff; }
+.cover .subtitle { font-size: 14px; opacity: 0.92; margin-bottom: 6px; position: relative; }
+.cover .date-info { font-size: 13px; opacity: 0.8; margin-top: 8px; position: relative; }
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 { font-size: 16px; color: #1a3a6c; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e8edf5; }
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0; width: 24px; height: 24px;
+    background: #1a3a6c; color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    margin-right: 10px; margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header { padding: 16px 18px 12px; border-left: 4px solid #1a3a6c; }
+.article .num {
+    display: inline-block;
+    background: #1a3a6c; color: white;
+    font-size: 12px; font-weight: 700;
+    padding: 3px 9px; border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 { font-size: 17px; font-weight: 700; color: #0d2444; line-height: 1.4; word-break: keep-all; }
+.article .body { padding: 0 18px 16px; font-size: 14.5px; line-height: 1.75; color: #2a2a2a; }
+.article .body p { margin-bottom: 12px; word-break: keep-all; }
+.article .body p:last-child { margin-bottom: 0; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title { font-size: 12px; font-weight: 700; color: #b9770e; margin-bottom: 8px; letter-spacing: 1px; }
+.easy-box p { font-size: 13.5px; line-height: 1.7; color: #3a3a3a; word-break: keep-all; margin-bottom: 8px; }
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title { font-size: 13px; font-weight: 700; color: #1a3a6c; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #1a3a6c; }
+.ig-unit { font-size: 10.5px; color: #888; font-weight: 400; display: block; margin-top: 2px; }
+
+/* 통계 카드 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card { background: linear-gradient(135deg, #f0f4fa, #e3eaf5); border-left: 3px solid #1a3a6c; padding: 10px 12px; border-radius: 6px; }
+.stat-card .stat-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.stat-card .stat-value { font-size: 18px; font-weight: 800; color: #1a3a6c; line-height: 1.1; }
+.stat-card .stat-sub { font-size: 10px; color: #999; margin-top: 2px; }
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+.stat-blue { background: linear-gradient(135deg, #e3f0fc, #cde4f8); border-left-color: #2874a6; }
+.stat-blue .stat-value { color: #2874a6; }
+.stat-green { background: linear-gradient(135deg, #eafaf1, #d4f1e0); border-left-color: #1e8449; }
+.stat-green .stat-value { color: #1e8449; }
+.stat-purple { background: linear-gradient(135deg, #f4ecf7, #e8daef); border-left-color: #6c3483; }
+.stat-purple .stat-value { color: #6c3483; }
+
+/* 데이터 표 */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+.data-table th { background: #1a3a6c; color: white; padding: 8px 8px; text-align: left; font-weight: 600; font-size: 12px; }
+.data-table td { padding: 7px 8px; border-bottom: 1px solid #e5e8ed; background: transparent; word-break: keep-all; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+.data-table .pos { color: #1e8449; font-weight: 700; }
+.data-table .neg { color: #c0392b; font-weight: 700; }
+.data-table td.num, .data-table th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table td.center, .data-table th.center { text-align: center; }
+
+/* 인용 박스 */
+.quote-box {
+    margin: 10px 0;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #f0f4fa, #e8eef8);
+    border-left: 4px solid #2a5ca8;
+    border-radius: 6px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #2a3a55;
+    word-break: keep-all;
+}
+.quote-box .quote-src { display: block; margin-top: 6px; font-size: 11.5px; color: #6a7a95; font-weight: 600; }
+
+/* 키워드 태그 */
+.keyword-box { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.keyword-tag { background: #1a3a6c; color: white; padding: 4px 10px; font-size: 11.5px; border-radius: 12px; font-weight: 500; }
+
+/* 캡션 */
+.ig-caption { margin-top: 8px; font-size: 11.5px; color: #666; text-align: center; line-height: 1.5; padding: 4px; }
+.ig-caption strong { color: #c0392b; }
+
+/* 별점 */
+.rating-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 4px; border-bottom: 1px solid #e5e8ed; font-size: 13px; }
+.rating-row:last-child { border-bottom: none; }
+.rating-row .stars { color: #d68910; font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+
+/* 푸터 */
+.footer-note { text-align: center; padding: 30px 20px; font-size: 12px; color: #888; line-height: 1.7; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #f0f4fa; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #6da3e8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #6da3e8; border-bottom-color: #6da3e8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #6da3e8; }
+    .data-table td { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .quote-box { background: linear-gradient(135deg, #222b3c, #1d2433); color: #c8d4e8; }
+    .quote-box .quote-src { color: #8a9ab5; }
+    .rating-row { border-bottom-color: #2d3340; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ===== 후원 버튼 ===== */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 북리뷰</a>
+    <span class="date">2026.06.12</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">BOOK REVIEW · SELF-DEVELOPMENT</div>
+    <h1>시작의 기술<br>'<span class="highlight">7가지 자기 단언</span>' 챕터별 리뷰</h1>
+    <div class="subtitle">개리 비숍 著 · 이지연 譯 · 침대에 누워 걱정만 하는 게으른 완벽주의자를 위한 책</div>
+    <div class="date-info">2026년 6월 12일 발행 · 전 챕터 심층 리뷰</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>들어가는 말 — 자기 대화가 인생을 결정한다</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>단언 1 '나는 의지가 있어' — 남 탓의 종말</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>단언 2 '나는 이기게 되어 있어' — 당신은 이미 승자다</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>단언 3 '나는 할 수 있어' — 인지적 재구성의 힘</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>단언 4 '나는 불확실성을 환영해' — 확실성이라는 환상</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>단언 5 '생각이 아니라 행동이 나를 규정해'</span>
+    </a>
+    <a class="toc-item" href="#a7">
+        <span class="toc-num">7</span>
+        <span>단언 6 '나는 부단한 사람이야' — 멈추지 않는 힘</span>
+    </a>
+    <a class="toc-item" href="#a8">
+        <span class="toc-num">8</span>
+        <span>단언 7 '나는 아무것도 기대하지 않고 모든 것을 받아들여'</span>
+    </a>
+    <a class="toc-item" href="#a9">
+        <span class="toc-num">9</span>
+        <span>나가는 말 &amp; 총평 — 읽기만 하면 아무것도 바뀌지 않는다</span>
+    </a>
+</div>
+
+<!-- 기사 1: 들어가는 말 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">Chapter 1</span>
+        <h3>들어가는 말 — 자기 대화가 인생을 결정한다</h3>
+    </div>
+    <div class="body">
+        <p>이 책의 출발점은 단순한 관찰입니다. <strong>우리가 하루 중 가장 많이 대화하는 상대는 다른 누구도 아닌 자기 자신</strong>이라는 것입니다. 연구에 따르면 인간은 하루 5만 가지가 넘는 생각을 하는데, 저자는 그중 상당수가 '너는 게을러', '너 정도로는 안 돼' 같은 자기 비판이라고 지적합니다. 문제는 이런 무의식적 독백이 단순한 소음이 아니라 <strong>삶의 질을 실제로 좌우하는 변수</strong>라는 점입니다.</p>
+        <p>저자는 앨라배마 대학교 윌 하트 교수의 실험을 근거로 듭니다. 같은 사건이라도 그것을 <strong>어떤 언어로 묘사하느냐에 따라 실제로 느끼는 감정이 달라진다</strong>는 결과인데, 부정적 사건을 현재진행형으로 묘사한 사람은 더 부정적으로 느꼈다는 것입니다. 비트겐슈타인, 하이데거 같은 철학자들의 언어철학과 현대 심리학(앨버트 엘리스의 인지치료)을 한데 엮어, "언어가 곧 현실 인식의 틀"이라는 주장을 뒷받침합니다.</p>
+        <p>흥미로운 것은 저자의 차별화 전략입니다. 그는 <strong>"네 안의 호랑이를 깨워라" 식의 낯간지러운 긍정 구호를 정면으로 거부</strong>합니다. 대신 그가 제시하는 도구는 '단언(assertion)'입니다. '할 거야', '해야 돼' 같은 미래형 서사가 아니라 <strong>'나는 ~이다'라는 현재형 선언</strong>이 핵심입니다. 새해 다짐이 늘 실패하는 이유가 '앞으로 할 일'이라는 나중의 언어를 쓰기 때문이라는 분석은 꽤 날카롭습니다.</p>
+        <p><strong>리뷰어 평가:</strong> 신경가소성, 스토아 철학, 인지심리학을 동원한 이론적 무장이 인상적이지만, 인용된 연구들의 깊이가 다소 얕다는 점은 아쉽습니다. 다만 '긍정적 사고를 강요하지 않겠다'는 선언으로 기존 자기계발서와 거리를 두는 포지셔닝은 이 책의 가장 큰 매력이며, 이후 7개 챕터를 읽게 만드는 강력한 훅으로 작동합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>머릿속에서 하루 종일 돌아가는 혼잣말이 사실은 <strong>내 인생의 내비게이션</strong>이라는 얘기입니다. "난 안 돼"라고 입력하면 차가 그쪽으로 가고, "나는 한다"라고 입력하면 그쪽으로 갑니다.</p>
+        <p>그리고 이 책은 "긍정적으로 생각하세요~" 같은 달콤한 말 대신, <strong>"네 인생 그만 망쳐라"라고 따귀를 때리는 스타일</strong>이라고 처음부터 경고합니다. 쓴소리에 약한 독자라면 마음의 준비가 필요합니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">📌 책의 뼈대 — 7가지 자기 단언 한눈에 보기</div>
+        <table class="data-table">
+            <tr><th class="center" style="width:14%;">순서</th><th>단언</th><th>핵심 메시지</th></tr>
+            <tr><td class="center">1</td><td><strong>나는 의지가 있어</strong></td><td>남 탓·환경 탓 중단</td></tr>
+            <tr><td class="center">2</td><td><strong>나는 이기게 되어 있어</strong></td><td>무의식이 증명하려는 믿음 교체</td></tr>
+            <tr><td class="center">3</td><td><strong>나는 할 수 있어</strong></td><td>인생 전체 시야로 문제 축소</td></tr>
+            <tr><td class="center">4</td><td><strong>나는 불확실성을 환영해</strong></td><td>확실성은 환상, 기회는 미지에</td></tr>
+            <tr><td class="center">5</td><td><strong>생각이 아니라 행동이 나를 규정해</strong></td><td>기분과 무관하게 행동</td></tr>
+            <tr><td class="center">6</td><td><strong>나는 부단한 사람이야</strong></td><td>한 번에 한 걸음, 멈추지 않기</td></tr>
+            <tr><td class="center">7</td><td><strong>나는 아무것도 기대하지 않고 모든 것을 받아들여</strong></td><td>숨은 기대 제거, 현재 수용</td></tr>
+        </table>
+        <div class="ig-caption">💬 각 챕터는 독립적으로 읽어도 무방한 구조 — <strong>저자도 건너뛰며 읽기를 허용</strong>합니다</div>
+    </div>
+</article>
+
+<!-- 기사 2: 단언 1 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">Chapter 2</span>
+        <h3>단언 1 '나는 의지가 있어' — 남 탓의 종말</h3>
+    </div>
+    <div class="body">
+        <p>저자가 코칭 현장에서 <strong>가장 먼저 가르친다는 첫 번째 단언</strong>입니다. 논리는 단순하지만 불편합니다. 지금의 상황을 바꿀 의지가 없다면, 좋든 싫든 그것이 당신이 선택한 삶이라는 것입니다. 저자는 운, 타인, 환경, 어린 시절을 탓하는 모든 행위를 중단하라고 요구하며, 심지어 <strong>자기 자신을 탓하는 것조차 쓸모없다</strong>고 말합니다. 비극적 사건은 통제할 수 없지만 그 이후를 어떻게 살지는 전적으로 본인 책임이라는 입장입니다.</p>
+        <p>이 챕터의 백미는 단언의 양면성입니다. '나는 의지가 있어'만큼이나 <strong>'나는 의지가 없어'라는 선언도 강력한 도구</strong>가 될 수 있다는 통찰입니다. "건강하지 않은 몸으로 살 의지가 있는가? 없다"라는 식의 부정형 단언은 모래 위에 선을 긋듯 더 이상 과거로 돌아가지 않겠다는 결의가 됩니다. 또 하나의 묵직한 지점은 정직한 포기입니다. BMW를 동경하면서도 그에 필요한 출퇴근 시간을 감수할 의지가 없다면, <strong>그 동경 자체가 '생각 낭비'임을 인정하라</strong>는 것입니다. 이렇게 의지와 현실을 일치시키면 죄책감과 원망에서 벗어날 수 있다는 논리입니다.</p>
+        <p>에픽테토스("환경은 사람을 드러낼 뿐"), 세네카("운명은 의지 있는 자를 인도한다"), 마키아벨리까지 동원한 인용은 챕터의 무게를 더합니다. 과제가 거대해 보일 때는 '일어난다 → 침대에서 나온다 → 이메일을 연다'처럼 <strong>의지 표명을 잘게 쪼개라</strong>는 실용적 처방도 담겨 있습니다.</p>
+        <p><strong>리뷰어 평가:</strong> "100% 당신 책임"이라는 명제는 동기부여로는 강력하지만, 구조적 불평등이나 정신건강 문제처럼 개인 의지로 환원하기 어려운 영역까지 일괄 적용하면 위험할 수 있습니다. 다만 저자가 '원하지 않는 것을 원한다고 착각하지 말라'는 자기 정직의 도구로 의지 개념을 확장한 점은, 단순한 정신력 예찬과는 결이 다른 성숙한 접근입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>"다이어트 해야 하는데 안 돼요"가 아니라, 둘 중 하나를 솔직하게 고르라는 겁니다. <strong>① "나는 살 뺄 의지가 있다" → 그럼 시작</strong>, <strong>② "사실 좋아하는 음식 포기할 의지가 없다" → 그럼 죄책감 없이 인정</strong>.</p>
+        <p>둘 다 괜찮지만, 가장 나쁜 건 의지도 없으면서 "언젠가 할 거야"라며 <strong>자기 자신에게 허튼소리를 계속하는 것</strong>이라는 게 저자의 핵심 주장입니다.</p>
+    </div>
+</article>
+
+<!-- 기사 3: 단언 2 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">Chapter 3</span>
+        <h3>단언 2 '나는 이기게 되어 있어' — 당신은 이미 승자다</h3>
+    </div>
+    <div class="body">
+        <p>전체 7개 챕터 중 <strong>가장 도발적이고, 가장 정신분석적인 챕터</strong>입니다. 저자의 주장은 충격적입니다. 당신이 인생에서 지고 있다고 느끼는 그 순간조차, 사실은 이기고 있다는 것입니다. 무슨 뜻일까요? 반복되는 연애 실패를 예로 들면, 무의식 깊은 곳에 '아무도 나를 사랑하지 않을 것'이라는 믿음이 박혀 있는 사람은 <strong>그 믿음을 증명하기에 최적인 상대를 무의식적으로 골라</strong> 매번 같은 결말의 에피소드를 재생산한다는 분석입니다. 즉 연애에는 실패했지만, '내 믿음이 옳다는 것을 증명하는 게임'에서는 완벽하게 승리한 셈입니다.</p>
+        <p>저자는 브루스 립튼 박사의 연구를 인용해 일상 행동의 95%를 무의식이 통제한다고 말합니다. 우리는 각자 '이기는 영역'을 갖고 있는데, 연봉 3천만원을 버는 사람은 그 금액에 맞는 계획과 전략의 영역 안에서 충실히 이기고 있다는 것입니다. 6천만원의 영역으로 이동하려면 노력의 양이 아니라 <strong>자동주행 모드 자체를 바꿔야 한다</strong>는 통찰은, 열심히 사는데도 제자리인 사람들에게 뼈아픈 진단입니다.</p>
+        <p>특히 코칭 사례가 흥미롭습니다. 저자를 찾아온 많은 의뢰인들이 무의식적으로 <strong>'부모가 나를 잘못 키웠다'는 사실을 증명하기 위해</strong> 자기 몸을 망치고, 연애를 망치고, 돈 문제를 반복했다는 것입니다. 왜 이런 자해적 게임을 할까요? 저자의 답은 생존 본능입니다. 아무리 나빴어도 과거의 패턴은 '나를 여기까지 살아남게 한 검증된 길'이기 때문입니다.</p>
+        <p><strong>리뷰어 평가:</strong> '정복되지 않는 마음의 힘'(세네카)을 부정적 자기 증명에 쓰지 말고 의식적으로 선택한 목표로 방향만 틀면 된다는 결론은 우아합니다. 다만 무의식 95% 같은 수치는 학계에서 논쟁적인 주장이라 액면 그대로 받아들이긴 어렵습니다. 그럼에도 "당신의 문제 영역에서 당신은 무엇을 증명하며 이기고 있는가?"라는 질문 하나만으로도 이 챕터는 책값을 합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>설거지를 며칠씩 미루면서 시리얼을 나무주걱으로 떠먹는 사람은 '게으른 패배자'가 아니라, <strong>"설거지 회피 게임의 챔피언"</strong>이라는 겁니다. 그 정도로 우리 마음은 한번 정한 목표(설령 나쁜 목표라도)를 기막히게 달성합니다.</p>
+        <p>그렇다면 해법은? 이 <strong>무패의 엔진을 떼어다가 좋은 목표에 장착</strong>하는 것. "나는 어차피 이기게 되어 있으니, 이길 게임만 제대로 고르자"는 발상의 전환입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔁 무의식적 '승리 루프'의 구조</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">STEP 1 · 숨은 믿음</div>
+                <div class="stat-value">"난 사랑받을 자격 없어"</div>
+                <div class="stat-sub">어린 시절·과거 경험에서 형성</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">STEP 2 · 무의식적 선택</div>
+                <div class="stat-value">실패 예약 상대 선택</div>
+                <div class="stat-sub">믿음 증명에 최적인 행동 반복</div>
+            </div>
+            <div class="stat-card stat-blue">
+                <div class="stat-label">STEP 3 · '승리'</div>
+                <div class="stat-value">"거봐, 내 말 맞지"</div>
+                <div class="stat-sub">믿음이 강화되고 루프 재가동</div>
+            </div>
+        </div>
+        <div class="ig-caption">💬 저자의 처방: 루프와 싸우지 말고 <strong>방향을 바꿔 새 목표를 제시</strong>하라</div>
+    </div>
+</article>
+
+<!-- 기사 4: 단언 3 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">Chapter 4</span>
+        <h3>단언 3 '나는 할 수 있어' — 인지적 재구성의 힘</h3>
+    </div>
+    <div class="body">
+        <p>문제에 짓눌린 사람을 위한 챕터입니다. 저자의 진단은 이렇습니다. 부정적 경험은 <strong>한 가지로 끝나지 않고 독성물질처럼 삶 전체에 번진다</strong>는 것. 돈 문제가 있으면 저녁 식탁이 불편해지고, 배우자가 원망스러워지고, 막히는 길조차 짜증이 됩니다. 책상에 쏟은 커피가 컴퓨터와 영수증 더미로 번져가는 비유는 누구나 겪어본 그 감각을 정확히 포착합니다.</p>
+        <p>처방은 두 단계입니다. 첫째, <strong>비교를 통한 원근법 회복</strong>. 소크라테스의 말처럼 모두가 저마다의 문제를 안고 있으며, 남의 삶은 하이라이트만 보이고 내 삶은 무대 뒤만 보인다는 착시를 걷어내는 것입니다. 둘째, 이 챕터의 핵심인 <strong>'인생 철로' 시각화</strong>입니다. 삶 전체를 좌우로 끝없이 펼쳐진 철길로 상상하고, 왼쪽(과거)으로 걸어가 좋았던 기억과 힘들었던 기억을 모두 살핀 뒤, 그 모든 시련을 결국 극복했다는 사실을 확인합니다. 그리고 오른쪽(미래)으로 가서 아직 오지 않은 기쁨과 시련, 심지어 자신의 죽음까지 내다봅니다. 이 관점에서 보면 <strong>지금의 문제는 긴 영화의 지나가는 한 장면</strong>에 불과합니다.</p>
+        <p>저자는 이것이 심리학에서 말하는 <strong>'인지적 재구성(cognitive reframing)'</strong>과 같은 원리라고 설명합니다. 해결책이 안 보이는 것은 문제에 너무 가까이 있기 때문이며, 초점을 뒤로 물리면 문제가 제시되는 방식 자체가 바뀐다는 것입니다. 문제는 하나씩 직면하고, 필요한 관심만 주고, 다음으로 넘어가라는 원칙도 함께 제시됩니다.</p>
+        <p><strong>리뷰어 평가:</strong> '나는 할 수 있어'가 완벽한 해결책을 갖고 있다는 뜻이 아니라 <strong>"운전대를 잡고 있다"는 뜻</strong>이라고 정의한 부분이 이 챕터의 품격입니다. 근거 없는 낙관이 아니라 '지나온 기록'이라는 증거 기반의 자신감을 요구한다는 점에서, 실전 심리치료 기법을 대중적으로 잘 번역한 챕터로 평가합니다. 다만 죽음 명상까지 이어지는 시각화가 독자에 따라 무겁게 느껴질 수 있습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>지금 닥친 문제 때문에 세상이 끝난 것 같을 때, 카메라를 <strong>드론처럼 하늘 끝까지 띄워보라</strong>는 겁니다. 고등학교 때 수학 점수 때문에 울었던 일이 지금은 우습듯이, 오늘의 문제도 10년 뒤엔 점 하나입니다.</p>
+        <p>핵심 한 줄: <strong>"당신이 탄 배는 그렇게 쉽게 가라앉지 않는다."</strong> 지금까지 모든 폭풍을 통과해온 항해 기록이 그 증거입니다.</p>
+    </div>
+</article>
+
+<!-- 기사 5: 단언 4 -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">Chapter 5</span>
+        <h3>단언 4 '나는 불확실성을 환영해' — 확실성이라는 환상</h3>
+    </div>
+    <div class="body">
+        <p>이 챕터는 인간을 <strong>'예측 중독자'</strong>로 규정하며 시작합니다. 내일 날씨, 주가, 경기 결과까지 끊임없이 미래를 알아내려 하고, 만난 지 몇 초 만에 사람을 평가하고, 익숙한 브랜드만 사는 행동의 뿌리는 모두 확실성에 대한 갈망이라는 것입니다. 저자는 이 성향이 맹수에게 잡아먹히던 시대의 생존 본능이었으나, <strong>안전해진 현대에는 오히려 제대로 사는 것을 막는 족쇄</strong>가 됐다고 진단합니다.</p>
+        <p>가장 날카로운 대목은 <strong>성공이 사람을 멈추게 하는 메커니즘</strong>입니다. 저자가 코칭한 성공한 의뢰인들은 삶이 시들해졌다며 찾아왔는데, 원인은 통장에 쌓인 돈이 미래를 '확실해 보이게' 만들면서 야망이 무뎌졌기 때문이었습니다. 불확실성이 사라지는 순간 추구할 필요성도 사라진다는 역설입니다. 성공한 사람들이 성공한 이유는 확신이 있어서가 아니라 <strong>불확실성 때문에 그만두지 않았기 때문</strong>이라는 재정의도 인상적입니다.</p>
+        <p>철학적으로는 소크라테스의 무지의 지("내가 아는 것은 아무것도 모른다는 사실뿐")를 빌려, 우리가 확실하다고 믿는 것 대부분이 가정과 인지편향과 반쪽짜리 진실임을 지적합니다. 또 하나의 축은 <strong>타인의 시선</strong>입니다. 불확실성 회피의 상당 부분이 '바보처럼 보일까 봐'라는 두려움에서 오는데, 에픽테토스를 인용해 더 나은 사람이 되려면 어리석게 보일 위험을 감수하라고 촉구합니다. 실천 처방은 구체적입니다. 출근길 바꾸기, 안 가본 식당 가기, 낯선 사람에게 말 걸기 — 그리고 궁극적으로는 안전지대를 넓히는 게 아니라 <strong>안전지대 자체를 날려버리라</strong>는 것입니다.</p>
+        <p><strong>리뷰어 평가:</strong> 투자자에게 특히 와닿는 챕터입니다. '확실성을 찾아 정착하는 순간 성장이 멈춘다'는 명제는 기업 분석에서 보는 성숙기 기업의 함정과 정확히 겹칩니다. 걱정의 대부분이 '미래 예측 시도 + 예측 빗나감의 거부'에서 온다는 진단과, 통제 가능한 것에만 집중하라는 결론은 스토아 철학의 핵심을 충실히 현대어로 옮긴 것입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>우리는 인생을 <strong>스포일러 다 보고 영화 보듯</strong> 살고 싶어 합니다. 그런데 스포일러(확실성)라는 건 애초에 존재하지 않는 상품입니다. 내일 일은 아무도 모릅니다.</p>
+        <p>그러니 선택지는 둘뿐입니다. 존재하지도 않는 확실성을 찾아 평생 헤매거나, <strong>"모르니까 재밌네"라고 태도를 바꾸거나.</strong> 꿈꿔온 모든 좋은 것들은 전부 '모르는 영역'에 있다는 게 저자의 결론입니다.</p>
+    </div>
+</article>
+
+<!-- 기사 6: 단언 5 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">Chapter 6</span>
+        <h3>단언 5 '생각이 아니라 행동이 나를 규정해' — 책의 심장</h3>
+    </div>
+    <div class="body">
+        <p>개인적으로 <strong>이 책의 심장</strong>이라 부르고 싶은 챕터입니다. 저자는 SNS에서 본 "생각을 바꿔라, 인생을 바꿔라"라는 격언을 두고 '완벽한 헛소리'라고 일축하며 시작합니다. 회사에서 일은 안 하고 점심 메뉴 고민 → 쇼핑 사이트 → 카드빚 걱정 → 데이트앱 자괴감으로 30분을 날리는 묘사는 웃프도록 사실적인데, 이 장면이 보여주는 핵심은 <strong>기분이 따라줄 때까지 기다리면 영원히 시작할 수 없다</strong>는 것입니다.</p>
+        <p>저자의 논리는 명확합니다. 우리는 생각의 내용을 통제하기는커녕 인식조차 못 하는 경우가 대부분입니다. 그러나 이미 우리는 매일 '하기 싫은 일'을 하며 삽니다. 즉 <strong>생각과 독립적으로 행동하는 능력은 이미 탑재돼 있다</strong>는 것입니다. 성공한 사람들의 비밀은 긍정적인 생각이 아니라, 의심과 두려움을 겪으면서도 그것과 무관하게 행동하는 법을 터득한 데 있습니다. "최고의 날인 것처럼 느낄 필요는 없다, 그런 것처럼 행동하면 된다"는 문장이 챕터 전체를 요약합니다.</p>
+        <p>행동의 이점은 이중적이라고 저자는 설명합니다. 첫째, 당연히 일이 됩니다. 둘째, 역설적으로 <strong>행동이 생각을 바꾸는 가장 빠른 길</strong>입니다. 행동에 몰입하면 내면의 수다가 잦아들고(운동선수들의 'the zone'), 작은 성공 경험이 쌓이며 자기 신뢰가 형성되고, 결국 사고방식 자체가 따라온다는 것입니다. 이는 노출치료 등 실제 정신의학적 접근과 닿아 있다고 저자 스스로 밝힙니다. 간디, 링컨, 잡스도 매일 의심에 시달렸지만 아랑곳없이 행동했다는 사례, 그리고 부정적 사고를 가진 채 크게 성공한 사람들이 무수히 많다는 반례 제시는 '긍정 만능론'에 대한 효과적인 반박입니다.</p>
+        <p><strong>리뷰어 평가:</strong> 아리스토텔레스의 덕 윤리("용감한 행동을 함으로써 용감해진다")와 데일 카네기, 행동주의 심리학이 자연스럽게 합류하는 챕터로, 책 전체에서 이론과 실용의 균형이 가장 좋습니다. "뭘 해야 할지 모르겠다면 '알아내는 것'을 첫 행동으로 삼아라"는 마무리는 변명의 퇴로까지 차단하는 깔끔한 설계입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>"의욕이 생기면 해야지"는 <strong>순서가 거꾸로</strong>라는 얘기입니다. 의욕이 생겨서 운동하는 게 아니라, 일단 운동화를 신고 나가면 의욕이 따라옵니다. 차가 저절로 시동 걸고 현관 앞에 대기해주지 않습니다. 내가 키를 꽂아야 합니다.</p>
+        <p>기억할 한 줄: <strong>당신의 정체는 머릿속 생각이 아니라, 오늘 실제로 한 일</strong>입니다.</p>
+    </div>
+</article>
+
+<!-- 기사 7: 단언 6 -->
+<article class="article" id="a7">
+    <div class="article-header">
+        <span class="num">Chapter 7</span>
+        <h3>단언 6 '나는 부단한 사람이야' — 멈추지 않는 힘</h3>
+    </div>
+    <div class="body">
+        <p>'부단함(relentlessness)'을 다루는 이 챕터는 <strong>모든 것을 잃은 것처럼 보일 때 남는 마지막 자원</strong>에 관한 이야기입니다. 저자는 먼저 큰 성취의 공통점을 짚습니다. 인생의 가장 큰 성공은 예외 없이 불편과 불확실과 위험 속에서 탄생했으며, 경험한 불편의 크기가 클수록 성취감도 크다는 것입니다. 위대한 성취가 드문 이유는 간단합니다. <strong>대부분의 사람이 불편한 것을 싫어하기 때문</strong>입니다.</p>
+        <p>이 챕터의 핵심 명제는 인식론적입니다. <strong>"당신은 뭐가 가능하고 불가능한지 절대 증명할 수 없다"</strong>는 것. 1,000번 실패해도 1,001번째에 성공할 수 있고, 우리는 결코 모든 팩트를 갖고 있지 않습니다. 따라서 어떤 의견이 진실이 되는 유일한 경우는 <strong>당신이 그 의견에 '동의'하고 멈출 때뿐</strong>입니다. 라이트 형제는 비행이 불가능하다는, 역사적 증거가 차고 넘치는 통념에 동의하지 않았기에 하늘을 열었습니다.</p>
+        <p>아놀드 슈워제네거 사례는 챕터의 절반을 차지할 만큼 공들여 서술됩니다. 전후 오스트리아 시골에서 태어난 소년이 보디빌더 → 할리우드 스타 → 주지사가 된 여정의 교훈은 거창한 비전이 아니라 <strong>'한 번에 한 걸음'</strong>입니다. 이두박근 한 동작, 다음 근육, 다음 날 또 처음부터. 지도에 없는 땅을 가는 사람에게 이정표는 없으며, 할 수 있는 일은 눈앞의 것에 집중하고 대처하는 것뿐이라는 메시지입니다. 부단함은 팔을 휘두르며 무작정 돌진하는 게 아니라 <strong>망치와 끌로 벽을 한 조각씩 뜯어내는 집중된 결연함</strong>이라는 정의도 명료합니다.</p>
+        <p><strong>리뷰어 평가:</strong> "러닝머신 30분 뛰었다고 딴 사람이 되진 않지만, 효과가 없는 게 아니다"라는 비유처럼, <strong>결과가 보이지 않는 구간에서도 발전은 진행 중</strong>이라는 위로와 채찍이 공존합니다. 다만 생존자 편향(성공한 아놀드만 보이고, 같은 전략으로 실패한 무수한 사람은 안 보이는)에 대한 언급이 없는 점은 자기계발 장르의 고질적 한계로 남습니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>정글을 헤맬 때 마을까지 3일 남았는지 30분 남았는지는 알 수 없습니다. 할 수 있는 건 <strong>계속 걷는 것뿐</strong>이고, 그게 유일한 탈출법입니다.</p>
+        <p>그리고 "너는 안 돼"라는 말(남의 말이든 내 머릿속 말이든)은 <strong>내가 동의 버튼을 눌러야만 효력이 발생하는 약관</strong> 같은 겁니다. 동의하지 않으면? 게임은 계속됩니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🧗 부단함의 작동 원칙 3가지</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-green">
+                <div class="stat-label">원칙 1</div>
+                <div class="stat-value">한 번에 한 걸음</div>
+                <div class="stat-sub">눈앞의 장애물에만 온전히 집중</div>
+            </div>
+            <div class="stat-card stat-blue">
+                <div class="stat-label">원칙 2</div>
+                <div class="stat-value">동의 거부</div>
+                <div class="stat-sub">"불가능"이라는 의견 수락 안 함</div>
+            </div>
+            <div class="stat-card stat-purple">
+                <div class="stat-label">원칙 3</div>
+                <div class="stat-value">보이지 않아도 전진</div>
+                <div class="stat-sub">성과 미확인 구간에도 발전은 진행</div>
+            </div>
+        </div>
+        <div class="ig-caption">💬 부단함의 방향은 하나, 선택지도 하나 — <strong>앞으로, 계속</strong></div>
+    </div>
+</article>
+
+<!-- 기사 8: 단언 7 -->
+<article class="article" id="a8">
+    <div class="article-header">
+        <span class="num">Chapter 8</span>
+        <h3>단언 7 '나는 아무것도 기대하지 않고 모든 것을 받아들여'</h3>
+    </div>
+    <div class="body">
+        <p>마지막 단언이자 <strong>가장 동양철학적인 챕터</strong>입니다. 저자는 창업 시나리오로 문을 엽니다. 가게를 구하고, 직원을 뽑고, 모든 게 순조롭다가 핵심 제품 계약이 무산되는 순간 — "어쩐지 너무 술술 풀린다 했어"라는 자기 비하와 함께 사업 전체를 후회하기 시작하는 과정입니다. 저자의 진단은 명확합니다. 사람을 무너뜨린 것은 계약 무산이라는 사건 자체가 아니라, 수면 아래에서 조용히 쌓여온 <strong>'숨은 기대(hidden expectations)'</strong>가 배신당한 충격이라는 것입니다.</p>
+        <p>숨은 기대를 찾는 방법도 구체적입니다. 삶에서 실망·원망·분노·무기력을 느끼는 영역이 있다면, 그곳에 반드시 기대가 숨어 있습니다. 종이 두 장을 꺼내 한 장에는 <strong>'원래 어떻게 됐어야 하는지'</strong>를, 다른 장에는 <strong>'실제로 지금 어떤지'</strong>를 꼼꼼히 적어 나란히 놓으면, 그 격차의 크기가 곧 고통의 크기입니다. 저자는 결혼생활 불화의 근본 원인이 '기대 불충족'이 아니라 <strong>기대 그 자체</strong>라고까지 밀어붙입니다. 발 마사지를 해주고 무언의 답례를 기대하는 '이에는 이' 게임이 관계를 좀먹는다는 분석은 뜨끔합니다.</p>
+        <p>오해를 막는 장치도 충실합니다. '모든 것을 받아들인다'는 항복이 아니라 <strong>주인의식</strong>이며, 모든 것에 동의한다는 뜻도, 나를 홀대하는 관계를 참으라는 뜻도 아닙니다. 계획을 세우지 말라는 것도 아닙니다. 다만 계획에 내재된 기대까지 끌어안고 가지 말라는 것입니다. <strong>"승리를 계획하되, 패배에서 배워라"</strong> — 계획이 성공하면 축하하고, 실패하면 조정하면 그만입니다. 보트에서 떨어졌으면 노 젓는 시늉을 멈추고 강가로 헤엄치라는 비유가 챕터를 관통합니다.</p>
+        <p><strong>리뷰어 평가:</strong> 에픽테토스의 "일어나는 대로 일어나기를 바라라"를 사실상 현대어로 풀어쓴 챕터로, 스토아 철학의 수용(acceptance) 개념을 가장 실용적으로 번역했습니다. 자유의지에 대한 도발("하지 말아야 할 행동을 전부 그만둬보라, 자유의지가 쉬운가?")은 짧지만 책 전체에서 가장 철학적으로 흥미로운 대목입니다. 투자자 관점에서도 '시나리오는 세우되 시나리오에 대한 집착은 버려라'로 치환 가능한, 응용 범위가 넓은 챕터입니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>화가 나는 곳을 잘 들여다보면, 거의 항상 <strong>"원래 이래야 하는데"라는 대본</strong>이 숨어 있습니다. 현실이 대본대로 안 흘러가면 우리는 현실이 아니라 대본 때문에 괴로워합니다.</p>
+        <p>해법은 대본을 찢는 것. <strong>기대했던 삶이 아니라 지금 가진 삶을 사랑하라</strong>는 게 마지막 단언의 결론입니다. 원하는 게 있으면 기대하지 말고 입 밖으로 부탁하면 됩니다.</p>
+    </div>
+</article>
+
+<!-- 기사 9: 나가는 말 & 총평 -->
+<article class="article" id="a9">
+    <div class="article-header">
+        <span class="num">Chapter 9</span>
+        <h3>나가는 말 &amp; 총평 — 읽기만 하면 아무것도 바뀌지 않는다</h3>
+    </div>
+    <div class="body">
+        <p>마지막 챕터는 7가지 단언을 하나의 테마로 수렴시킵니다. 바로 <strong>행동</strong>입니다. 세상의 모든 생각과 명상과 계획도, 밖으로 나가 행동하지 않으면 삶을 바꾸지 못한다는 것입니다. 저자는 독자를 임종의 병상으로 데려가는 강수를 둡니다. 똑같은 직장, 똑같은 관계에 매인 채 죽음을 맞는 미래의 자신을 상상하게 한 뒤, 우리가 후회하는 것은 <strong>이루지 못한 것이 아니라 시도조차 하지 않은 것</strong>임을 직시하게 합니다. 10억을 못 번 것이 아니라 사업을 시작조차 안 한 것을, 슈퍼모델과 결혼 못 한 것이 아니라 끝난 관계를 붙들고 있던 것을 후회한다는 대비가 강렬합니다.</p>
+        <p>실천 지침은 단 두 가지로 압축됩니다. <strong>① 지금 하고 있는 것(발목 잡는 습관)을 그만둬라, ② 앞으로 나아가게 하는 행동을 시작하라.</strong> 넷플릭스냐 커리어냐, 도넛이냐 몸매냐 — 양자택일을 들이밀며, 나쁜 습관은 끊는 데서 멈추지 말고 반드시 좋은 습관으로 '대체'해야 빈자리에 옛 패턴이 돌아오지 않는다는 행동과학적 조언도 잊지 않습니다. 과거에 발목 잡힌 사람들에게는 "과거를 분석해서 벗어나는 게 아니라, <strong>너무 크고 반짝이는 미래를 만들어 뒤돌아볼 틈을 없애라</strong>"는 우회 전략을 제시합니다.</p>
+        <p><strong>총평 — 이 책의 매수 포인트:</strong> 자기계발서 시장의 '긍정 확언' 일변도에 대한 성공적인 역발상 상품입니다. 하이데거·에픽테토스·아우렐리우스 같은 묵직한 철학적 원자재를 글래스고 노동계급 출신 특유의 직설 화법으로 가공해, 진입장벽 없이 소비할 수 있게 만들었습니다. 챕터별 독립 구성이라 필요한 단언만 골라 읽는 '사전식 활용'이 가능한 것도 강점입니다.</p>
+        <p><strong>리스크 요인:</strong> ① 모든 문제를 개인 의지로 환원하는 프레임은 구조적 요인을 과소평가합니다. ② 인용 연구(무의식 95% 등)의 학술적 엄밀성이 약합니다. ③ 7개 단언이 결국 '행동하라'는 하나의 메시지의 변주라 중반 이후 반복감이 있습니다. 그럼에도 "당신은 당신의 생각이 아니라 당신이 하는 일"이라는 핵심 명제 하나를 체화하는 것만으로 책값 이상의 효용이 나오는, <strong>비중확대 의견의 자기계발서</strong>입니다. 단, 읽고 덮으면 효용은 0원입니다. 저자도 그렇게 경고합니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>이 책의 결론은 책답지 않게 솔직합니다. <strong>"이 책을 읽기만 하면 아무 소용 없다"</strong>는 것. 좋은 강의를 100개 들어도 한 번의 실행을 못 이깁니다.</p>
+        <p>그러니 오늘 할 일은 둘 중 하나입니다. 미루던 그 일을 지금 시작하거나, "나는 그 일을 할 의지가 없다"고 솔직히 인정하고 머릿속에서 지우거나. <strong>제3의 선택지(언젠가 해야지)는 이 책이 가장 경멸하는 답</strong>입니다.</p>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">⭐ 챕터별 리뷰어 별점</div>
+        <div class="rating-row"><span>Ch.1 들어가는 말 — 자기 대화 이론</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Ch.2 나는 의지가 있어</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Ch.3 나는 이기게 되어 있어</span><span class="stars">★★★★★</span></div>
+        <div class="rating-row"><span>Ch.4 나는 할 수 있어</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Ch.5 나는 불확실성을 환영해</span><span class="stars">★★★★★</span></div>
+        <div class="rating-row"><span>Ch.6 생각이 아니라 행동이 나를 규정해</span><span class="stars">★★★★★</span></div>
+        <div class="rating-row"><span>Ch.7 나는 부단한 사람이야</span><span class="stars">★★★★☆</span></div>
+        <div class="rating-row"><span>Ch.8 기대하지 않고 모든 것을 받아들여</span><span class="stars">★★★★★</span></div>
+        <div class="rating-row"><span>Ch.9 나가는 말 — 행동 촉구</span><span class="stars">★★★★☆</span></div>
+        <div class="ig-caption">💬 종합 평점 <strong>★★★★☆ (4.4/5)</strong> — "철학을 입은 따귀, 단 맞고 나서 움직여야 효과"</div>
+    </div>
+    <div class="infographic">
+        <div class="ig-title">🔑 핵심 키워드</div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#자기단언</span>
+            <span class="keyword-tag">#자기대화</span>
+            <span class="keyword-tag">#스토아철학</span>
+            <span class="keyword-tag">#인지적재구성</span>
+            <span class="keyword-tag">#신경가소성</span>
+            <span class="keyword-tag">#행동우선주의</span>
+            <span class="keyword-tag">#불확실성</span>
+            <span class="keyword-tag">#숨은기대</span>
+            <span class="keyword-tag">#부단함</span>
+        </div>
+        <div class="ig-caption">📖 개리 비숍 著 · 이지연 譯 · 원제 Unfu*k Yourself · 26개국 출간 · NYT 베스트셀러</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 리뷰 공유하기</button>
+    <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 가좌버핏 뉴스 · 북리뷰 시리즈<br>
+    <span style="opacity:0.7; font-size:11px;">2026년 6월 12일 발행 · 도서 「시작의 기술」(개리 비숍 저, 이지연 역) 기반<br>본 글은 도서 내용을 리뷰어의 관점에서 요약·평가한 서평이며, 원문의 풍부한 사례와 문체는 책에서 직접 확인하시기 바랍니다.</span>
+</div>
+
+<script>
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📚 [북리뷰]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
