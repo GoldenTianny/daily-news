@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2018년 12월 4일</div>
         <h1>친구가 나더러 이렇게 살아보라 하네</h1>
+        <img class="aimg top" src="https://picsum.photos/id/56/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">01. 말이 많으면 말을 많이 하면 반드시 필요 없는 말이 섞여 나온다. 원래 귀는 닫도록 만들어지지 않았지만, 입은 언제나 닫을 수 있게 되어 있다. 
  
 02. 허허허 잘 웃는 것을 연습하라. 세상에는 정답을 말하거나 답변하기에 난처한 일이 많다. 그때에는 허허허!~ 웃어 보라. 뜻밖에 문제가 풀리는 것을 보게 된다. 
@@ -110,6 +116,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 10. 늙어서는 젊은 사람과 대화에서 이겨서는 안된다. 설령 이겼다 해도 젊은 사람들은 절대 수긍하지 않는다. 
 
 .</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/122/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20181204_02.html">← 사랑과 감동</a><a href="20181205_01.html">이런 사람은 걱정하지 않습 →</a></div>
     <a class="more" href="../#20181204_03">✨ 좋은글 1,258편 모두 보기 →</a>

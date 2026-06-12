@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2019년 7월 9일</div>
         <h1>걱정의 숲에 나를 가두지 마세요</h1>
+        <img class="aimg top" src="https://picsum.photos/id/60/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">걱정이 습관이 되면 우울증이 되고 지나치면 죽음으로 갑니다.
 &#x27;걱정&#x27;을 뜻하는 영어단어 &#x27;worry&#x27;는 &#x27;사냥개가 짐승을 물고 흔들다&#x27;는 뜻입니다. 
 
@@ -105,6 +111,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 - &lt;여자의 생각&gt;中 - 
 
 .</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/165/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20190709_04.html">← 잘 사는 사람</a><a href="20190709_06.html">없으면 없는 대로 →</a></div>
     <a class="more" href="../#20190709_05">✨ 좋은글 1,258편 모두 보기 →</a>

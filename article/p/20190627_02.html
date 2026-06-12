@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2019년 6월 27일</div>
         <h1>세월아 천천히 가자</h1>
+        <img class="aimg top" src="https://picsum.photos/id/25/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">세월아 
 누가 행복하게 살기를 바라지 않으며 
 누군들 후회 없는 삶을 살다 가기를 원하지 않으리. 
@@ -156,6 +162,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 웃으며 한세상 동행 하자꾸나. 
 
 .</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/36/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20190627_01.html">← 이런 사람이 좋다</a><a href="20190627_03.html">인생이 즐거운 주옥같은 이 →</a></div>
     <a class="more" href="../#20190627_02">✨ 좋은글 1,258편 모두 보기 →</a>

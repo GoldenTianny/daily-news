@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2019년 4월 16일</div>
         <h1>똑똑하게 화내는 방법 12가지</h1>
+        <img class="aimg top" src="https://picsum.photos/id/30/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">1. 다른 사람의 기분에 좌우되지 마라.
 
 침착함을 잃지 않을 때에야 비로소 이성적으로 생각할 수 있고 다른 사람의 공격에 대해서도 효과적으로 당신을 방어할 수 있다.
@@ -142,6 +148,7 @@ c. 상대가 부주의하게 내뱉은 말이라면 아예 무시하고 잊어�
 
 .
 #맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/54/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20190415_06.html">← 나이가 들수록 꼭 필요한 </a><a href="20190416_02.html">사람 과 사람 →</a></div>
     <a class="more" href="../#20190416_01">✨ 좋은글 1,258편 모두 보기 →</a>

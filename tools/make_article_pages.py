@@ -21,6 +21,48 @@ OUT_DIR = os.path.join(ROOT, "article", "p")
 BASE = "https://gjbuffet.kr"
 PHOTO_COUNT = 12
 
+# ── 뷰어(article/index.html)와 동일한 위/아래 picsum 이미지 선택 로직 (JS 1:1 재현) ──
+NATURE_IMAGES = [
+    10, 11, 13, 14, 15, 16, 17, 18, 19,
+    25, 27, 28, 29, 30, 31, 36, 37, 38,
+    42, 47, 49, 50, 53, 54, 56, 57, 58, 60,
+    65, 67, 76, 100, 101, 110, 122, 130, 134, 142, 165,
+]
+M32 = 0xFFFFFFFF
+
+
+def _hash_code(s):
+    h = 0
+    for ch in s:
+        h = (h * 31 + ord(ch)) & M32
+    return h
+
+
+def _imul(a, b):
+    return (a * b) & M32
+
+
+def _seeded_random(seed):
+    state = {"a": seed & M32}
+
+    def rand():
+        state["a"] = (state["a"] + 0x6D2B79F5) & M32
+        t = state["a"]
+        t = _imul(t ^ (t >> 15), t | 1)
+        t = (t ^ (t + _imul(t ^ (t >> 7), t | 61))) & M32
+        return ((t ^ (t >> 14)) & M32) / 4294967296
+
+    return rand
+
+
+def pick_images(article_id):
+    rand = _seeded_random(_hash_code(article_id))
+    arr = NATURE_IMAGES[:]
+    for i in range(len(arr) - 1, 0, -1):
+        j = int(rand() * (i + 1))
+        arr[i], arr[j] = arr[j], arr[i]
+    return [f"https://picsum.photos/id/{pid}/800/500" for pid in arr[:2]]
+
 PAGE = """<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -74,8 +116,12 @@ body {{
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }}
 .date {{ font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }}
-h1 {{ font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }}
+h1 {{ font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }}
 .poem {{ white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }}
+.aimg {{ width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }}
+.aimg.top {{ margin-bottom: 20px; }}
+.aimg.bottom {{ margin-top: 20px; }}
 .nav {{ display: flex; gap: 8px; margin-top: 22px; }}
 .nav a {{
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -100,6 +146,7 @@ h1 {{ font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; marg
     .nav a, .share {{ background: #242831; border-color: #3a4150; color: #d4c4a8; }}
     .more {{ background: #8b6f4e; }}
     .footer {{ color: #6a7180; }}
+    .aimg {{ background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }}
 }}
 </style>
 </head>
@@ -112,7 +159,9 @@ h1 {{ font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; marg
     <div class="card">
         <div class="date">{date_kr}</div>
         <h1>{title_esc}</h1>
+        <img class="aimg top" src="{img_top}" alt="" onerror="this.style.display='none'">
         <div class="poem">{body_esc}</div>
+        <img class="aimg bottom" src="{img_bottom}" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav">{prev_link}{next_link}</div>
     <a class="more" href="../#{id}">✨ 좋은글 {total:,}편 모두 보기 →</a>
@@ -167,9 +216,12 @@ def main():
                      if prev_a else '')
         next_link = (f'<a href="{next_a["id"]}.html">{html.escape(next_a["title"][:14])} →</a>'
                      if next_a else '')
+        img_top, img_bottom = pick_images(a["id"])
         page = PAGE.format(
             id=a["id"],
             base=BASE,
+            img_top=img_top,
+            img_bottom=img_bottom,
             title_esc=html.escape(a["title"]),
             title_js=a["title"].replace("\\", "").replace("`", "").replace("$", ""),
             title_json=json.dumps(a["title"], ensure_ascii=False),

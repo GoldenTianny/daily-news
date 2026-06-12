@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2018년 12월 31일</div>
         <h1>삶이 힘겨울 때 해볼 7가지</h1>
+        <img class="aimg top" src="https://picsum.photos/id/18/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">1. 삶이 힘겨울 때
 새벽시장에 한번 가보십시오. 밤이 낮인듯 치열하게 살아가는 상인들을 보면 힘이 절로 생깁니다. 그래도 힘이 나질 않을 땐 뜨끈한 우동 한그릇 드셔보십시오. 국물맛이 희망을 줄것입니다. 
  
@@ -111,6 +117,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 밤 하늘을 올려다 보십시오. 그리고 하루 동안의 일을 하나씩 떠올려 보십시오. 아침에 지각해서 허둥거렸던 일, 간신히 앉은 자리 어쩔 수 없이 양보하면서 살짝 했던 욕들, 하는 일마다 꼬여 눈물 쏟을뻔한 일, 넓은 밤 하늘에 다 날려버리고, 활기찬 내일을 준비하십시오. 
 
 .</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/15/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20181231_02.html">← 마음을 낮추어야 한다</a><a href="20181231_04.html">용기 잃지 말고 살아가자 →</a></div>
     <a class="more" href="../#20181231_03">✨ 좋은글 1,258편 모두 보기 →</a>

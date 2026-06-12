@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2018년 12월 27일</div>
         <h1>피하면 행복해지는 15가지 습관</h1>
+        <img class="aimg top" src="https://picsum.photos/id/110/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">1. 남을 시기하고 질투하는 습관 
 &#x27;남 잘되는 꼴&#x27;을 못보는 사람은 절대 행복할 수 없다. 다른 사람의 행복에 공감할 수 없으면서 자신이 행복할 수는 없는 법이다. 시기와 질투는 유익하지 않은 열등감, 당신을 갉아먹을 증오를 키우는 일이다. 
 
@@ -133,6 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 
 15. 자기의심 
 당신의 능력은 당신이 할 수 있다고 생각하는 범위까지만 발휘할 수 있다. 행복 또한 당신이 행복할 수 있다고 생각하는 범위까지만 느낄 수 있다. 자기의심을 버리고 자기확신을 갖는 것은 매우 어려울 것이다. 하지만 어려운 만큼 가장 중요한 일이기도 하다. 항상 당신의 행복은 무한할 것이라는 희망을 가져라.</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/15/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20181227_03.html">← 말한대로 이루어집니다</a><a href="20181227_05.html">멈추면 비로소 보이는 것들 →</a></div>
     <a class="more" href="../#20181227_04">✨ 좋은글 1,258편 모두 보기 →</a>

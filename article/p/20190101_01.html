@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2019년 1월 1일</div>
         <h1>마음을 다스리는 방법 5가지</h1>
+        <img class="aimg top" src="https://picsum.photos/id/14/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">1. 불안과 걱정을 줄이는 법 : 지금 이 순간에 집중하라 
 
 불안과 걱정은 비슷하면서도 다르다. 둘 다 ‘내 마음이 만들어 낸 것’으로 실체가 없다는 점은 같다. 하지만 “불안이 현재나 먼 미래에 대한 것이라면 걱정은 아주 가까운 곳, 지금이나 내일 등 가까운 미래에 존재한다”는 점에서 다르다.  불안과 걱정을 줄이는 가장 손쉽고 효과적인 방법은 ‘지금 이 순간, 내가 하는 일에 집중하는 것’이다. 사람은 행동과 고민을 동시에 하지 못한다. 
@@ -112,6 +118,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 - &lt;마스노 슌묘‘ 9할&gt;중 - 
 
 .</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/53/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20181231_05.html">← 물처럼 사랑하고 싶다</a><a href="20190101_02.html">피하면 행복해지는 15가지 →</a></div>
     <a class="more" href="../#20190101_01">✨ 좋은글 1,258편 모두 보기 →</a>

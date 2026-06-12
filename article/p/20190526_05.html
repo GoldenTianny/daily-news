@@ -51,8 +51,12 @@ body {
     box-shadow: 0 3px 14px rgba(107,79,58,0.10); border: 1px solid #efe7d8;
 }
 .date { font-size: 12.5px; color: #b89878; letter-spacing: 1px; margin-bottom: 10px; }
-h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 22px; word-break: keep-all; }
+h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margin-bottom: 18px; word-break: keep-all; }
 .poem { white-space: pre-line; font-size: 16px; color: #3a3530; word-break: keep-all; }
+.aimg { width: 100%; aspect-ratio: 8/5; object-fit: cover; border-radius: 10px;
+    background: #ece4d4; box-shadow: 0 2px 8px rgba(107,79,58,0.12); display: block; }
+.aimg.top { margin-bottom: 20px; }
+.aimg.bottom { margin-top: 20px; }
 .nav { display: flex; gap: 8px; margin-top: 22px; }
 .nav a {
     flex: 1; text-align: center; padding: 12px 8px; border-radius: 10px;
@@ -77,6 +81,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     .nav a, .share { background: #242831; border-color: #3a4150; color: #d4c4a8; }
     .more { background: #8b6f4e; }
     .footer { color: #6a7180; }
+    .aimg { background: #2a2f3a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 }
 </style>
 </head>
@@ -89,6 +94,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
     <div class="card">
         <div class="date">2019년 5월 26일</div>
         <h1>많이 참고 꾸준히 견뎌라</h1>
+        <img class="aimg top" src="https://picsum.photos/id/27/800/500" alt="" onerror="this.style.display='none'">
         <div class="poem">옛말에 &quot;산을 오를 때는 비탈길을 견뎌야 하고, 눈길을 걸을 때는 위태로운 다리를 견뎌야 한다&quot;고 했습니다. 이렇게 참고 견디는 것을 인내라고 하며, 인내야말로 가슴에 희망을 품을 수 있는 고도의 기술입니다. 
 
 &#x27;반근착절(盤根錯節)&#x27;이라는 말이 있습니다. 비틀어져서 꾸블꾸불한 뿌리와 헝클어진 마디라는 뜻입니다. 그것에 부딛혀 보지 않고서는 날카로운 칼도 그 진가를 알 수 없다는 식으로 쓰입니다. 사람도 마찬가지로 반근착절 같은 곤란한 일을 겪어봐야 그 사람의 진면목을 알 수 있습니다. 
@@ -103,6 +109,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 
 .
 #맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀 #좋은생각 #아침좋은글</div>
+        <img class="aimg bottom" src="https://picsum.photos/id/31/800/500" alt="" loading="lazy" onerror="this.style.display='none'">
     </div>
     <div class="nav"><a href="20190526_04.html">← 인연은 한번 밖에 오지 않</a><a href="20190526_06.html">당신도 이럴 때 있나요 →</a></div>
     <a class="more" href="../#20190526_05">✨ 좋은글 1,258편 모두 보기 →</a>
