@@ -528,13 +528,36 @@ function parseSlug(slug) {
     return { kind: 'unknown', date: '', articleId: slug, url: '#', label: slug };
 }
 
-// 제목 캐시 (24시간)
-const TITLE_CACHE_KEY = 'gjb_title_cache_v1';
+// 제목 캐시 (24시간) — v2: 엔티티 디코딩 적용 전 캐시 무효화
+const TITLE_CACHE_KEY = 'gjb_title_cache_v2';
 const titleCache = (() => {
     try { return JSON.parse(localStorage.getItem(TITLE_CACHE_KEY) || '{}'); }
     catch (e) { return {}; }
 })();
 const TITLE_TTL = 24 * 60 * 60 * 1000;
+
+// HTML 엔티티(&#x27; &amp; 등) → 실제 문자
+function decodeEntities(s) {
+    const ta = document.createElement('textarea');
+    ta.innerHTML = s;
+    return ta.value;
+}
+
+// 좋은글 전체 데이터 (한 번만 로드, 홈에서 이미 캐시된 파일 재사용)
+let _articlesPromise = null;
+function loadArticlesJson() {
+    if (!_articlesPromise) {
+        _articlesPromise = fetch('../article/articles.json', { cache: 'force-cache' })
+            .then(r => r.ok ? r.json() : [])
+            .catch(() => []);
+    }
+    return _articlesPromise;
+}
+
+function cacheTitle(slug, title) {
+    titleCache[slug] = { v: title, t: Date.now() };
+    try { localStorage.setItem(TITLE_CACHE_KEY, JSON.stringify(titleCache)); } catch (e) {}
+}
 
 async function fetchArticleTitle(slug) {
     const cached = titleCache[slug];
@@ -542,6 +565,14 @@ async function fetchArticleTitle(slug) {
         return cached.v;
     }
     const info = parseSlug(slug);
+    // 좋은글: articles.json에서 제목 조회
+    if (info.kind === 'article') {
+        const arts = await loadArticlesJson();
+        const found = arts.find(a => a.id === info.articleId);
+        const title = found ? found.title : null;
+        if (title) cacheTitle(slug, title);
+        return title;
+    }
     if (info.kind !== 'archive') return null;
     try {
         const res = await fetch('../archive/' + info.date + '.html', { cache: 'force-cache' });
@@ -549,11 +580,8 @@ async function fetchArticleTitle(slug) {
         const html = await res.text();
         const re = new RegExp('<article[^>]*id="' + info.articleId + '"[^>]*>[\\s\\S]*?<h3[^>]*>([^<]+)<\\/h3>', 'i');
         const m = html.match(re);
-        const title = m ? m[1].trim() : null;
-        if (title) {
-            titleCache[slug] = { v: title, t: Date.now() };
-            try { localStorage.setItem(TITLE_CACHE_KEY, JSON.stringify(titleCache)); } catch (e) {}
-        }
+        const title = m ? decodeEntities(m[1].trim()) : null;
+        if (title) cacheTitle(slug, title);
         return title;
     } catch (e) {
         return null;
@@ -718,8 +746,9 @@ async function loadStats() {
         uniqueSlugs.forEach(async (slug) => {
             const title = await fetchArticleTitle(slug);
             if (title) {
+                const prefix = parseSlug(slug).kind === 'article' ? '✨ ' : '';
                 listEl.querySelectorAll('.di-title[data-slug="' + slug + '"]')
-                    .forEach(el => { el.textContent = title; });
+                    .forEach(el => { el.textContent = prefix + title; });
             }
         });
     }
