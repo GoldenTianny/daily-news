@@ -239,7 +239,7 @@ def main():
     # ── sitemap.xml ──
     core = [
         ("", "1.0"), ("archive/", "0.8"), ("article/", "0.9"),
-        ("analysis/", "0.7"), ("companies/", "0.7"),
+        ("analysis/", "0.7"), ("companies/", "0.7"), ("book/", "0.7"),
     ]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']

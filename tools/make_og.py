@@ -290,6 +290,8 @@ def detect_category(filepath, html=None):
         return 'daily'
     if '/analysis/' in p:
         return 'analysis'
+    if '/book/' in p:
+        return 'book'
     if '/companies/' in p:
         if html is None:
             html = open(filepath, encoding='utf-8').read()
@@ -340,7 +342,7 @@ def process_file(filepath, update_html=True):
 
 def find_all():
     files = []
-    for d in ['archive', 'analysis', 'companies']:
+    for d in ['archive', 'analysis', 'companies', 'book']:
         for f in sorted((REPO / d).glob('*.html')):
             if f.name == 'index.html':
                 continue
@@ -361,7 +363,7 @@ def main():
             REPO / 'archive' / '2026-05-27.html',
             REPO / 'analysis' / '2026-05-27_kospi-8000.html',
             REPO / 'companies' / '2026-05-14_samsung-skhynix-citi.html',
-            REPO / 'companies' / '2026-05-22_oneil-successful-investor.html',
+            REPO / 'book' / '2026-05-22_oneil-successful-investor.html',
         ]
         for t in targets:
             process_file(t, update_html=False)
