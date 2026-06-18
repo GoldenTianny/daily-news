@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#2c3e50">
+<title>가좌버핏 뉴스 · 『나는 왜 항상 시간에 쫓길까』 핵심 정리</title>
+<meta name="description" content="직장인을 위한 400여 가지 시간 단축 기술 — 야근 없애기, 일정관리, 회의·메일 효율화, 정리법, IT 단축키까지 6개 장 완전 정리">
+
+<!-- 파비콘 -->
+<link rel="icon" type="image/png" href="../assets/title.png">
+<link rel="apple-touch-icon" href="../assets/title.png">
+
+<!-- 링크 공유 미리보기 -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="가좌버핏 뉴스 · 『나는 왜 항상 시간에 쫓길까』 핵심 정리">
+<meta property="og:description" content="직장인을 위한 400여 가지 시간 단축 기술 — 야근 없애기, 일정관리, 회의·메일 효율화, 정리법, IT 단축키까지 6개 장 완전 정리">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/2026-06-18_jitanjutsu-book.png">
+<meta property="og:url" content="https://gjbuffet.kr/book/2026-06-18_jitanjutsu-book.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="가좌버핏 뉴스 · 『나는 왜 항상 시간에 쫓길까』 핵심 정리">
+<meta name="twitter:description" content="직장인을 위한 400여 가지 시간 단축 기술 — 야근 없애기, 일정관리, 회의·메일 효율화, 정리법, IT 단축키까지 6개 장 완전 정리">
+<meta name="twitter:image" content="https://gjbuffet.kr/assets/og/2026-06-18_jitanjutsu-book.png">
+
+<!-- OG 썸네일용 짧은 텍스트 (파이프 | = 줄바꿈) -->
+<meta name="og-title-short" content="나는 왜 항상|시간에 쫓길까">
+<meta name="og-subtitle-short" content="직장인을 위한 400가지 시간 단축 기술">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #f0f2f5;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ===== 상단 헤더 ===== */
+.top-bar {
+    position: sticky;
+    top: 0;
+    background: #2c3e50;
+    color: white;
+    padding: 14px 16px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar .title {
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.top-bar .title:hover, .top-bar .title:active { opacity: 0.8; }
+.top-bar .date { font-size: 12px; opacity: 0.85; }
+
+/* ===== 공유 버튼 ===== */
+.share-section { margin: 24px 16px 8px; text-align: center; }
+.analysis-share-btn {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.25);
+}
+.analysis-share-btn:hover { background: #233140; }
+.analysis-share-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .analysis-share-btn { background: #3d566e; }
+    .analysis-share-btn:hover { background: #4a6582; }
+}
+
+/* ===== 표지 ===== */
+.cover {
+    background: linear-gradient(135deg, #1a2633 0%, #2c3e50 50%, #3d566e 100%);
+    color: white;
+    padding: 50px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.cover::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(120,180,210,0.22) 0%, transparent 70%);
+    pointer-events: none;
+}
+.cover .label { font-size: 11px; letter-spacing: 5px; opacity: 0.85; margin-bottom: 16px; position: relative; }
+.cover h1 {
+    font-size: 27px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+    line-height: 1.3;
+    position: relative;
+}
+.cover h1 .highlight { color: #7ec8e3; }
+.cover .subtitle { font-size: 14px; opacity: 0.92; margin-bottom: 6px; position: relative; }
+.cover .date-info { font-size: 13px; opacity: 0.8; margin-top: 8px; position: relative; }
+
+/* ===== 목차 ===== */
+.toc {
+    background: white;
+    margin: 16px 12px;
+    padding: 18px 18px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.toc h2 { font-size: 16px; color: #2c3e50; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e8edf5; }
+.toc-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f7;
+    font-size: 13.5px;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.45;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item:active { background: #f7f9fc; }
+.toc-item .toc-num {
+    flex-shrink: 0; width: 24px; height: 24px;
+    background: #2c3e50; color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    margin-right: 10px; margin-top: 1px;
+}
+
+/* ===== 기사 카드 ===== */
+.article {
+    background: white;
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    scroll-margin-top: 64px;
+}
+.article-header { padding: 16px 18px 12px; border-left: 4px solid #2c3e50; }
+.article .num {
+    display: inline-block;
+    background: #2c3e50; color: white;
+    font-size: 12px; font-weight: 700;
+    padding: 3px 9px; border-radius: 4px;
+    margin-bottom: 8px;
+}
+.article h3 { font-size: 17px; font-weight: 700; color: #1a2633; line-height: 1.4; word-break: keep-all; }
+.article .body { padding: 0 18px 16px; font-size: 14.5px; line-height: 1.75; color: #2a2a2a; }
+.article .body p { margin-bottom: 12px; word-break: keep-all; }
+.article .body p:last-child { margin-bottom: 0; }
+
+/* 쉬운 설명 박스 */
+.easy-box {
+    margin: 0 18px 16px;
+    background: linear-gradient(135deg, #fff8e1 0%, #fef5e7 100%);
+    border-left: 4px solid #d68910;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.easy-box .easy-title { font-size: 12px; font-weight: 700; color: #b9770e; margin-bottom: 8px; letter-spacing: 1px; }
+.easy-box p { font-size: 13.5px; line-height: 1.7; color: #3a3a3a; word-break: keep-all; margin-bottom: 8px; }
+.easy-box p:last-child { margin-bottom: 0; }
+.easy-box strong { color: #b9770e; }
+
+/* 핵심 비법 리스트 박스 */
+.tip-list {
+    margin: 0 18px 16px;
+    background: #f7f9fc;
+    border: 1px solid #e3e8f0;
+    border-radius: 8px;
+    padding: 6px 4px;
+}
+.tip-list .tip-cat {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #2c3e50;
+    padding: 10px 14px 4px;
+    letter-spacing: 0.3px;
+}
+.tip-list ul { list-style: none; padding: 0 14px 8px; margin: 0; }
+.tip-list li {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #333;
+    padding: 5px 0 5px 18px;
+    position: relative;
+    word-break: keep-all;
+    border-bottom: 1px solid #eef1f6;
+}
+.tip-list li:last-child { border-bottom: none; }
+.tip-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    color: #2c8a6e;
+    font-weight: 800;
+    font-size: 12px;
+}
+.tip-list li strong { color: #2c3e50; }
+
+/* ===== 인포그래픽 ===== */
+.infographic {
+    margin: 0 18px 18px;
+    padding: 14px;
+    background: #f7f9fc;
+    border-radius: 8px;
+    border: 1px solid #e3e8f0;
+}
+.ig-title { font-size: 13px; font-weight: 700; color: #2c3e50; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #2c3e50; }
+.ig-unit { font-size: 10.5px; color: #888; font-weight: 400; display: block; margin-top: 2px; }
+
+/* 통계 카드 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.stat-grid.three { grid-template-columns: 1fr; gap: 6px; }
+.stat-card { background: linear-gradient(135deg, #f0f4fa, #e3eaf5); border-left: 3px solid #2c3e50; padding: 10px 12px; border-radius: 6px; }
+.stat-card .stat-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+.stat-card .stat-value { font-size: 18px; font-weight: 800; color: #2c3e50; line-height: 1.1; }
+.stat-card .stat-sub { font-size: 10px; color: #999; margin-top: 2px; }
+.stat-red { background: linear-gradient(135deg, #fdf0ee, #fadbd8); border-left-color: #c0392b; }
+.stat-red .stat-value { color: #c0392b; }
+.stat-orange { background: linear-gradient(135deg, #fef5e7, #fdebd0); border-left-color: #d68910; }
+.stat-orange .stat-value { color: #d68910; }
+.stat-teal { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border-left-color: #138d75; }
+.stat-teal .stat-value { color: #138d75; }
+.stat-blue { background: linear-gradient(135deg, #e3f0fc, #cde4f8); border-left-color: #2874a6; }
+.stat-blue .stat-value { color: #2874a6; }
+.stat-green { background: linear-gradient(135deg, #eafaf1, #d4f1e0); border-left-color: #1e8449; }
+.stat-green .stat-value { color: #1e8449; }
+.stat-purple { background: linear-gradient(135deg, #f4ecf7, #e8daef); border-left-color: #6c3483; }
+.stat-purple .stat-value { color: #6c3483; }
+
+/* 데이터 표 */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+.data-table th { background: #2c3e50; color: white; padding: 8px 8px; text-align: left; font-weight: 600; font-size: 12px; white-space: nowrap; }
+.data-table td { padding: 7px 8px; border-bottom: 1px solid #e5e8ed; background: transparent; word-break: keep-all; }
+.data-table .highlight { color: #c0392b; font-weight: 700; }
+.data-table .pos { color: #1e8449; font-weight: 700; }
+.data-table .neg { color: #c0392b; font-weight: 700; }
+.data-table td.num, .data-table th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table td.center, .data-table th.center { text-align: center; }
+.data-table td.key { font-weight: 600; color: #2c3e50; white-space: nowrap; }
+
+/* 키워드 태그 */
+.keyword-box { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.keyword-tag { background: #2c3e50; color: white; padding: 4px 10px; font-size: 11.5px; border-radius: 12px; font-weight: 500; }
+
+/* 캡션 */
+.ig-caption { margin-top: 8px; font-size: 11.5px; color: #666; text-align: center; line-height: 1.5; padding: 4px; }
+.ig-caption strong { color: #c0392b; }
+
+/* ===== SVG 차트 공통 ===== */
+.chart-svg { width: 100%; height: auto; display: block; }
+.chart-svg text { font-family: inherit; font-size: 11px; fill: #444; }
+.chart-svg .axis-line { stroke: #c8d0dc; stroke-width: 1; }
+.chart-svg .grid-line { stroke: #e8edf5; stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-svg .value-label { font-weight: 700; font-size: 11px; }
+
+/* 단축키 표 */
+.key-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+.key-table td { padding: 8px 8px; border-bottom: 1px solid #e5e8ed; word-break: keep-all; }
+.key-table td:first-child { color: #333; }
+.key-table td:last-child { text-align: right; white-space: nowrap; }
+kbd {
+    display: inline-block;
+    background: #2c3e50;
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    line-height: 1.5;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+}
+
+/* 푸터 */
+.footer-note { text-align: center; padding: 30px 20px; font-size: 12px; color: #888; line-height: 1.7; }
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+    body { background: #15181d; color: #e0e0e0; }
+    .article, .toc { background: #232730; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .article h3 { color: #eef2f7; }
+    .article .body { color: #c8ccd4; }
+    .toc h2 { color: #7ea6c8; border-bottom-color: #2d3340; }
+    .toc-item { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .infographic { background: #1c1f26; border-color: #2d3340; }
+    .ig-title { color: #7ea6c8; border-bottom-color: #7ea6c8; }
+    .ig-caption { color: #999; }
+    .stat-card { background: linear-gradient(135deg, #2a3040, #1f2330); }
+    .stat-card .stat-label { color: #aaa; }
+    .stat-card .stat-value { color: #7ea6c8; }
+    .data-table td { background: transparent; color: #c8ccd4; border-bottom-color: #2d3340; }
+    .data-table td.key { color: #7ea6c8; }
+    .footer-note { color: #777; }
+    .easy-box { background: linear-gradient(135deg, #2d2820, #261f17); }
+    .easy-box p { color: #d8d0c0; }
+    .tip-list { background: #1c1f26; border-color: #2d3340; }
+    .tip-list .tip-cat { color: #7ea6c8; }
+    .tip-list li { color: #c8ccd4; border-bottom-color: #2d3340; }
+    .tip-list li strong { color: #9ec0dd; }
+    .chart-svg text { fill: #c8ccd4; }
+    .chart-svg .axis-line { stroke: #444b5a; }
+    .chart-svg .grid-line { stroke: #2d3340; }
+    .key-table td { border-bottom-color: #2d3340; color: #c8ccd4; }
+    kbd { background: #3d566e; }
+}
+
+/* 큰 화면 */
+@media (min-width: 600px) {
+    body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    .stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ===== 후원 버튼 ===== */
+.top-donate-btn {
+    background: #c0392b;
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+    display: inline-block;
+    line-height: 1.3;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+.top-donate-btn:hover, .top-donate-btn:active { background: #d44a3a; }
+
+.donate-inline-btn {
+    background: #fff5e6;
+    color: #c0392b;
+    border: 1.5px solid #f4d3c4;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all 0.15s;
+    display: inline-block;
+    margin-left: 8px;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.15);
+    vertical-align: middle;
+}
+.donate-inline-btn:hover { background: #ffe9d6; border-color: #c0392b; transform: translateY(-1px); }
+.donate-inline-btn:active { transform: scale(0.97); }
+@media (prefers-color-scheme: dark) {
+    .donate-inline-btn { background: #2a2024; color: #ff8a80; border-color: #5a3030; }
+    .donate-inline-btn:hover { background: #3a2528; border-color: #ff8a80; }
+}
+@media (max-width: 380px) {
+    .donate-inline-btn { display: block; margin: 10px auto 0; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- 상단바 -->
+<div class="top-bar">
+    <a href="../index.html" class="title">📰 가좌버핏 뉴스 · 책읽기</a>
+    <span class="date">2026.06.18</span>
+</div>
+
+<!-- 표지 -->
+<div class="cover">
+    <div class="label">BOOK SUMMARY · PRODUCTIVITY</div>
+    <h1>나는 왜 항상<br>'<span class="highlight">시간에 쫓길까</span>'</h1>
+    <div class="subtitle">실속 없이 바쁜 직장인을 위한 400여 가지 시간관리법</div>
+    <div class="date-info">생산성개선회의 엮음 · 시그마북스 · 6개 장 완전 정리</div>
+</div>
+
+<!-- 목차 -->
+<div class="toc">
+    <h2>📑 이번 호 차례</h2>
+    <a class="toc-item" href="#a1">
+        <span class="toc-num">1</span>
+        <span>이 책의 핵심 — "아낀 시간은 수단이지 목적이 아니다"</span>
+    </a>
+    <a class="toc-item" href="#a2">
+        <span class="toc-num">2</span>
+        <span>제1장 · 일을 척척 진행시키는 일정관리법</span>
+    </a>
+    <a class="toc-item" href="#a3">
+        <span class="toc-num">3</span>
+        <span>제2장 · 직장인이 꼭 알아야 할 시간 단축 기술</span>
+    </a>
+    <a class="toc-item" href="#a4">
+        <span class="toc-num">4</span>
+        <span>제3장 · 의도한 대로 일이 되게 하는 인간관계법</span>
+    </a>
+    <a class="toc-item" href="#a5">
+        <span class="toc-num">5</span>
+        <span>제4·5장 · 정리법과 IT기기 활용법</span>
+    </a>
+    <a class="toc-item" href="#a6">
+        <span class="toc-num">6</span>
+        <span>제6장 · 초고속 컴퓨터 단축키 모음</span>
+    </a>
+</div>
+
+<!-- 기사 1: 핵심 요약 -->
+<article class="article" id="a1">
+    <div class="article-header">
+        <span class="num">No. 1</span>
+        <h3>이 책의 핵심 — "아낀 시간은 수단이지 목적이 아니다"</h3>
+    </div>
+    <div class="body">
+        <p>이 책은 일본의 <strong>생산성개선회의</strong>가 엮은 직장인용 시간관리 실용서입니다. 일정관리부터 회의·상담 기법, 최신 디지털 활용법까지 <strong>400여 가지의 시간 단축 기술</strong>을 6개 장에 담았습니다.</p>
+        <p>저자들이 가장 강조하는 건 단순합니다. 하루는 <strong>누구에게나 똑같은 24시간</strong>인데, 일 잘하고 인생을 즐기는 사람과 늘 쫓기는 사람의 차이는 결국 <strong>'시간 사용법'</strong>에 있다는 것입니다. 그리고 시간 단축으로 아낀 시간 자체는 <strong>'수단'일 뿐 '목적'이 아니라는 점</strong>이 핵심입니다. 그 시간을 자기계발이나 가족·친구와 보내는 데 써야 비로소 의미가 생깁니다.</p>
+    </div>
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>거창한 비법을 기대하면 실망할 수 있습니다. 이 책의 무기는 <strong>"소소한 비법의 누적"</strong>입니다. 예를 들어 단축키를 외워 하루 업무를 10분만 줄여도, 1년이면 <strong>약 40시간</strong>을 아낄 수 있습니다.</p>
+        <p>인간관계나 실수 방지처럼 '시간 단축과 무관해 보이는' 항목도 많은데, 이것도 결국 <strong>재작업과 손실을 막아 시간을 아껴주기</strong> 때문에 함께 다룹니다.</p>
+    </div>
+
+    <!-- 6개 장 비중 막대차트 -->
+    <div class="infographic">
+        <div class="ig-title">📚 6개 장 구성 한눈에 보기 <span class="ig-unit">장별 비법 항목 수(추정)</span></div>
+        <svg class="chart-svg" viewBox="0 0 320 195" role="img" aria-label="장별 비법 수 막대그래프">
+            <!-- 그리드 -->
+            <line class="grid-line" x1="40" y1="120" x2="308" y2="120"/>
+            <line class="grid-line" x1="40" y1="75" x2="308" y2="75"/>
+            <line class="grid-line" x1="40" y1="30" x2="308" y2="30"/>
+            <line class="axis-line" x1="40" y1="165" x2="308" y2="165"/>
+            <!-- y라벨 -->
+            <text x="34" y="168" text-anchor="end">0</text>
+            <text x="34" y="123" text-anchor="end">30</text>
+            <text x="34" y="78" text-anchor="end">60</text>
+            <text x="34" y="33" text-anchor="end">90</text>
+            <!-- 막대 -->
+            <rect x="49.8" y="90.0" width="25" height="75.0" rx="2" fill="#2c3e50"/>
+            <text class="value-label" x="62.3" y="85.0" text-anchor="middle" fill="#2c3e50">50</text>
+            <rect x="94.5" y="30.0" width="25" height="135.0" rx="2" fill="#c0392b"/>
+            <text class="value-label" x="107.0" y="25.0" text-anchor="middle" fill="#c0392b">90</text>
+            <rect x="139.2" y="60.0" width="25" height="105.0" rx="2" fill="#3d566e"/>
+            <text class="value-label" x="151.7" y="55.0" text-anchor="middle" fill="#3d566e">70</text>
+            <rect x="183.8" y="97.5" width="25" height="67.5" rx="2" fill="#2c3e50"/>
+            <text class="value-label" x="196.3" y="92.5" text-anchor="middle" fill="#2c3e50">45</text>
+            <rect x="228.5" y="52.5" width="25" height="112.5" rx="2" fill="#3d566e"/>
+            <text class="value-label" x="241.0" y="47.5" text-anchor="middle" fill="#3d566e">75</text>
+            <rect x="273.2" y="45.0" width="25" height="120.0" rx="2" fill="#2c3e50"/>
+            <text class="value-label" x="285.7" y="40.0" text-anchor="middle" fill="#2c3e50">80</text>
+            <!-- x라벨 -->
+            <text x="62.3" y="180" text-anchor="middle" font-size="9">1장</text>
+            <text x="107.0" y="180" text-anchor="middle" font-size="9">2장</text>
+            <text x="151.7" y="180" text-anchor="middle" font-size="9">3장</text>
+            <text x="196.3" y="180" text-anchor="middle" font-size="9">4장</text>
+            <text x="241.0" y="180" text-anchor="middle" font-size="9">5장</text>
+            <text x="285.7" y="180" text-anchor="middle" font-size="9">6장</text>
+            <text x="62.3" y="191" text-anchor="middle" font-size="8" fill="#888">일정</text>
+            <text x="107.0" y="191" text-anchor="middle" font-size="8" fill="#888">단축</text>
+            <text x="151.7" y="191" text-anchor="middle" font-size="8" fill="#888">관계</text>
+            <text x="196.3" y="191" text-anchor="middle" font-size="8" fill="#888">정리</text>
+            <text x="241.0" y="191" text-anchor="middle" font-size="8" fill="#888">IT</text>
+            <text x="285.7" y="191" text-anchor="middle" font-size="8" fill="#888">단축키</text>
+        </svg>
+        <div class="ig-caption">💬 가장 분량이 많은 <strong>2장(시간 단축 기술)</strong>이 책의 중심입니다.</div>
+    </div>
+
+    <!-- 관통하는 3원칙 -->
+    <div class="infographic">
+        <div class="ig-title">🎯 책을 관통하는 3가지 원칙</div>
+        <div class="stat-grid three">
+            <div class="stat-card stat-red">
+                <div class="stat-label">① 목적과 수단의 구분</div>
+                <div class="stat-value">시간 ≠ 목적</div>
+                <div class="stat-sub">아낀 시간은 나를 위해 쓴다</div>
+            </div>
+            <div class="stat-card stat-orange">
+                <div class="stat-label">② 작은 습관의 누적</div>
+                <div class="stat-value">10분 → 40시간</div>
+                <div class="stat-sub">하루 10분 절약 = 연 40시간</div>
+            </div>
+            <div class="stat-card stat-teal">
+                <div class="stat-label">③ 양보다 질</div>
+                <div class="stat-value">집중의 밀도</div>
+                <div class="stat-sub">같은 1시간도 질이 다르다</div>
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- 기사 2: 제1장 일정관리 -->
+<article class="article" id="a2">
+    <div class="article-header">
+        <span class="num">No. 2</span>
+        <h3>제1장 · 일을 척척 진행시키는 일정관리법</h3>
+    </div>
+    <div class="body">
+        <p>1장의 핵심은 <strong>"야근하지 않겠다고 결심하면 업무 속도가 오른다"</strong>는 역발상입니다. 보통 '속도를 올리면 야근이 준다'고 생각하지만, 순서가 반대라는 것이죠. 정시에 일어나 나갈 <strong>'퇴근할 용기'</strong>가 모든 변화의 출발점입니다.</p>
+        <p>일정 관리의 기본기로는 수첩에 <strong>휴식시간을 가장 먼저 적기</strong>, 일정의 <strong>종료시간까지 적기</strong>, <strong>하루 일정은 전날 세우기</strong>, <strong>실제 마감보다 앞당긴 '나만의 마감일' 만들기</strong> 등을 제시합니다.</p>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">🌙 절대로 야근하지 않는 방법</div>
+        <ul>
+            <li>야근 대신 <strong>'아침 근무'</strong>를 하라 — 전화·방문객이 없어 집중된다</li>
+            <li>육하원칙으로 <strong>야근의 근본 원인</strong>을 파악하라 ('왜?'를 거듭 묻기)</li>
+            <li>'노 야근 데이'보다 <strong>'야근하는 날'</strong>을 정하라</li>
+            <li>저녁에 <strong>개인 일정(데이트·학원)</strong>을 잡아 악순환을 끊어라</li>
+            <li><strong>"오늘은 ○시에 퇴근합니다"</strong>라고 배수의 진을 쳐라</li>
+            <li>서툰 일은 전문가에게 맡기고, 못 마칠 일은 즉시 도움을 받아라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">📋 업무관리 · 사전 계획</div>
+        <ul>
+            <li>매일 <strong>TO DO LIST</strong>와 함께 <strong>NOT TO DO LIST</strong>도 만들어라</li>
+            <li>TO DO LIST는 <strong>하루 세 번</strong>(출근 전·점심 후·퇴근 전) 수정하라</li>
+            <li>모든 일을 <strong>'중요도'와 '긴급도'</strong>로 분류하라</li>
+            <li>같은 종류의 일은 <strong>한 번에 몰아서</strong> 하라</li>
+            <li>하루 일정은 <strong>전날</strong>, 한 주 일정은 <strong>전주</strong>에 세워라</li>
+            <li>실제 마감보다 앞당긴 <strong>'나만의 마감일'</strong>을 만들어라</li>
+            <li>한 달에 의도적으로 <strong>'빈 하루'</strong>를 만들어 깊이 사고하라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">⏰ 시간대 활용 · 역발상</div>
+        <ul>
+            <li>주요 업무는 <strong>오전 골든타임</strong>에 마쳐라 (뇌는 기상 3시간 뒤 최고)</li>
+            <li>출근 후 곧바로 컴퓨터를 켜지 말고 <strong>TO DO LIST부터</strong> 작성하라</li>
+            <li>오후엔 <strong>20분 이내 짧은 낮잠</strong>으로 집중력을 회복하라</li>
+            <li>일을 <strong>어중간한 단계에서 끊고</strong> 퇴근하면 다음 날 금방 집중된다</li>
+            <li><strong>남과 다른 시간대</strong>(11시 점심 등)에 행동해 혼잡을 피하라</li>
+            <li>작업시간은 끊기 편한 시간(1시간)으로 설정하지 마라</li>
+        </ul>
+    </div>
+
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>핵심은 <strong>"마감을 스스로 당겨서 강제로 집중 환경을 만드는 것"</strong>입니다. 인간은 1시간을 주면 50분 걸릴 일도 1시간을 꽉 채우는 습성이 있기 때문에, 일부러 짧은 마감과 빈틈없는 시간대 배치로 자신을 몰아넣는 전략입니다.</p>
+    </div>
+</article>
+
+<!-- 기사 3: 제2장 시간 단축 기술 -->
+<article class="article" id="a3">
+    <div class="article-header">
+        <span class="num">No. 3</span>
+        <h3>제2장 · 직장인이 꼭 알아야 할 시간 단축 기술</h3>
+    </div>
+    <div class="body">
+        <p>책에서 가장 분량이 많은 장입니다. 시작의 기술, '하지 않는 것'의 기술, 실수 방지, 공부법, 기획서 작성법까지 폭넓게 다룹니다. 관통하는 메시지는 <strong>"일단 시작하라"</strong>와 <strong>"하지 않을 일을 정하라"</strong>입니다.</p>
+        <p>특히 <strong>"하기 싫어도 일단 10분만"</strong> 시작하면 탄력이 붙는다는 점, 그리고 선택지를 무작정 늘리기보다 <strong>'하지 않는 일'을 정해 실제 할 수 있는 일을 늘린다</strong>는 발상이 핵심입니다.</p>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">🚀 가볍게 시작하는 기분전환법</div>
+        <ul>
+            <li>하기 싫어도 <strong>"일단 10분만"</strong> 하고 무조건 시작하라</li>
+            <li>두려운 일은 <strong>'체험 기간'</strong>이라 생각하라</li>
+            <li>큰일은 <strong>분할</strong>해 부담을 줄여라</li>
+            <li>타인이 아닌 <strong>과거의 자신</strong>과 비교하며 동기부여하라</li>
+            <li>'가능한가'가 아니라 <strong>'할 것인가'</strong>가 중요하다</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">🛑 하지 않는 것의 유용함</div>
+        <ul>
+            <li><strong>2차 회식</strong>은 가지 말고, 회식 진행자 역할은 '졸업'하라</li>
+            <li><strong>'혹시 모르니까' '일단은'</strong>이라고 말하지 마라 (불필요한 일 증가)</li>
+            <li><strong>거절하기를 주저하지 마라</strong> — 거절은 되도록 빨리</li>
+            <li>일하는 기분으로 집에 들어가지 마라 (영화·서점 경유)</li>
+            <li><strong>IT 노이즈</strong>(스팸·불필요 정보)를 차단하라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">✏️ 실수 방지 · 자기관리</div>
+        <ul>
+            <li>일상 업무는 <strong>체크리스트</strong>로 실수를 방지하라</li>
+            <li>모호한 말(주관적 표현·지시어·완곡한 표현)을 구체적 숫자로 바꿔라</li>
+            <li>서류 원본은 <strong>노란 형광펜</strong>으로 '원본' 표시(복사 시 안 보임)</li>
+            <li>잠들기 전 <strong>3시간 동안 수면의 질</strong>을 높여라</li>
+            <li>충분한 수면(<strong>6~8시간</strong>)으로 피로를 해소하라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">📖 공부법 · 기획서 작성법</div>
+        <ul>
+            <li>공부 시작 시 <strong>쉬운 입문서 3권</strong>을 읽어라 (편향 방지)</li>
+            <li>참고서와 공책은 <strong>1권만</strong> 반복하라</li>
+            <li>시간 대비 효과가 큰 공부법은 <strong>낭독</strong>이다 (눈·입·귀 연동)</li>
+            <li>한 문장은 <strong>40자 이내</strong>로, 하나의 메시지만 담아라</li>
+            <li>기획서는 <strong>A4 한 장</strong>에 정리하고, 길면 서머리를 붙여라</li>
+            <li>'기승전결'보다 <strong>'기결승전'</strong>이 효과적일 때가 있다</li>
+        </ul>
+    </div>
+
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>이 장의 정수는 <strong>"완벽한 시작을 기다리지 말고, 불완전하게라도 지금 시작하라"</strong>입니다. 그리고 모든 걸 다 잘하려는 욕심을 버리고 <strong>'안 할 일'을 먼저 정하는 것</strong>이 오히려 시간을 버는 길이라고 말합니다.</p>
+    </div>
+</article>
+
+<!-- 기사 4: 제3장 인간관계 -->
+<article class="article" id="a4">
+    <div class="article-header">
+        <span class="num">No. 4</span>
+        <h3>제3장 · 의도한 대로 일이 되게 하는 인간관계법</h3>
+    </div>
+    <div class="body">
+        <p>회의·상담·메일·인간관계를 다룹니다. 핵심은 <strong>"원만한 소통이 곧 시간 절약"</strong>이라는 관점입니다. 오해와 재확인이 줄면 그만큼 시간 손실이 사라지기 때문입니다.</p>
+        <p>회의는 <strong>10분 단위로 설정하고 종료시간을 미리 정하기</strong>, 상담은 <strong>밑작업에 80%를 쏟기</strong>, 보고는 <strong>중요한 점을 3가지로 정리하기</strong>가 대표 비법입니다.</p>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">👥 회의의 낭비 제거</div>
+        <ul>
+            <li>회의는 <strong>10분 단위</strong>로 설정하고 종료시간을 정하라</li>
+            <li>참가자는 <strong>해결책을 낼 수 있는 사람</strong>만 뽑아라</li>
+            <li>자료는 미리 배부하라 (A4 5장 이하)</li>
+            <li><strong>화이트보드</strong>를 좌우로 이분할해 활용하라 (왼쪽 발언·오른쪽 그림)</li>
+            <li>결정된 것은 <strong>당장 착수</strong>하고, '가짜 회의'는 하지 마라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">🤝 상담 성공률 높이기</div>
+        <ul>
+            <li>약속 날짜를 <strong>먼저(최소 3개)</strong> 제시하라</li>
+            <li>영업의 <strong>밑작업에 80%</strong>를 할애하라</li>
+            <li>먼저 <strong>'최종 목적지(목표)'</strong>를 정하라</li>
+            <li>키맨(Keyman)을 파악해 유리하게 진행하라</li>
+            <li>합의 내용은 반드시 <strong>서면으로 공유</strong>하라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">📞 메일 · 전화 · 인간관계</div>
+        <ul>
+            <li>메일 작성에 <strong>3분 이상</strong> 걸리면 구두·전화를 이용하라</li>
+            <li>영업 전화는 <strong>첫 15초</strong>에 신뢰를 얻어라</li>
+            <li>상대방의 말을 <strong>따라 하면</strong> 신뢰를 얻는다 ("홋카이도요?")</li>
+            <li>'미안합니다'보다 <strong>'고맙습니다'</strong>라고 말하라</li>
+            <li>상사에겐 <strong>'상담·연락·보고'</strong> 순으로 하라</li>
+            <li>부하에게 지시할 때는 <strong>이유</strong>(목적·중요도·지명 이유)를 대라</li>
+        </ul>
+    </div>
+
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>한마디로 <strong>"커뮤니케이션 비용을 줄이는 기술"</strong>입니다. 회의·메일·상담에서 군더더기를 걷어내고 핵심만 빠르게 주고받으면, 다시 묻고 고치는 데 드는 시간이 통째로 사라집니다. <strong>핵심은 항상 3가지로 정리</strong>하라는 조언이 반복 등장합니다.</p>
+    </div>
+</article>
+
+<!-- 기사 5: 제4·5장 정리법과 IT -->
+<article class="article" id="a5">
+    <div class="article-header">
+        <span class="num">No. 5</span>
+        <h3>제4·5장 · 정리법과 IT기기 활용법</h3>
+    </div>
+    <div class="body">
+        <p>4장은 <strong>"정리는 물건 찾는 시간을 추방하는 것"</strong>이라는 한 문장으로 요약됩니다. 책상·서류·가방을 정돈하는 구체적 규칙을 제시합니다. 5장은 컴퓨터·인터넷·메일·앱·스마트폰을 시간 단축 도구로 쓰는 법을 다룹니다.</p>
+        <p>버릴지 말지는 <strong>'3초 규칙'</strong>으로 판단하고, 메일은 <strong>제목에 용건을 쓰고 받은 순서대로 즉시 답장</strong>하라는 것이 대표적입니다.</p>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">🗂️ 제4장 · 정리법</div>
+        <ul>
+            <li>버릴지 말지는 <strong>'3초 규칙'</strong>으로 판단하라</li>
+            <li>종이 크기를 <strong>A4로 통일</strong>하고, 서류는 PDF로 만들어라</li>
+            <li>책상 위 물건과 파일은 전부 <strong>세워서 보관</strong>하라</li>
+            <li>일을 <strong>3개 트레이</strong>('미처리·처리 중·완료')로 가시화하라</li>
+            <li>신문·책은 <strong>1면 톱기사와 제목·첫머리</strong>만 읽어라</li>
+            <li>정보원은 <strong>3개</strong>로 좁혀 편향을 줄여라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">💻 제5장 · 컴퓨터 · 인터넷</div>
+        <ul>
+            <li><strong>단어 등록</strong>으로 정형 문구 입력 시간·오타를 줄여라</li>
+            <li>하위 폴더는 <strong>최대 1~2단계</strong>까지만 만들어라</li>
+            <li>파일은 자주 저장(30분마다)하고 정기 백업하라</li>
+            <li>검색은 <strong>10분 이내</strong>로 한다는 규칙을 세워라</li>
+            <li><strong>클라우드 · 온라인 스토리지</strong>로 언제 어디서나 일하라</li>
+        </ul>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">📧 제5장 · 메일 · 스마트폰</div>
+        <ul>
+            <li>사내 메일은 <strong>첫줄부터 용건</strong>을 쓰고 인사말을 생략하라</li>
+            <li>제목에 <strong>용건을 써라</strong> ('△△사의 ○○입니다'는 금물)</li>
+            <li>한 통의 메일에는 <strong>한 가지 용건</strong>만 써라</li>
+            <li>받은 메일은 <strong>받은 순서대로 즉시</strong> 답장하라</li>
+            <li>'첨부'라고 입력한 <strong>그 순간</strong> 파일을 첨부하라</li>
+            <li>앱은 <strong>사용 빈도 순</strong>(화면 아래부터)으로 정리하라</li>
+        </ul>
+    </div>
+
+    <div class="easy-box">
+        <div class="easy-title">💡 쉽게 풀어쓰면</div>
+        <p>정리와 IT 모두 목적은 하나, <strong>"찾고 헤매는 시간을 0으로 만드는 것"</strong>입니다. 책상이든 폴더든 메일함이든, '어디 있더라?'를 없애면 그게 곧 시간 단축입니다. 특히 메일은 <strong>'제목에 용건 + 한 건 + 즉시 답장'</strong> 세 가지만 지켜도 크게 빨라집니다.</p>
+    </div>
+</article>
+
+<!-- 기사 6: 제6장 단축키 -->
+<article class="article" id="a6">
+    <div class="article-header">
+        <span class="num">No. 6</span>
+        <h3>제6장 · 초고속 컴퓨터 단축키 모음</h3>
+    </div>
+    <div class="body">
+        <p>마지막 장은 <strong>당장 써먹는 단축키 모음집</strong>입니다. 윈도우 기본 조작부터 워드·엑셀 실전 기능까지, 마우스 대신 키보드로 처리하는 법을 정리했습니다. 표로 모아두었으니 필요할 때 찾아 쓰면 됩니다.</p>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">⌨️ 윈도우 · 인터넷 기본 단축키</div>
+        <table class="key-table">
+            <tr><td>새 창 / 새 문서 열기</td><td><kbd>Ctrl + N</kbd></td></tr>
+            <tr><td>창 · 탭 닫기</td><td><kbd>Ctrl + W</kbd></td></tr>
+            <tr><td>프로그램 종료</td><td><kbd>Alt + F4</kbd></td></tr>
+            <tr><td>닫은 탭 다시 열기</td><td><kbd>Ctrl + Shift + T</kbd></td></tr>
+            <tr><td>찾기 / 바꾸기</td><td><kbd>Ctrl + F</kbd> / <kbd>Ctrl + H</kbd></td></tr>
+            <tr><td>복사 / 붙이기 / 자르기</td><td><kbd>Ctrl + C/V/X</kbd></td></tr>
+            <tr><td>휴지통 미경유 영구 삭제</td><td><kbd>Shift + Delete</kbd></td></tr>
+            <tr><td>새 폴더 만들기</td><td><kbd>Ctrl + Shift + N</kbd></td></tr>
+            <tr><td>컴퓨터 잠금</td><td><kbd>Win + L</kbd></td></tr>
+        </table>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📝 워드 실전 단축키</div>
+        <table class="key-table">
+            <tr><td>되돌리기</td><td><kbd>Ctrl + Z</kbd></td></tr>
+            <tr><td>맞춤법 검사</td><td><kbd>F7</kbd></td></tr>
+            <tr><td>굵게 / 기울임 / 밑줄</td><td><kbd>Ctrl + B/I/U</kbd></td></tr>
+            <tr><td>가운데 / 양쪽 정렬</td><td><kbd>Ctrl + E</kbd> / <kbd>Ctrl + J</kbd></td></tr>
+            <tr><td>서식만 복사 / 붙이기</td><td><kbd>Ctrl + Shift + C/V</kbd></td></tr>
+            <tr><td>단어 선택 / 단락 선택</td><td>더블클릭 / 세 번 클릭</td></tr>
+            <tr><td>무작위 텍스트 생성</td><td><kbd>=Rand( )</kbd></td></tr>
+        </table>
+    </div>
+
+    <div class="infographic">
+        <div class="ig-title">📊 엑셀 실전 단축키</div>
+        <table class="key-table">
+            <tr><td>A1 셀로 이동</td><td><kbd>Ctrl + Home</kbd></td></tr>
+            <tr><td>오늘 날짜 / 현재 시간</td><td><kbd>Ctrl + ;</kbd> / <kbd>Ctrl + :</kbd></td></tr>
+            <tr><td>열 · 행 삭제 / 삽입</td><td><kbd>Ctrl + -</kbd></td></tr>
+            <tr><td>표 전체 선택</td><td><kbd>Ctrl + Shift + End</kbd></td></tr>
+            <tr><td>셀 안에서 줄바꿈</td><td><kbd>Alt + Enter</kbd></td></tr>
+            <tr><td>표를 차트로 (같은/새 시트)</td><td><kbd>Alt + F1</kbd> / <kbd>F11</kbd></td></tr>
+            <tr><td>셀 편집 상태로</td><td><kbd>F2</kbd></td></tr>
+            <tr><td>시트 이동 (왼쪽/오른쪽)</td><td><kbd>Ctrl + PgUp/PgDn</kbd></td></tr>
+            <tr><td>그림 균등 복사 배열</td><td><kbd>Ctrl + D</kbd></td></tr>
+        </table>
+    </div>
+
+    <div class="tip-list">
+        <div class="tip-cat">💡 엑셀 작업 습관</div>
+        <ul>
+            <li>엑셀 파일은 <strong>종이 인쇄 상태</strong>를 생각하며 만들어라 (A4 폭 안)</li>
+            <li>표 스타일 수정은 <strong>마지막에</strong> 하라</li>
+            <li>입력 속도를 떨어뜨리는 건 <strong>'시선의 이동'</strong> — 원본은 종이로 옆에 둬라</li>
+            <li>메일 첨부 시 <strong>PDF로 변환</strong>해 수식·기밀 정보 유출을 막아라</li>
+            <li>다음 사람을 위해 <strong>셀을 A1로</strong> 돌려놓고 저장하라</li>
+        </ul>
+    </div>
+
+    <!-- 종합 한 줄 요약 + 키워드 -->
+    <div class="infographic">
+        <div class="ig-title">🎯 책 전체 한 줄 요약</div>
+        <div class="ig-caption" style="font-size:13px; text-align:left; line-height:1.7;">
+            💬 "<strong>시간은 줄이는 것이 목적이 아니라, 줄여서 생긴 시간을 '나'를 위해 쓰는 것이 목적이다.</strong>" 거창한 비법이 아니라, 아침 근무·전날 계획·즉시 처리·단축키 같은 <strong>작은 습관을 꾸준히 쌓는 것</strong>이 시간 부자가 되는 길이다.
+        </div>
+        <div class="keyword-box">
+            <span class="keyword-tag">#시간관리</span>
+            <span class="keyword-tag">#생산성</span>
+            <span class="keyword-tag">#야근탈출</span>
+            <span class="keyword-tag">#일정관리</span>
+            <span class="keyword-tag">#TODO리스트</span>
+            <span class="keyword-tag">#회의효율</span>
+            <span class="keyword-tag">#메일관리</span>
+            <span class="keyword-tag">#정리법</span>
+            <span class="keyword-tag">#엑셀단축키</span>
+            <span class="keyword-tag">#직장인필독</span>
+        </div>
+    </div>
+
+    <!-- 출처 -->
+    <div class="infographic">
+        <div class="ig-title">📋 출처 및 유의사항</div>
+        <table class="data-table">
+            <tr><th style="width:30%;">항목</th><th>내용</th></tr>
+            <tr><td class="key">원제</td><td>JITANJUTSU TAIZEN (時短術大全)</td></tr>
+            <tr><td class="key">엮은이</td><td>생산성개선회의</td></tr>
+            <tr><td class="key">옮긴이</td><td>오시연</td></tr>
+            <tr><td class="key">출판</td><td>시그마북스(한빛스) · 2019</td></tr>
+        </table>
+        <div class="ig-caption">⚠️ 본 자료는 도서 내용을 독자가 이해하기 쉽게 정리·요약한 기획 글입니다. 자세한 내용은 원서를 참고하시기 바랍니다.</div>
+    </div>
+</article>
+
+<!-- 공유 버튼 -->
+<div class="share-section">
+    <button class="analysis-share-btn" type="button" id="shareAnalysisBtn">📤 이 정리 공유하기</button>
+    <a href="../donate/" class="donate-inline-btn">💝 후원하기</a>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-note">
+    📰 가좌버핏 뉴스 · 책읽기 시리즈<br>
+    <span style="opacity:0.7; font-size:11px;">2026년 6월 18일 발행 · 『나는 왜 항상 시간에 쫓길까』(생산성개선회의) 기반<br>일반 독자가 이해하기 쉽게 풀어쓴 기획 글입니다.</span>
+</div>
+
+<script>
+document.getElementById('shareAnalysisBtn').addEventListener('click', async () => {
+    const ogTitle = document.querySelector('meta[property="og:title"]')?.content || document.title;
+    const ogDesc = document.querySelector('meta[property="og:description"]')?.content || '';
+    const url = location.href;
+    const message = `📖 [책읽기]\n${ogTitle.replace(/^가좌버핏 뉴스 · /, '')}\n\n${ogDesc}\n\n${url}`;
+    const data = { title: ogTitle, text: message };
+    if (navigator.share) {
+        try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+        try {
+            await navigator.clipboard.writeText(message);
+            alert('아래 내용이 복사되었습니다:\n\n' + message);
+        } catch (e) {
+            prompt('아래 내용을 복사해 주세요:', message);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
