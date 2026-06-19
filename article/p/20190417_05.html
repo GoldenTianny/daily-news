@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘은 왠지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘은 왠지\n\n오늘은 왠지 \n밝은 미소를 가진 \n사람과 커피를 하고 싶다.  \n \n단 둘이 마주 앉아\n짙은 향기 그윽한\n커피 한잔 앞에 두고\n차분하고 고운 얘기\n나누고 싶습니다.  \n \n내면의 모습은\n더 아름다워서 조용한\n미소만으로도\n대화를 나눌 수 있는...  \n \n하얀 프림 같은\n그런 사람의 미소가 좋습니다.  \n \n마음도 넉넉한\n고운 심성을 가진 사람과\n커피를 마시고 싶습니다.  \n \n따스한 마음은\n더 정스러워서\n푸근한 말 한마디로도.  \n \n평안을 얻을 수 있는\n커피향기 같은 그런\n사람의 모습이 좋습니다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘은 왠지", text }); } catch (e) {}
     } else {

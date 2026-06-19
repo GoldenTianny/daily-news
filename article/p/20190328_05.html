@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 인생은 내가 만든다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 인생은 내가 만든다\n\n수영할 줄 모르는 사람은\n수영장 바꾼다고 해결이 안되고,\n일하기 싫은 사람은\n직장을 바꾼다고 해결이 안되며,\n건강을 모르는 사람은\n비싼약을 먹는다고 병이 낫는게 아니고,\n사랑을 모르는 사람은\n상대를 바꾼다고 행복해지는게 아니다.  \n \n모든 문제의 근원은 내 자신이다.  \n \n내가 좋아하는 사람도 내 자신이고,\n내가 사랑하는 사람도 내 자신이며,\n내가 싫어하는 사람도 내 자신이다.\n내가 변하지 않고는 아무것도 변하는게 없다.  \n \n내 인생은 내가 만든다.  \n \n내가 빛이나면 내 인생은 화려하고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 인생은 내가 만든다", text }); } catch (e) {}
     } else {

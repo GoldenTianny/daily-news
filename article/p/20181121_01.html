@@ -166,7 +166,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 작은 것을 소중히 할때\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 작은 것을 소중히 할때\n\n한평생\n시계만을 만들어 온 사람이 있었다.\n그리고 그는 늙어 있었다.  \n \n그는\n자신의 일생에\n마지막 작업으로 온 정성을 기울여\n시계 하나를 만들었다.  \n \n자신의 경험을 쏟아 부은 눈부신 작업이었다.\n그리고 그 완성된 시계를 아들에게 주었다.  \n \n아들이 시계를 받아보니\n아들이 이상스러운 것이 있었다.  \n \n초침은 금으로,\n분침은 은으로, \n시침은 구리로 되어 있었다.  \n \n"아버지, 초침보다 시침이 금으로\n되어야 하지 않을까요?"\n아들의 질문은 당연한 것이었다. \n그러나 아버지의 대답...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "작은 것을 소중히 할때", text }); } catch (e) {}
     } else {

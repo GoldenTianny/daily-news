@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신은 선물입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신은 선물입니다\n\n이 넓은 세상에서\n당신을 만난 건\n너무나 소중한 선물입니다.  \n \n가슴이 따뜻한 당신을\n마음이 깊고 깊은 당신을\n따뜻한 배려가 묻어 나는\n당신을 만난 것은 커다란 행운입니다.  \n \n그런 당신이\n이 많고 많은 사람 중에\n어떻게 내게 왔을까요. \n \n늘 웃는 당신은\n늘 지켜 주는 당신은\n늘 걱정하고 격려하는 당신은  \n \n내 가슴을 뛰게 하는\n내 심장을 뛰게 하는\n세상 무엇과도\n바꿀 수 없는 선물입니다. \n \n- 꿈이 있는 한 나이는 없다 中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신은 선물입니다", text }); } catch (e) {}
     } else {

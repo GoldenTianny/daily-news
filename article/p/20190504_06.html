@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나를 사랑하는 법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나를 사랑하는 법\n\n나 자신이 \n심심하지 않도록 \n취미를 만들어주고  \n \n친구를 사귀어서 \n외롭지 않게 해주고  \n \n가끔은 멋진 식당에서 \n식사를 하며 \n나 자신에게 선물을 주고,  \n \n많은 사람과 어울릴 수 있게 \n해박한 지식을 쌓도록 \n책을 읽고,  \n \n아침마다 거울을 보며 \n" 파이팅 " 외쳐서 \n하루를 활기차게 만들어 주고,  \n \n신발만은 좋은 걸 신어 \n좋은 곳에 데려다주게 하고  \n \n미래에 \n나 자신이 위험하지 않게 \n저축으로 대비하고  \n \n건강을 유지하도록 \n하루 30분씩 꼭 산책을 하고  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나를 사랑하는 법", text }); } catch (e) {}
     } else {

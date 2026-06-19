@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 평생 마음으로 만나고 싶은 한 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 평생 마음으로 만나고 싶은 한 사람\n\n인생이란 어차피 홀로 걸어가는 쓸쓸한 길이라지만, \n내가 걷는 삶의 길목에서 그래도 \n평생을 함께 걷고 싶은 \n한 사람을 만나고 싶습니다.  \n \n사랑하는 이를 만나기보다는 \n연인도 아닌 친구도 아닌 \n그저 편안한 사람을 만나고 싶습니다.  \n \n고단하고 힘든 날에 마음으로 다가가면 \n살포시 내 등을 토닥여주는 \n다정한 사람을 만나고 싶습니다.  \n \n부족한 내가 위로해주기보다는 \n그의 위로를 더 많이 받아 \n가끔은 나보다 더 나를 아껴주는 \n마음이 넓은 사람을 만나고 싶습니다.  \n \n기도로서도...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "평생 마음으로 만나고 싶은 한 사람", text }); } catch (e) {}
     } else {

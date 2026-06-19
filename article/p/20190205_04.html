@@ -222,7 +222,7 @@ TV에서 이렇다고 하면 이런 줄 알고,
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그럽디다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그럽디다\n\n그럽디다.\n사람 사는 일이 다 그렇고 그럽디다.\n능력 있다고 해서 하루 열 끼 먹는 거 아니고,\n많이 배웠다고 해서\n남들 쓰는 말과 다른 말 쓰는 것도 아니고,\n그렇게 발버둥거리며 살아봤자\n사람 사는 일 다 거기서 거깁디다.  \n \n백원 버는 사람이 천원 버는 사람 모르고,\n백원이 최고인 줄 알고 살면\n그 사람 이 잘 사는 것입디다.\n만원 벌자고 남 울리고\n자기 속상하게 사는 사람 보다\n맘 편히 천원 버는 사람이 훨씬 나은 인생입디다.  \n \n어차피 내 맘대로 안 되는 세상,\n그 세상 원망하고 세...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그럽디다", text }); } catch (e) {}
     } else {

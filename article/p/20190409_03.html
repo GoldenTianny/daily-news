@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가장 즐거운 시간은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가장 즐거운 시간은\n\n가장 낭비하는 시간은 방황하는 시간이고,\n가장 교만한 시간은 남을 깔보는 시간이다.  \n\n가장 자유로운 시간은 규칙적인 시간이고,\n가장 통쾌한 시간은 승리하는 시간이다.  \n\n가장 지루한 시간은 기다리는 시간이고,\n가장 서운한 시간은 이별하는 시간이다.  \n\n가장 겸손한 시간은 자기 분수에 맞게 행동하는 시간이고,\n가장 비굴한 시간은 자기 변명을 늘어놓는 시간이다.  \n\n가장 불쌍한 시간은 구걸하는 시간이고,\n가장 가치 있는 시간은 최선을 다한 시간이다.  \n\n가장 현명한 시간은 위기를 슬기롭게 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가장 즐거운 시간은", text }); } catch (e) {}
     } else {

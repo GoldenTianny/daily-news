@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 진정한 우정\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 진정한 우정\n\n친구에게 기쁜일이 생겼을 때는 \n한 발 늦게 찾아가고,  \n\n슬픈일이 생겼을 때는 \n한 발 먼저 찾아가는 것이 진정한 우정입니다.   \n\n시간이 남을 때 찾아가는 친구가 아니라 \n바쁜 시간을 같이 보낼 수 있는 친구여야 합니다.   \n\n우정을 위해 모든 것을 버릴 수 있어야 합니다. \n사랑을 위해 이익을 포기할 수 있어야 합니다.  \n\n그것이 진정 순수한 사랑과 우정입니다.  \n\n우정과 사랑은 인간관계를 넘어서 \n영혼의 교감이며 삶의 동반이기 때문입니다.   \n\n죽음을 맞이할 때 자신의 죽음을 슬...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "진정한 우정", text }); } catch (e) {}
     } else {

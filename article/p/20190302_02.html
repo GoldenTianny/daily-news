@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑받으며 살아가는 12가지 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑받으며 살아가는 12가지 지혜\n\n1. 남의 허물울 보지 않는다. 혹 보더라도 마음에 담아두지 않는다. 자신의 허물을 보는 것이 지혜요, 남의 허물을 지나쳐 버리는 것이 덕이다.  \n \n2. 자기를 해롭게 하는 이들에게 앙심을 품지 않는다. 앙갚음을 하지도 말고 보복도 꾀하지 않는다. 욕설을 퍼붓더라도 끝까지 참는다.  \n \n3. 어떠한 경우에도 뼈있는 말로써 남에게 괴로움을 안겨주지 않으며 자신의 책임이나 부담을 남에게 떠넘기지 않는다.  \n \n4. 남의 부덕한 행위를 기뻐하는 것이 부덕한 행위 그 자체보다 더 나쁘다. 적의 고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑받으며 살아가는 12가지 지혜", text }); } catch (e) {}
     } else {

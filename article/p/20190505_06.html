@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생의 의미\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생의 의미\n\n우리는 흔히 왜 사느냐고 \n인생의 의미를 묻습니다.  \n \n그러나 삶에는 특별한 의미가 없습니다.\n인생은 의미를 갖고 사는게 아니라 \n그냥 사는 겁니다.  \n \n삶에 너무 많은 의미를 부여하지 마세요\n그러면 또 하나의 굴레만 늘게 됩니다  \n \n우리 인생은 길가에 피어 있는 \n한 포기 풀꽃입니다.\n길가에 풀꽃처럼 그냥 살면 됩니다.  \n \n"나는 특별한 존재다. 나는 특별해야 한다." \n이런 생각 때문에 \n자신의 하루 하루 삶에 만족 못하고\n늘 초조하고 불안하고 후회하는 것입니다.  \n \n특별한 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생의 의미", text }); } catch (e) {}
     } else {

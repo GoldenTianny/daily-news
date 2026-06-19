@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살다가\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살다가\n\n살다가 힘든 일이 생기거든 \n누구를 탓하지 말거라 \n이미 생긴 일이거늘 어찌하겠느냐   \n \n살다가 울 일이 생기거든 \n누구를 원망 말고 실컷 울어보렴 \n울고 나면 속이라도 시원하지 않겠니   \n \n살다가 이별할 일이 생기거든 \n너무 슬퍼하지 말아라 \n인연은 만났다가 헤어지기도 하는 것이란다   \n \n살다가 사랑할 일이 생기거든 \n밀고 당기는 시간을 줄이거라 \n사랑의 실타래가 항상 질기지 않으니 \n적당히 밀고 당기려무나   \n \n살다가 행복한 일이 생기거든 \n너무 잡으려 애쓰지 말거라 \n무엇이든 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살다가", text }); } catch (e) {}
     } else {

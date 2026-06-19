@@ -210,7 +210,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인간관계\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인간관계\n\n가장 만나기 쉬운것도\n사람이다  \n \n가장 얻기 쉬운것도 \n사람이다  \n \n하지만 \n가장 잃기 쉬운 것도\n사람이다.  \n \n물건을 잃어버리면 \n대체가 되지만  \n \n사람은 아무리 \n애를 써도 똑같은 \n사람으로대체할수 없다  \n \n그래서 \n사람이 가장 중요하다  \n \n그리고 \n한번 잃은사람은 \n다시 찾기 어렵다  \n \n사람을 사람으로사람답게 \n대하는 진실한인관관계  \n \n그것이 \n가장 아름다운 일이며\n진정 소중한 것을 \n지킬 줄 아는 비결이다  \n \n사람을 얻는일\n그 일이 가장 중요하다  \n \n사람...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인간관계", text }); } catch (e) {}
     } else {

@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 힘들어질 때\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 힘들어질 때\n\n서로 마음 든든한 사람이 되고\n때때로 힘겨운 인생의 무게로 하여\n속마음마저 막막할 때 우리 서로 위안이 되는\n그런 사람이 되었으면 좋겠습니다. \n \n누군가 사랑에는 조건이 따른 다지만\n우리의 바램은 지극히 작은 것이게 하고 \n \n그리하여 더 주고 덜 받음에 섭섭해 말며\n문득 스치고 지나는 먼 회상 속에서도\n우리 서로 기억마다 반가운 사람이 되었으면\n좋겠습니다. \n \n어쩌면 고단한 인생길 먼 길을 가다\n어느 날 불현듯 지쳐 쓰러질 것만 같은 시기에\n우리 서로 마음 기댈 수 있는 사람이 되고 \n \n견...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 힘들어질 때", text }); } catch (e) {}
     } else {

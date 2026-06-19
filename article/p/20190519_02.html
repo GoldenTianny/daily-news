@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생에서 조심해야 할 것들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생에서 조심해야 할 것들\n\n생각은 행동을,\n행동은 습관을,\n습관은 성품을, \n성품은 운명을 낳는다.\n- 스티븐 코비 -  \n \n \n생각을 조심하라.\n왜냐하면 그것은 \n말이 되기 때문이다.  \n \n말을 조심하라.\n왜냐하면 그것은 \n행동이 되기 때문이다.  \n \n행동을 조심하라.\n왜냐하면 그것은 \n습관이 되기 때문이다.  \n \n습관을 조심하라.\n왜냐하면 그것은 \n인격이 되기 때문이다.  \n \n인격을 조심하라.\n왜냐하면 그것은 \n인생이 되기 때문이다.  \n \n-마하트마 간디- \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생에서 조심해야 할 것들", text }); } catch (e) {}
     } else {

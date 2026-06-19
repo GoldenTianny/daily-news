@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람은 참 좋은 향기가 있어요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람은 참 좋은 향기가 있어요\n\n사람은\n누구나 그 사람만이 지니고 있는\n마음씨가 있습니다. \n\n없으면서도\n남을 도우려고 하는 사람, \n\n자기도 바쁘면서\n순서를 양보하는 사람, \n\n어떠한 어려움도\n굿굿하게 이겨내는 사람, \n\n어려울 때\n보기만 해도 위로가 되고, \n\n어려움을\n함께 해결 해주려는 사람, \n\n나의 허물을 감싸주고,\n나의 미흡한 점을\n고운 눈길로 봐주는 사람, \n\n자기의 몸을 태워 \n빛을 밝히는 촛불과도 같이\n상대를 배려하고 도움을 주는사람, \n\n인연을 깨뜨리지 않는 사람, \n\n삶을 진실하게\n함께하는 사람은 잘 익은\n찐...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람은 참 좋은 향기가 있어요", text }); } catch (e) {}
     } else {

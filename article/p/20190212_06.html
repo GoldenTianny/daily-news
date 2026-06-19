@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복의 문\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복의 문\n\n오늘 당신이 만나는 사람에게 \n웃음을 활짝 지어도 손해 볼 것은 없습니다  \n \n고맙다고 말해도 \n손해 볼 것은 없습니다  \n \n훌륭하다고 칭찬해도 \n손해 볼 것은 없습니다  \n \n함께 일하는 것이 즐겁다고 말해도 \n손해 볼 것은 없습니다  \n \n그렇게 말하면 그말이 당신에게 \n두배로 메아리가 되어서 돌아오기 때문입니다  \n \n오늘 당신이 나가는 일터와 하는 일에 대해서 \n감사한 마음을 가져도 손해 볼 것은 없습니다  \n \n그 감사하는 마음이 일과 일터로부터 \n당신을 더 높은 곳으로 인도하기 때문...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복의 문", text }); } catch (e) {}
     } else {

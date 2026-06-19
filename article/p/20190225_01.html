@@ -169,7 +169,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ -◆- 행복해지는 법 -◆-\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ -◆- 행복해지는 법 -◆-\n\n1. 나 자신을 위해서 꽃을 산다.\n2. 날씨가 좋은 날엔 석양을 보러 나간다.\n3. 제일 좋아하는 향수를 집안 곳곳에 뿌려 둔다.\n4. 하루에 3번씩 사진을 찍을 때처럼 환하게 웃어본다.\n5. 하고 싶은 일을 적고 하나씩 시도해본다.\n6. 시간날 때마다 몰입할 수 있는 취미를 하나 만든다.\n7. 음악을 크게 틀고 내 맘대로 춤을 춘다.\n8. 매일 나만을 위한 시간을 10분이라도 확보한다.\n9. 고맙고 감사한 것을 하루 한 가지씩 적어 본다.\n10. 우울할 때 찾아갈 수 있는 비밀장소를 만든다.\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "-◆- 행복해지는 법 -◆-", text }); } catch (e) {}
     } else {

@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 괜찮아질 거야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 괜찮아질 거야\n\n힘들고 어려운 일도\n가슴 아프고 슬픈 일도\n하루씩 견디다 보면 괜찮아질거야  \n \n화나고 억울한 일도\n속상하고 괴로운 일도 \n하루밤씩 자고 나면 지나가게 될 거야  \n \n막막한 삶도\n울고 싶은 현실도\n기억 하고 싶지 않은 나쁜 일들도\n언젠간 끝은 있는 거니까  \n \n하루씩 잘 참아내고\n하루밤씩 잘 자고 나면\n모두 없던 일이 되어줄거야  \n \n지금 힘들더라도 용기 잃지 말고\n꿋꿋하게 이겨내 보는 거야\n모두다 괜찮아질테니까  \n \n그러니까 힘내!  \n \n- 유지나 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "괜찮아질 거야", text }); } catch (e) {}
     } else {

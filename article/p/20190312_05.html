@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너에게 나는 그런 사람이고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너에게 나는 그런 사람이고 싶다\n\n푸른하늘처럼 투명하게\n새벽공기처럼 청아하게\n언제나 파란 희망으로 다가서는 \n \n너에게 나는 그런 사람이고 싶다 \n \n들판에 핀 작은 풀꽃같이\n바람에 날리는 어여쁜 민들레같이\n잔잔한 미소와 작은 행복을 주는 사람 \n \n너에게 나는 그런 사람이고 싶다 \n \n따스한 햇살이 되어\n시린 가슴으로 아파할때\n포근하게 감싸주며 위로가 되는 사람 \n \n너에게 나는 그런 사람이고 싶다 \n \n긴 인생여정에 정다운 벗되어\n꼭 사랑이 아니여도\n꼭 가슴이 뜨겁지 않아도\n어깨동무하며 서로의 온기를 나누는 사람 \n \n너에게 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너에게 나는 그런 사람이고 싶다", text }); } catch (e) {}
     } else {

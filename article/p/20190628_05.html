@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 비우는 삶\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 비우는 삶\n\n마음 비우기 전엔 몰랐던 \n아름다운 세상을 \n마음을 비우고 이제 알았습니다.  \n\n마음을 비우고 나니 \n마음을 비운 만큼 채울수 있다는 것도 \n이제야 알았습니다.  \n\n마음 비우기 전에는 \n어떡하면 가득 채울까 욕심이 생겨나고 \n무엇이든 갖고 싶은 생각으로 \n넘쳐 나던걸 이제야 알았습니다.  \n\n마음 비우고 빈몸이 되고 보니 \n세상을 바로 보이는걸 \n이제야 알았습니다.  \n\n빈몸이 되기전엔 \n허울좋은 가식 덩어리가 가득 차서 \n넘쳐 흘러 내리던걸 이제야 알았습니다.  \n\n마음을 비우고 이제야 알았...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 비우는 삶", text }); } catch (e) {}
     } else {

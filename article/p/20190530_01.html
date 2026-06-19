@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 다스리기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 다스리기\n\n내가 두 귀로 \n들은 이야기라 해서 \n다 말할 것이 못되고  \n \n내가 두 눈으로 \n본 일이라 해서 \n다 말할 것 또한 못된다  \n \n들은 것을 들었다고 \n다 말해 버리고  \n \n본 것을 보았다고 \n다 말해버리면  \n \n자신을 거칠게 만들고 \n나아가서는 궁지에 빠지게 한다.  \n \n현명한 사람은\n남의 욕설이나 비평에\n귀를 기울이지 않으며  \n \n또 남의 단점을 \n보려고도 않으며 \n남의 잘못을 말하지도 않는다.  \n \n모든 화는 입으로부터 나온다. \n그래서 입을 잘 지키라고 했다.  \n \n맹렬한 불...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 다스리기", text }); } catch (e) {}
     } else {

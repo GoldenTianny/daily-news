@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 바라는 건\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 바라는 건\n\n삶이 잔잔했으면 좋겠습니다\n쉽게 성내지 않고\n쉽게 흥분하지 않고\n흐르는 물처럼 고요했으면 좋겠습니다 \n\n괴롭고 슬픈 일이 있어도\n표 내지 않고 혼자 간직하다\n이내 평온해졌으면 좋겠습니다 \n\n세상이 내 뜻과 다르게 흘러\n힘이 부치고 쉬고 싶을 때\n마음 가는 대로 훌쩍 떠나는\n용기가 있으면 좋겠습니다 \n\n세월이 흐르고 나이를 먹어도\n어린아이 같은 순수를 지켰으면 좋겠습니다 \n\n사랑에 대가를 바라지 않고\n주는 것이 익숙했으면 좋겠습니다\n이 행복을 오래 느꼈으면 좋겠습니다 \n\n- <결정했어 행복하기로>中...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "바라는 건", text }); } catch (e) {}
     } else {

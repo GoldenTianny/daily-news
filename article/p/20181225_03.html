@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 절대긍정으로 산다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 절대긍정으로 산다\n\n성공의 반대말은 실패가 아니라 포기다.\n이 사실은 아는 사람은 흔치 않다.  \n\n성공은 실패의 결과물이다.\n성공하는 사람들은 실패를\n일시적인 후퇴로 여길 뿐,\n완전한 패배로 받아들이지 않는다.  \n\n바로 그러한 태도가 성패를\n가름하는 잣대이다.  \n\n실패했다고 낙망하지 마라,\n아직 준비가 덜 되었다고 말하라.  \n\n안된다고 체념하지 마라,\n아직 때가 아니라고 말하라.  \n\n틀렸다고 주저앉지 마라,\n다른 길이 있다고 말하라.  \n\n인생길은 알고 찾아가는 것이 아니라\n가면서 찾아가는 것이다.  \n\n-...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "절대긍정으로 산다", text }); } catch (e) {}
     } else {

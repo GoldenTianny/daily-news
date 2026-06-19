@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나를 위한 저녁 기도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나를 위한 저녁 기도\n\n소중한 사람이 이유 없이 화를 낸다고 생각되면\n먼저 자신을 돌아보세요  \n \n당신은 믿었던 사람한테 상처받은 적 있나요?\n그 아픔이 그 어떤 일보다 \n몇 배 더 크게 느껴진 적 없나요?  \n \n가까우니까,\n사랑하니까,\n믿으니까 \n잘못한 일이 있어도 용서해주고 \n다른 사람보다 당신을 \n더 많이 이해해줄 줄 알았는데 \n상대방이 무심코 던진 한마디가 \n아픈 가시가 되어 마음에 와 박힌 적은 없나요?  \n \n어쩌면 오늘 당신의 소중한 그 사람도 \n그 때의 당신과 똑 같은 심정이 아니었을까요? \n모든 사람...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나를 위한 저녁 기도", text }); } catch (e) {}
     } else {

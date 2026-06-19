@@ -165,7 +165,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 차 한 잔과 좋은 생각\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 차 한 잔과 좋은 생각\n\n누구를 만나\n좋아하게 되고\n친구를 삼게 되어도 \n\n진정 아름다운\n우정으로\n남고 싶다면\n그에게 반대 급부를\n바라지 말아야 합니다. \n\n그냥 그가 나의\n친구가 되었으므로\n그 사실만으로 기뻐하고 \n\n어쩌다 그가 나를\n모질게 떠나 간데도 \n\n그가 내곁에\n머무는 동안 \n\n내게 준 우정으로\n내게 준 기쁨으로\n내게 준 든든한 마음으로 \n\n그냥 기뻐하면 됩니다. \n\n진정한 우정은\n세월이 지날 수록\n더 아름다워집니다. \n\n시간이 흐를 수록\n더 가까이 느껴져야 합니다. \n\n보이는 것으로만\n평가되는 이 세상에서 \n\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "차 한 잔과 좋은 생각", text }); } catch (e) {}
     } else {

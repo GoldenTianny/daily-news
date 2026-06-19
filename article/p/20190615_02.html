@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 멋진 남자, 멋진 여자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 멋진 남자, 멋진 여자\n\n멋진남자  \n \n<ㄱ> 겸허 - 다른사람의 충고를 받아들일줄 알고 \n<ㄴ> 노력 - 항상 노력에 소홀하지 않고 \n<ㄷ> 대담 - 소심하지 않고 대범하며 \n<ㄹ> 리드 - 여자를 이끌줄 알고 \n<ㅁ> 모험 - 때로는 모험도 불사하며 \n<ㅂ> 박력 - 패기있게 밀어 붙일줄도 알고 \n<ㅅ> 신중 - 그러면서도 신중함을 잃지 않으며 \n<ㅇ> 여유 - 늘 여유롭게 생활하고 \n<ㅈ> 자상 - 따뜻한 마음으로 배려해주며 \n<ㅊ> 착실 - 자신이 맡은 일은 반드시 해내고 \n<ㅋ> 쾌활 - 재치로 주변이 늘 즐거...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "멋진 남자, 멋진 여자", text }); } catch (e) {}
     } else {

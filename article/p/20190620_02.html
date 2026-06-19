@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이런 삶을 살고 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이런 삶을 살고 싶습니다\n\n오늘이 있어\n감사함을 알게 하고\n희망이 있어\n내일을 바라보고 싶습니다.    \n \n하루라는 짧은 시간을\n헛되게 보내지 말고\n한가지라도 분명히 해내는\n내가 되고 싶습니다. \n \n모자람을 채우는 내일이 있어\n조급함을 버리고\n조금 실수를 하더라도\n천천히 생각하는\n느긋한 마음으로 살고 싶습니다.    \n \n오늘은 시간을 어찌 보낼까?\n보다는 할 일을\n미리 찾아 알찬 시간으로\n오늘 할 일을 될 수 있으면\n내일로 미루지 않는\n노력하는 삶을 살고 싶습니다.    \n \n시작을 했으면\n마무리 까지 최선을 다하며\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이런 삶을 살고 싶습니다", text }); } catch (e) {}
     } else {

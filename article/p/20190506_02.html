@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연 그리고 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연 그리고 사랑\n\n인간은 우연히\n태어나는 게 아니라고 합니다.  \n \n인연 또한 \n우연히 찾아 오는 게 아니랍니다.  \n \n그 인연을 통해 사랑을 하고 \n나눔을 통해 정이 드는거라고 합니다.  \n \n언제나 가까운 곳에서 \n서로를 지켜 보고 있기에  \n \n마음속 깊이 그 사랑을 품으면\n기쁨이 두배로 차 오르고  \n \n그리움으로 물 들이는 향기 조차 \n온 통 즐거움으로 가득 찰 테니까요.  \n \n긴 기다림을 통해 맺어진 \n한 사람과의 인연이 \n시도 때도 없이 아른거리는 건  \n \n서로가 간절함으로 한 곳을 \n바라보게 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연 그리고 사랑", text }); } catch (e) {}
     } else {

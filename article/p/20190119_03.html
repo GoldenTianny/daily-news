@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이렇게 살아가게 하소서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이렇게 살아가게 하소서\n\n남자는 마음으로 늙고, \n여자는 얼굴로 늙는다고 하지만, \n나이가 들면 들수록 \n꽃 같은 인품의 향기를 지니고 \n넉넉한 마음으로 살게 하소서. \n\n늙어 가더라도 \n지난 세월에 너무 애착하지 말고,\n언제나 청춘의 봄날로 의욕이 솟아 \n활기가 넘치는 인생을 젊게 살아가게 하소서. \n\n우러난 욕심 모두 몰아내고, \n언제나 스스로 평온한 마음 지니며 \n지난 세월을 모두 즐겁게 안아 \n자기 인생을 사랑하며 살게 하소서. \n\n지나간 과거는 모두 아름답게 여기고 \n앞으로 오는 미래의 시간표마다 \n아름다운 행복...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이렇게 살아가게 하소서", text }); } catch (e) {}
     } else {

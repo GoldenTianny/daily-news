@@ -113,7 +113,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 금전문을 열어주는 황금잉어\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 금전문을 열어주는 황금잉어\n\n내스토리에 공유하여 보관하시면  \n \n신기하게도 3일안에 금전이 들어온다고 하네요?^^ \n \n모두 부자되세요~~~~^^\n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "금전문을 열어주는 황금잉어", text }); } catch (e) {}
     } else {

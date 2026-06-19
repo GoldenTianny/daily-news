@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 서산대사의 解脫詩\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 서산대사의 解脫詩\n\n근심 걱정 없는 사람 누군고.\n출세 하기 싫은 사람 누군고.\n시기 질투 없는 사람 누군고.\n흉허물 없는 사람 어디 있겠소.  \n\n가난하다 서러워 말고,\n장애를 가졌다 기죽지 말고\n못 배웠다 주눅 들지 마소.\n세상살이 다 거기서 거기외다. \n\n가진 것 많다 유세 떨지 말고,\n건강하다 큰소리 치지말고\n명예 얻었다 목에 힘주지 마소.\n세상에 영원한 것은 없더이다. \n\n잠시 잠깐 다니러 온 이 세상,\n있고 없음을 편 가르지 말고,\n잘나고 못남을 평가 하지 말고,\n얼기 설기 어우러져 살다나 가세. \n\n다 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "서산대사의 解脫詩", text }); } catch (e) {}
     } else {

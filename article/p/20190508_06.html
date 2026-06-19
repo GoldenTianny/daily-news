@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 동행\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 동행\n\n힘을 내요 당신에게 힘이 될께요\n혼자 있는 듯 해도 그게 아냐\n그대 곁에 항상 내가 있어\n용기 내어 걸어가요 우리 함께 \n \n길고 어둔 터널을 홀로 지나는 삶 속에\n끝을 알 수 없어 외롭고 원망이 일어날 때\n내가 아는 모든 것 희미 해지고 어두워\n살아 만져지는 것조차 느껴지지 않네 \n \n내가 아는 모든 것 옳은 확신이 없어도\n그대 가는 그길 바른길 이란 확신 없어도\n보지 않아 명확찮고 만지지 않아도\n그대 가는 그 길 두려워 포기하지 마요 \n \n힘을 내요 당신에게 힘이 될께요\n혼자 있는 듯 해도 그...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "동행", text }); } catch (e) {}
     } else {

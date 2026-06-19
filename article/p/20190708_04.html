@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 여자와 남자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 여자와 남자\n\n여자의 몸만 원하는 남자는 삼류다.\n여자의 마음만 원하는 남자는 이류다.\n여자의 몸과 마음을 원하는 남자는 일류다.  \n \n여자의 몸과\n마음을 만족시키는 남자는 초일류다.  \n \n그러나\n여자의 몸과 마음을 아끼고 배려하며\n사랑하는 남자가 진정한 남자다.  \n \n여자는\n많은 사람들의 눈을 위해 옷을 입고\n한 사람의 마음을 위해 옷을 벗는다.  \n \n남자는 시각과 촉각의 동물이다.\n그녀의 볼륨 있는 몸매에 반하고\n그녀의 매끄러운 피부에 반하고\n그녀의 오뚝한 콧날에 반하고\n그녀의 입술에 반한다  \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "여자와 남자", text }); } catch (e) {}
     } else {

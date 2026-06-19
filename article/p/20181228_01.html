@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 기도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 기도\n\n소유가 아닌 빈 마음으로 사랑하게 하소서\n받아서 채워지는 가슴보다\n주어서 비워지는 가슴이게 하소서\n지금까지 해왔던 내 사랑에\n티끌이 있었다면 용서하시고\n앞으로 해나갈 내 사랑은\n맑게 흐르는 강물이게 하소서 \n\n위선보다 진실을 위해\n나를 다듬어 나갈 수 있는 지혜를 주시고\n바람에 떨구는 한 잎의 꽃잎일지라도\n한없이 품어 안을 깊고 넓\n바다의 마음으로 살게 하소서\n바람 앞에 스러지는 육체로 살지라도\n선(善)앞에 강해지는 내가 되게 하소서\n크신 임이시여 그리 살게 하소서 \n\n철저한 고독으로 살지라도\n사...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "기도", text }); } catch (e) {}
     } else {

@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 긍정과 부정\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 긍정과 부정\n\n항상 부정적인 사람과 \n항상 긍정적인 사람은 \n시작이 다르고 끝이 다르다.  \n \n부정에는 부정적 마음으로 시작되어 \n부정의 얼굴 표정이 나오고 \n부정의 말이 나오며 \n부정의 행동이 나오게 된다.  \n \n결과적으로 부정하는 삶은 \n부정적인 결과를 낳는다.  \n \n긍정에는 긍정하는 마음으로 시작되어 \n긍정의 얼굴표정이 나오고 \n긍정의 말이 나오며 \n긍정의 행동이 나오게 된다.  \n \n결과적으로 긍정하는 삶은 \n긍정적인 결과를 낳는다.  \n \n성공하고 싶은가?  \n \n지긋지긋한 가난에서 벗어나 \n경제...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "긍정과 부정", text }); } catch (e) {}
     } else {

@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말의 습관\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말의 습관\n\n언어가 거친 사람은\n분노를 안고 있는 사람입니다.  \n \n부정적인 언어습관을 가진 사람은\n마음에 두려움이 있는 사람입니다.  \n \n과장되게 이야기하기 좋아하는 사람은\n그 마음이 궁핍하기 때문입니다.  \n \n자랑을 늘어 놓기 좋아하는 사람은\n그 마음에 안정감이 약하기 때문입니다.  \n \n음란한 이야기를 좋아하는 사람은\n그 마음이 청결하지 못하기 때문입니다.  \n \n항상 비판적인 말을 하는 사람은\n그 마음에 비통함이 있기 때문입니다.  \n \n다른 사람을 헐뜯는 사람은\n그 마음이 열등감에 사로 잡혀 있...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말의 습관", text }); } catch (e) {}
     } else {

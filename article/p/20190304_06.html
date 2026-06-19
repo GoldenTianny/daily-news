@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 혼자 살 수 없는 세상\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 혼자 살 수 없는 세상\n\n함께 어울리며 살아요. \n인연이란 이런거래요.   \n\n씨앗은 흙을 만나야 싹이트고, \n고기는 물을 만나야 숨을쉬고,   \n\n사람은 사람다운 \n사람을 만나야 행복하고,   \n\n맹수들은 산이 깊어야 하고, \n지렁이는 흙이 있어야 살고,  \n\n또한 \n나무는 썩은 흙이 있어야 \n뿌리를 깊이 내릴 수 있고,  \n\n이렇듯 만남이 \n인연의 끈이 됩니다.   \n\n우리 서로 서로 기대어 \n도움주며 살아요.  \n\n니것 내것 따지지 말고 \n받는 즐거움은 주는 이가 \n있어야 하니 먼저 줘 보래요.   \n\n받을 사람은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "혼자 살 수 없는 세상", text }); } catch (e) {}
     } else {

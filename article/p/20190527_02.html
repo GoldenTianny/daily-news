@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하악하악\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하악하악\n\n멋진 사람이 되지말고\n따뜻한 사람이 되세요  \n \n멋진 사람은 눈을 즐겁게 하지만\n따뜻한 사람은 마음을 데워줍니다  \n \n잘난 사람이 되지말고\n진실한 사람이 되세요  \n \n잘난 사람은 피하고 싶어지지만\n진실한 사람은 곁에 두고 싶어집니다  \n \n대단한 사람이 되지 말고\n좋은 사람이 되세요  \n \n대단한 사람은 부담을 주지만\n좋은 사람은 행복을 줍니다  \n \n- 이외수 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀 #좋은생각 #아침...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하악하악", text }); } catch (e) {}
     } else {

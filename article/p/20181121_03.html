@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 부정적인 생각 지우기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 부정적인 생각 지우기\n\n「욕심」은 부릴 수록 더 부풀고...  \n \n「미움」은 가질 수록 더 거슬리며...  \n \n「원망」은 보탤 수록 더 분하고...  \n \n「아픔」은 되씹을 수록 더 아리며...  \n \n「괴로움」은 느낄 수록 더 깊어지고...  \n \n「집착」은 할 수록 더 질겨지는 것이니...  \n \n「칭찬」은 해줄 수록 더 잘 하게 되고...  \n \n「인정」은 나눌 수록 더 가까워지며...  \n \n「사랑」은 베풀 수록 더 애틋해지고...  \n \n「몸」은 낮출 수록 더 겸손해지며...  \n \n「마음」은 비울 수록 더...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "부정적인 생각 지우기", text }); } catch (e) {}
     } else {

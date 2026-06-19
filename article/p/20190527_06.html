@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내려놓음의 끝에는 행복이 있다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내려놓음의 끝에는 행복이 있다\n\n내가 행복할 때보다 \n내가 사랑하는 사람이 \n행복할 때 더욱 행복합니다.  \n \n포기는 할 수 없다고 멈추는 것이고,\n내려놓음은 할 수 있지만 \n비우는 마음으로 하지 않기로 \n결단하고 멈추는 것입니다.  \n \n포기는 아쉬운 결정이고,\n내려놓음은 깊은 성찰인 것입니다.  \n \n옳은 일을 할 때 느끼는 기쁨과\n바른 길을 갈 때 느끼는 평안,\n바로 그 기쁨과 평안이 \n우리 인생의 가장 큰 보상입니다.  \n \n그 기쁨과 평안 속으로 걸어가면,\n인생의 모든 순간은 영원한 시간입니다.  \n \n마지막은 마지막...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내려놓음의 끝에는 행복이 있다", text }); } catch (e) {}
     } else {

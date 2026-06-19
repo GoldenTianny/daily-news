@@ -128,7 +128,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 별거 아닙니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 별거 아닙니다\n\n인생이 뜻대로 되지 않는다고\n절망하거나 낙담하지 마십시오. \n\n아무리 노력을 한다 해도\n최선을 다 한다 해도\n안 되는 일이 있기 마련입니다. \n\n그 일들도 뒤돌아 보면 별거 아닙니다. \n\n쉬지 않고 달려야 할 때도 있고\n가만히 숨을 고를 때도 있는 법입니다. \n\n놓친 차는 다시 오는 차를 타면 되고\n돌아가더라도 그 곳만 가면 될 일이며 \n\n노력해도 안 되는 건 버리면 됩니다. \n\n훗날 힘들고 아팠던 일들도\n뒤돌아 보면 별거 아닙니다. \n\n- 전레오 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "별거 아닙니다", text }); } catch (e) {}
     } else {

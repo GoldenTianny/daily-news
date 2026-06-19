@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생 별 거 없습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생 별 거 없습니다\n\n귀인을 만나면 귀인이 되는 거고 \n하찮은 사람들만 만나면 하찮게 되는 겁니다 \n\n내가 만나는 사람들이 \n내가 어떤 사람인지 말해줍니다 \n\n좋은 사람들과 교류하고 친분을 쌓으면 \n나도 좋은 사람이 될수 있습니다 \n\n좋은 사람들 옆에 있으면 \n어떻게 사람들을 대하는지 \n인간관계를 어떻게 형성하고 유지하는지 \n배울수 있습니다 \n\n십억을 벌고 싶다면 \n십억을 벌어 놓은 사람에게 배워야 합니다 \n\n그들과 교류하다보면 노하우를 배울수 있습니다 \n\n성공하고 싶다면 성공한 사람들과 교류하면서 \n그들을 관찰하고 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생 별 거 없습니다", text }); } catch (e) {}
     } else {

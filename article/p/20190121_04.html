@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이제 조금은 알 것 같다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이제 조금은 알 것 같다\n\n이제 조금은 알 것 같다.  \n \n보고싶다고\n볼 수 있는 것은 아니며,\n나의 사랑이 깊어도\n이유 없는 헤어짐은 있을 수 있고,  \n \n받아 들일 수 없어도 \n받아 들여야 하는 것이 있다는 것을  \n \n사람의 마음이란게\n아무 노력 없이도 움직일 수 있지만\n아무리 노력해도 움직여지지 않을 수\n있다는 것을  \n \n기억 속에 있을 때 \n아름다운 사람도 있다는 것을  \n \n가을이 가면 겨울이 오듯 \n사람도, 기억도 이렇게 흘러가는 것임을  \n \n- <빗방울처럼 나는 혼자였다> ,공지영 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이제 조금은 알 것 같다", text }); } catch (e) {}
     } else {

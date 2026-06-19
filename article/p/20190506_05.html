@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 단 하루의 시간이 내게 주어진다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 단 하루의 시간이 내게 주어진다면\n\n덜 미워하고 더 사랑하겠습니다.\n덜 가지고 더 행복하겠습니다.\n눈물을 흘리는 대신 웃겠습니다. \n \n다가오지 않은 내일을 두려워하는 대신\n오늘을 열심히 살겠습니다.\n잘못된 결정을 후회하는 대신\n새로운 결정을 내리겠습니다. \n \n실패를 안타까워하는 대신\n다시 무언가를 시작하겠습니다.\n아프다고 말하는 대신\n아픔을 견디겠습니다. \n \n바쁘다고 말하는 대신\n쌓인 일을 하나씩 해 나가겠습니다.\n남들에게 어떻게 보일까 걱정하는 대신\n나 자신에게 어떻게 보일까 생각하겠습니다. \n \n남들의 잘못을 용서하는 대신...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "단 하루의 시간이 내게 주어진다면", text }); } catch (e) {}
     } else {

@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 따뜻한 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 따뜻한 인연\n\n처음 만남은 "하늘"이 만들어 주는 인연이고,\n그 다음부터는 "인간"이 만들어가는 인연이라 하지요. \n\n"만남과 관계가 잘 조화된 사람"의 인생은 아름답습니다.\n만남에 대한 책임은 "하늘"에 있고, 관계에 대한 책임은 "사람"에게 있습니다. \n\n좋은 관계는 저절로 만들어지지 않습니다.\n서로 노력하고 애쓰면서 좋은 관계를 맺으려고 해야 결과적으로 원하는 바를 이룰 수 있습니다. \n\n오늘도 당신을 믿습니다.\n많이 넘어지는 사람만이 쉽게 일어나는 법을 배웁니다.\n살다보면, 지금보다 \n더 많이 넘어질 일...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "따뜻한 인연", text }); } catch (e) {}
     } else {

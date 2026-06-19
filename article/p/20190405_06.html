@@ -152,7 +152,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 사용 설명서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 사용 설명서\n\n고통은 10개월 무이자 할부를 활용하고, \n감동은 일시불로 구입할 것.  \n \n사랑은 30년 만기 국채를, \n그리고 우정은 연금처럼 납입할 것을 권함.  \n \n감사는 밑반찬처럼 항상 차려놓고,\n슬픔은 최대한 소식할 것. \n \n고독은 풍성한 채소로 만든 샐러드처럼 싱싱하게, \n이해는 뜨거운 찌개를 먹듯 천천히, \n용서는 동치미를 먹듯 시원하게 섭취할 것.  \n \n기쁨은 인심 좋은 국밥집 아주머니처럼 차리고, \n상처는 계란처럼 잘 풀어줄 것.  \n \n오해는 잘게 다져 이해와 버무리고, \n실수는 굳이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 사용 설명서", text }); } catch (e) {}
     } else {

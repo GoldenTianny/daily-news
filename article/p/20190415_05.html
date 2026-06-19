@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 인연과 사랑으로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 인연과 사랑으로\n\n나 이제 그 사람이 있어  \n아름다운 시향기 가득 품어내듯  \n\n그 사람도 나로인해 아름다운 \n삶의향기 마음껏 느낄수 있게 하소서.  \n\n앞으로 살아감에 있어 \n그 어떤 일도 지금에 마음처럼 \n변하지 않고 사랑이 밑바탕 되어  \n\n미움이 싹트려 할때 더욱 용서하는 마음 \n더욱 사랑 할수 있는 마음되게 하시고  \n\n진정한 사랑이란? \n흐르는 눈물을 닦아 주는것이 아니라  \n\n그 사람의 눈에서 눈물이 흐르지 \n않게하는 것임을 항상 잊지않게 하소서  \n\n이 세상에 사랑을 하는 모든 이들에게 \n마음까지 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 인연과 사랑으로", text }); } catch (e) {}
     } else {

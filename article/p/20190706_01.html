@@ -157,7 +157,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑하는 사람과 이렇게 살고싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑하는 사람과 이렇게 살고싶다\n\n이제 나머지 세월\n무얼하며 살겠느냐 물으면\n사랑하는 사람과 이렇게 살고 싶다고   \n \n기도로 하루를 열어\n텃밭에 가꾼 행복 냄새\n새벽별 툭툭털어 아침사랑 차리고 \n \n햇살 퍼지는 숲길 따라\n야윈 손 꼭 잡고 거닐며\n젊은날의 추억 이야기 하면서\n선물로 주신 오늘을 감사하고  \n \n호수가 보이는 소박한 찻집에서\n나이든 옛노래 발장단 고개짓으로\n나즈막이 함께 따라 부르며\n이제까지 지켜 주심을 감사하고  \n \n한마디 말없이 바라만 보아도\n무슨 말 하려는지\n무슨 생각 하는지 읽을 수 있는  \n \n살다 때...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑하는 사람과 이렇게 살고싶다", text }); } catch (e) {}
     } else {

@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 무엇이든 기대없이 좋아해 보세요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 무엇이든 기대없이 좋아해 보세요\n\n바다를 보면 기분이 좋습니다.\n그럼 바다가 기분 좋은 걸까요?\n내가 기분이 좋은 걸까요?\n내가 기분이 좋은 겁니다. \n\n내가 기분이 좋은 것은\n바다가 나를 좋아하기 때문이\n아니라 내가 바다를 좋아하기 때문이예요.\n산은 그냥 산이고,\n바다는 바다고,\n하늘은 그냥 하늘일 뿐입니다. \n\n내가 이런 것들을 좋아하기\n때문에 그냥 바라는 것 없이\n좋아하고 행복해 하는 겁니다. \n\n바라는 것 없이\n어떤 사람을 사랑하면\n그가 나를 좋아하지 않아도\n내가 그 사람을 좋아하기 때문에\n그를 보는 것만으로도 행복해집니다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "무엇이든 기대없이 좋아해 보세요", text }); } catch (e) {}
     } else {

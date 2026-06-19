@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 기쁨꽃\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 기쁨꽃\n\n한번씩 욕심을 버리고\n미움을 버리고\n노여움을 버릴때 마다\n그래 그래 고개 끄덕이며  \n \n순한 눈길로 내마음에 \n피어나는 기쁨꽃 맑은꽃  \n \n한번씩 좋은생각 하고\n좋은말을 하고\n좋은일 할때마다\n그래 그래 환희 웃으며\n고마움에 꽃술 달고  \n \n내마음 안에 피어나는\n기쁨꽃 맑은꽃  \n \n한결 같은 정성으로\n기쁨꽃 피워내리라\n기쁘게 살아야지 \n사랑으로 가꾸어 이웃에게\n나누워줄 사랑열매 맺어  \n \n힘들고 슬프고 지친 사람들에게\n사랑열매 하나씩 \n달아 드리고 싶습니다  \n \n- 이해인 - \n\n.\n#맑...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "기쁨꽃", text }); } catch (e) {}
     } else {

@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑했다, 사랑한다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑했다, 사랑한다\n\n사랑도 아팠지만 이별은 더 아팠다\n떠나가는 네 뒷모습은 \n바람에 떨어지는 붉은 가을 나뭇잎의 실루엣처럼 \n나를 슬프고 아프게 하였다 \n\n그 어떤 사랑이든 사랑은 아름답고 고귀한 것인데\n떠난 사랑의 얼룩은 오래남고 상처는 왜 이리 깊은 것인지\n그 얼마의 시간이 흘러야 널 잊고 지울 것인지\n눈물 속에 아른거리는 회색빛 너의 실루엣\n오래 지워지지 않을 것 같아 \n\n정녕 가야 한다면 \n가는 것이 너를 편안하게 한다면\n웃으며 보내줄게\n사랑하니까 보내야 하는 거겠지\n그리움의 이파리 가지마다 파릇하게 피어오르...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑했다, 사랑한다", text }); } catch (e) {}
     } else {

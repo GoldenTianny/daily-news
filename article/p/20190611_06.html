@@ -193,7 +193,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 매일 행운을 불러오는 31가지 특별한 비밀\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 매일 행운을 불러오는 31가지 특별한 비밀\n\n1. 아침에 일어나면\n'오늘은 좋은날!' 하고 큰 소리로 외쳐라.\n좋은 아침이 좋은 하루를 만든다.  \n \n2. 거울을 보며 활짝 웃어라.\n거울 속의 사람도 나를 보고 웃는다.  \n \n3. 가슴을 펴고 당당히 걸어라.\n비실비실 걷지 말라.  \n \n4. 사촌이 땅을 사면 기뻐하라.\n사촌이 잘되야 나도 잘되게 마련이다.  \n \n5. 마음 밭에 사랑을 심어라.\n그것이 자라나서 행운의 꽃이 핀다.  \n \n6. 세상을 향해 축복하라.\n세상도 나를 향해 축복해준다.  \n \n7. 밝은 얼굴을 하라.\n얼굴 밝은...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "매일 행운을 불러오는 31가지 특별한 비밀", text }); } catch (e) {}
     } else {

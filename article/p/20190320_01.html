@@ -165,7 +165,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 꼭 읽어봐야 할 좋은글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 꼭 읽어봐야 할 좋은글\n\n농사를 모르는 사람들은 \n논에 물이 가득차 있으면 \n벼가 잘 자라는줄 압니다.  \n \n하지만 논에 항상 물이 차 있으면 \n벼가 부실해져서 작은 태풍에도 \n잘 넘어집니다.  \n \n그래서 가끔씩은 물을 빼고, \n논바닥을 말려야 벼가 튼튼해집니다..  \n \n우리 삶의 그릇에도 \n물을 채워야 할 때가 있고, \n물을 비워야 할 때가 있습니다 \n \n인생은 흘러가는 것이 아니라, \n채우고 비우는 과정의 연속입니다 \n \n오늘 무엇을 채우고 \n또 무엇을 비우겠습니까?  \n \n마음에도 저울이 있습니다. \n가끔씩 가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "꼭 읽어봐야 할 좋은글", text }); } catch (e) {}
     } else {

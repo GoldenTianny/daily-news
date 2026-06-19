@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 내려 놓기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 내려 놓기\n\n지위가 높은 사람도\n무너질 듯 눈물 흘릴 때가 있어요.  \n \n많은 걸 소유하고\n드높은 명예를 얻었다 해도\n걱정 없이 사는 건 아니에요.  \n \n높이 올라 갈수록 더\n거센 비바람과 맞서야 하고\n많이 가질수록 감당해야 할\n무게가 더 커질 수 있거든요.  \n \n삶은 오십보백보예요.\n누가 더 마음을 비우느냐,\n누가 더 마음을 여느냐 하는\n차이가 있을 뿐입니다.  \n \n그에 따라 마음에 감옥을 짓기도 하고\n허물기도 하지요.  \n \n험한 세상을 살다 보면\n아플 때도 있고, 눈물 날 때도 있어요.  \n \n찬...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 내려 놓기", text }); } catch (e) {}
     } else {

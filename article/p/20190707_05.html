@@ -207,7 +207,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 있잖아요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 있잖아요\n\n* 함께있을때 *  \n \n설레이는 사람보다는\n편해지는 사람이 좋고  \n \n \n* 손을잡으면 *  \n \n손이 따뜻해지기보다는\n마음이 따뜻해져오는 사람이 좋고  \n \n \n* 밥을먹으면 *  \n \n신경쓰이는 사람보다는\n함께일때 평소보다 더 많이 \n먹을수 있는 사람이좋고  \n \n \n* 문자가오면 *  \n \n혹시나 그사람일까 기대되는 사람보다는\n당연히 그사람이겠지 싶은 사람이 좋고  \n \n \n* 걱정해줄때 *  \n \n늘 말로만 아껴주고 걱정해주는사람보다는\n오직 행동하나로 묵묵히 보여주는 사람이 좋고  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "있잖아요", text }); } catch (e) {}
     } else {

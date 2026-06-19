@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 술과 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 술과 사랑\n\n주거니 받거니 허물을 \n깨는 건 술이요.\n주어도 받아도 그리움이 \n쌓이는 건 사랑이다.  \n \n뱃속을 채우는 건 술이요.\n영혼을 채우는 건 사랑이다.  \n \n손으로 마시는 건 술이요.\n가슴으로 마시는 건 사랑이다.  \n \n아무에게나 줄 수 \n있는 건 술이요.\n한 사람에게만 줄 수 \n있는 건 사랑이다.  \n \n마음대로 마시는 건 술이요.\n내 뜻대로 안 되는 건 사랑이다.  \n \n입맛이 설레는 건 술이요.\n가슴이 설레는 건 사랑이다.  \n \n주린 허기를 채우는 건 술이요.\n마음을 채울 수 있는 건 사...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "술과 사랑", text }); } catch (e) {}
     } else {

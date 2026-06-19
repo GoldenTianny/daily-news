@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름답게 말하기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름답게 말하기\n\n마음에 있는 생각을 \n어떻게 말하느냐가 중요합니다  \n \n말은 내용보다 \n말하는 사람의 태도에 따라 \n더 많은 것이 전달되는 \n속성을 갖고 있기 때문입니다  \n \n* 솔직하게 말하기  \n \n적당히 덮어 두거나 \n거짓말을 하면 갈 수록 힘들어 집니다  \n \n* 바로 말하기  \n \n사과할 일이나 미안한 마음은 \n생각나면 즉시 표현하세요  \n \n* 한번 더 생각하고 말하기  \n \n남을 기쁘게 하는 말은 바로 하지만 \n남을 힘들게 하는 말은 한번 더 생각하세요  \n \n* 분명히 말하기 \n말의 핵심은 분명...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름답게 말하기", text }); } catch (e) {}
     } else {

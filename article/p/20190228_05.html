@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복해지기 연습\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복해지기 연습\n\n사실 꿈이든 인생이든 \n누구나 선택 앞에서 망설이기 마련입니다.  \n \n두렵기도 하고 걱정이 되기도 하고 \n좋은 결과를 상상하기도 하고\n생각이 많다 보면 \n결국 아무것도 못하고 마는 때도 있습니다.  \n \n그럴 때는 \n단 하나만 생각하는 건 어떨까요?  \n \n바로 '행복'입니다.  \n \n어느 쪽이 나를 \n더 행복하게 만드는가..\n어느 쪽이 나를 \n덜 아프게 하는가..\n어느 쪽이 나를 \n더 사랑하는 길인가..  \n \n타인의 행복도 중요하고 소중하지만 \n내가 먼저 행복해야 그 행복을 나눌 수 있습니다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복해지기 연습", text }); } catch (e) {}
     } else {

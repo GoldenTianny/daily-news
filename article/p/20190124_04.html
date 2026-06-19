@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한결같은 마음과 따뜻한 만남\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한결같은 마음과 따뜻한 만남\n\n자신에게 늘 한결같이\n잘 해주는 사람과\n작은 정성으로 매일 매일\n메세지를 보내주는\n사람을 절대 버리지 말라  \n \n한 평생 수 많은 날들을\n살아가면서 아마도 그런 사람 만나는건 그리 쉽지 않으리라  \n \n택시한번 놓치면\n다음차을 기다리면 되지만\n잠깐의 실수로 사람하나\n한번 놓치면 그런 사람\n다시 얻기가 넘 힘든 세상이다.  \n \n선함을 가지고 이용하지마라\n믿음을 가지고 놀지마라\n감정을 가지고 속이지마라\n진심을 가지고 농담하지마라  \n \n늘 항상 언제나 변함없이\n한결같은 마음으로\n그냥 있는그대로  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한결같은 마음과 따뜻한 만남", text }); } catch (e) {}
     } else {

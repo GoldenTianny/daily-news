@@ -126,7 +126,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 신과의 인터뷰\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 신과의 인터뷰\n\n인간에게서 가장\n놀라운 점이 무엇인가요? \n\n신이 대답했다. \n\n돈벌기 위해\n건강 잃어버리는 것, \n\n그리고는\n건강 되찾기 위해 돈 잃는 것. \n\n미래 염려하느라\n현재 놓쳐버리는 것, \n\n그리하여\n현재도 미래도 살지 못하는 것. \n\n- <신과의 인터뷰>中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "신과의 인터뷰", text }); } catch (e) {}
     } else {

@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연설\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연설\n\n정말 사랑하고 있는 사람앞에서\n사랑하고 있단 말은 아니합니다. \n \n아니하는 것이 아니라 못하는 것이 진리입니다. \n잊어버려야 하겠다는 말은 잊을 수 없다는\n말입니다. 정말 잊고 싶을 땐 잊겠다는 말이\n없습니다.  \n \n어질 때 돌아보지 않는 것은\n너무도 헤어지기 싫기 때문입니다. \n \n그것은 헤어진다는 것이 아니라\n언제나 같이 있다는 것입니다.  \n \n사랑하는 사람앞에서 눈물보이는 것은\n그 만큼 그 사람을 잊지 못하는 증거요, \n \n사랑하는 사람앞에서 웃는 것은\n그 만큼 그 사람과 행복했다는 것...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연설", text }); } catch (e) {}
     } else {

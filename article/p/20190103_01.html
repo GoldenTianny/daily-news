@@ -220,7 +220,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 2019 기해년(己亥年) 장수 하는 비법 38가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 2019 기해년(己亥年) 장수 하는 비법 38가지\n\n밝은 마음으로 살라. \n마음이 밝아지면 몸에 병이 발붙이지 못한다. \n\n병을 두려워 말라. \n병 때문에 죽는 것이 아니라 두려움 때문에 죽는다. \n\n불평을 하지 말라. \n불평을 가장 좋아하는 것은 저승사자이다. \n\n손발을 부지런히 움직여라. \n손발이 건강해지면 온 몸이 건강해진다. \n\n열심히 웃어라. 웃다보면 즐겁고 즐거우면 활력이 넘친다. \n\n열 받지 말라. \n열을 잘 받는 사람이 쉽게 간다. \n\n음식을 적게 먹어라. \n소식하는 사람이 오래 산다. \n\n일을 즐겁게 하라. \n즐겁게 일하면 인생이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "2019 기해년(己亥年) 장수 하는 비법 38가지", text }); } catch (e) {}
     } else {

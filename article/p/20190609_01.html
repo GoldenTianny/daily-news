@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 지금 힘들다면 잘하고 있는 것이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 지금 힘들다면 잘하고 있는 것이다\n\n세상을 살아가면서\n어려운 일이 와도 견뎌내고,\n꿈을 이루어 낼 수 있는 힘은\n어떻게 얻어지는 것일까, \n\n답은 간단하다. \n\n지금보다 더 힘든 상황에 처하지\n않았음을 감사하는 것이다.\n그러면 용기를 얻게 된다. \n\n어둠의 터널을 아직 들어가보지\n않고서는 내가 가장 힘들다고\n말할 자격이 없다.\n다만, 힘들다고 느낄 뿐이다. \n\n그러나 나는 힘들다고 느끼고\n있는 그대들을 응원한다.\n지금 힘들다고 느끼고 있다면,\n포기하지 않고 인생을 경주하고\n있다면 잘하고 있는 것이다. \n\n그것이 비록 도전이 아니더라...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "지금 힘들다면 잘하고 있는 것이다", text }); } catch (e) {}
     } else {

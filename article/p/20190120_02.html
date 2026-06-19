@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 운명의 귀는 내 말을 듣고 있습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 운명의 귀는 내 말을 듣고 있습니다\n\n‘힘들다’ ‘힘들다’ 말하면\n더 힘들어 집니다   \n \n‘안된다’ ‘안된다’ 말하면\n될 일도 안됩니다   \n \n‘어렵다’ ‘어렵다’ 말하면\n더 어려워 집니다   \n \n‘죽겠다’ ‘죽겠다’ 말하면\n고통스런 일만 생겨납니다   \n \n‘잘된다’ ‘잘된다’ 말하면\n안 될 일도 잘 되어줍니다   \n \n‘행복하다’ ‘행복하다’ 말하면\n행복한 일이 찾아옵니다   \n \n혼잣말을 하지만\n운명의 귀는\n내 생각을 감지하고\n내 말을 듣고 있습니다   \n \n- 유지나 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "운명의 귀는 내 말을 듣고 있습니다", text }); } catch (e) {}
     } else {

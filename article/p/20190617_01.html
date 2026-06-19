@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이런 사람이 행복합니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이런 사람이 행복합니다\n\n누가 나에게 섭섭하게 해도 \n그 동안 나에게 그가 베풀어 주었던 \n고마움을 생각하는 사람은 행복한 사람이다.  \n \n나의 행동이 다른 이에게 \n누를 끼치지 않는가를 미리 생각하며 \n행동하는 사람은 행복한 사람이다..  \n \n남이 잘 사는 것을 \n배아파 하지 않고 사촌이 땅을 사도 \n축하할 줄 아는 사람은 행복한 사람이다..  \n \n자신의 직위가 낮아도 \n인격까지 낮은 것은 아니므로 기죽지 않고 \n당당하게 처신하는 사람은 행복한 사람이다..  \n \n비가 오면 만물이 자라나서 좋고 \n날이 개면 쾌청해...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이런 사람이 행복합니다", text }); } catch (e) {}
     } else {

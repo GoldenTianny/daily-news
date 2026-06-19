@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그리운 사람이 있거든\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그리운 사람이 있거든\n\n세상을 혼자 산다는 것은\n너무도 쓸쓸한 일이다\n가슴 속까지 뻔히 들여다 보고\n물살처럼 빠져 나가는 외로움을\n작은 가슴하나로 받아 내는 일은\n때론 눈물에 겨운 일이다 \n\n하염없이 흐드러지며\n눈 앞을 내 뒹구는 햇살 몇 줄기에도\n그림자 길게 늘어 뜨리고\n무심코 불어 오는 찬 바람에도\n몸서리 치게 추운 것이기에\n어쩌면 세상을 혼자 산다는 것은\n무모한 오만인지도 모른다\n그리워 할 수 있을 때 그리워 해야 한다\n사랑할 수 있을 때 사랑 해야 한다 \n\n다하지 못한 말 언저리 깊게\n배어 내어 주절주절 뱉어도 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그리운 사람이 있거든", text }); } catch (e) {}
     } else {

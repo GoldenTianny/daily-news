@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행운을 당신에게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행운을 당신에게\n\n네 잎 클로버,\n당신께만 드리고 싶어요\n꽃반지 만들다가 찾은\n내 손안의 작은 네 잎 클로버  \n \n햇살이 시들기 전에\n시집 안에 넣어두세요  \n \n당신의 삶에도\n행운이 올 거예요\n힘내세요...  \n \n내 당신을 향한 마음도\n기쁨이 되어 찾아갈 거예요  \n \n자리에 눕고 싶을 땐\n일어나 하늘을 보아요\n푸른 희망의 빛이, 물결이 일 거예요  \n \n초록의 잎새처럼\n싱싱한 꿈을 꾸어요  \n \n살다가 삶에 지칠 땐\n네 잎 클로버 보노라면\n하루가 즐거워질 거예요  \n \n내게 행운이 온다면\n그건 당신께 드리겠...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행운을 당신에게", text }); } catch (e) {}
     } else {

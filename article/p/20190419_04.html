@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 예쁜 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 예쁜 마음\n\n귀에 들린다고 \n생각에 담지 말고  \n \n눈에 보인다고 마음에 담지 마라 \n담아서 상처가 되는 것은 흘려버리고  \n \n담아서 더러워지는 것은 쳐다보지 마라  \n \n좋은 것만 마음에 가져올 수 없지만 \n마음을 아프게 하는 것들은 지워버려라  \n \n귀에 거슬린다고 \n귀를 막아버리지 말고  \n \n마음을 아프게 한다고 눈을 감지 마라  \n \n귀를 열어 놓아야 노래를 부를 수 있고 \n눈을 뜨고 있어야 \n예쁜 것들을 마음에 가져올 수 있으리라  \n \n세상에는 슬픈 일보다 \n기쁜 일이 더 많기에 웃으면서 사는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "예쁜 마음", text }); } catch (e) {}
     } else {

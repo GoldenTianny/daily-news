@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아무 걱정하지 말아요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아무 걱정하지 말아요\n\n그대여\n아무 걱정하지 말아요. \n\n떠나가는 것과\n다가올 것들에 연연해 하지 말아요. \n\n어려운 문제와\n힘든 시간들을 겸허히 받아 드리세요. \n\n지나고 나면\n모든 것들은\n그들 만의 의미가 있습니다. \n\n걱정은 적게\n희망은 많이 가지세요. \n\n후회 없이 살아가고\n아낌없이 행복하세요. \n\n오늘\n당신의 하루가 \n\n눈물 나는 시간보다\n웃는 시간이 많았으면 좋겠습니다. \n\n화나는 일들보다\n즐거운 일들이 많았으면 좋겠습니다. \n\n근심으로 보내기보다\n행복으로 채워졌으면 좋겠습니다. \n\n불평하는 하루보다\n감사하는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아무 걱정하지 말아요", text }); } catch (e) {}
     } else {

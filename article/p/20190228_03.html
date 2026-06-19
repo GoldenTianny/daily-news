@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 항상 당신의 손을 잡아주는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 항상 당신의 손을 잡아주는 사람\n\n항상 어두운 긴 터널을 혼자 지나왔다고 \n생각할지도 모릅니다.\n축축하고 외로운 그런 길을 \n혼자 왔다고 할지도 모릅니다.   \n \n하지만 그 터널을 지나\n밖으로 나왔을 때 \n그 작은 손 꼬옥 잡고 놓지 않은\n다른 손을 보게 될 겁니다.\n혼자라고 생각하고 걸어온 그 길을\n혼자 오지 않았다는 걸 알게 될 겁니다.   \n \n어두운 밤길을 걸을 때\n무서워서 자신이 혼자라고 생각이들 때\n가만히 밤하늘을 올려다보세요.\n많은 별들과 이쁜 달이 당신을\n보고 있을 겁니다.\n그 가는 길 위험할까 바 그렇게 가만히\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "항상 당신의 손을 잡아주는 사람", text }); } catch (e) {}
     } else {

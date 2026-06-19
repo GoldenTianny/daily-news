@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 참 좋은 당신 그대있어 더 좋은하루\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 참 좋은 당신 그대있어 더 좋은하루\n\n너를 \n잠깐 만났어도 \n나뭇잎 따라 보낸 \n시냇물 처럼 \n이렇게 긴 여운이 \n남을줄 몰랐다.  \n \n보고 있는데도 \n보고싶어 자꾸 바라보다 \n눈이 빠져 나올 수 없었고 \n곁에 있는데도 생각이나 \n내 안에 너의 모습 \n그리기에 바빴다.  \n \n너를 만나는 것이 \n이렇게 좋은줄 알았으면 \n오래전에 만났을걸 \n아쉽기도 하지만 \n이제라도 만날 수 있는 것은 \n더 깊은 사랑을 눈 뜨게한 \n배려 때문이겠지...  \n \n걷고 있는데도 걷고싶고 \n뛰고 있는데도 \n느리다고 생각 될 때처럼 \n내 공간 구석구석에 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "참 좋은 당신 그대있어 더 좋은하루", text }); } catch (e) {}
     } else {

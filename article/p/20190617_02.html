@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 산다는 것의 의미\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 산다는 것의 의미\n\n살아보니 알겠다\n삶은 사는게 아니라\n살아진다는 것을  \n \n제 아무리 \n잘 살아보려고 애를 써도\n그러면 그럴수록\n삶은 저만치 비켜서서\n자꾸만 멀어지고\n내가 아무리 몸부림에\n젖지 않아도 삶은 내게\n기쁨을 준다는 것을\n삶은 살아보니 알겠다  \n \n못 견디게 삶이 고달파도\n피해 갈 수 없다면 그냥,\n못 이기는 척 받아들이는 것이다\n넘치면 넘치는 대로\n부족하면 부족한 대로\n감사하게 사는 것이다  \n \n삶을 억지로 \n살려고 하지마라\n삶에게 너를 맡겨라\n삶이 너의 손을 \n잡아줄 때까지\n그렇게 그렇게 \n너의 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "산다는 것의 의미", text }); } catch (e) {}
     } else {

@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 날이~\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 날이~\n\n좋은 날이 있으면\n궂은 날도 있는것이다 \n \n지금 궂은 날이라면\n다시 좋은 날이 오리라 \n \n헤어지면\n다시 만날때가 오고 \n \n보기 싫다해서\n다시 안보는게 아니다 \n \n지금 힘든것은\n더 좋은 날을 위한\n신의 선물이라 생각하라 \n \n사랑에도\n그렇게 역경이 따른다 \n \n더 넓고 깊은\n사랑을 할 수 있도록\n오해와 불신이 따르는것이다 \n \n서로의 사랑을\n확인할 수 있는 기회로 삼아라 \n \n당신은\n귀하고 존귀한 사람이다 \n \n당신의\n사랑이 당신을 찾아가리라 \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 날이~", text }); } catch (e) {}
     } else {

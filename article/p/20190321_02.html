@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음에 바르는 약\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음에 바르는 약\n\n남에게 상처 줄 수 있는 말은 되도록 하지 마세요\n아무렇지 않은 척해도 속으로 울고 있을지도 몰라요 \n \n내가 원래 이런 사람이니까 무조건 이해해주길 바라는 마음도  버리세요\n그건 이해가 아니라 강요랍니다 \n \n힘들 때 누군가 위로해 줄 것을 바라지만 말고\n혼자서 이겨내 볼 방법을 생각해 보세요\n그들이 당신의 고민보다 더 큰 고민을 안고 있을지도 모르니까요 \n \n진심을 장난으로 말하지 마세요\n그럴수록 당신의 진심의 가치는 점점 떨어지게 돼 있거든요 \n \n누군가를 좋아할 때는 머리보다 마음으로 사랑...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음에 바르는 약", text }); } catch (e) {}
     } else {

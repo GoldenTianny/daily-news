@@ -186,7 +186,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 남 때문인줄 알았습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 남 때문인줄 알았습니다\n\n내 마음이 메마를 때면 나는 늘 \n남을 보았습니다.  \n \n남이 나를 메마르게 하는 줄 \n알았기 때문입니다.  \n \n그러나 이제 보니,  \n \n내가 메마르고 차가운 것은 남 \n때문이 아니라 내 \n속에 사랑이 없었기 때문입니다.  \n \n내 마음이 불안할 때면 나는 늘 \n남을 보았습니다.  \n \n남이 나를 불안하게 하는 줄 알았기 \n때문입니다.  \n \n그러나 이제 보니,  \n \n내가 불안하고 답답한 것은 남 \n때문이 아니라 내 \n속에 사랑이 없었기 때문입니다.  \n \n내 마음이 외로울 때면 나는 \n늘...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "남 때문인줄 알았습니다", text }); } catch (e) {}
     } else {

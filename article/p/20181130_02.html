@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구에게 행운이 있기를\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구에게 행운이 있기를\n\n" 사랑하는 사람의 마음은\n아침 햇살처럼 빛난다 " 라는\n어느 사랑의글귀 처럼 \n \n당신의 마음은\n고운 햇살의 봄날같이\n향기로운 꽃향기를 날리고 \n \n무더운 여름날\n지친 몸과마음을 시원하게\n쉴수있는 쉼의 공간을 마련해 주며 \n \n청명하고 맑은\n가을 햇살같이\n당신의 정감어린 사랑의 마음은\n맑고 깨끗합니다 \n \n추운 겨울\n영하의 날씨에도\n따뜻하고 포근하게 감싸주고 안아주는\n넓고깊은 당신의 배려함에 \n \n너그러움도 없고\n늘 채워짐이 부족하고 미흡한\n아직 두잎밖에 안되는 내가 \n \n당신에게\n" 고맙다 "...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구에게 행운이 있기를", text }); } catch (e) {}
     } else {

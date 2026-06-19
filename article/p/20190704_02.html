@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 바람이 그렇게 살다 가라하네\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 바람이 그렇게 살다 가라하네\n\n이 작은 가슴속에 지나온\n날들에 대한 세월을 되돌아 보니\n\n이세상 모든 것 다 가졌어도\n가진것 하나 없으니 물같이 바람같이\n살다가 가라 하네.\n\n오늘 하루 행복 하거나 불행 했다고 하여\n내일의 이름으로 기대설 행복도 불행도\n나의 몫이 아니라고 하네.\n\n아름다운 꽃들 또한 시들기 전에\n떨어질수 있으니 이 한몸\n시들기 전에 떨어 진다고 하여 서럽게\n울지 말라고 하네.\n\n모든것들은 파리하게 시들게 되나니\n세상에 영원함은 없으니\n모든걸 소유하지 말라고 하네.\n\n내 마음에 좋은 말이 넘쳐 누군가에게\n행복을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "바람이 그렇게 살다 가라하네", text }); } catch (e) {}
     } else {

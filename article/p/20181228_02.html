@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가라고 내버려 둬라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가라고 내버려 둬라\n\n가라고 내버려 둬라\n떠나기로 마음먹은 사람\n잡는다고 달라질까 \n\n머무르는 시간\n잠시 늘린다고 나아질까\n벌어진 거리만큼\n이미 마음은 떠났다 \n\n결국\n처음 마음먹은 대로\n떠나는 것이 시나리오다 \n\n받아들이자\n진리를 거스른다고\n달라질 게 없다 \n\n거기까지인 인연을\n고무줄처럼 늘린다고\n무엇이 달라질까 \n\n억지로 늘리면\n상처 나고 곪아\n오히려 부작용만 생긴다 \n\n내버려 둬라\n함께 있는 것은 내 몫이고\n떠나는 것은 떠나는 사람 몫이다 \n\n가끔 생각 나겠지\n치밀어 오르는 설움도 있겠지\n그것까지만 하자\n그리고 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가라고 내버려 둬라", text }); } catch (e) {}
     } else {

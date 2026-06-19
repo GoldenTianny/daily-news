@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가장 아름다운 만남\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가장 아름다운 만남\n\n가장 잘못된 만남은 \n생선과 같은 만남입니다.\n만날수록 비린내가 묻어 오니까요.  \n \n가장 조심해야 할 만남은 \n꽃송이 같은 만남입니다.\n피어있을 때는 환호하다가 \n시들면 버리니까요.  \n \n가장 시간이 아까운 만남은 \n지우개 같은 만남입니다.\n금방의 시간이 순식간에 지워져 버리니까요.  \n \n가장 아름다운 만남은 \n손수건 같은 만남입니다.\n힘이 들때는 땀을 닦아주고\n슬플때는 눈물을 닦아주니까요.  \n \n나는 비린내 나는 생선처럼\n나의 욕심을 채워 달라고 \n조르지 않겠습니다. \n \n나는 꽃송이처...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가장 아름다운 만남", text }); } catch (e) {}
     } else {

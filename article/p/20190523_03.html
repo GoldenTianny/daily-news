@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살면서 놓치고 싶지 않은 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살면서 놓치고 싶지 않은 사람\n\n세상을 살아가면서\n놓치고 싶지 않은 사람이 있습니다.  \n \n별 소식이 없는 듯 이리 살아도\n마음 한편엔 보고픈 그리움 두어\n보고 싶을 때면 살며시 꺼내보는\n사진첩의 얼굴처럼 반가운 사람\n그 사람이\n당신이었으면 좋겠습니다.  \n \n한참동안 뜨음하여 그립다 싶으면\n잘 지내느냐고 이메일이라도 띄워\n안부라도 물어보고 싶어지는\n풋풋한 기억 속에 있는 사람\n그 사람이 바로\n당신이었으면 좋겠습니다.  \n \n살면서 왠지\n붙잡고 싶은 사람이 있습니다.  \n \n세월이 흘러 그만 잊은 듯하여도\n문뜩 문뜩 생각에 설...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살면서 놓치고 싶지 않은 사람", text }); } catch (e) {}
     } else {

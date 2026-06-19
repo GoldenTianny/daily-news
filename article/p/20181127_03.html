@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑하는 당신에게 드리는 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑하는 당신에게 드리는 글\n\n하루에도 몇번씩 \n생각나는 사람이 있습니다. \n \n얼굴만 떠올려도 좋은사람 \n이름만 들어도 느낌이 오는 사람  \n \n아침내내 그렇게 그립다가도 \n언덕끝에 달님이 걸린 그런 밤이 되면  \n \n또다시 그리운 사람 내 모든걸 다 \n주고 싶도록 간절히 보고픈 사람 \n그런 사람이 있습니다.  \n \n그 사람을 알고부터 특별할것 없는 \n일상에 행복이라는 단어가 작은 \n파문으로 일렁이기 시작합니다.  \n \n길을 가다가 혹여 하는 마음에 \n자꾸만 뒤를 돌아보게 되고 매일  \n \n오가다 만나는 집잃은 고양이들도 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑하는 당신에게 드리는 글", text }); } catch (e) {}
     } else {

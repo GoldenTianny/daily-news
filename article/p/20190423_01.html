@@ -124,7 +124,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아둥바둥 살지 말아요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아둥바둥 살지 말아요\n\n너무 아둥바둥 살지 말아요\n급하게 뛰어 가다 돌부리에 넘어 집니다.   \n \n앞만 보고 달려 가다가\n꽃 같은 시절 시들어 할미꽃 되면\n나만 서럽잖아요.  \n\n너무나 많은 짐 등에 지고 가지 말아요\n그 무게에 내 등 휘면 나만 슬프잖아요.  \n\n너무 아둥바둥 살지 말아요.\n그런다고 부자 되는것 아니잖아요.  \n\n소중한 삶을 누리며 살아요. 우리.  \n\n- <그냥>中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아둥바둥 살지 말아요", text }); } catch (e) {}
     } else {

@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 감정 다스리기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 감정 다스리기\n\n물위에 글을 쓸 수는 없다.\n물속에서는 조각도 할 수 없다.\n물의 본성은 흐르는 것이다. \n \n우리의 성난 감정은\n바로 이 물처럼 다루어야 한다.\n분노의 감정이 일어나면\n터뜨리지 말고 그냥 내버려 두어라. \n \n마치 강물이 큰 강으로 흘러가듯이\n분노의 감정이 자신의 내면에서\n세상 밖으로 흘러가는 모습을 즐겁게 지켜보라. \n \n이것이 감정을 숨기는 것과는 다르다.\n이때 필요한 것은 자신이 그런 감정을\n느낀다는 사실을 분명히 인식하는 것이다. \n \n그리고 그것을 자신에게서 떠나가게 하라.\n그것은 부정...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "감정 다스리기", text }); } catch (e) {}
     } else {

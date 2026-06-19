@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말의 무게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말의 무게\n\n어떤 사람의 입은 마음에 있어 \n생각을 마음에 담지만 \n어떤 사람의 마음은 입에 있어 \n생각을 무심코 내 뱉습니다  \n \n사람의 혀는 야수와 같아. \n한번 고삐가 풀리면 \n다시 잡아 묶어 두기가 어렵죠 \n내뱉은 말을 다시 담을 수는 없습니다  \n \n말이란 내뱉는 사람에겐 가볍게 느껴져도 \n듣는 사람에겐 큰 무게를 지닙니다.  \n \n마땅히 말해야 할 때는 말해야 하고 \n말하지 않는 사람은 \n전진할 수 없는 사람이기도 합니다  \n \n말을 해야 할 때는 겸손하고 부드럽게 하고 \n주장해야 할 때는 한 마...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말의 무게", text }); } catch (e) {}
     } else {

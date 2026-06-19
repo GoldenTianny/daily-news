@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 그냥 나 자신이면 됩니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 그냥 나 자신이면 됩니다\n\n누구보다 더 잘 나고 싶고,\n누구보다 더 아름답고 싶고,\n누구보다 더 잘 살고 싶고, \n누구보다 더 행복하고 싶은 마음들..\n우리 마음은 끊임없이 상대를 세워 놓고\n상대와 비교하며 살아갑니다.  \n\n비교 우위를 마치 성공인 양, 행복인 양\n비교 열등을 마치 실패인 양, 불행인 양\n그러고 살아가지만,\n비교 속에서 행복해지려는 마음은\n그런 상대적 행복은 참된 행복이라 할 수 없어요.  \n\n무언가 내 밖에 다른 대상이 있어야만\n행복할 수 있기 때문입니다.\n나 혼자서 행복할 수 있어야 합니다.\n그저 나 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 그냥 나 자신이면 됩니다", text }); } catch (e) {}
     } else {

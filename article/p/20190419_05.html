@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음을 다지는 방법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음을 다지는 방법\n\n귀하다고 생각하고 귀하게 여기면\n귀하지 않은 것이 없고 하찮다고 생각하고\n하찮게 여기면 하찮지 않은 것이 없습니다. \n\n예쁘다고 생각하고 자꾸 쳐다보면\n예쁘지 않은 것이 없고 밉다고 생각하고\n고개 돌리면 밉지 않은 것이 없습니다. \n\n \n \n1. 독해져라 \n누구도 널 상처 따윈 줄 수 없도록. \n \n2. 냉정해져라 \n아닌건 후회없이 짜를 수 있도록.  \n \n3. 지혜로워져라 \n누구나 널 상대할 수 없도록. \n \n4. 배워라\n누구든 널 무식하다 할 수 없도록.  \n \n5. 맘을 넓혀라 \n진심으로 용...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음을 다지는 방법", text }); } catch (e) {}
     } else {

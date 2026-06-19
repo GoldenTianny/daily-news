@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세월은 기다려 주지 않기에\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세월은 기다려 주지 않기에\n\n사랑하는 사람이 영원히 내 곁에 있으리라\n그리 무심히 대하진 마세요.\n\n세월 앞에는 무엇도 영원할 수 없기에\n드릴 수 있을 때 마음도, 사랑도\n흠뻑 줄 수 있을 만큼 최선을 다해요.\n\n다음을 기약하는 사랑은 하나마나 하는 사랑이며\n이 다음 형편이 되면 이란 핑계는\n안 하니만 못하지요.\n\n사랑하는 부모님은 세월이 모셔 가는 것이고\n사랑하는 사람은 당신의 말 한 마디에\n지옥과 천국을 드나들지요.\n\n사랑 나눔에 아까워 말아요\n\n사랑함에 사랑하는 사람을 위함에\n다시는 보지 못할 날이 오기 전에\n마음을 다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세월은 기다려 주지 않기에", text }); } catch (e) {}
     } else {

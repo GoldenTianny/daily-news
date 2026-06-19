@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑 처방전, 하루 치\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑 처방전, 하루 치\n\n사랑이 부족하면 추억을 꺼내세요. \n사랑이 넘쳐지면 소망을 더하세요. \n사랑이 묽어지면 감사를 얹으세요. \n사랑이 진해지면 책임을 다하세요.  \n \n사랑이 물러지면 시간을 가지세요. \n사랑이 굳혀지면 세월을 품으세요. \n사랑이 피어나면 꽃씨를 날리세요. \n사랑이 지고나면 내일을 꿈꾸세요.  \n \n사랑이 식어지면 꼭 끌어안으세요. \n사랑이 타오르면 더 끌어안으세요.  \n \n따분하면 예전과는 달리 사랑하세요. \n재미나면 예전보다 더욱 더 많은 사랑하세요.  \n \n언제나 환하게 행복꽃으로 답해 줄게요....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑 처방전, 하루 치", text }); } catch (e) {}
     } else {

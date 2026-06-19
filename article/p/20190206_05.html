@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그래도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그래도\n\n"그래도" 란 섬이 있습니다.\n우리들 마음속에만 있는\n이어도 만큼 신비한 섬 입니다.  \n \n미칠 듯 괴로울 때,\n한없이 슬플 때,\n증오와 좌절이\n온몸을 휘감을 때,\n비로소 마음 한구석에서\n조용히 빛을 내며 나타나는 섬\n그게 "그래도" 입니다.  \n \n"그래도" 섬 곳곳에는\n"그래도 너는 멋진 사람이야"\n"그래도 너는 건강하잖니?"\n"그래도 너에겐 가족과 친구들이 있잖아"\n"그래도 세상은 살만 하단다"\n같은 격려문 들이 나붙어 있습니다.  \n \n"그래도" 는\n자신을 다시 돌아볼 수 있게 하는\n용서...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그래도", text }); } catch (e) {}
     } else {

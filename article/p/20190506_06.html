@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음의 기도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음의 기도\n\n늘 푸른 소나무처럼\n한결같은 마음을 지니게 해 주십사고\n기도합니다.  \n \n숲속의 호수처럼\n고요한 마음을 지니게 해 주십사고\n기도합니다.  \n \n하늘을 담은 바다처럼\n넓은 마음을 지니게 해 주십사고\n기도합니다.  \n \n밤새 내린 첫눈처럼\n순결한 마음을 지니게 해 주십사고\n기도합니다.  \n \n사랑의 심지를 깊이\n묻어둔 등불처럼\n따뜻한 마음을 지니게 해 주십사고\n기도합니다.  \n \n가을 들녘의 볏단처럼\n익을수록 고개 숙이는\n겸손한 마음을 주십사고\n기도합니다.  \n \n살아있는 동안은 \n나이에 상관없이\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음의 기도", text }); } catch (e) {}
     } else {

@@ -189,7 +189,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶\n\n좋다고 해서\n금방 달려들지 말고\n싫다고 해서\n금방 달아나지 말고  \n \n멀리 있다해서\n잊어버리지 말고\n가까이 있다해서\n소홀하지 말라.  \n \n'악'을 보거든\n뱀을 본듯 피하고\n'선'을 보거든\n꽃을 본듯 반겨라.  \n \n부자는 빈자를\n얕잡아보지 말고\n빈자는 부자를\n아니꼽게 생각지 말고  \n \n은혜를 베풀거든\n보답을 바라지 말고\n은혜를 받았거든\n작게라도 보답하고  \n \n타인의 것을 받을 때\n앞에서지 말고\n내 것을 줄때\n뒤에 서지 말라.  \n \n타인의 허물은\n덮어서 다독거리고\n내 허물은 들춰서\n다듬고 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶", text }); } catch (e) {}
     } else {

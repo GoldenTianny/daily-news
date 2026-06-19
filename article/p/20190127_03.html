@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인간 관계의 법칙\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인간 관계의 법칙\n\n▶ 369 법칙 \n\n사람 사이는 3번 정도 만나야 잊혀지지 않고, 6번 정도 만나야  마음의 문이 열리며, 9번 정도 만나야 친근감이 느껴지기 시작한다. \n\n누군가와 좋은 관계를 만들고 싶다면 369 법칙을 명심하고 최소한 아홉번 이상은 꾸준하게 만남과 연락을 지속하라. \n\n▶ 248 법칙 \n\n248법칙이란? 다른 사람에게 2개를 받고 싶다면 4개를 주고, 4개를 받고 싶다면 8개를 주라는 것이다. 인간관계는 불공평하다. 100% give and take란 없다.  \n\n그것을 인정해야 좋은 관계가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인간 관계의 법칙", text }); } catch (e) {}
     } else {

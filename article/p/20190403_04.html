@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ -◆- 감사하는 법 -◆-\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ -◆- 감사하는 법 -◆-\n\n1. 태어나 줘서 고마워요.\n2. 무사히 귀가해 줘서 고마워요.\n3. 건강하게 자라줘서 고마워요.\n4. 당신을 만나고부터 행복은 내 습관이 되어버렸어요.\n5. 당신은 바보, 그런 당신을 사랑하는 난 더 바보예요.\n6. 이 세상 전부를 준대도 당신과 바꿀 순 없어요.\n7. 당신 없는 세상은 상상할 수도 없어요.\n8. 난 전생에 착한일을 많이 했나 봐요. 당신을 만난거보면...\n9. 당신이 내 곁에 있다는 사실 이보다 더 큰 행운은 없어요.\n10. 당신은 나의 비타민 당신을 보고 있음 힘이 솟아요.\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "-◆- 감사하는 법 -◆-", text }); } catch (e) {}
     } else {

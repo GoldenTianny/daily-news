@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑보다 정이 더 무섭습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑보다 정이 더 무섭습니다\n\n사랑은 시간이 지날수록 줄어들지만\n정은 시간이 지날수록 늘어납니다. \n\n사랑은 좋은걸 함께 할때 더 쌓이지만\n정은 어려움을 함께 할때 더 쌓입니다. \n\n사랑 때문에 서로를 미워할 수도 있지만\n정 때문에 미웠던 마음도 되돌릴 수 있습니다. \n\n사랑은 꽂히면 뚫고 지나간 상처라\n곧 아물지만 정이 꽂히면\n빼낼 수 없어 계속 아픕니다. \n\n사랑엔 유통 기한이 있지만\n정은 숙성 기간이 있습니다. \n\n사랑은 상큼하고 달콤하지만\n정은 구수하고 은근합니다. \n\n사랑은 돌아서면 남이지만\n정은 돌아서도 다시 우리입...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑보다 정이 더 무섭습니다", text }); } catch (e) {}
     } else {

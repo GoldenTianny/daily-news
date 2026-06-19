@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 비워가며 닦는마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 비워가며 닦는마음\n\n모름지기 살아간다는 것은\n가득 채워져 더 들어갈 수 없는 상태가 아니라\n비워가며 닦는 마음이다.  \n \n비워 내지도 않고 담으려 하는 욕심,\n내 안엔 그 욕심이 너무 많아\n이리 고생이다.  \n \n언제면 내 가슴 속에\n이웃에게 열어 보여도 부끄럽지 않은\n수수한 마음이 들어와 앉아 둥지를 틀구  \n \n바싹 마른 참깨를 거꾸로 들고 털때\n소소소소 쏟아지는 그런 소리 같은 가벼움이\n자릴 잡아 평화로울까.  \n \n늘 내 강물엔 파문이 일고\n눈자국엔 물끼 어린 축축함으로\n풀잎에 빗물 떨어지듯 초라하니  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "비워가며 닦는마음", text }); } catch (e) {}
     } else {

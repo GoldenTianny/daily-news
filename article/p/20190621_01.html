@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 다 바람같은 거야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 다 바람같은 거야\n\n뭘 그렇게 고민하는 거니?\n만남의 기쁨이건\n이별의 슬픔이건 다 한순간이야  \n \n사랑이 아무리 깊어도 산들 바람이고\n오해가 아무리 커도 비 바람이야\n외로움이 아무리 지독해도 눈 보라일 뿐이야  \n \n폭풍이 아무리 세도 지난 뒤엔 고요하듯\n아무리 지독한 사연도\n지난 뒤엔 쓸쓸한 바람만 맴돌지\n다 바람이야  \n \n이 세상에 온것도 바람처럼 온다고\n이 육신을 버리는 것도 \n바람처럼 사라지는 거야  \n \n가을바람 불어 곱게 물든 \n잎들을 떨어뜨리듯\n덧없는 바람불면\n모든 사연을 공허하게 하지  \n \n어차피...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "다 바람같은 거야", text }); } catch (e) {}
     } else {

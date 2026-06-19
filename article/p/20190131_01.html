@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어리석은 사람은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어리석은 사람은\n\n어리석은 사람은\n인연을 만나도\n인연인줄 알지 못하고, \n \n보통사람은\n인연인줄 알아도\n그것을 살리지 못하며, \n \n현명한 사람은\n옷자락만 스쳐도\n인연을 살릴줄 안다. \n \n살아가는동안\n인연은 매일 일어난다 \n\n그것을 느낄수있는 육감을\n지녀야 한다. \n \n사람과의 인연도 있지만\n눈에 보이는 모든 사물이\n인연으로 엮여있다. \n \n- <인연> ,피천득 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어리석은 사람은", text }); } catch (e) {}
     } else {

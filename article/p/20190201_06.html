@@ -177,7 +177,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신과 술 한잔하고 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신과 술 한잔하고 싶습니다\n\n나 당신과 그냥 좋은 인연으로 만나서\n서로에게 부담없는 친구가 되자고\n시작은 그러 했습니다 \n \n어쩌다가 이렇게 빠져버렸는지\n어느 누구에게도 사과씨 만큼도 \n내마음 주지 않았는데\n어느 순간 가슴 떨림으로\n잠못 이루는 나를 보았습니다 \n \n슬픈 그대 모습에 나도 같이 우울해 지고\n기쁜 그대 얼굴에 \n내 얼굴도 덩달아 환해지는\n그대 따라 온종일 동그랗게 원을 그리는\n키 작은 해바라기 처럼 \n \n사랑의 아픔이 어떤 것인지\n오래전에 알고서도\n영혼 깊은 곳에 심은 그대의 뿌리가\n조금씩 내 몸을 가르고 있는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신과 술 한잔하고 싶습니다", text }); } catch (e) {}
     } else {

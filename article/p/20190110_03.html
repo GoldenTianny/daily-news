@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음에 사랑이 넘치면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음에 사랑이 넘치면\n\n마음에 사랑이 넘치면 \n눈이 맑아집니다\n부정적인 말로 \n남을 판단하기 보다는\n긍정적인 말로 \n남을 이해하려 애쓰게 됩니다  \n \n마음에 사랑이 넘치면\n맑은 웃음이 \n늘 배경처럼 깔려 있어 \n만나는 이들을 \n기쁘게 할 것입니다  \n \n매우 사소한 것일지라도 \n다른 사람을 배려하고 \n그를 위해서 열려 있는 \n사랑의 행동은 \n그 자체가 아름다운 보석입니다  \n \n찾기만 하면 \n늘 널려 있는 이 보석을\n찾지 못하는 것은 \n저의 게으름 때문이겠지요  \n \n늘 감사하며 사는 맑은 마음엔\n남을 원망하는 삐딱한...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음에 사랑이 넘치면", text }); } catch (e) {}
     } else {

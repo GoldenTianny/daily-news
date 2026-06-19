@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 앞에 멈춘 것들을 사랑하자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 앞에 멈춘 것들을 사랑하자\n\n싫다고 떠나는 것\n멀리 있는 것을\n애써 잡으려 하지 말자  \n \n스쳐 지나간 그리운 것에\n목숨 걸지도 말자\n그것이 일이든 사랑이든\n욕망이든 물질이든\n흐르는 시간속에 묻어두자  \n \n지금 내 앞에 멈춘 것들을\n죽도록 사랑하며 살자  \n \n오랜 시간이 흘러 나를 찾았을때\n그때도 그들이 못 견디게\n그리우면 그때 열어보자  \n \n아마도 떠난 것들\n그리운 것들이 순서대로\n서서 나를 반겨주리니  \n \n그때까지 미치도록\n그리워도 시간속에 묻어두고\n지금 내 앞에 멈춘 것들에\n몰입하여 죽도록 사랑하며 살자  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 앞에 멈춘 것들을 사랑하자", text }); } catch (e) {}
     } else {

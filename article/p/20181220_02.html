@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람을 움직이는 황금비결 30가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람을 움직이는 황금비결 30가지\n\n01. 상대에게 즐거움과 이익을 주어라.\n02. 상대방이 원하는 것을 해 주어라.\n03. 상대의 흥미를 유발하라.\n04. 웃음 띤 얼굴로 상대하라.\n05. 상대방의 입장에서 들어주라.\n06. 자기 잘못을 인정하라.\n07. 먼저 진심으로 칭찬하라.\n08. 명령조로 말하지 말라.\n09. 격려를 아끼지 말라.\n10. 상대의 잘못을 지적하지 말라. \n\n11. 상대에게 중요감을 갖도록 하라.\n12. 항상 친절함과 서비스를 베풀어라.\n13. 상대방의 관점에서 생각하고 이해하라.\n14. 이름을 기억하라.\n15...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람을 움직이는 황금비결 30가지", text }); } catch (e) {}
     } else {

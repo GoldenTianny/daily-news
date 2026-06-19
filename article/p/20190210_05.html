@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 난 언제나 네 편이야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 난 언제나 네 편이야\n\n묵묵히 지켜봐 줄게\n너의 하루를 \n \n그냥 너의 뒤에서\n너의 행복을 바라면서 \n \n네가 힘이 들어 누군가 필요할 때\n그때 내가 그 누군가가 돼줄게 \n \n아파서 눈물 흘리면\n눈물 닦아주진 못하지만\n같이 눈물 흘려줄게 \n \n불안한 마음이 들 때면\n뒤를 돌아봐\n그곳에 내가 있으니까 \n \n난 언제나 네 편이야\n내 앞에 있는\n세상에 하나뿐인\n바로 너의 편이야 \n \n- <밤 삼킨 별 하나> 中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "난 언제나 네 편이야", text }); } catch (e) {}
     } else {

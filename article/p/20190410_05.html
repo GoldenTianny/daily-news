@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오직 사랑뿐\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오직 사랑뿐\n\n꽃은 피어도 소리가 없고 \n\n새는 울어도 눈물이 없고\n사랑은 불타도 연기가 없더라 \n\n장미가 좋아서 꺽었더니 가시가 있고\n친구가 좋아서 사귀었더니 이별이 있고\n세상이 좋아서 태어났더니 죽음이 있더라 \n\n나 시인이라면\n그대에게 한편의 시를 드리겠지만 \n\n나 목동이라면\n그대에게 한잔의 우유를 드리겠지만 \n\n나 가진 것 없어\n오직 드릴 것은 사랑 뿐입니다 \n\n- 마야 엔젤루 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오직 사랑뿐", text }); } catch (e) {}
     } else {

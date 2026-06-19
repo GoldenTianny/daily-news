@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 시련은 삶의 밑거름이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 시련은 삶의 밑거름이다\n\n사람들은 누구나\n자신에게 닥친\n시련들을 피하고 싶어합니다.  \n\n왜 이런 시련이\n나에게 찾아왔는지에 대한 의문보다는\n당장 닥친 시련 때문에\n힘겨워하고 쓰러지려 합니다.  \n \n하지만 우리는 언제나\n먼 훗날이 되어서는\n이렇게 말하곤 합니다.  \n \n"그 시련이\n오늘의 나를 만들었습니다"라고..  \n \n우리는 늘 그런 식이지요.  \n \n시련을 당하고 있을 때는\n시련의 의미를 모르지만\n시간이 흐른 후에 그 시련이 준\n참의미를 비로소 깨닫게 되는.. \n \n시련은 늘\n그 시련을 이겨낼 수 있는 힘과 용기,...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "시련은 삶의 밑거름이다", text }); } catch (e) {}
     } else {

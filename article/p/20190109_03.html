@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가슴 속 항상 기억나는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가슴 속 항상 기억나는 사람\n\n함께 있을 때 \n설레이는 사람보다는 편해지는 사람이 좋고 \n손을 잡으면 손이 따뜻해 지기 보다는 \n마음이 따뜻 해져 오는 사람이 좋고    \n \n밥을 먹으면 \n신경 쓰이는 사람보다는 함께일 때 \n평소보다 더 많이 먹을 수 있는 사람이 좋고    \n \n문자가 오면 \n혹시나 그 사람일까 기대되는 사람 보다는 \n당연히 그 사람이겠지 싶은 사람이 좋고    \n \n걱정해 줄 때 \n늘 말로만 아껴주고 걱정해 주는 사람보다는 \n오직 행동 하나로 묵묵히 보여주는 사람이 좋고    \n \n친구들 앞에서 \n나를 내세...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가슴 속 항상 기억나는 사람", text }); } catch (e) {}
     } else {

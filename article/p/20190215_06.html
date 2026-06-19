@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 언젠가\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 언젠가\n\n언젠가\n우리가 지나온 삶을\n뒤돌아 봤을때\n미련이 많아\n질척이는 삶보다 \n \n쿨하게 후회없이 살았다고\n얘기할수 있기를 \n \n언젠가\n당신이 나를 떠올렸을때\n그저 기억에서\n지우고픈 한사람이 아니라 \n \n항상 그림자처럼\n내 주위를 살펴준\n아름다운 사람으로\n기억될수 있기를 \n \n우리는 잠시 하늘에서\n소풍나온 ....\n순서를 기다리다\n어렵게 나온.... \n \n각자 부여받은 삶을 위해\n사는거라네 \n \n무엇을 위해 살면 좋을까! \n \n묵묵히 지켜주는 사랑도 해보고\n마음에 품은 큰 꿈을 이루면서\n여한없이 삶을 만...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "언젠가", text }); } catch (e) {}
     } else {

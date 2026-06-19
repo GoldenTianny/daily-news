@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 미숙한 사람과 성숙한 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 미숙한 사람과 성숙한 사람\n\n미숙한 사람은 자기와 닮은 사람만 좋아하고,\n성숙한 사람은 자기와 다른 사람도 좋아한다.  \n\n미숙한 사람은 인연도 악연으로 만들고,\n성숙한 사람은 악연이야말로 인연으로 나아가는 징검다리라는 사실을 알고 있다.  \n\n미숙한 사람은 자기가 좋아하는 일만 찾지만,\n성숙한 사람은 꼭 해야만 하는 일들로부터 훨씬 더 많은 것을 배우며 산다.  \n\n미숙한 사람은 고난이나 불행한 환경을 견디지 못하지만,\n성숙한 사람은 바람과 물결이 항상 유능한 항해사의 편에 선다고 믿으며 그것을 거부하지 않는다.  \n\n미숙...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "미숙한 사람과 성숙한 사람", text }); } catch (e) {}
     } else {

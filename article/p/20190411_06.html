@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 정말 좋은 사람은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 정말 좋은 사람은\n\n정말 좋은 사람은 \n숨소리가 다르다  \n \n몇 마디 말에도 \n심장이 울리고  \n \n짧은 침묵에도 \n가슴이 막힌다  \n \n정말 좋은 사람은 \n살내음이 다르다  \n \n스치는 몸짓에도 \n향기가 나고  \n \n멀어져 있어도 \n향기가 깊다  \n \n정말 좋은 사람은 \n미워할수 가 없다  \n \n미워할 수도 없게 \n정말 좋은 당신  \n \n옆에 있어 좋은사람 \n옆에 있어 행복한 사람  \n \n옆에 있어 든든한 사람 \n옆에 있어 편한 사람  \n \n옆에 있어 설레이는 사람 \n당신은 내게 있어 그런사람입니다  \n \n같은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "정말 좋은 사람은", text }); } catch (e) {}
     } else {

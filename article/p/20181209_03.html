@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 날마다 배우며 살게 하소서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 날마다 배우며 살게 하소서\n\n초라해 보잘것이 없어 보이고\n아주 작고 사소한 것에서도\n배울 것이 있다면 \n\n머뭇 거리거나 지나치지 않고\n부끄럼 없이\n날 마다 배우며 살게 하소서 \n\n배움을 통해\n확실히 깨닫게 하소서 \n\n나의 삶의 위치를 바로잡게 하시고\n늘 새롭게 하소서 \n\n나의 삶이 늘 정지된 상태가 아니라\n봄날에 돋아나는 새순처럼\n푸르고 싱싱하게 잘 자라게 하시고 \n\n나의 삶이 늘 틀에 박혀 고정된 상태가 아니라\n새로운 변화를 거듭하여\n생명력 있는 믿음을 갖게 하소서 \n\n배움을 통하여 깨닫게 하사\n나에게 주어진 소중한 기회들...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "날마다 배우며 살게 하소서", text }); } catch (e) {}
     } else {

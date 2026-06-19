@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어느 날 그랬다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어느 날 그랬다면\n\n어느 날\n내가 누군가로부터 사랑 받고 있다는 것을 알았다면  그 시간은 이 세상에서 가장 빛나는 시간이었습니다. \n\n어느 날 \n내가 누군가를 사랑하고 있다는 것을 알았다면 그 시간은 이 세상에서 가장 빛나는 시간이었습니다. \n\n어느 날\n내가 누군가의 아픔을 가슴으로 느끼면서 기도하고 있었다면 그 시간은 이 세상에서 가장 따뜻한 시간이었습니다. \n\n어느 날 \n내가 누군가의 모두를 이해하고 그 모습 그대로 받아들였다면 그 시간은 이 세상에서 가장 아름다운 시간이었습니다. \n\n어느 날 \n내 마음이 누군...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어느 날 그랬다면", text }); } catch (e) {}
     } else {

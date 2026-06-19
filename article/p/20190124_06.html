@@ -164,7 +164,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복해졌으면 좋겠다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복해졌으면 좋겠다\n\n행복해졌으면 좋겠다\n아주 많이 행복해졌으면 좋겠다\n\n어린날,\n아무것도 하지 않아도 절로 웃음이 나고\n내일의 걱정보다 지금의 순간에\n최선을 다했던 그 시절처럼\n\n누군가를 좋아한다는 감정이 싹틀 때\n세상의 옷들은 다 벗어 버리고\n순수하게 오로지 \n사랑만을 바라 봤던 그 시절처럼\n\n이별에 대한 걱정보단, \n나의 진심을 주고\n더 주지 못함에 \n아쉬워했던 그 시절처럼\n\n벗을 사귐에 있어\n오로지 그에게만 집중하며\n작은 것 하나에도 웃고 떠들고\n서로를 위해 \n온전히 나의 시간을 \n내어 주었던 그 시절처럼\n\n그...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복해졌으면 좋겠다", text }); } catch (e) {}
     } else {

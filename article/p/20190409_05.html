@@ -196,7 +196,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음의 여유가 아름답습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음의 여유가 아름답습니다\n\n사랑하는 사람끼리\n오해나 착오가 생겼을 때\n서로 따지고, 나무라고,\n말다툼하기보다는\n상대를 편하게 해주는\n사과부터 먼저 하는\n마음의 여유가 아름답습니다.  \n \n아파트나 할인점, 은행 등의\n여닫이문을 드나들 때\n바로 뒤에 사람이 따라오면\n문을 놓아버리기보다는\n문을 붙잡은 채 기다려 주는\n마음의 여유가 아름답습니다.  \n \n엘리베이터나 전철을 타려고\n기다리고 섰을 때\n내리는 사람을 밀치며 끼어 타기보다는\n다 내릴 때까지 비켜주며 기다렸다 타는\n마음의 여유가 아름답습니다.  \n \n아이들이 말을 듣지 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음의 여유가 아름답습니다", text }); } catch (e) {}
     } else {

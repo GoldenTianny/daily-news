@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 주위의 모든 사람들은 소중합니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 주위의 모든 사람들은 소중합니다\n\n좋은 사람을 찾지말고\n좋은 사람이 되주고  \n \n좋은 조건을 찾지말고\n내가 좋은 조건이 되는 사람이 되주자  \n \n좋은 애인을 찾기 전에\n좋은 애인이 되주자  \n \n좋은 사랑을 찾기 전에\n좋은 사랑을 주는 사람이 되주자  \n \n좋은 하루가 되길 바라지 말고\n좋은 하루를 만들자  \n \n행복해지기를 바라지 말고 \n나 스스로 행복하자  \n \n털어봐~ 아프지 않은 사람있나\n꾹 짜봐~ 슬프지 않은 사람있나\n찾아봐~ 힘들지 않은 사람있나\n건드려 봐~ 눈물나지 않은 사람있나\n물어 봐~ 사연없는 사람있나\n살펴 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 주위의 모든 사람들은 소중합니다", text }); } catch (e) {}
     } else {

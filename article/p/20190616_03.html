@@ -161,7 +161,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 1%의 행복\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 1%의 행복\n\n사람들이 자꾸 묻습니다.\n행복하냐고\n낯선 모습으로 낯선 곳에서 \n사는 제가 자꾸 걱정이 되나 봅니다. \n \n저울에 행복을 달면\n불행과 행복이 반반이면, \n저울이 움직이지 않지만\n불행 49% 행복 51%면, \n저울이 행복쪽으로 기울게 됩니다. \n \n행복의 조건엔\n이처럼 많은 것이 필요없습니다.\n우리 삶에서\n단 1%만 더 가지면 행복한 겁니다. \n \n어느 상품명처럼 2%가 부족하면, \n그건 엄청난 기울기입니다.\n아마..\n그 이름을 지은 사람은\n인생에 있어서 2%라는 수치가\n얼마나 큰지를 아는 모양입니...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "1%의 행복", text }); } catch (e) {}
     } else {

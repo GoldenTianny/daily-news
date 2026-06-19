@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑을 가지고 가는자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑을 가지고 가는자\n\n사랑을 가지고 가는 자는\n가는 곳곳마다 친구가 있고  \n \n선을 가지고 가는 자는 \n가는 곳곳마다 외롭지 않고  \n \n정의를 가지고 가는 자는 \n가는 곳곳마다 함께 하는 자가 있고  \n \n진리를 가지고 가는 자는 \n가는 곳곳마다 듣는 사람이 있으며  \n \n자비를 가지고 가는 자는\n가는 곳곳마다 화평이 있으며  \n \n진실함을 가지고 가는 자는 \n가는 곳곳마다 진실이 있고  \n \n성실함을 가지고 가는 자는\n가는 곳곳마다 믿음이 있고  \n \n부지런함을 가지고 가는 자는\n가는 곳곳마다 즐거움이 있으며  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑을 가지고 가는자", text }); } catch (e) {}
     } else {

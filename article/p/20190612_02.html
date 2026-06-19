@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나 당신을 너무 좋아합니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나 당신을 너무 좋아합니다\n\n어느 날 아침이슬 처럼 살며시 \n내 마음 안에 들어온 당신.  \n눈 빛만 봐도 알 수 있는 \n너무도 아름다운 마음을 가진 당신.  \n그런 당신이 자꾸만 좋아집니다.  \n \n당신을 좋아한 뒤로는 \n가슴 벅차옴으로 터질 것만 같습니다.  \n당신을 사랑해'라는 말보다 \n당신이 자꾸 보고 싶어'라는 말이 \n내 가슴에 더 와 닿습니다.  \n \n언제나 당신의 얼굴에 웃음이 \n가득하길 바라는 나의 마음은 \n당신을 향한 단 하나뿐인 \n나의 사랑입니다.  \n \n당신을 위해 저하늘 별은 못 되어도 \n간절한 소망의 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나 당신을 너무 좋아합니다", text }); } catch (e) {}
     } else {

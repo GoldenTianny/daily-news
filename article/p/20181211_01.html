@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶은 나에게 일러주었네\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶은 나에게 일러주었네\n\n나에게 없는 것을 욕심내기 보다는 \n내가 갖고 있는 것을 소중히 하고 \n감사히 여기라는 것을 \n \n삶은 내게 또 일러주었네...  \n \n갖고 있는 것에 너무 집착하지 말기를\n그것에 지나치게 집착하다 보면 \n외려 잃을 수도 있다는 것을 \n \n내가 가진 것이 무엇인가\n내가 가질 수 있고 \n가질 수 없는 것은 또 무엇인가 \n \n나는 여지껏 욕심만 \n무겁게 짊어지고 있었네 \n \n하지만 그 욕심을 잃을지라도 \n결행하는 것은 결코 욕심이 아니라고 \n내 마음이 나에게 이야기 하네 \n \n우리는 언젠가 때가되면 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶은 나에게 일러주었네", text }); } catch (e) {}
     } else {

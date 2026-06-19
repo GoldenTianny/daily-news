@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 5가지가 즐거워야 삶이 즐겁다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 5가지가 즐거워야 삶이 즐겁다\n\n첫째, 눈이 즐거워야 한다.  \n \n눈이 즐거우려면 좋은 경치와 아름다운 꽃을 봐야 한다.\n그러기 위해서는 여행을 자주 해야 아름다운 경치와 아름다운 꽃들을 볼 수 있다.\n그러므로 가능하다면 해외나 국내 여행을 자주 하여야 할 것 같다.\n외국 사람들은 돈을 벌어 어디에 쓰느냐고 물으면 여행하기 위해 번다는 사람이 많다.  \n \n여행은 휴식도 되고 새로운 에너지를 충전하는 기회도 되는 것이다.\n꼭 여행만이 눈이 즐거운 것은 아니다.\n개인에 따라 여행이 여의치 않는다면, 하루 시간 중 짬나는 대로 웃...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "5가지가 즐거워야 삶이 즐겁다", text }); } catch (e) {}
     } else {

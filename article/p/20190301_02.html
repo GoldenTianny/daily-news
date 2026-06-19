@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ '사랑해' 라는 그 말\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ '사랑해' 라는 그 말\n\n백 번의 눈빛보다 \n천 번의 스킨십보다\n만 번의 입맞춤보다 \n가슴 설레는 건  \n \n사랑하는 사람에게서 듣는 \n‘사랑한다’는 말이다  \n \n사랑한다는 말을 표현하지 않고\n사랑을 한다는 것은 \n낙타에게 물 한방울 없이 \n사막을 건너라고 하는 것과 같다  \n \n사랑은 때로는 \n아무 이유도 없이\n사랑한다고 말해주는 것\n어떤 잘못을 하건 \n왜 그랬는지 따지지 않고 \n무작정 같은 편이 돼주는 것  \n \n흔하디 흔한 말\n사랑한다는 그 말\n네 편이 되어줄게 라는 말  \n \n오늘 마음을 담아 \n건네 보는건 어떨...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "'사랑해' 라는 그 말", text }); } catch (e) {}
     } else {

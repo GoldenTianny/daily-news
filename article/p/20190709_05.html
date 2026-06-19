@@ -121,7 +121,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 걱정의 숲에 나를 가두지 마세요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 걱정의 숲에 나를 가두지 마세요\n\n걱정이 습관이 되면 우울증이 되고 지나치면 죽음으로 갑니다.\n'걱정'을 뜻하는 영어단어 'worry'는 '사냥개가 짐승을 물고 흔들다'는 뜻입니다. \n\n실제로 '걱정'은 삶을 물고 흔들어 서서히 죽어가게 만듭니다.\n돈이 많다고 해서 사회적 지위가 높다 고해서 걱정이 없는 것은 아닙니다. \n\n걱정이 많은 이유는 나와 주변 사람들을 비교하거나 분수에 맞지 않게 많은 것을 가지려 할 때입니다. \n\n욕망을 가지되 '적당함'을 유지하면서 느긋하게 책을 읽거나\n좋아하는 노래를 들으며 긴 호흡으로 천천히 걱정...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "걱정의 숲에 나를 가두지 마세요", text }); } catch (e) {}
     } else {

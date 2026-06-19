@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그런 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그런 사람\n\n아침에 눈을 뜨면 \n창가에 비친 햇살 만큼이나 \n생각 나는 그런사람이 있습니다\n\n보이지 않아도 \n마음이 닿아\n그도 \n향이 진한 커피 한잔에\n아침을 함께 열고픈 사람 \n \n입가에 미소를 번지게 하는\n그런 당신이 있기에 \n이 하루가\n행복으로 가득 합니다\n\n어스름히 \n어둠이 내리는 저녁이면\n그도 나와 같은 \n하루를 보냈을까?\n생각 하게 하는 \n그런 사람이 있습니다\n\n서로의 \n안부가 궁금해 지는 \n\n- <좋은 생각 좋은 느낌> 中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그런 사람", text }); } catch (e) {}
     } else {

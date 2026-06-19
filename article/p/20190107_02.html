@@ -124,7 +124,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 상처받은 내 마음에게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 상처받은 내 마음에게\n\n인연을 이어가기 위해서\n잘못이 없는데도 ‘앞으로 잘할게’라는 말을 \n해야 할 때가 있다.  \n\n하지만 우리가 노력해서 인연을 이어가려고 해도, \n상대에게 실수하지 않고 인정받으려고 해도, \n마음대로 할 수 없는 게 인연이다.  \n\n나 자신에게 상처를 주면서까지 \n인연을 억지로 이어나가기엔 \n우리 존재는 너무나도 소중하다.  \n\n그러니 상대방에게 사과하는 대신에 \n상처받은 내 마음에게 사과해야 하지 않을까.  \n\n- <방구석 라디오> 中 ,모자 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "상처받은 내 마음에게", text }); } catch (e) {}
     } else {

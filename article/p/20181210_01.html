@@ -168,7 +168,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶의 명언 10가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶의 명언 10가지\n\n1. 누구를 욕했는데 그사실을 모르는 그 사람이 \n나에게 따뜻한 말을 전한다. 엄청 미안하다.\n복수는 이렇게 하는것이다. 사랑으로.  \n \n \n2. 논쟁은 무슨일이 있어도 피하세요.\n결론이 나오지 않을뿐만 아니라 상처투성이로 끝나게\n되요. 또 누구를 설득하려고 하지 마세요.\n왜 좋은지 설명은 할수있어도 말안에 강요가 들어가면 설득 당하지 않습니다.  \n \n \n3. 결혼은 사랑하는 이유말고 다른 이유가 있어서 \n결혼을 하게되면 그 다른이유때문에 나중에 \n갈라선다. 장담한다!  \n \n \n4. 누가 내...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶의 명언 10가지", text }); } catch (e) {}
     } else {

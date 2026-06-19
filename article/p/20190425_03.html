@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오직 너를 위한 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오직 너를 위한 글\n\n생각이 많아지고\n생각이 많아지고\n네 곁의 누구도 힘이 되지 않아 외롭겠지만\n가끔은 모두가 그렇단 사실을 잊지마 \n \n내 사람 같은 친구도 나를 이해하지 못하고\n함께 살아온 가족조차 너를 쓸쓸하게 하지만\n사실은 깊이 사랑하고 있다는 사실을 잊지마 \n \n골목마다 사람마다\n바람만 가득한 차가운 이 세상에\n금쪽같은 시간을 뚫고\n네 안부를 물어오는 사람이 있다면\n그것만으로 너는 충분히\n행복한 존재라는 사실을 잊지마 \n \n제 걱정으로 매일이 벅찬 사람들이\n가슴속의 혼란과 역경을 뚫고\n너를 생각 한다는 게 얼...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오직 너를 위한 글", text }); } catch (e) {}
     } else {

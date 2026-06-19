@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 있는 그대로의 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 있는 그대로의 사랑\n\n있는 그대로의 \n사랑을 원합니다.  \n \n곁에서 끊임없이\n사랑을 갈구하는\n아이 같은 사랑이 아니라 \n \n그저 바라보며 밀어주는 \n그대로의 사랑을 원합니다.  \n \n나무와 나무처럼\n적당한 거리에서  \n \n서로의 그늘이 되어 주고 \n외로울 땐 친구도 되어 주는 \n믿음직한 사랑을 원합니다.  \n \n사랑한다 하여 쉽게 다가가 \n괜한 상처를 주거나  \n \n반대로 싫어 졌다 하여 \n마음 밖으로 쉽게 \n밀어 내지도 않는  \n \n그냥 눈빛만으로도 \n서로를 이해할 수 있는 \n넓은 사랑을 원합니다.  \n \n내가 힘...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "있는 그대로의 사랑", text }); } catch (e) {}
     } else {

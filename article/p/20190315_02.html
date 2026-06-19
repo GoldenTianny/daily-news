@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모두가 함께 만드는 것\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모두가 함께 만드는 것\n\n너는 참 마음이 착하고 여린 사람이다.  \n\n사람들에게 상처받을까 봐 두려워...\n오늘도 이 사람 저 사람에게 잘하려고 \n애쓰고 다니는 걸 보니... \n\n모든 사람에게 잘하려니 힘들겠다. \n점점 지칠텐데...  \n\n사람들에게 너무 잘하려고 \n노력하지 않았으면 좋겠다.  \n\n네가 지치지 않아야 \n주변 사람과 계속 잘 지낼 수 있으니. \n\n어차피 조금 잘못해도 감싸고 이해하는 사람은 \n언제까지나 너와 함께할 것이고  \n\n네가 아무리 잘한다 해도 \n뒤에서 욕하고 떠날 사람은 결국 떠나기 마련이다. \n\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모두가 함께 만드는 것", text }); } catch (e) {}
     } else {

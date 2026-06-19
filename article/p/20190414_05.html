@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어느 어머니의 말씀\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어느 어머니의 말씀\n\n아들아!\n결혼할 때 부모 모시겠다는 여자 택하지 마라. 너는 엄마랑 살고 싶겠지만 엄마는 너를 벗어나 엄마가 아닌 인간으로 살고 싶단다. \n\n엄마한테 효도하는 며느리를 원하지 마라. 네 효도는 너 잘사는 걸로 족하거늘 네 아내가 엄마 흉을 보면 네가 속상한 것 충분히 이해 한다. \n\n그러나 그걸 엄마한테 옮기지 마라. 엄마도 사람인데 알면 기분 좋겠느냐? 모르는 게 약이란 걸 백번 곱씹고 엄마한테 옮기지 마라. \n\n내 사랑하는 아들아!\n나는 널 배고 낳고 키우느라 평생을 바쳤거늘 널 위해선 당장 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어느 어머니의 말씀", text }); } catch (e) {}
     } else {

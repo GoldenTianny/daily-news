@@ -161,7 +161,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그러려니 하며 살자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그러려니 하며 살자\n\n인생길에 내마음\n꼭맞는 사람이 어디있으리\n난들 누구 마음에 그리 꼭 맞으리\n그러려니 하고 살자  \n \n내 귀에 들리는 말들\n어찌다 좋게만 들리랴\n내말도 더러는 남의 귀에 거슬리리니\n그러려니 하고 살자  \n \n세상이 어찌 내마음을 꼭 맞추어주랴\n마땅찮은일 있어도\n세상은 다 그런거려니 하고 살자  \n \n사노라면 다정했던 사람\n멀어져갈수도 있지 않으랴\n온것처럼 가는것이니\n그저 그러려니 하고 살자  \n \n무엇인가 안되는일 있어도 실망하지 말자\n잘되는일도 있지 않던가\n그러려니 하고 살자  \n \n더불어 사는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그러려니 하며 살자", text }); } catch (e) {}
     } else {

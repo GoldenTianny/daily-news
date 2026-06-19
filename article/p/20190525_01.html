@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 보고픈 당신에게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 보고픈 당신에게\n\n그립다 말하면\n더 그리워 질까봐\n그저 미소만 짓습니다.  \n \n보고파 한다 한들 마음뿐이기에\n무엇 하나 줄 것이 없습니다.  \n \n지나온 세월동안\n두 마음이 함께 함에\n고마운 마음뿐 입니다.  \n \n그저 생각과\n느낌만으로도 만날 수 있으니\n사랑하는 마음이 행복이라 여기며  \n \n사랑하는 마음은 꿈만 같고\n현실의 삶을 초월할 수 없으니\n그리움 속에 담겨 있는 당신에게\n그저 행복한 미소만 보냅니다.  \n \n늘.. 내 마음속에 당신이 있어\n내 삶이 향기롭고 새로운 마음이지요\n현실의 벽앞에 서로에게 다가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "보고픈 당신에게", text }); } catch (e) {}
     } else {

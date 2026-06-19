@@ -192,7 +192,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 법정스님의 좋은글 모음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 법정스님의 좋은글 모음\n\n무소유란 아무것도 갖지 않는다는 것이 아니라\n불필요한 것을 갖지 않는다는 뜻이다.\n우리가 선택한 맑은 가난은 부보다 훨씬 값지고 고귀한 것이다.\n- 산에는 꽃이피네 -  \n \n \n우리 곁에서 꽃이 피어난다는 것은\n얼마나 놀라운 생명의 신비인가.\n곱고 향기로운 우주가 문을 열고 있는 것이다.\n잠잠하던 숲에서 새들이\n맑은 목청으로 노래하는 것은\n우리들 삶에 물기를 보태주는 가락이다.\n- 산방한담 -  \n \n \n빈마음, 그것을 무심이라고 한다.\n빈마음이 곧 우리들의\n본 마음이다.\n무엇인가 채워져 있으면...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "법정스님의 좋은글 모음", text }); } catch (e) {}
     } else {

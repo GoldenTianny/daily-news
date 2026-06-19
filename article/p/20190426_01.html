@@ -164,7 +164,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 돈이 모이는 집\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 돈이 모이는 집\n\n풍수에서는 운을 불러들이는 데 집이나 가구가 중요한 역할을 한다고 본다.\n돈이 모이는 집이 있는 반면 있는 돈이 금방 없어져버리는 집이 있다는 것.\n금전운이 높아지는 풍수 인테리어를 배워보자. \n \n \n▶ 부자가 되는 집 꾸미기 \n \n1. 현관은 밝고 깨끗하게\n현관에 우산꽂이, 구둣주걱, 쓰레기, 헌책 등을 두지 말고 신발을 가지런히 정리해둔다. 매일 물청소를 해서 깨끗하게 만들고 조명은 밝게 설치한다. \n \n2. 북쪽에 진한 색상의 가구를 둔다.\n예금통장이나 인감, 자주 사용하지 않는 중요한 물...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "돈이 모이는 집", text }); } catch (e) {}
     } else {

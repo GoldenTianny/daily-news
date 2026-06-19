@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신은 나의 사랑입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신은 나의 사랑입니다\n\n오늘 하루가 힘들고 피곤해도\n당신이 있기에\n미소로 보낼 수 있었습니다.  \n \n언제나 넉넉한 마음으로\n바라봐주는 당신이 있기에\n늘 행복해지는 내가 있습니다.  \n \n오로지 당신만 생각하고,\n당신만 사랑할 줄 아는\n난 당신의 그림자이고 싶습니다.  \n \n힘들고 고단한 날들도\n당신을 생각하면 기쁜 하루가 되듯이\n늘 기쁜 당신입니다.  \n \n당신의 마음이 내안에 자리해서,\n늘 여유로움이 넘쳐납니다. \n외로움도 이젠 \n그리움이고, 사랑입니다.  \n \n이 모든 마음은 \n당신 때문에 생겨난 \n알 수없는 마음...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신은 나의 사랑입니다", text }); } catch (e) {}
     } else {

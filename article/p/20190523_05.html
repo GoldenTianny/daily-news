@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구야 나에게 기댈래?\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구야 나에게 기댈래?\n\n난 아무렇지 않은데\n사람들이 걱정스레 묻더라  \n \n어디 아파요?\n무슨 일 있었어요?\n얼굴이 많이 상했어요  \n \n왜 그럴까 생각했어  \n \n부담을 줄까 봐\n모든 걸 혼자 짊어지고\n해결하려는 것이 습관이 되어\n남몰래 아파하고 고민했던 거 같아\n한 번쯤 누군가의 어깨에 기댈 수도 있는데  \n \n친구야\n너는 나에게 기댈래?\n내 작은 어깨도 괜찮으면\n언제든 내줄께  \n \n기대고 울어도 좋고\n말없이 있어도 좋아\n그것으로도 충분한 위로가 될 테니까  \n \n- 해밀 조미하 - \n\n.\n#맑고좋은글 #좋은글 #...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구야 나에게 기댈래?", text }); } catch (e) {}
     } else {

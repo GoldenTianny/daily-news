@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶의 과정이 행복인 것을\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶의 과정이 행복인 것을\n\n산 꼭대기에 오르면 행복 할거라 생각 하지만 \n정상에 오른다고 행복한건 아니다. \n어느 지점에 도착하면 모든 사람이 \n행복해지는 그런 곳은 없다. \n \n같은 곳에 있어도 \n행복한 사람이 있고 \n불행한 사람이 있다. \n \n같은 일을 해도 \n즐거운 사람이 있고 \n불행한 사람이 있다.  \n\n같은 음식을 먹지만 \n기분이 좋은 사람과 \n기분 나쁜 사람이 있다. \n\n같은 물건, 좋은 음식, 좋은 장소보다 \n더 중요한 것은 그것들을 대하는 태도이다. \n무엇이든 즐기는 사람에겐 행복이 되지만 \n거부하는 사람에겐...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶의 과정이 행복인 것을", text }); } catch (e) {}
     } else {

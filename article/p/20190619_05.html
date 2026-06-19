@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구야\n\n내가 너를 사랑하는 만큼 바람이 분다면\n하늘 끝까지 날아가버리겠지 \n \n친구야 !!\n내가 너를 좋아하는 만큼 커피를 마신다면\n영원히 잠들지 않아 널 볼수있겠지 \n \n친구야 !!\n내가 너를 사랑하는 만큼 낙서를 한다면\n이세상에 백지란 없겠지 \n \n아름다운 꿈을가진\n사랑하는 내 친구야\n조그만 일에도 함께 웃을수 있고\n슬픈 일에도 같이 눈물 흘리수 있는\n사랑하는 내 친구야 \n \n내게 기대렴\n커다란 나무그늘처럼\n안락한 엄마품처럼\n그렇게\n난 네곁에 있을테니 \n \n힘들땐 누구 보다도\n난 그런 널\n누구 보다도...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구야", text }); } catch (e) {}
     } else {

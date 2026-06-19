@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인간관계에 연연하지마라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인간관계에 연연하지마라\n\n사랑은 기다리지 않아도 찾아오고 \n사랑은 보내지 않아도 떠나간다.  \n \n그 사람의 인연이라면 \n지구 한바퀴를 돌아서라도 \n다시 만나게 될 것이고  \n \n인연이 아니라면 \n지금 바로 내 옆에 있더라도 \n언젠가 떠나갈 것이다.  \n \n인간관계에 연연하지마라 \n떠날사람은 아무리 \n붙잡아도 떠나게 되있고 \n옆에 있을 사람은 가라고 \n소리쳐도 떠나지 않게 되있다.  \n \n누구에게도 많은 것을 기대하지 말것 \n그리고 질투하지 말것 \n사랑하면 곁에 머물 것이고  \n \n아니면 떠나는 것이 사람의 인연이라 \n그...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인간관계에 연연하지마라", text }); } catch (e) {}
     } else {

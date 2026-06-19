@@ -183,7 +183,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 배웠다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 배웠다\n\n나는 배웠다\n다른 사람으로 하여금 \n나를 사랑하게 만들 수 없다는 것을 \n \n내가 할 수 있는 일은 \n사랑받을 만한 사람이 되는 것뿐임을\n사랑은 사랑하는 사람의 선택에 달린 일  \n \n나는 배웠다\n내가 아무리 마음을 쏟아 \n다른 사람을 돌보아도\n그들은 때로 \n보답도 반응도 하지 않는다는 것을 \n \n신뢰를 쌓는 데는 여러 해가 걸려도\n무너지는 것은 한순간임을  \n \n삶은 무엇을 손에 쥐고 있는가가 아니라\n누가 곁에 있는가에 달려 있음을 나는 배웠다\n우리의 매력이라는 것은 15분을 넘지 못하고\n그 다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 배웠다", text }); } catch (e) {}
     } else {

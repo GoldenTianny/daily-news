@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신이 고맙습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신이 고맙습니다\n\n손잡아 준다고 \n넘어지지 않는 건 아니지만, \n손 내미는 당신이 고맙습니다.  \n \n응원한다고 \n삶이 힘들지 않는 건 아니지만, \n힘내라는 당신이 고맙습니다.  \n \n일으켜 준다고 \n상처가 아무는 건 아니지만, \n흙 털어주는 당신이 고맙습니다.  \n \n목마르다고 \n당장 숨 넘어가는 건 아니지만, \n물병 챙겨주는 당신이 고맙습니다.  \n \n혼자 간다고 \n다 길 잃는 건 아니지만, \n기다려준 당신이 고맙습니다.  \n \n말 한마디 안한다고 \n우울해지는 건 아니지만, \n말 건네는 당신이 고맙습니다.  \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신이 고맙습니다", text }); } catch (e) {}
     } else {

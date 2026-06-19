@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어린왕자 명대사 8가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어린왕자 명대사 8가지\n\n1. 내 비밀은 이런 거야. 매우 간단한 거지.\n오로지 마음으로 보아야만 정확하게 볼 수 있어...\n가장 중요한 것은 눈에는 보이지 않는 법이야." \n \n2. "네 장미꽃을 \n그렇게 소중하게 만든 것은,\n그 꽃을 위해 네가 소비한 시간이란다." \n \n3. "나를 길들여줘...\n가령 오후 4시에 네가 온다면\n나는 3시부터 행복해지기 시작할거야...\n그러나 만일, 네가 무턱대고 아무때나 찾아오면\n난 언제부터 마음의 준비를 해야할지 모르니까..." \n \n4. "나는 해 지는 풍경이 좋아. \n우리 해지는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어린왕자 명대사 8가지", text }); } catch (e) {}
     } else {

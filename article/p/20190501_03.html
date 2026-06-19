@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑의 이름으로 머문다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑의 이름으로 머문다면\n\n걸어도 걸어도 끝이없고\n채워도 채워도 채울수 없는\n생의 욕망이 있다면\n마음 다하여 사랑 할 일이다  \n \n인연도 세월도\n바람처럼 스쳐 지나는\n생의 들판에서\n무엇으로 위안삼아 먼길을 가랴  \n \n누구를 위하여 눈물을 \n삼키고 아파도 쓰러져도 가야하는 \n생의 길은 얼마나 긴 방황인가  \n \n파도처럼 밀려들어 부서지고\n썰물처럼 사라져 가는 \n세월을 두고 덧 없음에\n마음 둘 일이 아니다  \n \n진정 가슴을 열어 \n세월에 맞서\n뜨겁게 태우고 태워\n사랑할 일이다  \n \n애절한 그리움에 마음 다하고 \n눈물 겹...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑의 이름으로 머문다면", text }); } catch (e) {}
     } else {

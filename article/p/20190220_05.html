@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ '참 좋아 보여요' 말 한마디 ...\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ '참 좋아 보여요' 말 한마디 ...\n\n우리가 항상 남을 좋게\n보아 주고 좋은 미소로\n보아 주는 것은 \n상대방도 즐겁고 \n나도 기쁜 일입니다 \n \n활짝핀 꽃을 바라보면 \n아름다운 것처럼\n활짝 웃는 행복한 미소로\n남을 바라보며 웃을 때 \n \n상대방도 기분좋게 웃을 수 있고\n추운 겨울에도 따스함을 \n느낄 수 있는 \n아름다운 마음이 생깁니다  \n \n길을 가다가 저 멀리서 \n아는 사람이 다가오면 \n반갑게 맞아주며 \n'참 좋아 보여요' 하면 \n얼마나 기분이 좋을까요 \n \n상대방에게 말 한마디\n큰 힘이 되고 \n큰 활력소가 됩니다 \n \n키가 작은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "'참 좋아 보여요' 말 한마디 ...", text }); } catch (e) {}
     } else {

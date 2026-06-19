@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복도 심는 것입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복도 심는 것입니다\n\n모든 행복은\n행복한 생각에서 출발합니다\n생각은 눈에 보이지 않습니다\n보이는 것은 보이지\n않는것에서부터 옵니다 \n \n가시적 현실은\n비가시적 생각이\n자란 열매입니다 \n \n어떤 생각을 심는가에 따라\n행복과 불행이 선택됩니다 \n \n행복한 생각을 심으면\n행복한 인격이 나오고\n행복한 인격을 심으면\n행복한 인생이 나옵니다 \n \n인생은 작은 선택들이 모여\n큰 선택들이 됩니다 \n \n행복은 선택입니다\n행복은 습관입니다\n불행도 습관입니다 \n \n평소에\n행복의 선택을 훈련함으로\n나의 행복은 결정됩니다 \n \n불행은 원치 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복도 심는 것입니다", text }); } catch (e) {}
     } else {

@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나로부터의 시작\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나로부터의 시작\n\n어릴 때는 나보다 중요한 사람이 없고,\n나이 들면 나만큼 대단한 사람이 없는데,\n늙고 나면 나보다 못한 사람이 없습니다.  \n \n칭찬에 익숙하면\n비난에 마음이 흔들리고,\n대접에 익숙하면\n푸대접에 마음이 상합니다.  \n \n문제는\n익숙해져서 길들여진 내 마음 입니다.  \n \n집은 좁아도 같이 살 수 있지만, \n사람 속이 좁으면 같이 못 삽니다.  \n \n사실... \n나를 넘어서야 이곳을 떠나고, \n나를 이겨내야 그곳에 이릅니다.  \n \n갈 만큼 갔다고 생각하는 곳에서 \n얼마나 더 갈 수 있는지 아무도 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나로부터의 시작", text }); } catch (e) {}
     } else {

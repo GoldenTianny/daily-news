@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 귀한 인연이길\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 귀한 인연이길\n\n진심어린 맘을 주었다고 해서 \n작은 정을 주었다고 해서 \n그의 거짓 없는 맘을 받았다고 해서 \n그의 깊은 정을 받았다고 해서 \n내 모든 것을 걸어버리는 \n깊은 사랑의 수렁에 빠지지 않기를 \n\n한동안 이유 없이 연락이 없다고 해서 \n내가 그를 아끼는 만큼 \n내가 그를 그리워하는 만큼 \n그가 내게 사랑의 관심을 안준다고 해서 \n쉽게 잊어버리는 쉽게 포기하는 \n그런 가볍게 여기는 인연이 아니기를 \n\n이 세상을 살아가다 힘든 일 있어 \n위안을 받고 싶은 그 누군가가 당신이기를 \n그리고 나이기를 \n\n이 세...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "귀한 인연이길", text }); } catch (e) {}
     } else {

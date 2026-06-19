@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 말로 좋은 인연을\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 말로 좋은 인연을\n\n살다 보면 할말 \n하지 말아야 할 말이 있지요.  \n \n살다 보면 기분 좋은 말 \n가슴을 아프게 하는 말이 있지요.  \n \n살다 보면 \n칼보다도 더 무서운 것이 말씨이지요.  \n \n남의 마음에 눈물을 주는 말 \n실망을 주는 말 상처를 주는 말 \n불신의 말 절망의 말….  \n \n말 한마디에 천 냥 빚을 갚는다는 속담처럼 어쩌면 \n우린 말 한마디에 천재 또는 바보가 될 수도 있고, \n성공 또는 실패를 가져올 수도 있고  \n \n사랑 또는 이별을 할 수도 있고 \n좋은 인연 또는 악연이 될 수도 있고 \n영...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 말로 좋은 인연을", text }); } catch (e) {}
     } else {

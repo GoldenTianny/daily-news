@@ -128,7 +128,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음을 다스리는 방법 5가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음을 다스리는 방법 5가지\n\n1. 불안과 걱정을 줄이는 법 : 지금 이 순간에 집중하라 \n\n불안과 걱정은 비슷하면서도 다르다. 둘 다 ‘내 마음이 만들어 낸 것’으로 실체가 없다는 점은 같다. 하지만 “불안이 현재나 먼 미래에 대한 것이라면 걱정은 아주 가까운 곳, 지금이나 내일 등 가까운 미래에 존재한다”는 점에서 다르다.  불안과 걱정을 줄이는 가장 손쉽고 효과적인 방법은 ‘지금 이 순간, 내가 하는 일에 집중하는 것’이다. 사람은 행동과 고민을 동시에 하지 못한다. \n\n2. 욕심을 줄이는 법 : 흘려보내기 \n\n무언가 갖...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음을 다스리는 방법 5가지", text }); } catch (e) {}
     } else {

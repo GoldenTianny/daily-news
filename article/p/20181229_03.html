@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 일주일을 좋은 날로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 일주일을 좋은 날로\n\n월(月)\n월요일은 달처럼 살아야 합니다. 달은 컴컴한 어두운 밤을 비춰 주는 역할을 합니다. \n \n화(火)\n화요일은 불을 조심해야 합니다. 수많은 공덕이라도 마음에 불을 한 번 일으키게 되면 그 동안 쌓아온 공덕이 모두 타버리게 됩니다. \n \n수(水)\n수요일은 인생을 물처럼 살아가리라고 다짐하는 날입니다. 물은 갈 길을 찾아서 쉬지 않고 흘러갑니다. 하지만 언제나 낮은 곳을 택해가지 높은 곳으로 가는 법이 없습니다. 항상 사람은 물처럼 고개 숙이고, 남의 말을 존중하고 ,어질고, 순한 자세를 가져...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "일주일을 좋은 날로", text }); } catch (e) {}
     } else {

@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 주고 믿어주는 만큼\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 주고 믿어주는 만큼\n\n사람을 쉽게 믿는 사람이 있습니다\n그러나 쉽게 실망을 합니다 \n \n사람을 쉽게 믿지 않는 사람이 있습니다\n언제나 그만큼의 거리에서만\n사람을 대합니다 \n \n쉽게 믿는 사람도, 또 믿지 않는 사람도\n한가지 간과하는 것이 있습니다 \n \n마음주고 믿어주는 만큼\n내가 행복하다는 것이지요 \n \n상대에게 바라는 것이 없으면\n우선 내마음이 편합니다\n그리하면 서운하거나\n배신감 또한 없을 것입니다 \n \n역설적으로 이야기 하자면\n기대하는 만큼, 바라는 만큼 사람들에게\n애정과 관심이 있기때문에\n서운하거나 배신감이 들기...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 주고 믿어주는 만큼", text }); } catch (e) {}
     } else {

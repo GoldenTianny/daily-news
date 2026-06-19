@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 운을 상승시키는 9가지 습관\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 운을 상승시키는 9가지 습관\n\n1. 운은 아침에 태어난다 \n풍수에서 볼 때 아침은 생기가 넘치고 행운을 부르는 소중한 시간이다. \n아침에 일어나 가장 먼저 눈에 띄는 것, \n먹는 것, 말하는 것 등이 하루의 운을 결정한다.  \n \n2. 창문을 열고 햇볕을 쬐자 \n아침에 태어난 기를 바로 흡수하려면 일어나자마자 창문을 열어 쏟아지는 아침 햇살을 듬뿍 쬐자. 기는 가슴을 통해 들어오므로 이 부분에 집중적으로 햇볕을 쬐는 것이 좋다. 아침 햇살은 정체된 기를 깨끗이 정화하여 밝고 긍정적인 기로 바꿔준다.  \n \n3. 일어나자마자 물...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "운을 상승시키는 9가지 습관", text }); } catch (e) {}
     } else {

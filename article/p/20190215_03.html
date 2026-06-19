@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음을 아름답게 하는 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음을 아름답게 하는 글\n\n"화"는 마른 솔잎처럼 조용히 태우고\n기뻐하는 일은 꽃처럼 향기롭게 하라\n"역성"은 여름 선들바람이게 하고\n"칭찬"은 징처럼 울리게 하라  \n \n"노력"은 손처럼 끊임없이 움직이고\n"반성"은 발처럼 가리지 않고 하라\n"인내"는 질긴 것을 씹듯 하고\n"연민"은 아이의 눈처럼 맑게 하라  \n \n남을 도와주는 일은 스스로 하고\n도움 받는 일은 힘겹게 구하라\n내가 한 일은 몸에게 감사하고\n내가 받은 것은 가슴에 새겨두어라  \n \n"미움"은 물처럼 흘러 보내고\n"은혜"는 황금처럼 귀히 간직하라\n"사람"은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음을 아름답게 하는 글", text }); } catch (e) {}
     } else {

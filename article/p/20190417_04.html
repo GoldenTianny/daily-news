@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 무슨 인연으로 당신을 만났을까요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 무슨 인연으로 당신을 만났을까요\n\n얼마나 고운 인연이기에 \n우리는 만났을까요.  \n \n내숨결의 주인인 당신을 바라봅니다.\n내영혼의 고향인 당신을 바라봅니다.  \n \n피고지는 인연이 다해도 \n기어이 마주할 당신이기에  \n \n머리카락 베어다 신발 만들어 \n드리고픈 당신이기에  \n \n영혼을 불밝혀 그대에게 드리나니\n부디 한 걸음도 헛되지 않기를  \n \n살아가고 숨쉬는 날의 \n꿈같은 당신이기에  \n \n마른 하늘 보담아\n꽃피울 당신이기에  \n \n그립다 말하기 전에 \n가슴이 먼저 아는 당신이기에  \n \n애닯다 입열기 전에 \n마음이 먼저 안긴...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "무슨 인연으로 당신을 만났을까요", text }); } catch (e) {}
     } else {

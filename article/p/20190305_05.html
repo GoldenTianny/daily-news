@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 정말 소중한 사람이라면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 정말 소중한 사람이라면\n\n자기 몸 옆에 두려고 하지말고\n자기 마음 옆에 두려고 하세요.\n자기 몸 옆에 둔 사람은\n떠나면 그만이고 쉽게 떠날 사람이죠. \n\n하지만 자기 마음 옆에 둔 사람이라면\n떠나는 것이 아니라 멀리 떨어져 있을 뿐이며\n평생 떠나지 않는 사람이 될 거예요. \n\n하지만 자기 마음 옆에 둔 사람이\n평생 있을 거라는 당연한 생각은 하지 마세요.\n뭐든지 꾸준한 노력과 관심 없이는\n오래 가질 못하는 법이니까요. \n\n그럼 어떻게 해야 자기 마음 옆에 둘 수 있고\n상대방 마음 옆에 있을 수 있을까요.\n그러기 위해선 욕...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "정말 소중한 사람이라면", text }); } catch (e) {}
     } else {

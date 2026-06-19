@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 시련을 겪지 않고는 고통을 모른다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 시련을 겪지 않고는 고통을 모른다\n\n힘들었던 순간들도 있었고\n기쁘고 감격의 눈물을 흘렸던 때,  \n \n너무 암담해서 차라리 삶을\n외면하고 싶던 순간들 이 모든 일들이\n이젠 우리의 추억속에서 존재합니다  \n \n그런데 지나간 과거속에서의 아프고 힘들고\n괴로웠던 시간들이지금도 여전히 아프고\n힘들고 괴롭습니까?  \n \n그 아픔이 있었기에 현재의 내 삶이\n더욱 소중하고 존재한다는 것 그것만으로도\n감사함을 느끼지는 않으셨나요?  \n \n \n예방주사는 더 나은 건강을 위해\n일시적인 고통을 허락하는 것입니다  \n \n내 삶의 지나간 흔적이 비록\n아프...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "시련을 겪지 않고는 고통을 모른다", text }); } catch (e) {}
     } else {

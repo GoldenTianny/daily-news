@@ -154,7 +154,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그대여 지금 힘이 드시나요?\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그대여 지금 힘이 드시나요?\n\n창문을 열고 \n하늘을 올려다보세요.  \n \n저렇게 높고 파란 하늘색도\n조금 있으면 \n변하게 되어 있습니다.  \n \n우리의 삶이 우리의 마음이\n저 하늘색만큼\n맨날 변하는 거지요.  \n \n변하지 않는다면 우리는\n영원히 잠잘 수 없잖습니까.  \n \n우리에게 주어진 몫은 \n어떻게든 치르고 지나는 것  \n \n우리가 겪어야 하는 과정이니\n누구나 대신해 주지 않는다는 것\n그대와 나, \n우리는 잘 알고 살아갑니다  \n \n지금 이 고달픔이 내 것이려니\n누구도 대신해 주지 않는\n내 몫이려니  \n \n한 걸음 한 걸음...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그대여 지금 힘이 드시나요?", text }); } catch (e) {}
     } else {

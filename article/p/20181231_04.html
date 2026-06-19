@@ -126,7 +126,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 용기 잃지 말고 살아가자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 용기 잃지 말고 살아가자\n\n어떤 날은\n서러워서 울고 싶고 \n\n어떤 날은\n힘이 들어 쓸어질 것 같다 \n\n어떤 날은\n억울해서 분하기도 하고 \n\n어떤 날은\n속상해서 주저앉고 싶다 \n\n인생이 마음 먹은대로\n되지 않는게 한둘이 아니다 \n\n그래도 용기 잃지 말고 살아가자\n다들 괜찮은 척 그렇게 살아가는 거니까 \n\n- 유지나 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "용기 잃지 말고 살아가자", text }); } catch (e) {}
     } else {

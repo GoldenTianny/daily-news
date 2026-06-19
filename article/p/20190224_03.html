@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 태도가 인생이 된다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 태도가 인생이 된다\n\n행복한 사람은\n표정이 밝고 잘 웃습니다.   \n \n불행한 사람은\n얼굴이 어둡고 잘 찡그립니다.   \n \n잘되는 사람은\n적극적이고 긍정적입니다.   \n \n잘 안되는 사람은\n소극적이고 불평이 많습니다.   \n \n성공한 사람은\n낙천적이고 희망적입니다.   \n \n실패한 사람은\n비평적이고 이유가 많습니다.   \n \n중요한 것은\n그 사람의 태도가\n그 사람의 인생을 만들게 됩니다.   \n \n힘들 더라도 웃음을\n잃지 말아야 하고   \n \n어렵더라도 희망을\n놓지 말아야 하고   \n \n잘 안되더라도\n긍정적인 마인드...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "태도가 인생이 된다", text }); } catch (e) {}
     } else {

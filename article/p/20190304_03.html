@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ -◆ 나를 위한 마법의 주문 40가지 ◆-\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ -◆ 나를 위한 마법의 주문 40가지 ◆-\n\n01. 간절히 원하는 꿈은 반드시 이루어질 것이다.\n02. 나는 매력적인 여성이며 사랑받게 될 것이다.\n03. 내 인생의 주인공은 바로 나!\n04. 나는 기꺼이 변화하고 성장할 것이다.\n05. 다가온 기회는 절대 놓치지 않을 것이다. \n \n06. 나의 노력은 기적을 일으킬 것이다.\n07. 말보다 행동으로 보여주겠다.\n08. 나는 대단한 여자가 될 것이고, 대단한 남자를 선택할 것이다.\n09. 더 이상 어제의 내가 아니며, 내일은 더 나아질 것이다.\n10. 내가 마음먹은 만큼 행복해질 것이다. \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "-◆ 나를 위한 마법의 주문 40가지 ◆-", text }); } catch (e) {}
     } else {

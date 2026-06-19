@@ -195,7 +195,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 축의금 만삼천원\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 축의금 만삼천원\n\n10년 전 나의 결혼식 날이었다\n결혼식이 다 끝나도록 친구 형주가 보이지 않았다  \n \n'이럴리가 없는데... 정말 이럴리가 없는데...'  \n \n바로 그때 형주 아내가 토막 숨을 몰아쉬며\n예식장 계단을 급히 올라왔다  \n \n"고속도로가 너무 막혀서 여덟시간이 넘게 걸렸어요.\n어쩌나, 예식이 다 끝나버렸네..."  \n \n숨을 몰아쉬는 친구 아내의 이마에는\n송골송골 땀방울이 맺혀 있었다  \n \n"석민이 아빠는 못 왔어요. 죄송해요...\n대신 석민이 아빠가 이 편지 전해드리라고 했어요"\n친구 아내는 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "축의금 만삼천원", text }); } catch (e) {}
     } else {

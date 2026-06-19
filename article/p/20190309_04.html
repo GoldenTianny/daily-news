@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 넘어짐이 가져다 준 선물\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 넘어짐이 가져다 준 선물\n\n돼지는 하늘을\n올려다 볼 수 없습니다.  \n \n그 이유는 돼지의 목이\n땅을 향하고 있어 \n기껏 높이 들어봤자\n45°밖에 들 수 없기 때문이죠.  \n \n그래서 돼지는 자의로는\n하늘을 올려다 볼 수 없다고 합니다.  \n \n그런 돼지가 하늘을\n볼 수 있을 때가 있다고 합니다. \n그때는 바로\n'넘어 졌을 때'라고 합니다.  \n \n우리 삶에도 때론\n넘어지는 순간이 찾아옵니다. \n하지만 넘어진다는 건\n다 이유가 있습니다.  \n \n넘어져야 하늘을\n볼 수 있기 때문입니다.  \n \n아파 봐야\n자기의 건강도 살피게...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "넘어짐이 가져다 준 선물", text }); } catch (e) {}
     } else {

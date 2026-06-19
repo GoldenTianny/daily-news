@@ -188,7 +188,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶의 지혜가 묻어나는 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶의 지혜가 묻어나는 글\n\n사람들은 \n그때...라고 지나버린 후회스런 말을 자주 한다  \n \n그때 참았더라면, 그때 잘했더라면, \n그때 알았더라면, 그때 조심했더라면, \n훗날에 지금이 바로 그때가 될텐데 \n지금은 아무렇게나 보내면서, \n어리석게도 오늘도 자꾸 그때만을 찾고 있다.  \n \n \n게으른 사람에겐 돈이 따르지 않고, \n변명하는 사람에겐 발전이 따르지 않는다. \n거짓말하는 사람에겐 희망이 따르지 않고, \n간사한 사람에겐 친구가 따르지 않는다. \n자기만 생각하는 사람에겐 사랑이 따르지 않고, \n비교하는 사람에겐 만족이...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶의 지혜가 묻어나는 글", text }); } catch (e) {}
     } else {

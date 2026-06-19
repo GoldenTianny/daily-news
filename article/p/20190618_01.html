@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이기는 사람과 지는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이기는 사람과 지는 사람\n\n이기는 사람은 실수했을 때\n내 실수다, 내가 잘못했다 고 말하고\n지는 사람을 실수했을 때 \n너 때문에 이렇게 되었다고 말한다. \n\n이기는 사람은 아랫사람뿐만 아니라,\n어린아이에게도 고개를 숙일줄 압니다\n지는 사람은 지혜있는 사람에게도\n고개를 숙이지 않습니다. \n\n이기는 사람은 열심히 일하지만\n시간의 여유가 있습니다\n지는 사람은 게으르지만\n늘 바쁘다며 허둥댑니다 \n\n이기는 사람은 열심히 일하고,\n열심히 놀고, 열심히 쉽니다\n지는 사람은 허겁지겁 일하고,\n빈둥빈둥 놀고, 흐지부지 쉽니다. \n\n이기는 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이기는 사람과 지는 사람", text }); } catch (e) {}
     } else {

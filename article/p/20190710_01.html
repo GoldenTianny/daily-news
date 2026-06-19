@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 행복한 이유\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 행복한 이유\n\n내가 안고 가야 할 아픔과 힘듦이라면\n남을 탓하지 말자  \n \n나만 아프고 힘든 것 같지만\n나보다 더 아픈 이도 힘든 이도\n꿋꿋하게 열심히 잘 살아가더라  \n \n가끔은 입맛이 없을 만큼 너무 쓰지만\n좋은 약이 되고 삶의 노하우가 생기니 \n이 또한 일거이득이지  \n \n아등바등 살아온 날들 \n넉넉하지 못한 삶에 실망하지 말고\n부유한 사람들의 생활을 부러워말자  \n \n항상 긍정적이고\n햇살 같은 환한 미소를 지닌 내가\n이보다 더 고맙고 행복한일은 없지....  \n \n- <행복이 따로 있나요>中 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 행복한 이유", text }); } catch (e) {}
     } else {

@@ -921,7 +921,7 @@ modalShare.addEventListener('click', async () => {
     const slot = String(new Date().getMinutes() % STUB_COUNT + 1).padStart(2, '0');
     const base = location.pathname.replace(/index\.html$/, '');
     const url = location.origin + base + 's/' + slot + '.html?a=' + currentArticle.id;
-    const text = `✨ ${currentArticle.title}\n\n${currentArticle.body.slice(0, 200)}${currentArticle.body.length > 200 ? '...' : ''}\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ ${currentArticle.title}\n\n${currentArticle.body.slice(0, 280)}${currentArticle.body.length > 280 ? '...' : ''}\n\n${url}`;
     const data = { title: currentArticle.title, text };
     if (navigator.share) {
         try { await navigator.share(data); } catch (e) {}

@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 보고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 보고 싶다\n\n잎새에 맺힌 \n물방울 \n아침 햇빛 반짝인\n아침 그런 날\n보고싶다 \n\n코스모스 핀 \n신작로 \n총총 걸음으로\n마중나가 \n살랑살랑 \n반기는 \n그런날 \n보고싶다 \n\n첫 눈 내리는\n겨울 가슴 끌어안고\n찾아올 그런 날\n그대모습 \n보고싶다 \n\n찬 바람 \n옷깃 스치고\n그대 향 남기고\n간 그날\n밝은 달 아래\n내마음 속보인\n그런날\n보고싶다 \n \n- 고광식 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #감성글 #감성글귀 #명언글 #명언글귀 #명언모음\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "보고 싶다", text }); } catch (e) {}
     } else {

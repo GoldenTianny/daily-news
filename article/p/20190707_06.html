@@ -162,7 +162,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말에 담긴 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말에 담긴 지혜\n\n01. 무시당하는 말은 바보도 알아듣는다. \n \n02. 말은 입을 떠나면 책임이라는 추가 기다린다. \n \n03. 지적은 간단하게, 칭찬은 길게 \n \n04. 사랑이라는 이름으로도 잔소리는 용서가 안 된다. \n \n05. 앞에서 할 수 없는 말은 뒤에서도 하지 말라. \n \n06. 농담이라고 해서 다 용서되는 것은 아니다. \n \n07. 표정의 파워를 놓치지 말라. \n \n08 소소한 변화에 찬사를 보내면 큰 것을 얻는다. \n \n09. 말을 하기 쉽게 하지 말고, 알아듣기 쉽게 하라. \n \n10. 흥분한 목...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말에 담긴 지혜", text }); } catch (e) {}
     } else {

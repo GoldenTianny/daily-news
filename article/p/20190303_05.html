@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 영원까지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 영원까지\n\n˝항상 제게 묻지요... \n늙어서도 사랑할 자신있냐고..˝  \n \n˝당신의 얼굴에 주름살이 늘어 갈수록, \n내 사랑도 늘어갈 것이고..˝  \n \n˝당신의 눈이 침침해질때 쯤, \n내 사랑은 마음을 비출 것이며...˝  \n \n˝당신이 힘들어 누워 있을 때, \n내 사랑이 같이 할 것이며...˝  \n \n˝당신이 눈을 감을때, \n내 사랑은 당신을 지킵니다...˝  \n \n˝당신은 그저 내가 이마에 입맞춤 할 때, \n미소 한 번만...  \n \n날 살아가게 한 그 미소 \n단 한 번만 지어주면 됩니다....˝  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "영원까지", text }); } catch (e) {}
     } else {

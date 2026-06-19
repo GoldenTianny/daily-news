@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이것이 지혜로운 삶이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이것이 지혜로운 삶이다\n\n멀리 있다 해서 잊어버리지 말고\n가까이 있다 해서 소홀하지 말라 \n\n좋다고 금방 달려들지 말고\n싫다고 해서 금방 달아나지 말라 \n\n부자는 빈자를 얕잡아보지 말고\n빈자는 부자를 아니꼽게 생각하지 말라 \n\n악을 보거든 뱀을 보듯 피하고\n선을 보거든 꽃을 본듯 반겨라 \n\n타인의 것을 받을 때 앞에 서지 말고\n내 것을 줄 때 뒤에서 서지 말라 \n\n은혜를 베풀거든 보답을 바라지 말고\n은혜를 받았거든 작게라도 보답하고 \n\n사소한 일로 해서 원수 맺지 말고\n이미 맺었거든 맺은 자가 먼저 풀어라 \n\n타인의 허물...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이것이 지혜로운 삶이다", text }); } catch (e) {}
     } else {

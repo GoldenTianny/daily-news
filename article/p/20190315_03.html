@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하루를 사는 일\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하루를 사는 일\n\n순간을 사는 일이 하루를 만들고 \n하루를 사는 일이 한 생을 이룹니다. \n\n하루를 사는 일을 \n마지막처럼 정성을 다하고 \n하루를 사는 일을\n평생을 사는 일처럼\n길게 멀리 볼 일입니다. \n\n많은 사람들이 젊은 날의 시간을 \n의미 없이 낭비하고는  뒤늦게\n지난 시간으로 돌아갈 수 있다면\n다르게 한 번 살아볼텐데 하며\n후회하고 아쉬워합니다. \n\n한 번 지나가면 \n다시 살아볼 수 없는 시간 \n순간의 시간을 \n뜨겁게 사랑하며 살아야 합니다. \n\n하루를 사랑으로 사는 일이란\n너그러워지고 칭찬하고 겸손하고 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하루를 사는 일", text }); } catch (e) {}
     } else {

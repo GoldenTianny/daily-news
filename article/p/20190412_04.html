@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘하루\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘하루\n\n늘 반복되는 일상이지만 마음과 생각이 통하여\n작은 것에도 웃음을 나눌 수 있는 \n소중한 사람들을 만날 수 있으니\n오늘 하루도 선물입니다.  \n \n늘 질투와 욕심으로 상심하는 날들이지만 \n이해심과 사랑이 충만하여\n나를 누구보다 가장 아껴주는 부모님이 계시니\n오늘 하루도 선물입니다. \n\n늘 실수로 이어지는 날들이지만 \n믿음과 애정이 가득하여 어떤 일에도 변함없이 \n나를 지켜 봐주는 가족이 있으니\n오늘 하루도 선물입니다.  \n \n늘 불만으로 가득찬 지친 시간이지만 \n긍정적이고 명랑하여 언제라도 \n고민을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘하루", text }); } catch (e) {}
     } else {

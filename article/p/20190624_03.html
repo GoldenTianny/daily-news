@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 꽃처럼 예쁘면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 꽃처럼 예쁘면\n\n세상을 아름답게 살려면 \n꽃처럼 살면 되요.  \n \n세상을 편안하게 살려면 \n바람처럼 살면 되요.  \n \n꽃은 자신을 자랑하지 않고 \n남을 미워하지도 않고  \n \n바람은 그물에도 걸리지 않고 험한 산도 \n아무생각 없이 오르니까요.  \n \n벌은 꽃에게서 꿀을 따지만 \n꽃한테 상처를 주지는 않아요.  \n \n오히려 열매를 맺을 수 \n있도록..사랑..을 주지요.  \n \n사람과 사람사이에도 꽃과 \n벌 같은 마음으로 사랑을 한다면 이 세상의  \n \n삶의 사랑의 향기는 언제나 아름다움으로 \n가득할 것입니다. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 꽃처럼 예쁘면", text }); } catch (e) {}
     } else {

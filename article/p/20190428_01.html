@@ -154,7 +154,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 멈추면 비로소 보이는 것들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 멈추면 비로소 보이는 것들\n\n힘들면 한숨 쉬었다 가요.\n사람들에게 치여 상처받고 눈물 날 때,\n그토록 원했던 일이 이루어지지 않았을 때,\n사랑하던 이가 떠나갈 때,\n우리 그냥 쉬었다 가요. \n \n나를 진심으로 아껴주는 친구를 만나\n그동안 가슴속에 담아두었던 말들,\n서럽고 안타까웠던 이야기,\n조근조근 다 해버리고\n힘든 내 마음을 지탱하느라 애쓰는 내몸을 위해\n운동도 하고 찜질방도 가고\n어렸을 때 좋아했던 떡볶이, 오뎅 다 사먹어요. \n \n평소에 잘 가지 않던 극장에도 가서\n제일 웃긴 영화를 골라\n미친 듯이 가장 큰 소리로 웃어...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "멈추면 비로소 보이는 것들", text }); } catch (e) {}
     } else {

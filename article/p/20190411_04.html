@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 미워하지 말고 버리세요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 미워하지 말고 버리세요\n\n흐르는 물에 떠내려가는\n사람의 마음은 조급합니다.  \n \n그러나 언덕에 서서\n흐르는 물을 바라보는 사람의\n마음은 여유롭고 평화롭습니다.  \n \n내게 미움이 다가 왔을때\n미움 안으로 몸을 담그지 마십시요.  \n \n실체가 있는것은 아닙니다.\n그냥 지나가 버리는 것일 뿐입니다.\n다만 그것이 지나가기를 기다리는\n인내와 마음이 필요할 뿐입니다.  \n \n가만히 눈을 감고\n마음속에 빛을 떠올려 보십시오.  \n \n미움과 걱정의 어둠이\n서서히 걷히는것을\n느낄수가 있을 것입니다.  \n \n언덕에 서기 위해서는\n지혜가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "미워하지 말고 버리세요", text }); } catch (e) {}
     } else {

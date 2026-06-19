@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세월과 인생\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세월과 인생\n\n세월은 가는 것도, 오는 것도 아니며 \n시간 속에 사는 우리가 가고 오고 변하는 것일 뿐이다.  \n\n세월이 덧없는 것이 아니고, \n우리가 예측할 수 없는 삶을 살기 때문에 덧없는 것이다. \n\n해가 바뀌면 어린 사람은 한 살 더해지지만 \n나이든 사람은 한 살 줄어든다.  \n\n되찾을 수 없는게 세월이니 \n시시한 일에 시간을 낭비하지 말고 \n순간순간을 후회 없이 잘 살아야 한다. \n\n인간의 탐욕에는 끝이 없어 \n아무리 많이 가져도 만족할 줄 모른다.  \n\n행복은 마음에서 우러나오는 것이다.  \n\n가진것...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세월과 인생", text }); } catch (e) {}
     } else {

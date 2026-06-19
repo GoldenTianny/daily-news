@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음에 새길 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음에 새길 글\n\n내가 받은 것은 가슴에 새겨두세요.\n미움은 물처럼 흘려보내고\n은혜는 황금처럼 귀히 간직하세요.\n사람은 축복으로 태어났으며 \n해야 할 일들이 있습니다.  \n\n그러므로 \n생명을 함부로 하지 말며\n몸은 타인의 물건을 맡은 듯 소중히 하세요.\n시기는 칼과 같아 몸을 해하고\n욕심은 불과 같아 욕망을 태우며\n욕망이 지나치면 \n몸과 마음 모두 상하게 됩니다. \n\n모든 일에 넘침은 모자람 만 못하고\n억지로 잘난 척하는 것은 \n아니 함만 못합니다. \n\n내 삶이 비록 허물투성이라 해도\n자책으로 현실을 흐리게 하지 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음에 새길 글", text }); } catch (e) {}
     } else {

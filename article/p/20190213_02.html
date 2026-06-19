@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 안 되는 일에 마음을 쓰지 말라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 안 되는 일에 마음을 쓰지 말라\n\n마음의 즐거움은 얼굴을 빛나게 하지만,\n근심은 사람의 뼈도 상하게 한다.\n마음을 잘 지키는 자가 성을 빼앗는 자보다 낫다.  \n \n마음에서 생명이 나오며, 마\n음에서 건강도 나오고,\n마음에서 성공과 장수도 나오기 때문이다.  \n \n마음이 아프면 궁궐도 좋은 줄 모르나\n마음이 즐거우면 초가삼간에서도 만족한다.  \n \n이러한 마음을 상하게 하는 제일 중요한 적은 심려다.\n심려는 아무에게도 도움이 안 된다.  \n \n인생은 고해 라는 부처의 말처럼\n우리가 매일매일 생기는 근심 거리를\n다 마음속에 뿌리...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "안 되는 일에 마음을 쓰지 말라", text }); } catch (e) {}
     } else {

@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 약속\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 약속\n\n약속할 때는 신중히 \n못 지킬 약속은 하지 말고 \n한 약속은 반드시 지켜라. \n\n섣불리 한 약속을 지키지 못하고 \n아무 일 없었다는 듯 행동하는 것은 \n자신을 떨어뜨리는 지름길이다 \n\n우리는 크고 작은 약속을 하며 산다.  \n\n약속은 사회 생활에서 가장 중요하다 \n\n남과 약속도 중요하고\n자신과의 약속도 중요하다 \n\n자신과의 약속은 더 지키기 어렵다\n혼자 마음으로 한 약속이기에\n지켜도 그만 안지켜도 그만이라\n생각하기 때문이다 \n\n자신과 한 약속을 지키려면\n주위 사람에게 공개하라\n어느 순간 지켜지고 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "약속", text }); } catch (e) {}
     } else {

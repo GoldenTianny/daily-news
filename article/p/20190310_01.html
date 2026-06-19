@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 언제나 기분 좋은 말들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 언제나 기분 좋은 말들\n\n살면서 우리가 해야 할 말은\n"힘을 내세요"라는 말입니다 \n\n그 말을 들을 때 정말 힘이 나거든요\n오늘 이 말을 꼭 해 보도록 하세요\n그러면 당신도 힘을 얻게 될 테니까요 \n \n살면서 우리가 해야 할 말은\n"용기를 잃지 마세요"라는 말입니다 \n\n그 말을 들을 때 정말 용기가 생겨나거든요\n오늘 이 말을 꼭 속삭이세요\n그러면 당신도 용기를 얻게 될 테니까요 \n \n살면서 우리가 해야 할 말은\n"아름다워요"라는 말입니다 \n\n그 말을 들을 때 정말 따사롭고 환해 지거든요\n오늘 이 말을 꼭 소근거리세요\n그러...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "언제나 기분 좋은 말들", text }); } catch (e) {}
     } else {

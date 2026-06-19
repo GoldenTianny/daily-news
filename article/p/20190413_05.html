@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 처음과 같은 꾸준함\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 처음과 같은 꾸준함\n\n사랑한다는 이유로\n그 사람의 모든 것을 \n감내해야 한다는 것에 동의하지 않는다.  \n \n최소한 지켜주었으면 하는 것들에 대해서\n오랫동안 여러번의 기회를 주었음에도  \n \n그 사람의 그런 행동이 변하지 않고나\n내가 감당할 자신이 없다면\n그만 멈추어야 한다.  \n \n사람은 각자 감당할 수 있는 만큼\n사랑하게 된다  \n \n그 크기가 맞지 않는다면\n서로의 길을 가는게 좋다.  \n \n함께한 시간들이 아꺼워 망설이지 마라.\n잃어버린 시간들은 되돌아 오지 않는다.  \n \n처음에는 \n'이 사람이 내 사람이었으면...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "처음과 같은 꾸준함", text }); } catch (e) {}
     } else {

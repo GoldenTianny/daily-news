@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 만약 인생을 다시 산다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 만약 인생을 다시 산다면\n\n내가 만약 인생을 다시 산다면\n그때는 더 많은 실수를 저지르고\n긴장을 풀고 몸을 부드럽게 하리라. \n\n내가 만약 인생을 다시 살 수만 있다면\n지난번 살았던 인생보다\n더 우둔하게 살리라. \n\n되도록 심각해지지 않고\n좀 더 즐거운 기회들을 잡으리라. \n\n여행도 더 자주 다니고\n석양도 더 오래 바라보리라. \n\n산에도 더 자주 다니고\n강에서 수영도 해야지. \n\n아이스크림도 많이 먹고\n먹고 싶은 것은 참지 않고 먹으리라. \n\n그리고 이루어지지도 않은\n과거와 미래의 상상 속 고통은\n가능한 피하리라. \n\n내가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 만약 인생을 다시 산다면", text }); } catch (e) {}
     } else {

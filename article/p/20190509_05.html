@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름답고 향기로운 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름답고 향기로운 인연\n\n당신을 사랑하는 마음\n천년이 흘러도\n사랑을 다해 사랑하며 살다가  \n \n내가 눈 감을 때까지\n가슴에 담아 가고 싶은 사람은\n내가 사랑하는 지금의 당신입니다.  \n \n \n세월에 당신 이름이 낡아지고\n빛이 바랜다 하여도\n사랑하는 내 맘은  \n \n언제나 늘 푸르게 피어나\n은은한 향내 풍기며\n꽃처럼 피어날 것입니다.  \n \n \n시간의 흐름에 당신 이마에\n주름지고 머리는 백발이 된다 하여도\n먼 훗날 굽이 굽이 세월이 흘러  \n \n아무것도 가진 것 없는\n몸 하나로 내게 온다 하여도\n나는 당신을 사랑할 것입니...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름답고 향기로운 인연", text }); } catch (e) {}
     } else {

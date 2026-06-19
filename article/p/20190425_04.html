@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 참된 아름다움\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 참된 아름다움\n\n"인간(人間)"이\n바꿀 수 없는 것은 없습니다.  \n \n'과거(過去)'는\n해석(解釋)에 따라 바뀝니다.  \n \n'미래(未來)'\n결정(決定)에 따라 바뀝니다.  \n \n'현재(現在)'\n지금 행동하기에 따라 바뀝니다.  \n \n바꾸지 않기로 고집하면\n아무것도 바뀌지 않습니다.  \n \n'목표(目標)'를 잃는 것보다\n'기준(基準)'을\n잃는 것이 더 큰 위기입니다.  \n \n"인생(人生)"의 방황은\n목표를 잃었기 때문이 아니라\n기준을 잃었기 때문입니다.  \n \n'인생의 가치'는\n더 많은 소유가 아니라\n더 깊은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "참된 아름다움", text }); } catch (e) {}
     } else {

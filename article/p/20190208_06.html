@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 중년이 되면서 그리워지는 것들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 중년이 되면서 그리워지는 것들\n\n색깔 진한 사람 보다는\n항상 챙겨주는 은근한 친구의\n눈웃음을 더 그리워 하며....  \n \n바보 같이 우울할 때면\n그 친구의 눈웃음이 그리워\n전화를 합니다.  \n \n눈만 뜨면 만나지 못해도\n늘 언제나 그 자리에 있는지\n확인하기 좋아하고..  \n \n늘 사랑한다 좋아한다 말을 못 해도\n그것이 사랑이라는 걸 우리는 압니다.  \n \n우울한 날은\n괜스레 차 한잔 나누고 싶어하며\n할 이야기도 별로 없으면서\n얼굴이라도 보고 싶어합니다.  \n \n말없는 차 한잔에서도\n좋아하는 건지 사랑하는 건지\n읽을 수 있고, ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "중년이 되면서 그리워지는 것들", text }); } catch (e) {}
     } else {

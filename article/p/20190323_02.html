@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음은 그 사람의 중심입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음은 그 사람의 중심입니다\n\n외모는 \n웃음과 흥겨움을 주는\n꽃과 같습니다  \n \n그러나 이런 꽃도\n시간이 지나면 시들어 버리고\n향기도 떠나갑니다  \n \n하지만\n예쁜 마음과 지혜는 샘물과 같아서\n시간이 지나가도 변치 않고\n사람을\n즐겁게 만들어 줍니다  \n \n사람을 사귈 때는\n외모 보다 그 사람의 중심을 보십시오  \n \n중심이 반듯해야\n삶이 아름다워 집니다.  \n \n- <행복한 빵점짜리 남자>中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음은 그 사람의 중심입니다", text }); } catch (e) {}
     } else {

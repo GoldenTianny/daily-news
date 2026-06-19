@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가슴에 묻어둔 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가슴에 묻어둔 사랑\n\n빛바랜 사진처럼\n항상 가슴에 품고 있는\n잊고 싶지 않은 사랑이 있다 \n\n꺼내보지 않아도\n아스라이\n떠오르는 지나간 사랑 \n\n그리움이 없다면 사랑이 아니다\n가슴 저미는 아픔이 있어도\n그리움이 있기에 사랑이다 \n\n가슴에 묻어둔 사랑\n이루지 못했기에\n더욱 애절하다 \n\n오랜 세월이 흘러도\n가끔 생각나는 사랑\n그리움은 언제나 가슴에 있다 \n\n처절하게 외로운 시간\n추억 속 얼굴이 떠오르면\n행복한 미소에 눈물이 맺힌다 \n\n텅 빈 허공에 어리는\n아련한 그리움\n아프지만 행복하다 \n\n아직도 가슴에서\n숨쉬고 있는 사랑...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가슴에 묻어둔 사랑", text }); } catch (e) {}
     } else {

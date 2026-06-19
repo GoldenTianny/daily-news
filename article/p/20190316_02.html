@@ -230,7 +230,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 돈으로 살수없는 삶의 지혜들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 돈으로 살수없는 삶의 지혜들\n\n1. 핸드크림에 설탕 섞으면 효과 최고\n정말 간단하게 손의 피부를 지킬수있는 방법 하나,\n핸드크림과 함께 설탕을 준비하세요.\n핸드크림을 한번 쓸 분량만큼 짜고 거기에 설탕 반 스푼을 뿌려서 섞으세요.\n설탕과 크림을 골고루 섞은후 전체에 부드럽게 발라주면되요.\n몰라보게 손이 고와진답니다. \n \n2. 테이프는 냉동실에 잠깐\n아이가 듣는 동요테이프나 영어테이프는 반복해서 듣다보면 늘어지기 쉬워요.\n이럴땐 주방에서 쓰는 비닐봉지에 테이프를 넣고 입으로 바람을 불어넣은 후\n공기가 새어나가지 않도록 꼭 묶어...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "돈으로 살수없는 삶의 지혜들", text }); } catch (e) {}
     } else {

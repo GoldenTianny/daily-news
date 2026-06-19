@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아프지 말자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아프지 말자\n\n너도\n나도\n우리 모두\n몸도 마음도\n아프지 말자 \n\n오늘을 살아내는 일이\n좋은 일만 있다면 좋겠지만 \n\n예기치 못한 일로\n가슴을 치는 일도 있고\n이미 일어난 일에\n깊은 후회와 회한으로 많은 시간을 보낸다 \n\n덜 아프고\n덜 힘들고\n조금 더 무뎌져서\n무슨 일이든 잘 이겨낼 수 있으면 좋겠다\n훌훌 털어버렸으면 좋겠다\n\n- 조미하 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아프지 말자", text }); } catch (e) {}
     } else {

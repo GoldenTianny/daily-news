@@ -194,7 +194,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생이 즐거운 주옥같은 이야기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생이 즐거운 주옥같은 이야기\n\n인생의 시계는 단 한번 멈추지만, \n언제 어느 시간에 멈출지는 아무도 모릅니다.  \n \n지금이 내 시간이라 하고 살며, \n사랑하며 수고하고 미워하지만\n내일은 믿지 마십시오. \n그때는 시계가 멈출지도 모르기 때문입니다.  \n \n떠날때에 우리 모두는\n시간이라는 모래밭위에 남겨놓아야하는\n발자욱을 기억해야 합니다.  \n \n인생에서 중요한 것은\n실패하지 않는 것이 아니라, \n실패해도 좌절하지 않는데 있는 것입니다.  \n \n꿈을 계속 가지고 있으면, \n언젠가는 반드시\n그것을 실현할 때가 올 것입니다.  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생이 즐거운 주옥같은 이야기", text }); } catch (e) {}
     } else {

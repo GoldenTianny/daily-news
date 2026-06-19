@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 배웠다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 배웠다\n\n나는 배웠다\n어떤 일이 일어나도\n그것이 오늘 아무리 안 좋아 보여도\n삶은 계속된다는 것을\n내일이면 더 나아진다는 것을  \n \n나는 배웠다\n궂은 날과 잃어버린 가방과 엉킨 크리스마스트리 전구.\n이 세 가지에 대처하는 방식을 보면\n그 사람에 대해 많은 걸 알 수 있다는 것을  \n \n나는 배웠다\n당신과 부모와의 관계가 어떠하든\n그들이 당신 삶에서 떠나갔을 때\n그들을 그리워하게 되리라는 것을  \n \n나는 배웠다\n생계를 유지하는 것과\n삶을 살아가는 것은 같지 않다는 것을  \n \n나는 배웠다\n삶은 때로 두 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 배웠다", text }); } catch (e) {}
     } else {

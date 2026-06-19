@@ -185,7 +185,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 하루의 시작\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 하루의 시작\n\n사랑의 열매  \n \n겸손하고 섬기는 마음\n자기 이익만 생각 아니하는 마음\n소외를 주지 않고 덮어주고 감싸는 마음\n시기 질투하지 아니하는 진리를 기뻐하는 마음  \n \n \n희락의 열매  \n \n항상 기뻐하는 마음\n매사에 감사하고 만족감을 느끼는 마음\n매사에 긍정하는 마음\n좋은 것과 아름다움을 추구하고 창조하는 마음  \n \n \n \n화평의 열매  \n \n모든 사람과 평화한 마음\n이것도 저것도 다한 양면성 있는 마음  \n \n내가 옳다 하더라도 상대에 맞추는 마음\n믿음에 맞추지 않고 상대에게 여유를 줄 수 있는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 하루의 시작", text }); } catch (e) {}
     } else {

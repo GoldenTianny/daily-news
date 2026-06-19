@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하루의 행복\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하루의 행복\n\n이른 새벽 눈을 뜨면\n나에게 주어진 하루가 \n있음을 감사하렵니다. \n밥과 몇 가지 반찬... \n풍성한 식탁은 아니어도\n오늘 내가 허기를 달랠 수 \n있는 한 끼 식사를 할 수 \n있음을 감사하렵니다.   \n \n누군가 나에게 \n경우에 맞지 않게\n행동할 지라도 \n그 사람 으로 인하여 \n나 자신을 되돌아 \n볼 수 있음을 감사하렵니다.   \n \n태양의 따스한 \n손길을 감사하고, \n바람의 싱그러운 \n속삭임을 감사하고,\n나의 마음을 풀어 한 편의\n시를 쓸 수 있음을 \n또한 감사하렵니다.   \n \n오늘 하루도~!...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하루의 행복", text }); } catch (e) {}
     } else {

@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사 랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사 랑\n\n꽃은 피어도 소리가 없고\n새는 울어도 눈물이 없고\n사랑은 불타도 연기가 없더라. \n \n장미가 좋아 꺾었더니 \n가시가 있고 \n \n친구가 좋아 사귀었더니\n이별이 있고 \n \n세상이 좋아 태어났더니\n죽음이 있더라. \n \n나 시인이라면\n그대에게\n한 편의 시를 드리겠고 \n \n나 목동이라면\n그대에게\n한 통의 우유를 드리겠으나 \n \n나 가진 것 없는\n가난한 자이기에\n그대에게 드릴 것은\n사랑밖에 없습니다. \n \n- 마야 엔젤로우 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사 랑", text }); } catch (e) {}
     } else {

@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 허전한 것은 욕심 때문입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 허전한 것은 욕심 때문입니다\n\n마음이 허전한 것은\n욕심 때문입니다.\n특별히 무엇이 되겠다\n기대하는 것이 다 욕심입니다. \n \n마음이 허전하다고\n무엇으로 채우려 하는 것은,\n망상을 쫓는 것입니다. \n \n개에게 흙덩이를 던지면\n개는 흙덩이만 쫓습니다.\n하지만 사자는\n흙덩이를 던진 사람을 쫓습니다. \n \n사자가 사람을 쫓듯이,\n허전한 마음을\n탁 꿰뚫어 봐야 합니다.\n‘아 내가 뭔가 바라는 마음으로\n헤매고 있구나!’ \n \n채우려는 생각을 버리세요.\n그러면 허전함도 사라집니다. \n \n-법륜 스님- \n\n.\n#맑고좋은글 #좋은글 #좋은글귀...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 허전한 것은 욕심 때문입니다", text }); } catch (e) {}
     } else {

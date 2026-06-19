@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 힘들 땐 3초만 웃자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 힘들 땐 3초만 웃자\n\n"행복해서 노래하는 게 아니고,\n노래하니까 행복해진다"라는 말이 있다.  \n \n누구 하나 삶이 힘겹지 않은 사람이 없다.\n하지만 어떤 사람은 행복해 보이고,\n어떤 사람은 세상의 번뇌를 다 짊어진 것처럼\n인상을 쓰는 사람이 있다.  \n \n많은 현인들이 말하길 "인생은 짧다"고 하는데,\n그 짧은 삶을 인상을 구기며 살 필요가 있을까?\n남들도 힘겨운 삶을 살아간다는 사실을 알고도\n웃을 수 없이 불행하다고 생각하는 사람들이 있는데,\n이런 사람은 웃을 준비가 안 된 사람이 아닐까.  \n \n어느 사찰의 스님...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "힘들 땐 3초만 웃자", text }); } catch (e) {}
     } else {

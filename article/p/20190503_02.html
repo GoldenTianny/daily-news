@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 사람은 좋은 사람을 만나고\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 사람은 좋은 사람을 만나고\n\n좋은 사람은\n좋은 사람을 만나고\n따뜻한 사람은\n따뜻한 사람을 만나게 됩니다.  \n \n당신이\n좋은 사람이기 때문에\n당신이 지금\n좋은 사람을 만나고 있는 것입니다.  \n \n당신이\n솔직하고 따뜻하게\n상대를 대하므로\n상대가 당신에게 따뜻함을\n느끼는 것입니다.  \n \n좋은 사람을 못 만난다며\n투덜대기 전에\n스스로가 어떤 생각으로\n상대를 대하는지를\n돌아보는 것도 필요합니다.  \n \n나 스스로가 결코\n좋은 사람은 아니지만\n적어도 사람을 만남에 있어\n진심이고 싶고  \n \n그렇게 행동하려고 노력중입니다.  \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 사람은 좋은 사람을 만나고", text }); } catch (e) {}
     } else {

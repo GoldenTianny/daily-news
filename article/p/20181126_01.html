@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 공자의 사람을 보는 9가지 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 공자의 사람을 보는 9가지 지혜\n\n"무릇 사람의 마음은 험하기가 산천보다 더 하고 \n알기는 하늘보다 더 어려운 것이니라." \n- 공자 -  \n \n하늘은\n봄, 여름, 가을, 겨울의 사계절과 \n아침, 저녁의 구별이 있지만  \n \n사람은\n꾸미는 얼굴과 \n깊은 감정 때문에 알기가 어렵다.  \n \n외모는... 진실한 듯 하면서도 \n마음은... 교활한 사람이 있고,  \n \n겉은... 어른다운 듯 하면서도 \n속은... 못된 사람이 있으며,  \n \n겉은... 원만한 듯 하면서도 \n속은... 강직한 사람이 있고,  \n \n겉은... 건실한 듯 하면...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "공자의 사람을 보는 9가지 지혜", text }); } catch (e) {}
     } else {

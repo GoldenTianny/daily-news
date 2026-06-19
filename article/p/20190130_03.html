@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나의 삶은 내가 만들어간다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나의 삶은 내가 만들어간다\n\n나의 삶은 \n내가 만들어간다. \n \n자신의 삶은 자신이 \n만들어 가는 것입니다. \n나의 작은 습관들이 모여 \n나를 만들어갑니다.  \n \n알게 모르게 \n수년이 지나면 \n내 습관이 나를 \n얼마나 변하게 했는지 알 수 있습니다.  \n \n10년이 지나고나면 작지만 \n좋은 습관들을 만들어가는 \n성공자의 삶을 살았으면 좋겠습니다.  \n \n항상 긍정의 눈으로 세상을 보는 습관, \n항상 긍정의 말만 하는 습관, \n남에게 뭔가 주는 것을 기뻐하는 습관, \n문제만 제시하지 않고 \n대안도 제시할 줄 아는 습관,  \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나의 삶은 내가 만들어간다", text }); } catch (e) {}
     } else {

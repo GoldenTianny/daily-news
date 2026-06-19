@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 술 한잔\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 술 한잔\n\n이보게,\n오늘은 술 한잔 걸쳐야겠네.\n하루살이 같은 우리 인생이지만,\n하루 살기도 나는 참 힘들었다네.\n내 이야기 들어주며 함께 해 주겠나. \n\n이보게,\n오늘은 얼큰히 취해야겠네\n바쁜 세상에 빠져 허우적대다\n가까스로 땅을 밟고 서 있다네\n힘든 일에 취해  비틀거리기보다\n낭만에 취해 이 땅 위에 서 있고 싶네.\n내 속마음 들어주며 함께 해 주겠나. \n\n이보게,\n오늘은 그대 마음을 적셔야겠네\n힘든 사람이 나 뿐만이 아니지 않은가\n그대의 마음을 진실로 바라보며\n정성 어린 한잔 따라주고 싶네.\n내 진심이...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "술 한잔", text }); } catch (e) {}
     } else {

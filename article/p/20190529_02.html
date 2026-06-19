@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말의 숨은 의미\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말의 숨은 의미\n\n'어디서 많이 뵌 거 같아요' 라는 말은, \n친해지고 싶어요 라고 말하는 거래요..  \n \n'나중에 연락할게' 라는 말은, \n기다리지 마세요 라고 말하는 거래요..  \n \n'나 갈게' 라는 말은, \n제발 잡아줘 라고 말하는 거래요..  \n \n'사람은 괜찮아' 라는 말은, \n다른 건 별로야 라고 말하는 거래요..  \n \n'어제 필름이 끊겼나 봐' 라는 말은, \n창피하니까 그 얘긴 꺼내지마 라고 \n말하는 거래요..  \n \n'왜 그게 궁금하세요?' 라는 말은, \n대답하고 싶지 않아요...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말의 숨은 의미", text }); } catch (e) {}
     } else {

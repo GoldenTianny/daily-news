@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연\n\n움켜진 인연보다\n나누는 인연으로 살아야 하고\n각박한 인연보다\n넉넉한 인연으로 살아야 한다 \n \n기다리는 인연보다\n찾아가는 인연으로 살아야 하고\n의심하는 인연보다\n믿어주는 인연으로 살아야 한다 \n \n눈치주는 인연보다\n감싸주는 인연으로 살아야 하고\n슬픔주는 인연보다\n기쁨주는 인연으로 살아야 한다 \n \n시기하는 인연보다\n박수치는 인연으로 살아야 하고\n비난받는 인연보다\n칭찬하는 인연으로 살아야 한다 \n \n무시하는 인연보다\n존중하는 인연으로 살아야 하고\n원망하는 인연보다\n감사하는 인연으로 살아야 한다 \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연", text }); } catch (e) {}
     } else {

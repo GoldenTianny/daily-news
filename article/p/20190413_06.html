@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 나를 사랑합니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 나를 사랑합니다\n\n부족한 '나'라고 해도\n내가 나를 사랑해주세요. \n \n이 세상 살면서\n이렇게 열심히 분투하는 내가\n때때로 가엽지 않은가요? \n \n친구는 위로해주면서\n나 자신에게는\n왜 그렇게 함부로 대하는지. \n \n내 가슴을 토닥이면서\n스스로에게\n사랑한다고 말해주세요. \n \n"나는 나를 사랑합니다.\n다른 사람들에게 치여 상처 받았던\n나는 나를 사랑합니다. \n \n남들 보기엔 좀 부족해 보일 수 있어도\n나는 지금 이대로의 나를\n많이 아끼고 사랑합니다." \n \n- 혜민스님 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 나를 사랑합니다", text }); } catch (e) {}
     } else {

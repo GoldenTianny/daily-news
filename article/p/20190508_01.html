@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘을 사랑하라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘을 사랑하라\n\n오늘을 사랑하라.\n어제는 이미 과거 속에 묻혀 있고\n미래는 아직 오지 않은 날이라네.\n우리가 살고 있는 날은 바로 오늘,\n우리가 사용할 수 있는 날은 오늘,\n우리가 소유할 수 있는 날은 오늘 뿐.  \n \n오늘을 사랑하라.\n오늘에 정성을 쏟아라.\n오늘 만나는 사람을 따뜻하게 대하라.\n오늘은 영원 속의 오늘,\n오늘처럼 중요한 날도 없다.\n오늘처럼 소중한 시간도 없다.  \n \n오늘을 사랑하라.\n어제의 미련을 버려라.\n오지도 않은 내일을 걱정하지 말라.\n우리의 삶은 오늘의 연속이다.\n오늘이 30번 모여 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘을 사랑하라", text }); } catch (e) {}
     } else {

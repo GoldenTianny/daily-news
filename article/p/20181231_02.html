@@ -125,7 +125,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음을 낮추어야 한다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음을 낮추어야 한다\n\n예쁜 꽃은\n키가 작다 \n\n그래서 \n꽃을 보려면\n고운 향기를 맡으려면 \n\n내 몸을 낮추어야만 한다 \n\n세상의 고운 것은 낮은 곳에 있다 \n\n세상의 아름다움을 보려면\n삶의 고운 향기를 맡으려면 \n\n언제나 겸손히\n마음을 낮추어야 한다 \n\n- 유지나 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음을 낮추어야 한다", text }); } catch (e) {}
     } else {

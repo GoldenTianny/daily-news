@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 여보게 부처를 찾는가?\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 여보게 부처를 찾는가?\n\n여보게 친구\n산에 오르면 절이 있고\n절에 가면 부처가 있다고 생각하는가\n절에 가면 인간이 만든 불상만 \n자네를 내려다보고 있지 않던가   \n \n부처는 절에 없다네\n부처는 세상에 내려가야만 \n천지에 널려 있다네\n내 주위 가난한 이웃이 부처고\n병들어 누워 있는 자가 부처라네  \n \n그 많은 부처를 보지도 못하고\n어찌 사람이 만든 불상에만 \n허리가 아프도록 절만 하는가  \n \n천당과 지옥은 \n죽어서 가는 곳이라고 생각하는가\n천당은 살아 있는 지금이\n천당이고 지옥이라네\n내 마음이 천당이고 지옥이라네\n내가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "여보게 부처를 찾는가?", text }); } catch (e) {}
     } else {

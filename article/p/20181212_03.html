@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 동행\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 동행\n\n인생길에 \n동행하는 사람이 있다는 것은\n참으로 행복한 일입니다  \n\n힘들 때 서로 기댈 수 있고 \n아플 때 곁에 있어 줄 수 있고 \n어려울 때 힘이 되어 줄 수 있으니 \n서로 위로가 될 것입니다  \n\n여행을 떠나도 홀로면 고독할 터인데 \n서로의 눈 맞추어 웃으며 \n동행하는 이 있으니 \n참으로 기쁜 일입니다  \n\n사랑은 홀로는 할 수가 없고 \n맛있는 음식도 홀로는 맛없고 \n멋진 영화도 홀로는 재미없고 \n아름다운 옷도 보아줄 사람이 없다면 \n무슨 소용이 있겠습니까  \n\n아무리 재미있는 이야기도 \n들어...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "동행", text }); } catch (e) {}
     } else {

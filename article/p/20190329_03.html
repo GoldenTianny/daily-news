@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 조급하지 말기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 조급하지 말기\n\n사람과 사람 사이에는\n기다림이 필요합니다. \n\n무엇이든 쉽게 단정하지 말고\n쉽게 속단히지도 말고\n기다리는 마음이 필요합니다 \n\n관계에서 기다림보다 더 큰\n관계의 줄은 없습니다. \n\n대개의 관계가 성급하게 끊어지는 것은\n기다릴 줄 모르는 조급함 때문입니다. \n\n기다림은 단순한 기다림이 아닙니다.\n기다림은 나를 돌아보게 하고 상대에\n대한 마음이 없습니다. \n\n기다림은 이미 모든것을 다 받아 들이겠다는\n넓은 마음의 표현이기 때문입니다 \n\n살다보면 관계가 끊어지는\n순간들이 여러 번 있습니다. \n\n그러나 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "조급하지 말기", text }); } catch (e) {}
     } else {

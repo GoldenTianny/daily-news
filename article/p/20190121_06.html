@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 지혜가 필요해요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 지혜가 필요해요\n\n흐르는 물에\n떠내려가는 사람의 마음은\n조급합니다. \n\n그러나\n언덕에 서서 흐르는 물을\n바라보는 사람의 마음은 \n여유롭고 평화롭습니다. \n\n내게\n미움이 다가 왔을때 \n미움 안으로 몸을 담그지 마십시오. \n\n내게\n걱정이 다가 왔을때 \n긴 한숨에 스스로를 \n무너뜨리지 마십시오.  \n\n미움과 걱정은 \n실체가 있는 것이 아닙니다. \n\n그냥\n지나가 버리는 것일 뿐입니다. \n\n다만 그것이\n지나가기를 기다리는 \n인내의 마음이 필요할 뿐입니다.  \n\n가만히 눈을 감고 \n마음속에 빛을 떠올려 보십시오. \n\n미움과\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "지혜가 필요해요", text }); } catch (e) {}
     } else {

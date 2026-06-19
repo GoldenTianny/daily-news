@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 잘 사는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 잘 사는 사람\n\n세월은\n가는 것도 오는 것도 아니며\n시간속에. 사는 우리가\n가고 오고 변하는 것일 뿐이다 \n\n세월이 덧없는 것이 아니고\n우리가 예측할. 수 없는\n삶을 살고 있기 때문에\n덧없는 것이다 \n\n해가. 바뀌면 어린 사람은\n한살 더 해지지만\n나이든 사람은 한 살 줄어든다\n되찾을 수 없는게 세월이니 \n\n시시한 일에 \n시간을 낭비 하지 말고\n순간 순간을 \n후회 없이 잘 살아야 한다 \n\n행복은 마음에서\n우러 나오는 것이다 \n\n가진 만큼 행복한 것이 아니며\n가난은 결코 미덕이 아니며\n맑은 가난을 내세우는. 것은\n탐...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "잘 사는 사람", text }); } catch (e) {}
     } else {

@@ -171,7 +171,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생이 바뀌는 대화법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생이 바뀌는 대화법\n\n내 마음이 고약하면 남의 말이 고약하게 들립니다.\n지적은 간단하게, 칭찬은 길게 하시기 바랍니다.  \n \n말투는 내용을 담은 그릇입니다.\n따져서 이길 수는 없습니다.\n사랑이라는 이름으로도 잔소리는 용서가 안됩니다.  \n \n좋은 말만 한다고 해서\n좋은 사람이라고 평가받는 것은 아닙니다.\n유머에 목숨 걸지 마십시오.\n반드시 답변을 들어야 한다고 생각하면 화를 자초합니다.  \n \n앞에서 할 수 없는 말은 뒤에서도 하지 마십시오.\n농담이라고 해서 다 용서되는 것은 아닙니다.\n표정의 파워를 놓치지 마십시오...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생이 바뀌는 대화법", text }); } catch (e) {}
     } else {

@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구여\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구여\n\n친구여!! \n나이가 들면 설치지 말고, \n미운 소리, 우는 소리, 헐뜯는 소리, \n그리고 군소리, 불평일랑 하지를 마소. \n알고도 모르는 척, \n모르면서도 적당히 아는척 어수룩 하소. \n그렇게 사는것이 평안하다오.  \n \n친구여!! \n상대방을 꼭 이기려고 하지마소. \n적당히 져 주구려. \n한걸음 물러서서 양보하는 것, \n그것이 지혜롭게 살아가는 비결이라오.  \n \n친구여!! \n돈,돈 욕심을 버리시구려.\n아무리 많은 돈을 가졌다해도 죽으면 가져갈 수 없는 것, \n많은 돈 남겨 자식들 싸움하게 만들지...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구여", text }); } catch (e) {}
     } else {

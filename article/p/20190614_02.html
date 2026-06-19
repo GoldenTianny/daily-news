@@ -118,7 +118,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살면서 잊으면 안 될 10가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살면서 잊으면 안 될 10가지\n\n1. 끝까지 놓쳐서는 안 될 사랑 \n2. 나이가 들수록 돋보이는 지적 성숙 \n3. 달빛 아래에서도 체조할 정도로 건강한 몸 \n4. 여유와 이해력이 늘어가는 넉넉함 \n5. 나만의 일 찾기  \n \n6. 비굴하게 살지 않을 정도의 경제적인 인정 \n7. 외모에 대한 관심 늦추지 않기 \n8. 적당한 취미생활 \n9. 가족을 인격체로 대해주는 일 \n10. 손 내밀어 줄 친구 \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살면서 잊으면 안 될 10가지", text }); } catch (e) {}
     } else {

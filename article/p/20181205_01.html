@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이런 사람은 걱정하지 않습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이런 사람은 걱정하지 않습니다\n\n가슴에 꿈을 품고 있는 사람은 걱정하지 않습니다.\n지금은 비록 실패와 낙심으로 힘들어 해도 곧 일어나 꿈을 향해 힘차게 달려갈테니까요.  \n \n그 마음에 사랑이 있는 사람은 걱정하지 않습니다.\n지금은 비록 외로워도 그 마음의 사랑으로 곧 많은 사람들로부터 사랑을 받게 될테니까요.  \n \n그 마음이 진실한 사람은 걱정하지 않습니다.\n지금은 비록 손해를 보고 답답할 것 같아도 그 마음의 진실로 곧 모든 사람들이 그를 신뢰하게 될테니까요.  \n \n그 손길이 부지런한 사람은 걱정하지 않습니다.\n지금은 비...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이런 사람은 걱정하지 않습니다", text }); } catch (e) {}
     } else {

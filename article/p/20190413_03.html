@@ -157,7 +157,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 걱정을 쌓아놓지 않게 하소서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 걱정을 쌓아놓지 않게 하소서\n\n걱정을 쌓아놓지 않게 하소서\n우리의 삶은 고난의 연속이오니 \n힘든 일에 부딪칠 때마다 \n사랑을 깨닫게 하소서.  \n \n찢어진 상처마다 \n피고름이 흘러내려도 \n그 아픔에 원망과 \n비난하지 않게 하소서. \n \n어떤 순간에도 \n잘 견디고 이겨낼 수 있는 \n믿음을 갖게 해주시기를 원합니다. \n \n헛된 욕망과 욕심에 빠져 \n쓸데없는 것들에 \n집착하지 않게 하소서.  \n \n고통당할 때 도리어 \n믿음이 성숙하는 계기가 되도록 \n강하고 담대함을 주소서.  \n \n불안한 마음으로부터 \n벗어나게 하소서. \n \n불만 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "걱정을 쌓아놓지 않게 하소서", text }); } catch (e) {}
     } else {

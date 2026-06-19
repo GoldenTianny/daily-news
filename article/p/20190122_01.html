@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그대 내게 행복을 주는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그대 내게 행복을 주는 사람\n\n그냥 좋은 사람이 가장 좋은 사람입니다.   \n \n돈이 많아서 좋다거나 \n노래를 잘해서 좋다거나\n집안이 좋아서 좋다거나 \n그런 이유가 붙지 않는\n그냥 좋은 사람이 가장 좋은 사람입니다.   \n \n이유가 붙어 좋아하는 사람은\n그 사람에게서 그 이유가 없어지게 되는 날   \n \n그 이유가 어떠한 사정으로 인해\n사라지게 되는 날 얼마든지 그 사람을\n떠날 가능성이 많은 사람입니다.   \n \n좋아하는 데 이유가 없는 사람이\n가장 좋은 사람입니다.   \n \n어디가 좋아 좋아하느냐고 물었을 때\n딱히 꼬집어 말...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그대 내게 행복을 주는 사람", text }); } catch (e) {}
     } else {

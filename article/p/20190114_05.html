@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 엄마가 딸에게 남긴 인생의 말들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 엄마가 딸에게 남긴 인생의 말들\n\n딸아, 사랑하는 내 딸아.\n언제나 이 사실을 잊지 않겠다고 약속해줘. \n\n너는 네가 믿는 것보다 더 용감하고\n남이 보는 것보다 더 강하고\n네가 생각하는 것보다 똑똑하다는 것을 \n\n힘든 하루를 보냈을 때\n어떻게든 웃을 방법을 찾아내길 \n\n무언가를 하고 싶거든 지금 바로 해 보길\n인생에서 무언가를 하기에\n완벽한 시간이란 없단다\n기다릴 이유 따위는 없어.\n그냥 하면 돼 \n\n누군가와 이별했거나 운수가 나쁜 날엔\n마음의 건강을 돌보며 휴식을 취해보렴\n눈물을 흘리며\n자기 연민에 빠져보는 것도 좋아\n다음 날 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "엄마가 딸에게 남긴 인생의 말들", text }); } catch (e) {}
     } else {

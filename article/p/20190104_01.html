@@ -123,7 +123,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 진정한 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 진정한 인연\n\n인연이란 참 소중한 것이죠. 사회 생활 역시 인연, 즉 관계, 네트웍으로 이루어집니다. 꽃이 향기를 품으면 벌.. 나비가 날아들고 악취를 풍기면 똥파리가 꼬입니다. \n \n사람의 향기로 좋은 인연을 맺어 보시기 바랍니다. 진정한 인연과, 스쳐가는 인연은 구분해서 인연을 맺어야 합니다. \n \n진정한 인연이라면, 최선을 다해서 좋은 인연을 맺도록 노력하고 스쳐가는 인연이라면, 무심코 지나쳐 버려야 합니다. 그것을 구분하지 못하고 만나는 모든 사람들과 헤프게 인연을 맺어 놓으면 쓸만한 인연을 만나지 못하...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "진정한 인연", text }); } catch (e) {}
     } else {

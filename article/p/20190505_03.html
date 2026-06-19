@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 조용한 기다림\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 조용한 기다림\n\n사람과 사람 사이에는\n기다림이 필요합니다.  \n \n무엇이든 쉽게 단정하지 말고\n쉽게 속단하지도 말고\n기다리는 마음이 필요합니다. \n\n관계에서 기다림보다 더 큰\n관계의 줄은 없습니다.  \n \n대개의 관계가 성급하게 끊어지는 것은\n기다릴 줄 모르는 조급함 때문입니다. \n\n기다림은 단순한 기다림이 아닙니다.\n기다림은 나를 돌아보게 하고 상대에\n대한 시야를 넓혀줍니다.  \n \n기다림의 마음을 가져 본 사람들은\n관계 그 이후에도 사람에\n대한 미움이 없습니다. \n\n기다림은 이미 모든것을 다 받아들이겠다는\n넓...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "조용한 기다림", text }); } catch (e) {}
     } else {

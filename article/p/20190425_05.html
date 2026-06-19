@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말 없는 침묵이 때로는..\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말 없는 침묵이 때로는..\n\n한 사람이 절망 속에서 허우적거리고 \n삶이 너무 힘들어 주체 없이 흔들릴 때,  \n \n그 사람에게 진정으로 필요한 것은 \n어떤 충고나 조언이 아닙니다.  \n \n그냥 말없이 그 곁에 있어 주는 것입니다. \n철학자 칼 힐티는 "충고는 눈과 같아야 \n좋은 것이다.  \n \n조용히 내리면 내릴수록 마음에는 \n오래 남고 깊어지는 것이다." 라고 말합니다. \n \n때로는 백 마디 말보다도 말없음이 \n더 커다란 위안이 될 때가 있습니다.  \n \n우리는 상대방을 아낀다는 명목 아래 \n내가 그 사람에 대해서 다 안다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말 없는 침묵이 때로는..", text }); } catch (e) {}
     } else {

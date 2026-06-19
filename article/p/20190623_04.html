@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑과 배려\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑과 배려\n\n"사랑해" 를 천만번 말해도\n"사랑함" 을 느끼게 해주는 한번이 감동이고 \n \n"미안해" 의 습관성 멘트보다 \n"고마워" 의 따뜻한 한마디가 깊이있고 \n \n"어디 아파" 를 여러번 물어도 \n"병원 가자" 로 당장 일어섬이 낫고 \n \n"앞으로 잘할게" 로 호들갑 떨어도 \n"나한테 기대렴" 의 과묵함 보다 못하고 \n \n"바빠 나중에 전화할께"의 솔직함 보다 \n"미안해 끝나고 만나자" 의 성실함이 오래가고 \n \n"내일 자기 뭐할거야" 의 애매함 보다 \n"내일 우리 기념일야" 의 확실함이 센스있고 \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑과 배려", text }); } catch (e) {}
     } else {

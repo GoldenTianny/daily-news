@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 진정 행복한 삶\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 진정 행복한 삶\n\n잔인하게도 \n인간은 백번 잘해줘도 \n한번의 실수를 기억한다.   \n \n사람의 마음은 간사해서\n수많은 좋았던 기억보다\n단 한번의 서운함에 오해하고 실망하며 \n틀어지는 경우가 참 많아요.   \n \n서운함보다 함께한 좋은 기억을 \n먼저 떠올릴 줄 아는 현명한 사람이 되세요.   \n \n먼저 고맙다고, \n먼저 미안하다고 말한다면 \n사람관계는 나빠지려고해야\n나빠질 수 없습니다.   \n \n사람 관계에서는 \n이기고 지는 것이 없습니다.\n먼저 고맙다고 먼저 미안하다고 말하세요.   \n \n참, 이런거 아세요?   ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "진정 행복한 삶", text }); } catch (e) {}
     } else {

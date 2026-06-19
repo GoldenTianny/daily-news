@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하루하루가 기적입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하루하루가 기적입니다\n\n사랑아! 미움아! 용서야! 배려야!\n사랑아! 나와 동거하자!\n미움아! 넌 절대 안돼!\n빈방이 있어도 너에겐 줄 수 없어! \n \n용서야! 나는 너를 사랑해!\n너에게는 방 공짜야!\n제일 큰방은 네가 가지렴! \n \n배려야! 난 네가 필요해!\n너는 항상 나와 같이\n한방에서 자고 내마음에 있어줘! \n \n사랑아! 네가 할일이 참 많아!\n이제부터 사랑이가 씨를 잘 뿌려야 해! \n \n용서야! 거름도 주고! 너는 눈물도 주고!\n사랑이가 뿌린씨를 잘 키워보렴! \n \n배려야! 마음에 문을 네가 지키렴!\n질투 미움 시...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하루하루가 기적입니다", text }); } catch (e) {}
     } else {

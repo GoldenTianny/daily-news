@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 먼저 스스로를 아끼고 사랑해야 합니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 먼저 스스로를 아끼고 사랑해야 합니다\n\n화내고 짜증내고 미워하고 \n슬퍼하고 외로워하는 것을 \n한 마디로 괴로움이라 합니다.\n누가 나를 이렇게 괴롭힐까요?\n내가 나를 괴롭히는 겁니다. \n\n다시 말해 괴로워하고 있다는 것은\n자기가 자기를 함부로 한다,\n자기를 아끼지 않는다는 말입니다.\n과음하다 알코올 중독이 되어\n괴로워하는 사람이 어떻게 보입니까?\n본래의 몸은 건강했는데 어리석어서 \n자기 몸을 병들게 만들었지요. \n\n마찬가지로 우리들의 마음은 본래 청정한데\n내가 일으킨 한 생각에 사로잡혀서\n미워하고 원망하며 \n스스로를 괴롭히는 것입니다. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "먼저 스스로를 아끼고 사랑해야 합니다", text }); } catch (e) {}
     } else {

@@ -212,7 +212,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세상에서 가장 소중한 나를 이겨라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세상에서 가장 소중한 나를 이겨라\n\n1. 조급해하지 마세요.  \n \n급한 사람은 실수가 많습니다.\n외강내유형과 외유내강형\n"지나치게 신중한 사람은 \n결단을 내려야하는 순간에도 망설이다\n일을 그르치고, 지나치게 덜렁대는 사람은\n성공보다는 낭패 볼 확률이 더 높다.\n현대는 이 두 인물의 절충형을 원한다. "  \n \n \n2. 화를 내지 마세요.  \n \n이성을 잃어 가슴을 멍들게 합니다.\n"내 속에 감춰진 또 다른 '나' \n누구든지 화를 낼 수 있다.\n그것은 참으로 쉬운 일이다.\n그러나 어떤 대상에게 알맞는 정도로, \n적당한 시기에, 정당...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세상에서 가장 소중한 나를 이겨라", text }); } catch (e) {}
     } else {

@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그래~ 그렇게 사는거야~\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그래~ 그렇게 사는거야~\n\n나 혼자 버거워 껴안을 수조차 없는 삶이라면\n적당히 부대끼며 말없이 사는거야\n그냥 그렇게 흘러가듯이 사는게야\n인생이 특별히 다르다고 생각하지 말자 \n \n어제도 오늘도 내일도\n모두가 똑같다면 어떻게 살겠어\n뭔지 모르게 조금은\n다를거라고 생각하면서 사는게지 \n \n단지 막연한 기대감을 가지고\n사는게 또 우리네 인생이지 \n \n숨가쁘게 오르막길 오르다 보면\n내리막길도 나오고\n어제 죽을 듯이 힘들어 아팠다가도\n오늘은 그런대로 살만해\n어제의 일은 잊어버리며 사는게\n우리네 인생이 아니겠어 \n \n더불어 사는게 인...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그래~ 그렇게 사는거야~", text }); } catch (e) {}
     } else {

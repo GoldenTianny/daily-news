@@ -162,7 +162,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 기억 속 놓쳐선 안될 세 가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 기억 속 놓쳐선 안될 세 가지\n\n*인간의 3가지 좋은 습관\n1.일하는 습관 \n2.운동하는 습관 \n3.공부하는 습관  \n\n*인간을 감동시키는 3가지 액체\n1.땀 \n2.눈물 \n3.피  \n\n*남에게 주어야 할 3가지\n1.필요한이에게 도움\n2.슬퍼하는 이에게 위안\n3.가치있는 이에게 올바른 평가  \n\n*내가 진정 사랑해야 할 세사람\n1.현명한 사람 \n2.덕있는 사람 \n3.순수한 사람  \n\n*반드시 소유해야 할 3가지\n1.건강 \n2.재산 \n3.친구  \n\n*인생의 3가지 후회\n1.참을껄 \n2.즐길껄 \n3.베풀껄  \n\n*살면서 한번 놓치면 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "기억 속 놓쳐선 안될 세 가지", text }); } catch (e) {}
     } else {

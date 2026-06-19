@@ -227,7 +227,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 남자와 여자의 40가지 본능\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 남자와 여자의 40가지 본능\n\n01. 여자는 옷을 벗을수록 시선이 집중된다. \n남자는 옷을 입을수록 시선이 집중된다.  \n \n02. 여자가 짝사랑을 하면 보고도 못본 척한다.\n남자가 짝사랑을 하면 목소리가 커진다.  \n \n03. 여자는 증명된 사랑에도 불안해 한다.\n남자는 작은 사랑의 증거에도 용기를 얻는다.  \n \n04. 여자는 자랑할 일이 생기면 친구를 찾아간다.\n남자는 괴로운 일이 생기면 친구를 찾아간다.  \n \n05. 여자는 자기보다 예쁜 여자와 같이 다니지 않으려 한다.\n남자는 자기보다 돈없는 남자와 같이 다니지 않으...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "남자와 여자의 40가지 본능", text }); } catch (e) {}
     } else {

@@ -165,7 +165,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 참다운 삶이란 무엇인가\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 참다운 삶이란 무엇인가\n\n욕구를 충촉시키는 생활이 아니라\n의미를 채우는 삶이어야 한다.\n의미를 채우지 않으면 삶은 빈 껍질이다.  \n\n소유란 그런 것이다.\n손안에 넣는 순간 흥미가 사라져버린다.\n하지만 단지 바라보는 것은\n아무 부담없이 보면서 오래도록 즐길 수 있다.\n소유로 부터 자유로워야 한다.\n사랑도 인간 관계도 마찬가지다.  \n\n말이 많은 사람은\n안으로 생각하는 기능이 약하다는 증거이다.\n말이 많은 사람에게 신뢰감이 가지 않는 것은\n그의 내면이 허술하기 때문이고\n행동보다 말을 앞세우기 때문이다.  \n\n말을 아끼려면 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "참다운 삶이란 무엇인가", text }); } catch (e) {}
     } else {

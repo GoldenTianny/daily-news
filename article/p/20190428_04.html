@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 맑아 지는 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 맑아 지는 글\n\n시간의 아침은\n오늘을 밝히지만 \n\n마음의 아침은\n내일을 밝힌다. \n\n열광하는 삶보다\n한결같은 삶이\n더 아름답다 \n\n돕는다는 것은 우산을\n들어주는 것이 아니라\n함께 비를 맞는 것이다. \n\n사람은\n누구에게서나 배웁니다. \n\n부족한 사람에게서는\n부족함을 \n\n넘치는 사람에게서는\n넘침을 배웁니다. \n\n스스로를 신뢰하는 사람만이\n다른 사람에게 성실할 수 있다. \n\n살다 보면 일이 잘 풀릴 때가\n있습니다. \n\n그러나\n그것이 오래가지는 않습니다. \n\n살다 보면 일이 잘 풀리지\n않을 때가 있습니다. \n\n이것도 오...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 맑아 지는 글", text }); } catch (e) {}
     } else {

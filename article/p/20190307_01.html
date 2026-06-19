@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복하다 말하니 행복이 찾아오네요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복하다 말하니 행복이 찾아오네요\n\n당신 스스로\n행복하다고 말해보셔요.\n그러면 더 큰 행복이\n당신을 찾아올 거예요.  \n \n당신이\n좋은 일만 생각한다면.\n당신의 인생은 보다\n멋진 인생이 될 거예요.  \n \n당신이\n자신을 소중히 여기고\n자기 자신에게\n좋은 친구가 되어 준다면  \n \n다른 사람들도 모두 당신을\n소중히 여기게 될 겁니다.\n모두가 당신의\n좋은 친구가 될 거예요.  \n \n당신이 당신 자신을\n좋아하게 된다면\n다른 사람들도 모두\n당신을 좋아하게 될 겁니다.  \n \n당신이 당신 자신을\n소중히 여긴다면\n다른 사람들도 모두\n자기 자신...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복하다 말하니 행복이 찾아오네요", text }); } catch (e) {}
     } else {

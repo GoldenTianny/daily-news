@@ -162,7 +162,7 @@ a
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세상은 보는 대로 느끼는 대로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세상은 보는 대로 느끼는 대로\n\n어린아이의 미소가 \n아름다운 건\n그대 안에 \n동심이 있기 때문입니다. \n\n해맑은 \n아침햇살이 \n반가운 건\n그대 안에 \n평화가 있기 때문입니다. \na\n떨어지는 \n빗방울 소리가 \n듣기 좋은 건\n그대 안에 \n여유가 있기 때문입니다. \n\n하루 \n하루가 \n늘 \n감사한 건\n그대 안에 \n겸손이 있기 때문입니다. \n\n세상은 \n그대가 \n바라보는 대로\n그대가 \n느끼는 대로 \n변하는 것. \n\n모든 것은 \n그대로부터 \n비롯된 것이니\n누구를 \n탓하고 \n누구에게 \n의지하겠습니까? \n\n오늘 \n마주친 \n사람들이 \n소중한 건\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세상은 보는 대로 느끼는 대로", text }); } catch (e) {}
     } else {

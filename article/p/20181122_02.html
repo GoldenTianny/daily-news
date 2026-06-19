@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그냥 친구 진짜 친구\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그냥 친구 진짜 친구\n\n그냥친구는 \n당신이 우는걸 본적이 없습니다.\n하지만 진짜친구는 \n이미 어깨가\n당신의 눈물로 적셔져있지요.  \n \n그냥친구는 \n당신 부모님의 성함을 모릅니다.\n하지만 진짜친구는\n주소록에 당신 부모님의\n전화번호까지 가지고있지요.  \n \n그냥친구는\n당신이 파티를 열때 \n와인 한병을 사가지고 옵니다.\n하지만 진짜친구는\n당신이 파티를 열때 \n빨리와서 준비를 도와주고 \n파티가 끝나면 치우는거 도와주느라 \n집에 늦게들어가지요.  \n \n그냥친구는\n당신이 밤늦게 다 잠들어있을때\n전화하면 싫어하면서 짜증을 냅니다....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그냥 친구 진짜 친구", text }); } catch (e) {}
     } else {

@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 법정스님의 좋은글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 법정스님의 좋은글\n\n마음이 그늘지면\n그 사람 자신이 녹슬고 만다\n녹은 쇠에서 생긴 것인데\n점점 그 쇠를 먹는 것 처럼...\n\n삶에는 즐거움이 따라야 한다.\n즐거움이 없으면 그 곳에는\n삶이 정착되지 않는다.\n자신의 존재를 있는 그대로\n받아 들이지 못하면 불행해 진다.\n\n남과 비교하면 불행해 진다.\n억지로 꾸미지 말라\n있는 그대로가 좋다.\n아름다움이란 꾸면서 되는 것이 아니다.\n본래 모습대로가 그 만이 지닌 특성의 아름다움이다.\n즐거움은 밖에서 누가 주는 것이 아니라\n긍정적인 인생관을 지니고\n스스로 만들어 가야 한다.\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "법정스님의 좋은글", text }); } catch (e) {}
     } else {

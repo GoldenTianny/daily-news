@@ -171,7 +171,7 @@ h1 {{ font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; marg
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {{
     const url = location.href.split('#')[0];
-    const text = `✨ {title_js}\\n\\n— 가좌버핏 뉴스 좋은글\\n${{url}}`;
+    const text = `✨ {title_js}\\n\\n{body_js}\\n\\n${{url}}`;
     if (navigator.share) {{
         try {{ await navigator.share({{ title: {title_json}, text }}); }} catch (e) {{}}
     }} else {{
@@ -202,6 +202,15 @@ def desc_of(body):
     return (flat[:88] + "…") if len(flat) > 90 else flat
 
 
+def body_js_excerpt(body, n=280):
+    """공유 문구용 본문 발췌 — JS 템플릿 리터럴에 안전하게 삽입 (줄바꿈 보존)."""
+    s = body.strip()
+    out = s[:n] + ("..." if len(s) > n else "")
+    out = out.replace("\\", "").replace("`", "").replace("$", "")
+    out = out.replace("\r", "").replace("\n", "\\n")
+    return out
+
+
 def main():
     with open(os.path.join(ROOT, "article", "articles.json"), encoding="utf-8") as fh:
         arts = json.load(fh)
@@ -224,6 +233,7 @@ def main():
             img_bottom=img_bottom,
             title_esc=html.escape(a["title"]),
             title_js=a["title"].replace("\\", "").replace("`", "").replace("$", ""),
+            body_js=body_js_excerpt(a["body"]),
             title_json=json.dumps(a["title"], ensure_ascii=False),
             desc_esc=html.escape(desc_of(a["body"])),
             body_esc=html.escape(a["body"]),

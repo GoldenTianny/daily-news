@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 자꾸 읽어도 좋은 인생의 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 자꾸 읽어도 좋은 인생의 지혜\n\n성격은 얼굴에서 나타나고,\n본심은 태도에서 나타나며\n감정은 음성에서 나타난다.  \n\n센스는 옷차림에서 나타나고,\n청결함은 머리카락에서 나타나며\n섹시함은 옷 맵시에서 나타난다.  \n\n그리하야 사랑은\n이 모든 것에서 나타난답니다.  \n\n욕심은 부릴수록 더 부풀고 \n미움은 가질수록 더 거슬리며 \n원망은 보탤수록 더 분하고 \n아픔은 되씹을수록 더 아리며 \n괴로움은 느낄수록 더 깊어지고 \n집착은 할수록 더 질겨지는 것이니 \n부정적인 일들은 모두 지우는 게 좋습니다.  \n\n지워버리고 나면 \n번거롭던 마음이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "자꾸 읽어도 좋은 인생의 지혜", text }); } catch (e) {}
     } else {

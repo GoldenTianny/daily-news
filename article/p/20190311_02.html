@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ ‘되고’법칙\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ ‘되고’법칙\n\n돈이 없으면 돈은 벌면 되고, \n잘못이 있으면 잘못은 고치면 되고, \n\n안 되는 것은 되게 하면 되고,\n모르면 배우면 되고, 부족하면 메우면 되고, \n \n힘이 부족하면 힘을 기르면 되고, \n잘 안되면 될 때까지 하면 되고, \n \n길이 안 보이면 길을 찾을 때까지 찾으면 되고,\n길이 없으면 길을 만들면 되고, \n \n기술이 없으면 연구하면 되고, \n생각이 부족하면 생각을 하면 되고, \n \n내가 믿고 사는 세상을 살고 싶으면 \n거짓말로 속이지 않으면 되고, \n\n미워하지 않고 사는 세상을 원하면\n사랑하고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "‘되고’법칙", text }); } catch (e) {}
     } else {

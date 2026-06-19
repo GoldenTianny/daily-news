@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 서로 기대고 사는 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 서로 기대고 사는 인연\n\n우리는 많은 사물과 \n자연에 기대어 살아 갑니다.  \n \n우울한 날에는 \n하늘에 기대고 슬픈 날에는\n가로등에 기댑니다.  \n \n기쁜 날에는 나무에 기대고\n부푼 날에는 별에 기댑니다.  \n \n사랑하면 꽃에 기대고 \n이별하면 달에 기댑니다.  \n \n우리가 기대고 사는 것이 \n어디 사물과 자연뿐이리요.  \n \n일상 생활에서 우리는 \n수많은 사람들에게 \n기대어 살아 갑니다.  \n \n내가 건네는 인사는 \n타인을 향한 것이고 \n내가 사랑하는 사람도 \n나 아닌 타인입니다.  \n \n나를 울게하는 사람도 타인\n나...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "서로 기대고 사는 인연", text }); } catch (e) {}
     } else {

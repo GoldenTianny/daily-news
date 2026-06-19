@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶이란 지나고 보면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶이란 지나고 보면\n\n젊음도 \n흘러가는 세월 속으로\n떠나가 버리고\n추억 속에 잠자듯 \n소식 없는 친구들이 \n그리워진다.  \n \n서럽게 흔들리는 \n그리움 너머로\n보고 싶던 얼굴도 \n하나둘 사라져 간다.  \n \n잠시도 \n멈출 수 없는 것만 같아\n숨 막히도록 \n바쁘게 살았는데\n어느 사이에 \n황혼에 빛이 다가온 것이\n너무나 안타까울 뿐이다.  \n \n흘러가는 \n세월에 휘감겨서\n온 몸으로 맞부딪히며 \n살아왔는데\n벌써 끝이 \n보이기 시작한다.  \n \n휘몰아치는 \n생존의 소용돌이 속을\n필사적으로 빠져나왔는데\n뜨거웠던 열정도 \n온도를...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶이란 지나고 보면", text }); } catch (e) {}
     } else {

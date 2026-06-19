@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하루 그리고 또 하루를 살면서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하루 그리고 또 하루를 살면서\n\n부족함이 많은 인간이기에\n더 바라고 더 갖기를 원하는\n욕망의 욕심은 끝이 없는 듯 합니다 \n\n어느 하나를 절실히 원하다\n소유하게 되면\n그 얻은 것에 감사하는 마음은 \n짧은 여운으로 자리하고 \n\n또 다른 하나를 원하고 \n더 많이 바라게 되는 것 같습니다 \n\n우리의 욕심은 그렇듯\n채워지지 않는 잔인가 봅니다 \n\n갖고 있을 때는 소중함을 모릅니다\n잃고 나서야 비로서 얼마나\n소중했는지를 깨닫게 됩니다 \n\n현명한 사람은\n후에 일을 미리 생각하고 느끼어\n언제나 감사하는 마음을\n잃지 않으려고 변함없는 마음 자...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하루 그리고 또 하루를 살면서", text }); } catch (e) {}
     } else {

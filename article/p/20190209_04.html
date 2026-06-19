@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한번뿐인 소중한 내 인생인데\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한번뿐인 소중한 내 인생인데\n\n잠도 안오고 괜히 초조해지고\n지금 내가 잘 살고 있는가 싶고\n나만 이런가 싶고,\n징글징글하게 사람이 싫다가도\n한순간에 눈물나게 사람이 그립고,\n너 정도면 괜찮은 사람이지라는 말에\n괜시리 더 서러워 지는 날.. \n \n알아요,\n많이 힘들죠,\n정말 지쳐 죽겠죠? \n \n현실은 내가 꿈꿨던 것과 달리\n더 비참해져만 가고 점점 미치겠고,\n일도, 사랑도, 인생도\n되는거 하나 없고\n가슴은 답답하고\n몸은 지치고\n아무리 발버둥 쳐도\n벗어나지 못하는 이 답답한 현실,\n갑갑한 인생,\n그냥 될 대로 되라고 하고 싶기도 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한번뿐인 소중한 내 인생인데", text }); } catch (e) {}
     } else {

@@ -162,7 +162,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연따라 마음을 일으키고\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연따라 마음을 일으키고\n\n너무 좋아할 것도\n너무 싫어할 것도 없다.\n너무 좋아해도 괴롭고\n너무 미워해도 괴롭다. \n \n사실 우리가 알고 있고\n겪고 있는 모든 괴로움은\n좋아하고 싫어하는\n이 두 가지 분별에서 온다고 해도\n과언이 아니다. \n \n늙는 괴로움도\n젊음을 좋아하는 데서 오고\n병의 괴로움도\n건강을 좋아하는 데서 오며, \n \n죽음 또한 삶을 좋아함\n즉 살고자 하는 집착에서 오고\n사랑의 아픔도\n사람을 좋아하는 데서 오고, \n \n가난의 괴로움도\n부유함을 좋아하는 데서 오고\n이렇듯 모든 괴로움은\n좋고 싫은 두 가지 분별로 인...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연따라 마음을 일으키고", text }); } catch (e) {}
     } else {

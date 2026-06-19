@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마흔과 오십 사이\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마흔과 오십 사이\n\n해야할 사랑을 다하고\n이제는 그만 쉬고 싶은 나이  \n \n아직 하지 못하였다면\n더 늙기 전에\n다시 한번 해보고 싶은 나이  \n \n우연이든 인연이든\n아름다운 착각의 숲에서 만난\n필연이라 여기며\n스스로를 위로하고 싶은 나이  \n \n가난하다고 해서 그리움이 없겠느냐고\n가난하다고 해서 사랑을 모르겠느냐고\n어느 시인의 시 한 구절을 읊조리며  \n \n마흔과 오십 사이에\n홀로 서 있는 사람들은\n비 오는 날이면 쓰러진 술병처럼 \n한 쪽으로 몸이 기울어진다.  \n \n그래도 어느 인연이 있어\n다시 만나진다면\n외로움...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마흔과 오십 사이", text }); } catch (e) {}
     } else {

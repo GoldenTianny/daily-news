@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람은 무엇으로 사는가\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람은 무엇으로 사는가\n\n사람은\n누구나 마음에\n담고 싶은 사람이 있다 \n\n아무런 대가 없이 사랑해준 사람이며\n자신에게 특별한 관심을 보여준 사람은\n잊혀질 수 없는\n마음에 담고 싶은 사람이다 \n\n하지만\n반면에 기억하고 싶지 않은 사람도 존재한다\n상처, 피해, 아픔을 준 사람이다 \n\n다른 사람들은 오늘도 당신을 기억한다 \n\n당신이 어떤 사람인지를 \n\n가슴에 새기고 싶은 사람인지\n아니면 다시는\n기억하고 싶지 않은 사람인지를 \n\n잠시 스쳐가는 사람이라고\n함부로 말하지 말라\n스치고 만나는 모든 사람에게\n한결 같이 대하여야 한다 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람은 무엇으로 사는가", text }); } catch (e) {}
     } else {

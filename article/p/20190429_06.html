@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복\n\n혼자\n걷는 길에는\n예쁜 그리움이 있고.  \n\n둘이\n걷는 길에는\n사랑이 있지만.  \n\n셋이\n걷는 길에는\n우정이 있고.  \n\n우리가\n걷는 길에는\n나눔이 있읍니다.  \n\n감사 하는\n마음으로 걷다 보면.  \n\n어느 길이든\n행복 하지\n않는 길이 없습니다.  \n\n그대 가는 길은\n꽃길 입니다.  \n\n오늘도\n마음 가는 곳곳마다\n꽃길이시기를...  \n\n- 린 마틴 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복", text }); } catch (e) {}
     } else {

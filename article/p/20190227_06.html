@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 묵상(默想)\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 묵상(默想)\n\n내가 부지런히 걸으면\n없던 길도 생기지만\n내가 걸음을 멈추면\n있던 길도 없어진다. \n\n가지치기를 잘하면\n실한 열매가 열리지만\n가지치기를 잘못하면\n열매 키울 힘을 빼앗긴다. \n\n날마다 뜨는 태양도\n날마다 뜨는 달님도\n하룻길 동행이다\n그 하룻길도 멈출 날 온다. \n\n표현하지 않는 사랑과\n봉해 놓은 편지는\n시력이 아무리 좋아도\n보이지 않는다. \n\n사람이 사는 일도\n사람과의 관계도\n가꾸지 않으면\n잡초가 우거지게 된다. \n \n- 혜안 김민수 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "묵상(默想)", text }); } catch (e) {}
     } else {

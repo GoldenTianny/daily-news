@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생(人生)\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생(人生)\n\n보았으나 보지 않은 것처럼\n들었으나 듣지 않은 것처럼\n말했으나 말하지 않은 것처럼  \n \n행했으나 행하지 않은 것처럼\n알았으나 알지 못한 것처럼\n몰랐으나 모르지 않은 것처럼  \n \n주었으나 주지 않은 것처럼\n받아야 하나 받을 게 없는 것처럼\n뜨거우나 뜨겁지 않은 것처럼  \n \n외로우나 외롭지 않은 것처럼\n기대했으나 기대하지 않은 것처럼\n서운했으나 서운하지 않은 것처럼  \n \n놓쳤으나 놓치지 않은 것처럼\n이뤘으나 이루지 않은 것처럼\n없으나 없지 않은 것처럼  \n \n있으나 있지 않은 것처럼 \n아프나 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생(人生)", text }); } catch (e) {}
     } else {

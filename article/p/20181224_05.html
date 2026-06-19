@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말 한마디의 중요성\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말 한마디의 중요성\n\n한 어머니가 어린이 집 모임에 참석했습니다. 어린이 집 선생님이 그 어머니에게 말했습니다.  \n\n"아드님은 산만해서 단 3분도 앉아있지를 못합니다."  \n\n어머니는 아들과 집에 돌아오는 길에 말합니다.  \n\n"선생님께서 너를 무척 칭찬 하셨어. 의자에 앉아 있기를 단 1분도 못 견디던 네가 이제는 3분이나 앉아 있다고 칭찬하셨어. 다른 엄마들이 모두 엄마를 부러워 하더구나!"  \n\n그날 아들은 평소와 달리 밥투정을 하지 않고 밥을 두 공기나 뚝닥 비웠습니다. 시간이 흘러 아들이 \n초등학교에 들어 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말 한마디의 중요성", text }); } catch (e) {}
     } else {

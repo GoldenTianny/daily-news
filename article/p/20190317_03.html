@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어느 날의 커피\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어느 날의 커피\n\n어느 날, \n혼자 가만히 있다가\n갑자기 허무해지고 \n \n \n아무 말도 할수 없고\n가슴이 터질것만같고 \n \n \n눈물이 쏟아지는데\n누군가를 만나고 싶은데\n만날 사람이 없다 \n \n \n주위에는 항상 \n친구들이 있다고 생각했는데 \n \n \n이런날, \n이런 마음을 들어줄 사람을 생각하니\n수첩에 적힌 이름과 전화번호를 \n읽어 내려가 보아도 모두가 아니었다 \n \n \n혼자 바람맞고 사는 세상\n거리를 걷다\n가슴을 삭이고 마시는\n뜨거운 한잔의 커피 \n \n \n아~\n삶이란 때론 이렇게 외롭구나.. \n \n- 작가미상 - \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어느 날의 커피", text }); } catch (e) {}
     } else {

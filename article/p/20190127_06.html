@@ -176,7 +176,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나 늙으면 당신과 살아보고 싶어\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나 늙으면 당신과 살아보고 싶어\n\n나 늙으면 당신과 살아보고 싶어\n가능하다면 꽃밭이 있고\n가까운 거리에 숲이 있었으면 좋겠어\n개울물 소리 졸졸거리면 더 좋을 거야  \n \n잠 없는 난 당신 간지럽혀 깨워\n아직 안개 걷히지 않은 아침 길\n풀섶에 달린 이슬 담을 병 들고 산책해야지  \n \n삐걱거리는 허리 주욱 펴 보이며\n내가 당신 하나 두울~ 체조시킬 거야\n햇살이 조금 퍼지기 시작하겠지  \n \n우리의 가는 머리카락이 은빛으로 반짝일 때\n나는 당신의 이마에 오래 입맞춤하고 싶어\n사람들이 봐도 하나도 부끄럽지 않아  \n \n아주 부드러운 죽...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나 늙으면 당신과 살아보고 싶어", text }); } catch (e) {}
     } else {

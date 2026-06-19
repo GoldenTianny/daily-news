@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 백일홍 편지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 백일홍 편지\n\n모든 것은 다 지나간다\n모든 만남은 생각보다 짧다  \n \n영원히 살 것처럼\n욕심 부릴 이유는 하나도 없다  \n \n지금부터\n백 일만 산다고 생각하면  \n \n삶이 조금은\n지혜로워지지 않을까?  \n \n처음 보아도\n낯설지 않은 고향친구처럼\n편하게 다가오는 백일홍  \n \n날마다 무지갯빛 편지를\n족두리에 얹어\n나에게 배달하네  \n \n살아 있는 동안은\n많이 웃고\n행복해지라는 말도\n늘 잊지 않으면서 \n \n- 이해인 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "백일홍 편지", text }); } catch (e) {}
     } else {

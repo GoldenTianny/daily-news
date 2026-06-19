@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 소중한 너\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 소중한 너\n\n맑고 고운 눈망울이\n좋은 것만 바라보아\n예쁜 눈웃음 가득하기를 \n\n밝고 활기찬 발걸음이\n터벅터벅 힘없이 걷는 일 없게\n희망의 발걸음 되기를 \n\n가끔 누군가에게\n언짢은 소리 들어도\n빨리 지우고 그러려니 하기를 \n\n사소한 걸 가슴에 담아\n상처받고 절망하며\n시간을 낭비하지 않기를 \n\n착하고 여린 마음에\n송곳처럼 박히는 아픔도\n훌훌 털고 일어나기를 \n\n세상 무엇보다 소중한 너\n세상 누구보다 예쁘고 착한 너\n하루하루 제발 마음 다치지 않기를 \n\n- <결정했어 행복하기로>中 ,조미하 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "소중한 너", text }); } catch (e) {}
     } else {

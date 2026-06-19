@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 노력의 문\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 노력의 문\n\n일생동안 문밖에서 기다리다가\n죽은 사람이 있었습니다.  \n \n한번도 문안으로 들어가보지도\n못하고 문밖에서 서성거리다가  \n \n죽을무렵이나 되서야 문지기에게\n안으로 들어가지 못하게 문을 지키는\n이유가 무엇이냐고 물었습니다.  \n \n그러자 문지기는 반가워서 말했습니다.  \n \n"이 문은 당신의 문입니다.\n당신이 말하면 문을 열어드리려고\n여기에 있었습니다."  \n \n그제서야 땅을 치고 후회했지만\n이미 때는 늦은 뒤였습니다.  \n \n문지기에게 열어달라고 부탁을\n했거나 열어보려고 노력을 했더라면\n벌써 그 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "노력의 문", text }); } catch (e) {}
     } else {

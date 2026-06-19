@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 지혜있는 사람의 인생덕목\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 지혜있는 사람의 인생덕목\n\n⊙말(言) \n말을 많이 하면 필요 없는 말이 나온다. \n양 귀로 많이 들으며, 입은 세 번 생각하고 열라.  \n \n \n⊙책(讀書) \n수입의 1%를 책을 사는데 투자하라. \n옷이 헤어지면 입을 수 없어 버리지만... \n책은 시간이 지나도 위대한 진가를 품고 있다.  \n \n \n⊙노점상 \n할머니 등 노점상에서 물건을 살 때 깎지말라. \n그냥 돈을 주면 나태함을 키우지만.... \n부르는대로 주고 사면 희망과 건강을 선물하는 것이다.  \n \n \n⊙웃음(笑) \n웃는 연습을 생활화 하라. \n웃음은 만병의 예방...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "지혜있는 사람의 인생덕목", text }); } catch (e) {}
     } else {

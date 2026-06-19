@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 선물에 담긴 의미\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 선물에 담긴 의미\n\n1. 초콜릿 - 너를 사랑해\n2. 스카프 - 영원히 사랑해\n3. 사탕 - 너를 좋아해\n4. 모자 - 나를 감싸줘요\n5. 꽃 - 내 맘을 너에게  \n \n6. 향수 - 나를 잊지 마\n7. 화장품 - 너의 아름다움을 위해\n8. 장갑 - 친절히 대해줘\n9. 향초 - 영원한 사랑을 위해\n10. 볼펜 - 내 맘에 너를 새기고 싶어  \n \n11. 반지 - 넌 내꺼! 결혼해 줘\n12. 액자 - 사진 볼 때 날 생각해\n13. 목걸이 - 내 맘의 반을 너에게\n14. 일기장 - 우리의 추억을 영원히 간직해\n15. 라...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "선물에 담긴 의미", text }); } catch (e) {}
     } else {

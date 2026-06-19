@@ -165,7 +165,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리\n\n우리 서로 마음이\n지쳐 있을 때\n서로 마음 든든한\n사람이 되고  \n \n때때로 힘겨운 인생의\n무게로 인하여\n속마음마저 막막할 때  \n \n우리 서로 위안이 되는\n그런 사람이 되었으면\n좋겠습니다.  \n \n누군가 사랑에는\n조건이 따른 다지만  \n \n우리의 바램은 지극히\n작은 것이게 하고  \n \n그리하여\n더 주고 덜 받음에\n섭섭해 말며  \n \n문득 스치고 지나는\n먼 회상 속에서도  \n \n우리 서로 기억마다\n반가운 사람이\n되었으면 좋겠습니다.  \n \n어쩌면...\n고단한 인생길\n먼 길을 가다  \n \n어느 날 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리", text }); } catch (e) {}
     } else {

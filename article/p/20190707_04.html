@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 힘내요 당신\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 힘내요 당신\n\n힘들어요?\n혼자만 힘들 거로 생각하지 말아요\n누구나 짐을 지고 살아요  \n \n외로우세요?\n혼자라도 둘이라도 여럿이라도\n사람은 늘 외로운 거래요  \n \n울고 싶으세요?\n목까지 차오른 슬픔을 이기지 못하고\n꾸역꾸역 삼킬 때가 있지요\n그냥 목 놓아 우세요\n누가 보면 어때요  \n \n그리우세요?\n조용히 눈감고\n이름 한 번 불러요\n그리움이 두 배가 되어도\n가슴은 따듯해질 거예요  \n \n사랑하고 싶으세요?\n주위를 둘러봐요\n내 사랑을 바라는 사람과\n나를 사랑하는 사람이 많아요  \n \n고생하는 거 알아요\n힘든 거...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "힘내요 당신", text }); } catch (e) {}
     } else {

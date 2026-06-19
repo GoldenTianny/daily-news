@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한번 맺은 인연은 영원하라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한번 맺은 인연은 영원하라\n\n오늘 목마르지 않다 하여\n우물에 돌을 던지지 마라 \n오늘 필요하지 않다 하여 \n친구를 팔꿈치로 떠밀지 마라 \n오늘 배신하면 내일은 배신당한다  \n \n사람의 우수한 지능은\n개구리 지능과 동률을 이룰 때가 많다\n개구리가 올챙이 적 시절을 까맣게 잊듯\n사람들도 자신이 어려움에 처해 있을 때 \n도움 주었던 사람들을 까맣게 잊고 산다  \n \n그러다가 다시 어려움에 처하면\n까맣게 잊고 있던 그를 찾아가\n낯 뜨거운 도움을 청한다\n개구리와 다를 것이 뭐가 있는가  \n \n비 올 때만 이용하는 우산처럼 \n사람을 필...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한번 맺은 인연은 영원하라", text }); } catch (e) {}
     } else {

@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하고픈 말 다하고 살 순 없겠지요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하고픈 말 다하고 살 순 없겠지요\n\n아파도 아프다고\n하지 못할 때도 있고\n넘치도록 행복해도\n굳이 말로 하지 않을 때도 있답니다 \n\n좋은 일 있을 때\n함께 기뻐해 주진 못해도\n가슴으로나마\n잘된 일이라고 축복해 주는 것이\n얼마나 다행스러운지 모릅니다 \n\n외롭고 슬플 때\n세상에 혼자라고 느낄 때\n곁에 있어 주지 못함이\n안타까운 것을\n꼭 말로 해야 할까요 \n\n멀리서 지켜보는 아픔은\n말로는 못 한답니다\n흔하디 흔해서\n지겹게까지 느끼는\n그 말을 하지 않았다고\n그토록 아파하진 말아요 \n\n하고픈 말 다하고 살수는 없답니다 \n\n아끼고 아낀 그 한 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하고픈 말 다하고 살 순 없겠지요", text }); } catch (e) {}
     } else {

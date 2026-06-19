@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 거절도 용기다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 거절도 용기다\n\n어렵게 한 부탁을\n거절하기 어려워\n허락한 일이 얼마나 많은가 \n\n마음이 약해서\n거절할 수 없어\n가까운 친구라서\n이유는 많다 \n\n하지만 약속해놓고\n마음이 불편한 게 한두 번이 아니다\n관계가 어긋나기도 한다 \n\n아닌 것은 들어주지 말자\n감당할 것만 들어주자 \n\n서운해해도 소신을 밝히자\n당시에는 안타깝고 맘에 걸려도\n나중에는 잘했다고 생각할 것이다 \n\n거절이 쉽지 않지만\n허락하고 뒤척일 거 같으면\n용기를 내자\n거절도 용기다 \n\n- <결정했어 행복하기로> ,조미하 - \n\n.\n#맑고좋은글 #좋은글 #좋은글...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "거절도 용기다", text }); } catch (e) {}
     } else {

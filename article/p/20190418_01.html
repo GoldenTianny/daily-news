@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 천운, 지운, 인운\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 천운, 지운, 인운\n\n사람에게는 세가지 의\n운(運)이 있답니다....\n그것은 바로 천운(天運),\n지운(地運), 인운(人運)이랍니다. \n \n천운(天運)은 하늘이 정해준 운으로,\n내 부모가 아무개라는 것,\n내 성별이 남자 혹은 여자라는것\n등 바꿀 수 없는 운을 말한답니다. \n \n지운(地運)은 타고난 재능으로\n그림이나 연기, 노래 등 타고난\n재능은 지운이 결정한다고 하네요. \n \n아무리 천운과 지운을 잘 타고\n났어도 마지막 인운(人運)에서\n거르치면 삶이 힘들어 진답니다. \n \n인운(人運)은 사람 복을 말하며,\n인생에서 어떤...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "천운, 지운, 인운", text }); } catch (e) {}
     } else {

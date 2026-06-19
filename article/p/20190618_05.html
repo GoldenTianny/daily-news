@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑은 표현하지 않으면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑은 표현하지 않으면\n\n사랑은 \n표현하지 않으면 환상이고  \n \n슬퍼도 \n울 수 없으면 고통이며  \n \n만남이 없는 \n그리움은 외로움일뿐  \n \n표현되지 못한 감정은 \n아쉬운 아픔이 되고  \n \n행동이 없는 생각은 \n허무한 망상이 된다.  \n \n숨쉬지 않는 사람을 어찌 살았다 하며  \n \n불지 않는 바람을 어찌 바람이라 하겠는가  \n \n사람이 숨을 쉬고 \n바람이 부는 것처럼  \n \n살아있는 날엔 사랑을 하자 \n마음껏 울고 또 웃자  \n \n- <행복한 여운> 中 ,정유찬 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑은 표현하지 않으면", text }); } catch (e) {}
     } else {

@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑은 줄수록 아름답습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑은 줄수록 아름답습니다\n\n사랑은 줄수록 더 아름다워지는 것입니다.\n받고 싶은 마음 또한 간절하지만 \n사랑은 줄수록 내 눈빛이\n더욱 빛나 보이는 것입니다. \n \n한없이 주고싶은 사람이 있다는 거\n하염없이 바라보고 싶은 사람이 있다는 거\n시리도록 기다리게 되는 사람이 있다는 거 \n \n그건\n주는 사람만이 누릴 수 있는 특권이며\n내가 살아있다는 증거이기도 합니다. \n \n그래서 사랑은 받는 것이 아니라\n무언가 주고 싶은 사람이 있다는 건 \n내가 해야할 일이 생기는 것이고 \n \n끝없이 바라보고 싶은 사람이 있다는 건\n내가 일어나 웃...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑은 줄수록 아름답습니다", text }); } catch (e) {}
     } else {

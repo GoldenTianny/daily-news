@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 삶의 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 삶의 인연\n\n삶의 귀퉁이에서 우연이란 \n이름으로 만난 우리지만  \n \n이토록 애틋한 그리움이 \n될 줄은 몰랐습니다.  \n \n늘 함께 할 수는 없지만 \n마음으로 지켜주고 바라보며 \n서로 행복을 위해 기도하는 \n배려있는 사랑으로 \n그림자와 같은 우리이고 싶습니다.  \n \n혹독한 세상 속에서 찢기고 \n상처 입은 영혼의 날개 위에 \n살포시 내려앉는 포근한 위안으로 \n고단한 삶의 여정 한 가운데 \n아늑하고 편안한 우리이면 좋겠습니다.  \n \n때로는 사랑스러운 연인처럼. \n때로는 다정한 친구처럼. \n서로에게 마음의 양식...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 삶의 인연", text }); } catch (e) {}
     } else {

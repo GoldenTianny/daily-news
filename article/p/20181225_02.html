@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 늘 변하지 않는 마음으로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 늘 변하지 않는 마음으로\n\n당신은\n무덤덤한\n사람인 듯하지만 \n\n당신 곁에 있으면\n커다란 바위에 \n\n몸을 기댄 듯\n마음이 든든해집니다. \n\n당신은 늘 제대로\n마음을 표현하지\n못한다지만 \n\n당신 곁에 있으면\n불안이나 걱정도 없어지고\n마음이 편안해 집니다. \n\n당신은\n내 마음 속속들이\n채워주지 못한다지만 \n\n변화 많은\n세상 속에서\n늘 푸른 소나무처럼 \n\n나를 지켜주는\n그대가 있어\n참 고맙습니다. \n\n나는\n그대에게\n많은 것을 바라기보다 \n\n변하지 않는\n마음으로 \n\n언제까지나\n나를 사랑해 주기를\n바라는 마음뿐입니다. \n\n- 용혜원 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "늘 변하지 않는 마음으로", text }); } catch (e) {}
     } else {

@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 괜찮아 질꺼야~ 힘내~\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 괜찮아 질꺼야~ 힘내~\n\n치유가 필요하다고 해서\n무작정 누구에게~\n기대려고 하지 마세요~ \n\n힘들지 않냐고~\n물어주는 사람이 없다고 \n서운해하지도 마세요~ \n\n힘이 되는 사람이 없다고 \n자책도 하지 마세요~  \n\n오늘 하루 \n서럽고 힘든 일이 있었다면~\n마음 속에 쌓아두지 말고 \n당장 털어내세요~ \n\n그리고 \n내 가슴에 조용히 손을 얹고 \n토닥거리며 조용히 속삭이세요~ \n\n"많이 힘드냐고~\n곧 괜찮아 질거라고~\n힘내 라고~ "  \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "괜찮아 질꺼야~ 힘내~", text }); } catch (e) {}
     } else {

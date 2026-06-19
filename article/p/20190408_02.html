@@ -128,7 +128,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신의 마음을 안아줄게요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신의 마음을 안아줄게요\n\n함께 있을 때 \n편안해지는 사람을 만나요. \n\n자꾸만 눈치 보게 만드는 사람 말고,\n실수를 한 건 아닌가\n걱정 들게 하는 사람 말고, \n\n나를 아껴주고\n사랑하는 맘 한가득 느껴지는\n내가 참 소중하고 \n예쁜 사람이라 생각이 드는\n그래서 더 사랑스러운 \n행동을 하게 만드는 그런 사람. \n\n늘 사랑 가득 담은 채\n바라봐 주고 예뻐해 주는 사람.\n그러니까 나의 있는 그대로를\n아껴주고 사랑해주는 사람.  \n \n- 김지훈 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신의 마음을 안아줄게요", text }); } catch (e) {}
     } else {

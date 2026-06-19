@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 사람 하나 있었으면 좋겠네\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 사람 하나 있었으면 좋겠네\n\n죽도록 사랑하는 사람이 아닌\n미치도록 좋아하는 사람도 아닌\n괜찮은 사람하나 있었으면 좋겠네.  \n\n깊이의 잣대가 필요 없는\n가슴 넓이의 헤아림이 필요 없는 마음\n자신을 투영시킬 맑은 눈을 가진\n그런 사람 하나 있었으면 좋겠네.  \n\n삶이 버거워 휘청거릴 때\n조용히 어깨를 내어주고\n사심 없는 마음으로\n손을 잡아 줄 수 있는\n괜찮은 사람 하나 있었으면 좋겠네.  \n\n마음이 우울할 때 마주앉아\n나누는 차 한 잔 만으로도\n부자가 될 수 있고\n하늘빛이 우울하여 몹시도 허탈한 날\n조용한 음악 한 곡 마주 들...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 사람 하나 있었으면 좋겠네", text }); } catch (e) {}
     } else {

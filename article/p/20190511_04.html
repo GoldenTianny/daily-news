@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생은 내일도 계속된다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생은 내일도 계속된다\n\n힘들면 잠시 나무 근처의\n벤치에 앉아 숨을 고르자! \n\n고민해도 달라질게 없다면\n딱 오늘까지만 고민하고\n내일은 내일의 삶을 살자! \n\n꿈을 꾸어도 달라질게 없어도\n그래도 내일부터 다시 꿈을 꾸자! \n\n웃음이 안 나온다 해도\n그래도 내일부터\n그냥 이유없이 웃기로 하자! \n\n힘들다고 술로 지우려 하지 말고,\n아프다고 세상과 작별할 생각 말고,\n일이 잘 풀리지 않는다고\n사람을 원망하지 말고,\n위기가 닥쳤다고 짜증내지 말고,\n그러려니 하자! \n\n좋지 않는 일은\n심플하게 생각하고\n좋은 일은\n복잡하게 자꾸 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생은 내일도 계속된다", text }); } catch (e) {}
     } else {

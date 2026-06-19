@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연은 한번 밖에 오지 않는다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연은 한번 밖에 오지 않는다\n\n인연을 소중히 여기지 못했던 탓으로 \n내 곁에서 사라지게 했던 사람들 \n한때 서로 살아가는 이유를 깊이 공유했으나 \n무엇 때문인가로 서로를 저버려 \n지금은 어디에 있는지도 모르는 사람들   \n \n관계의 죽음에 의한 아픔이나 상실로 인해 \n사람은 외로워지고 쓸쓸해지고 황폐해지는 건 아닌지 \n나를 속이지 않으리라는 신뢰 \n서로 해를 끼치지 않으리라는 \n확신을 주는 사람이 주변에 둘만 있어도 \n살아가는 일은 덜 막막하고 불안할 것이다   \n \n마음 평화롭게 살아가는 힘은 \n서른이 되면 혹은 마흔이 되면...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연은 한번 밖에 오지 않는다", text }); } catch (e) {}
     } else {

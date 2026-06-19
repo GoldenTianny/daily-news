@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 동반자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 동반자\n\n내가 힘이 들 때\n당신은 나의 아픔이 되고\n내가 슬플 때에\n당신은 나의 슬픔이 되어 울어 준 사람  \n \n내 삶의 길에서\n또는 사랑의 길에서\n내가 나의 인생이 아파 울고 있을 때\n나의 목숨이 되어\n나의 삶을 사랑했던 사람  \n \n이제 당신을 사랑함이\n나의 전부이고\n나의 모든 인생입니다.  \n \n같이 함께 하여 \n세상을 살아갈 수 있었고\n같이 아파하여\n쓰러져도 일어날 수 있었던 시간\n차가운 가슴속에\n햇살처럼 다가온 당신  \n \n살아가는 동안 당신을 사랑하며\n당신과 이 세상 함께 살 수 있어\n나는 오...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 동반자", text }); } catch (e) {}
     } else {

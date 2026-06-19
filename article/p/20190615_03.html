@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그러니 하고 살자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그러니 하고 살자\n\n친구야\n티끌만 한 \n생각하나에도 \n가슴앓이하는 친구야\n세상일 모두다 그러니 하고 살자  \n \n가지각색의 꽃잎들이\n제각기 꿈을 꾸고\n있나니  \n \n내 마음대로 되는 일이\n어찌 하나라도 있겠나\n바람불면 부는 대로\n물결치면 치는 대로\n흔들리면서 살자  \n \n쉬어서 가는 인생\n가다가 못 볼 것 있더라도\n뭐 그리 답답할게 \n뭐 있더냐  \n \n모두를 내려놓으면\n어찌 그리 편할 텐데\n세상일 그러니 하고\n그렇게 살자꾸나\n생각을 내려놓고... \n \n- 김전 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그러니 하고 살자", text }); } catch (e) {}
     } else {

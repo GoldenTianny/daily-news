@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 노자가 말해주는 삶이 즐거워지는 인간관계 5계\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 노자가 말해주는 삶이 즐거워지는 인간관계 5계\n\n1\n진실함이 없는 아름다운 말을 늘어 놓지 말라. \n남의 비위를 맞추거나 사람을 추켜 세우거나 머지 \n않아 밝혀 질 사실을 감언이설로 회유하면서 재주로 \n인생을 살아가려는 사람이 너무나 많다. \n그러나 언젠가는 신뢰받지 못하여 사람위에 설 수 없게 된다 \n \n2\n말 많음을 삼가라.말이 없는 편이 좋다. \n말없이 성의를 보이는 것이 오히려 신뢰를 갖게한다. \n말보다 태도로서 나타내 보여야 한다 \n \n3\n아는체 하지 말라. 아무리 많이 알고 있더라도 너무 \n아는 체 하기보다는 잠자코 있는 편이 낫다....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "노자가 말해주는 삶이 즐거워지는 인간관계 5계", text }); } catch (e) {}
     } else {

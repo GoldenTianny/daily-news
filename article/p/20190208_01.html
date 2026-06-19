@@ -154,7 +154,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 복을 끌어 당기는 34가지 기술\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 복을 끌어 당기는 34가지 기술\n\n1. 힘차게 웃으며 하루를 시작하라. 활기찬 하루가 펼쳐진다. \n2. 세수할 때 거울을 보고 미소를 지어라. 거울 속의 사람도 나에게 미소를 보낸다. \n3. 밥을 그냥 먹지 말라. 웃으며 먹고 나면 피가 되고 살이 된다. \n4. 모르는 사람에게도 미소를 지어라. 마음이 열리고 기쁨이 넘친다. \n5. 웃으며 출근하고 웃으며 퇴근하라. 그 안에 천국이 들어있다.  \n \n \n6. 만나는 사람마다 웃으며 대하라. 인기인 1위가 된다. \n7. 꽃을 그냥 보지 말라. 꽃처럼 웃으며 감상하라. \n8. 남을 웃...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "복을 끌어 당기는 34가지 기술", text }); } catch (e) {}
     } else {

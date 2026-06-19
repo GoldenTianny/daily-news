@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이런 오늘이었으면 좋겠습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이런 오늘이었으면 좋겠습니다\n\n좋은일만 기억하며 지낼수 있는 \n오늘 이였으면 좋겠습니다\n사람의 향내와 인간미 물씬 풍기는 \n오늘 이였으면 좋겠습니다  \n \n오렌지 같이 시큼하면서도 달콤한 \n오늘이였으면 좋겠습니다\n향수를 뿌리지 않았는데도 \n은은한 향기를 뿜어낼수 있는 \n오늘이였으면 좋겠습니다  \n \n산속 깊은 옹달샘의 맑은 물같은\n오늘이였으면 좋겠습니다\n좋은 사람 만났다고 즐거워 할 수 있는\n오늘이였으면 좋겠습니  \n \n역시 난 행운아야...라고 말하며\n어깨에 힘을 더 할 수 있는\n오늘이였으면 좋겠습니다  \n \n무엇인가를 생각...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이런 오늘이었으면 좋겠습니다", text }); } catch (e) {}
     } else {

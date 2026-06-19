@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이렇게 생각하세요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이렇게 생각하세요\n\n힘들 때는\n"이 쯤이야" 라고\n생각 하세요.  \n \n슬플 때는\n"하나도 안 슬퍼" 라고\n생각 하세요.  \n \n억울한 일을 당할 때는\n"별걸 아니네" 라고\n생각 하세요.  \n \n하기 싫은 일을 할 때는\n"그래 이번 한번만 하자" 라고\n생각하세요.  \n \n용기가 없을 때는\n"눈 딱 감고 해버리자" 라고\n생각하세요.  \n \n무기력 해질 때는\n"지금 당장 내가 할일이 뭐지" 라고\n생각 하세요.  \n \n밥맛이 없을 때는\n"굶주린 아이들의 눈동자" 를\n생각 하세요.  \n \n재미가 없을 때는\n"하하하 억지 웃...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이렇게 생각하세요", text }); } catch (e) {}
     } else {

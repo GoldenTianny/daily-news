@@ -125,7 +125,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 부정적인 마음 지우기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 부정적인 마음 지우기\n\n「욕심」은 부릴 수록 더 부풀고...\n「미움」은 가질 수록 더 거슬리며...\n「원망」은 보탤 수록 더 분하고...\n「아픔」은 되씹을 수록 더 아리며...\n「괴로움」은 느낄 수록 더 깊어지고...\n「집착」은 할 수록 더 질겨지는 것이니... \n\n부정적인 일들은 모두 모두 지우는 게 좋습니다.\n지워버리고 나면 번거롭던 마음이 편안해지고,\n마음이 편안해지면 사는 일이 언제나 즐겁습니다. \n\n「칭찬」은 해줄 수록 더 잘 하게 되고...\n「인정」은 나눌 수록 더 가까워지며...\n「사랑」은 베풀 수록 더 애...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "부정적인 마음 지우기", text }); } catch (e) {}
     } else {

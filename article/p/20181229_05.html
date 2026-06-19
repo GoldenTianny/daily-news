@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 침묵하는 연습\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 침묵하는 연습\n\n나는 좀 어리석어 보이더라도\n침묵하는 연습을 하고 싶다.\n그 이유는 많은 말을 하고 난 뒤일수록\n더욱 공허를 느끼기 때문이다. \n\n많은 말이 얼마나 사람을 탈진하게 하고\n얼마나 외롭게 하고 텅비게 하는가?\n나는 침묵하는 연습으로\n본래의 나로 돌아가고 싶다. \n\n내 안에 설익은 생각을 담아두고 \n설익은 느낌도 붙잡아 두면서 때를 기다려 \n무르익히는 연습을 하고 싶다. \n\n다 익은 생각이나 느낌 일지라도\n더욱 지긋이 채워 두면서 향기로운 포도주로\n발효 되기를 기다릴 수 있기를 바란다. \n\n침묵하는 연...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "침묵하는 연습", text }); } catch (e) {}
     } else {

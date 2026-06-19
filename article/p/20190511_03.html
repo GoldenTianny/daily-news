@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 되돌아 오는 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 되돌아 오는 마음\n\n우리는 세상을 살면서 \n수많은 마음을 주고 받는다 \n사랑의 마음, 배려의 마음  \n\n용서의 마음\n때로는 미움의 마음 \n과욕의 마음, 거짓의 마음  \n\n우리가 보낸 마음들은 \n동그라미 인생속에 \n이리 흐르고 저리 딩굴다 \n결국은 마음의 주인에게 \n되찾아 온다 \n\n좋은 마음은 좋은 마음데로 \n나쁜 마음은 나쁜 마음데로 \n되돌려 받는 것이 세상의 이치다  \n\n이 세상엔 공짜가 \n그 무엇이 있겠는가 \n되돌아 생각하면 아무것도 없다  \n\n베풀면 배푼데로 \n인색하면 인색한 데로 \n다시 돌아온다 \n\n우리네 인...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "되돌아 오는 마음", text }); } catch (e) {}
     } else {

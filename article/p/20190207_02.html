@@ -182,7 +182,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 복 받고 살아가는 방법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 복 받고 살아가는 방법\n\n1. 웃음으로 시작하고 웃음으로 마감하라. \n여기가 천국이다.   \n \n2. 기쁨으로 수용하라. \n기뻐하면 기뻐할 일만 생겨난다.   \n \n3. 힘든 것에는 뜻이 있다. \n감사함으로 수용하라.   \n \n4. 믿음의 열도를 10배로 늘여라.\n100배의 수확이 보장된다.   \n \n5. 모두를 위하는 사람이 되라. \n그것이 나를 위하는 지름길이다.   \n \n6. 진리가 아니면 따르지 말라. \n길 한번 잘못 들면 평생 후회한다.   \n \n7. 인연을 소중히 하라. \n인연 중에 소중하지 않은 인연은 없다 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "복 받고 살아가는 방법", text }); } catch (e) {}
     } else {

@@ -186,7 +186,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 홀로 존재하는 법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 홀로 존재하는 법\n\n홀로 있다는 것은\n외로움이나 고독을 \n의미하는것 만은 아니다  \n \n오히려 그 외로움이나 \n고독이란 느낌이  \n \n우리의 속 뜰을 \n더 생생하게 비춰 주고  \n \n우리 존재의 근원을 들여다 \n볼 수 있는 여유와 깊이를 \n가져다 준다  \n \n홀로 존재한다는 것은\n그냥 그 자체만으로도 \n한없이 충만한 것이다  \n \n쉽게 생각해 보면 헛헛하고 \n외로워 보일지 모르지만  \n \n텅빈 가운데 성성하게 \n깨어있는 속 뜰은  \n \n마구잡이로 채워넣는 \n소유의 정신에 비할바가 아니다  \n \n홀로 있을 때 우리는 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "홀로 존재하는 법", text }); } catch (e) {}
     } else {

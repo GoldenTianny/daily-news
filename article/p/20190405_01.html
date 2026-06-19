@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 기억되는 사람이 되고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 기억되는 사람이 되고 싶다\n\n서로 다른 얼굴로 모여 사는 세상\n아픈 사람을 배려할 줄 아는 사람이 좋다.  \n \n상처주지 않고\n인연을 소중하게 여기는 사람이 좋다.\n서로를 위로하고 챙겨주는 사람이 나는 좋다.  \n \n단점이 있어도 덮을 줄 아는 사람\n장점만을 골라서 이야기할 줄 아는 사람\n사람들을 소중히 여기는 사람이 나는 좋다.  \n \n작은 것이라도 배려하며\n감사할 줄 아는 사람이 나는 좋다.  \n \n격려하고 위로해주고\n훈훈한 정으로 마주 앉아 웃음 지으며\n얘기를 들어주는 사람이고 싶다.  \n \n나도 누군가에게\n오래도록 기...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "기억되는 사람이 되고 싶다", text }); } catch (e) {}
     } else {

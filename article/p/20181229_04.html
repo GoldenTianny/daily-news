@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 혼자 울고 싶을 때가 있습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 혼자 울고 싶을 때가 있습니다\n\n이 나이에도\n혼자 울고 싶을 때가 있습니다. \n\n손 등에 뜨거운 눈물을\n뚝뚝 떨어뜨리고\n멍하니 허공을 바라보며\n혼자 울고 싶을 때가 있습니다. \n\n이젠 제법 산다는 것에\n어울릴 때도 되었는데\n아직도 어색한 걸 보면\n살아감에 익숙한 이들이\n부럽기만 합니다. \n\n모두들 이유가 있어 보이는데\n나만은 어릴 때나 지금이나\n똑같은 것만 같습니다. \n\n이젠 어른이 되었는데\n자식들도 나만큼이나 커가는데\n가슴이 아직도 소년시절의\n마음이 그대로 살아있나 봅니다. \n\n나이 값을 해야하는데\n이젠 제법 노숙해질 때도 됐...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "혼자 울고 싶을 때가 있습니다", text }); } catch (e) {}
     } else {

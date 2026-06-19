@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 늘 이런 사람이 되고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 늘 이런 사람이 되고 싶다\n\n언제나 고른 숨으로\n뜻한 바 곧은 길을\n묵묵히 걸어가는 사람 \n\n가식 없고 아집 없는\n오로지\n자신의 의지로\n잔잔한 일상을 맞이하는 사람 \n\n행운을 기다리지 않고\n행복을 염원하면서도\n몸과 마음이\n끝없이 움직이는 사람 \n\n상대의 눈을 맞추고\n겸손한 마음으로\n가슴 가득\n잔잔한 웃음과 미소를 건네는 사람 \n\n백 마디 말보다\n한번 따뜻하게 안아주고\n천 마디 말보다\n자주 문안 인사 드리는 사람 \n\n옳고 그름을 잘 가려\n선한 벗을 널리 하며\n악한 일에 휘말리지 않고\n늘 호수처럼 깊이를 더하는 사람 \n\n- <늘...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "늘 이런 사람이 되고 싶다", text }); } catch (e) {}
     } else {

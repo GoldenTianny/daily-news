@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘 하루는 내 작은 인생이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘 하루는 내 작은 인생이다\n\n오늘 하루를 알차게 보내야 하는 이유는 \n오늘 하루가 내 작은 인생이기 때문이다.  \n\n오늘이란 말은 싱그러운 꽃처럼 \n풋풋하고 생동감을 안겨준다.  \n\n마치 이른 아침 산책길에서 마시는 \n한모금의 시원한 샘물 같은 신선함이 있기 때문이다.  \n\n사람들은 누구나 눈을 뜨면 \n새로운 오늘을 맞이하고, \n오늘 할 일을 머리 속에 떠올리며 \n하루를 설계하는 사람의 모습은 \n한 송이 꽃보다 더 아름답고 싱그럽다.  \n\n사람의 가슴엔 새로운 것에 대한 \n기대와 열망이 있기 때문이며 \n반면에 그렇지 않은 사...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘 하루는 내 작은 인생이다", text }); } catch (e) {}
     } else {

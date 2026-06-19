@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음 다지기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음 다지기\n\n☆ 강해져라 - 누구도 망가뜨릴 수 없도록. \n \n☆ 독해져라 - 누구도 널 상처 따윈 줄 수 없도록. \n \n☆ 냉정해져라 - 아닌건 후회없이 짜를 수 있도록. \n \n☆ 힘을 키워라 - 힘 자랑하는 사람과 맞설 수 있도록. \n \n☆ 지혜로와져라 - 누구나 널 상대할 수 없도록. \n \n☆ 울지 마라 - 누구나 쉽게 볼 수 없도록. \n \n☆ 배워라 - 누구든 널 무식하다 할 수 없도록. \n \n☆ 맘을 넓혀라 - 진심으로 용서를 받을 수 있도록. \n \n☆ 감사하라 - 지금 누리고 있는 모든것에. \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음 다지기", text }); } catch (e) {}
     } else {

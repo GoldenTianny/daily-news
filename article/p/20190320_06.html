@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 불행을 막아주는 마법의 열쇠\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 불행을 막아주는 마법의 열쇠\n\n감사하는 마음은 불행을 막아주는 마법의 열쇠이다. \n \n감사하는 마음은 어떤 상황에 처해 있든 당신에게 행복한 순간을 선사하며 아름다운 순간을 늘려주기도 한다. \n \n또한 감사하는 마음은 당신이 슬플 때 그 '슬픔의 구명'에서 빠져나가 다시 햇빛을 볼 수 있도록 도와준다. \n \n그러므로 당신은 행복하게 만들어주는 마법의 약을 항상 '주머니'에 넣고 다니는 샘이다. \n \n하지만 대부분의 사람들이 자신의 주머니 속에 든 약의 존재를 모르고 살아간다. \n \n사람들은 외부 상황에 빨리 익숙해져 자신의 인...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "불행을 막아주는 마법의 열쇠", text }); } catch (e) {}
     } else {

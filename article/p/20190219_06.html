@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그렇게 살아가리라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그렇게 살아가리라\n\n내가 만일 삶을 다시 살 수 있다면\n쓸데없는 걱정은 덜어두고 \n행복한 고민만 하리라  \n \n단순한 일상의 즐거움을 느끼고 \n삶의 매 순간순간에 집중하리라  \n \n할 수만 있다면 빚을 지고서라도 \n여행을 가리라\n새로운 것을 겁내지 않고 \n해보고 후회하리라  \n \n사랑한다면 사랑한다고 표현하고 \n하고 싶은 말이 있으면 \n속 시원히 하고 살리라  \n \n \n내가 만일 삶을 다시 살 수 있다면\n더 많은 이들을 만나고 \n더 많은 이들을 알아가며\n사람들과의 관계 속에서 많은 것을 배우리라  \n \n포기할 것은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그렇게 살아가리라", text }); } catch (e) {}
     } else {

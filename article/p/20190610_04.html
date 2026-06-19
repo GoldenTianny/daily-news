@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 만나는 인연과 헤어지는 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 만나는 인연과 헤어지는 인연\n\n좋아하는데 헤어지면 고통이 생기고  \n미워하는데 만나도 고통이 생깁니다.  \n만나는 인연과 헤어지는 인연은 \n내 마음대로 할 수 있는 게 아닙니다.  \n\n만날 인연일 때는 \n미워함에 구애 받지 말고, \n헤어질 인연일 때는  \n사랑하는 마음에 구애 받지 말아야 합니다.  \n\n이를 위해서는 \n‘갖고 싶다’, ‘버리고 싶다’ 하는 \n그 마음을 놓아버리고   \n주어진 상황을 있는 그대로 \n받아들이면 됩니다.  \n\n하지만 우리는 항상 자기 주관을 중심으로 \n바깥을 변화시키려고 합니다. \n그런데 바깥이 내 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "만나는 인연과 헤어지는 인연", text }); } catch (e) {}
     } else {

@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나이가 들면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나이가 들면\n\n나이가 들면\n아는 게 많아질 줄 알았는데\n나이가 들면서\n알고 싶은게 많아진다  \n \n나이가 들면\n모든 게 이해될 줄 알았는데\n나이가 들면서\n이해하려 애써야 할 것들이 많아진다  \n \n나이가 들면\n무조건 어른이 되는 건 줄 알았는데\n나이가 들면서\n어른으로 보이기 위해 항상 긴장해야 한다  \n \n나이가 들면 모든게 편해질 줄 알았는데\n더 많이 공부해야 하고\n더 많이 이해해야 하고\n진정한 어른이 되기 위해 애써야 한다\n끝없이...\n끝없이...  \n \n나이가 들면서 \n짙은 향기보다는 은은한 향기가\n폭포수...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나이가 들면", text }); } catch (e) {}
     } else {

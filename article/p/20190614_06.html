@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람이 살아가는 일\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람이 살아가는 일\n\n사람이 살아가는 일\n어찌 좋을 수만 있을까요 \n \n어제 좋지 않았던 일이\n내일로 이어지지 않는다는\n보장이 없지만 \n \n그래도 역시\n맘먹기 나름인가 봅니다 \n \n좋은 일이든\n나쁜 일이든 \n \n자신의 마음에 따라\n울고 웃게 되는 거지요 \n \n오늘\n걱정되는 일이 있더라도 \n \n너무 걱정하지 마세요\n다 잘 될 거에요. \n \n- <사람이 살아가는 일> ,최유진 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람이 살아가는 일", text }); } catch (e) {}
     } else {

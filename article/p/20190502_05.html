@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나를 생각하면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나를 생각하면\n\n나는 믿는다고 하면서 의심도 합니다.\n나는 부족하다고 하면서 잘난 체도 합니다. \n \n나는 마음을 열어야 한다고 하면서 닫기도 합니다.\n나는 정직하자고 다짐하면서 꾀를 내기도 합니다. \n \n나는 떠난다고 하면서 돌아와 있고\n다시 떠날 생각을 합니다. \n \n나는 참아야 한다고 하면서\n화를 내고 시원해 합니다. \n \n나는 눈물을 흘리다가\n우스운 일을 생각하기도 합니다.\n나는 외로울수록 바쁜 척합니다. \n \n나는 같이 가자고 하면 혼자 있고 싶고\n혼자 있으라 하면 같이 가고 싶어집니다. \n \n나는 봄에...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나를 생각하면", text }); } catch (e) {}
     } else {

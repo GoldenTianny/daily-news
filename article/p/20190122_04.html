@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 마음속에 핀 사랑꽃\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 마음속에 핀 사랑꽃\n\n누구를 사랑한다는 것은\n내 삶의 기쁨과 설레임이며\n아름다운 나의 희망입니다. \n \n당신이 나를 위하여\n사랑을 하고 있다기에\n나의 마음을 비워두었습니다. \n \n그 사랑이 이 마음에\n촉촉이 스며들도록\n내 영혼과 가슴을 비워두었습니다. \n \n우리가\n어디서부터 맺어온 인연의 끈이\n이어지는 지는 알 수 없지만\n당신의 따뜻하고 아름다운 사랑이\n나에게는 처음이자 마지막\n사랑이기를 바래봅니다. \n \n아름다운 사랑은\n혼자인 사랑이기보다는\n그 사랑을 서로가 나눌 줄\n알면서 아끼는것이\n진정한 서로의 참사랑이라 생각합...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 마음속에 핀 사랑꽃", text }); } catch (e) {}
     } else {

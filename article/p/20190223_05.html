@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 웃고 있는 날이 오고 있어요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 웃고 있는 날이 오고 있어요\n\n무언가를 잃어 버렸을 땐\n생각하렴 \n \n원래부터\n내 것은 아니였다는 걸 \n \n일이 잘 안 풀릴 땐\n생각하렴 \n \n잘 되는 날도\n분명히 온다는 걸 \n \n역경을 겪고 있을 땐\n생각하렴 \n \n나만 겪고 있는\n고통이 아니라는 걸 \n \n삶이 힘들땐\n생각하렴 \n \n모든 것은\n지나가게 된다는 걸 \n \n절망에 빠졌을 땐\n기억하렴 \n \n하늘은\n네 편이라는 것을.. \n \n웃는날이\n오고 있다는 것을.. \n \n- 유지나 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "웃고 있는 날이 오고 있어요", text }); } catch (e) {}
     } else {

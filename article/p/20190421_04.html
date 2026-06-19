@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리 웃고 살아요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리 웃고 살아요\n\n오늘의 시련이 힘겨워\n절망의 나락끝으로 다다를때\n오늘이 끝이 아니라\n내일이 있다는 걸 알았으면 좋겠어요.  \n \n오늘을 참으로 잘 인내하여\n내일을 맞는다면\n어제보단 오늘이\n내일보단 그 다음날이\n놀랄 정도로 가벼워짐을\n느끼면 좋겠어요.  \n \n사람에겐\n감당하지 못할 고통을\n주시지 않는것처럼\n오늘이 힘들더라도\n내일은 덜 힘들거란 믿음으로\n우리 웃고 살아요.  \n \n그렇게 하루 하루 지나면\n인내하는 요령도 생기고\n여유있는 자신감도 생겨\n힘차게 살아 가면 좋겠어요.\n우리 웃으며 살아요\n삶의 주인공은 바로...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리 웃고 살아요", text }); } catch (e) {}
     } else {

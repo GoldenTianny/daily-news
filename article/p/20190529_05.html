@@ -126,7 +126,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 적당한 거리\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 적당한 거리\n\n너무 많은 기대가\n실망을 주고 \n\n너무 많은 관심이\n집착을 낳고 \n\n너무 많은 간섭이\n멀어지게 한다 \n\n사람과는\n적당한 거리가 필요하다 \n\n자기 합리화로 옥죄면\n상대는 서서히 지쳐간다 \n\n결국 곁에 있는 사람이 멀어진다 \n\n- <결정했어 행복하기로>中 ,조미하 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀 #좋은생각 #아침좋은글\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "적당한 거리", text }); } catch (e) {}
     } else {

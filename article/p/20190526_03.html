@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신은 소중한 사람입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신은 소중한 사람입니다\n\n몸에 난 상처에도 시간이 필요 하듯,\n삶에는\n적당한 시간이 필요한 때가 있다.  \n \n아무리 재촉해도\n발갛게 물든 은행잎은 가을에 볼수 있듯이\n항상 곁에 사랑하는 사람이 있다는 것, \n그리고\n그 사람이 나를 사랑한다는 것은\n분명 축복이다.  \n \n가끔\n하늘을 올려다 볼 수 없을 만큼 \n무너지는 절망감이 있다. \n \n지나간다.\n흘러간다.\n누구 때문이 아닌,\n나 자신에게서 찾는\n즐거움과 기대감으로 힘내세요 당신.  \n \n당신은\n이 세상에서 가장 소중한 사람이에요.\n당신은 혼자가 아니에요.\n고단하고 힘...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신은 소중한 사람입니다", text }); } catch (e) {}
     } else {

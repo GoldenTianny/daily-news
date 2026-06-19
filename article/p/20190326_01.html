@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나에게 힘을 주소서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나에게 힘을 주소서\n\n나에게 힘을 주소서.\n지치고 힘든 일에 부딪칠 때마다\n툭툭 털고 다시 일어날 힘을 주소서.\n남 탓으로 세상 탓으로 원망하지 않게 하소서.\n오로지 나의 실수로 인정하게 하소서.\n전신이 삶의 상처로 피고름이 흘러내려도\n포기하지 않게 하소서.\n지나친 집착과 헛된 욕망에 빠져\n남의 삶을 살지 않게 하소서.  \n \n나에게 힘을 주소서.\n어떤 어려움이 찾아와도\n견디고 이겨낼 수 있는\n나를 신뢰하는 믿음의 기도로\n헤쳐 나갈 수 있게 하소서.\n사랑으로 믿음으로 끌어안을 수 있게\n강한 자신감을 주소서.\n가치 없는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나에게 힘을 주소서", text }); } catch (e) {}
     } else {

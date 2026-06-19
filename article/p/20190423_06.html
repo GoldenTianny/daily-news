@@ -199,7 +199,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 힘들때 위로가 되는 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 힘들때 위로가 되는 글\n\n1. 나는 항상 많은 걱정과 고민을 하면서 살아왔다.  \n \n지금 생각해보면 일어나지도 않을 일까지 끌어다가  \n \n쓸데없는 걱정을 하느라 너무나 많은 시간을 허비한 것 같다.  \n \n \n2. 모든 이가 널 좋아할 수는 없다.  \n \n모든 사람이 너를 좋아할 수는 없다.  \n \n너도 싫어하는 사람이 있드시  \n \n누군가는 너를 이유없이 싫어할 수 있다.  \n \n그렇다고해서 네가 달라지는 것은 아니다.  \n \n그런 상황도 받아들일 수 있어야 한다.  \n \n항상 너는 너로써 당당하게 살아가야 한다. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "힘들때 위로가 되는 글", text }); } catch (e) {}
     } else {

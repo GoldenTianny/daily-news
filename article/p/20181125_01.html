@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람과 사람사이의 바램\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람과 사람사이의 바램\n\n"잘 잤냐" 는\n당신의 말 한마디가 힘이 되고,  \n \n"좋은 아침" 이라는\n당신의 말 한마디가 희망이 되고,  \n \n"즐거운 하루 되라" 는\n당신의 말 한마디가 행복의 근원이 되고,  \n \n"맛있는 점심 먹었냐" 는\n당신의 말 한마디에 에너지가 솟아나고,  \n \n"커피 한 잔 놓고 간다" 는\n친구의 말 한마디에 몰렸던 피곤은 도망가고,  \n \n"노래 한 곡 올리고 간다" 는\n당신의 말 한마디에 즐겁고 유익한 시간이 되고  \n \n"수고했다" 는\n당신의 말 한마디에 내일의 꿈을 볼 수 있고,  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람과 사람사이의 바램", text }); } catch (e) {}
     } else {

@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신이 보고 싶은 날\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신이 보고 싶은 날\n\n길을 가다 \n우연히 당신 생각이 났습니다.   \n \n꽃을 보고 예쁜 꽃만 생각했던 내가 \n꽃 앞에서 \n꽃처럼 웃던 당신 기억을 꺼내고 있습니다.   \n \n나무를 보고 \n무성한 잎을 먼저 생각했던 내가 \n나무 아래서 \n멋진 당신을 보고 싶어 하고 있습니다.   \n \n바람이 붑니다. \n바람에 지워야 할 당신 생각이 \n오히려 가슴에 \n세찬 그리움으로 불어옵니다.   \n \n하늘은 맑은 데 \n가슴에서 비가 내립니다 \n당신이 더 보고 싶게 쏟아집니다.   \n \n보고 나면 \n더 보고 싶어 고통은 있겠지만 \n한...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신이 보고 싶은 날", text }); } catch (e) {}
     } else {

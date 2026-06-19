@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신 옆에 이런 사람이 있습니까?\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신 옆에 이런 사람이 있습니까?\n\n삶이 너무나 고달파\n모든 것을 포기하려 해도 \n\n딱 한 사람\n나를 의지하는 그 사람의 삶이\n무너질 것 같아 일어나\n내일을 향해 바로 섭니다.  \n \n속은 일이 하도 많아\n이제는 모든 것을 의심하면서\n살아야겠다고 다짐하지만 \n\n딱 한 사람 나를 믿어주는\n그 사람의 얼굴이 떠올라\n그동안 쌓인 의심을 걷어 내고\n다시 모두 믿기로 합니다.  \n \n아프고 슬픈 일이 너무 많아\n눈물만 흘리면서 살아갈 것 같지만\n딱 한사람 나를 향해 웃고 있는\n그 삶의 해맑은 웃음이 떠올라\n흐르는 눈물을 닦고\n혼자 조용히 웃...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신 옆에 이런 사람이 있습니까?", text }); } catch (e) {}
     } else {

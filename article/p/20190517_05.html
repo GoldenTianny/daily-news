@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 일이 막힐때는 무조건 걸어라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 일이 막힐때는 무조건 걸어라\n\n삶에서 부딪히는 문제에 맞서는\n최고의 방법은\n잡념이 생기지 않은 몸을 만드는 것입니다. \n \n운동을 하고 나서 기분이 좋아집니다.\n몸은 날아갈 듯 가볍고,\n기분은 상쾌하고,\n에너지는 가득 차오르게 됩니다. \n \n내 몸의 상태가 좋을 때는\n어떤 문제도\n더 이상 문제로 느껴지지 않습니다. \n \n일이 막힐 때는\n무조건 걸어보세요 \n \n걷다보면\n불필요한 생각은 떨어져 나가고,\n누군가에게\n그 답을 구하지 않아도\n스스로 답을 알게 됩니다 \n \n신선한 에너지가\n몸 구석구석까지 흐르기 시작하면\n의식은 명료해지고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "일이 막힐때는 무조건 걸어라", text }); } catch (e) {}
     } else {

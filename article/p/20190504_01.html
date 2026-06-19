@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 먼저 마음을 열면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 먼저 마음을 열면\n\n우리는\n우리 스스로를 가둬 놓고 살고 있습니다.\n서로를 못 믿으니까\n마음의 문을 꼭꼭 걸어 잠그고\n스스로 감옥에 갇혀 살고 있습니다.  \n \n사랑의 눈으로 마음의 문을 열면\n세상은 더욱 넓어 보입니다.\n세상은 아름답게 보입니다.\n내가 마음의 문을 닫아 버리면\n세상은 나를 가두고 세상을 닫아 버립니다.\n내가 마음의 문을 열고 세상으로 향하면\n세상은 내게로 다가와 나를 열고 넓게 펼쳐집니다. \n \n내가 있으면 세상이 있고 내가 없으면 세상이\n없으므로 분명 세상의 주인은 그 누구도 아닌\n나 자신입니다....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 먼저 마음을 열면", text }); } catch (e) {}
     } else {

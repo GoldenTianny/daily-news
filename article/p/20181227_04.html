@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 피하면 행복해지는 15가지 습관\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 피하면 행복해지는 15가지 습관\n\n1. 남을 시기하고 질투하는 습관 \n'남 잘되는 꼴'을 못보는 사람은 절대 행복할 수 없다. 다른 사람의 행복에 공감할 수 없으면서 자신이 행복할 수는 없는 법이다. 시기와 질투는 유익하지 않은 열등감, 당신을 갉아먹을 증오를 키우는 일이다. \n\n2. 복수심, 원한 \n몇 달 전, 길게는 몇 년 전에 서운함이나 화를 아직도 가슴에 담고 있는가. 어쩌면 이런 습관은 당신 스스로를 원칙적인 사람 혹은 가볍지 않은 사람으로 느끼게 할지 모른다. 하지만 이런 습관은 당신을 약한 사람으로 만들 뿐이다. 쉽지...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "피하면 행복해지는 15가지 습관", text }); } catch (e) {}
     } else {

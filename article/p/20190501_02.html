@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나의신조\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나의신조\n\n사주팔자보다 중요한 것은 관상이요.\n관상보다 중요한 것은 수상(손금)이고\n수상보다 중요한 것은 심상(마음)이다.  \n \n젊었을 때 돈 있는 건 돈 있는 게 아니다.\n돈 버는 자랑하지 말고,\n돈 쓰는 자랑해야 할 것이며.\n간사함에 홀리지 않고,\n사랑함에 취하지 않으며,\n달면 뱉고 쓰면 삼킬 줄 아는 내가 되자.  \n \n힘들어도 티 내지 말고,\n잘나간다고 내세우지 말고,\n인생 한방이라 떠들지 말고,\n잘 될 거라 확신하지 말고,\n내 사람이라고 너무 믿지 말고,\n안 보면 그만이라고 막 대하지 말고,  \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나의신조", text }); } catch (e) {}
     } else {

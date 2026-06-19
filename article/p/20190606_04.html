@@ -172,7 +172,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생과 함께 살아야할 행복\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생과 함께 살아야할 행복\n\n생활이 궁핍하다 해도 \n여유 있는 표정을 \n짓는 사람은 행복한 사람입니다.  \n \n누가 나에게 섭섭하게 해도 \n그 동안 나에게 그가 베풀어 주었던  \n \n고마움을 생각하는 \n사람은 행복한 사람입니다.  \n \n밥을 먹다가 돌이 씹혀도\n돌보다는 밥이 많다며  \n \n껄껄껄 웃는 \n사람은 행복한 사람입니다  \n \n밥이 타거나 질어 \n아내가 미안해 할 때 누룽지도 먹고  \n \n죽도 먹는데 무슨 상관이냐며 \n대범하게 말하는 \n사람은 행복한 사람입니다.  \n \n나의 행동이 다른 이에게 \n누를 끼치지 않는가를 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생과 함께 살아야할 행복", text }); } catch (e) {}
     } else {

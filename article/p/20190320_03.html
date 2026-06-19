@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생이 한그루에 꽃 나무라면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생이 한그루에 꽃 나무라면\n\n미친 듯 사랑하며 살다가 \n그 사랑이 시들면 우정으로 살고, \n그것마저도 시들해지면 \n연민으로 살라는 말이 있지요. \n세상에 사랑처럼 좋은 것도 없지만 \n한떨기 꽃과 같아서 피었다가 \n이내 시들어 떨어지고 말아요.  \n \n사랑보다는 우정이 힘이 강하다고는 해도 \n우정의 잎새 무성하여 오래 갈듯 해도 \n시간이 지나면 시들해지기는 매한가지구요. \n꽃피고 잎새 무성할땐 보이지 않던 \n나뭇가지들이 그제야 삐죽 고개 내미는데 \n그 가지들의 이름이 바로 연민이 아닌가 싶어요.  \n \n꽃처럼 화려하지 않고 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생이 한그루에 꽃 나무라면", text }); } catch (e) {}
     } else {

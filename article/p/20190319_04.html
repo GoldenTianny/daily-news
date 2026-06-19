@@ -152,7 +152,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사는 거 그렇다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사는 거 그렇다\n\n좋은 일 있을 때 찾게 되는 친구 있고,\n슬프고 힘들 때 찾는 친구 따로 있다.   \n \n좋은 일 기쁜 일 있다고 \n막 자랑하고 싶고, 이야기하고 싶잖아.   \n \n좋은 일을 \n함께 기뻐해 주는 사람 있고,\n비꼬는 사람 있어.   \n \n슬프고 힘들 일 있을 때 \n나누면 반이 된다고 하잖아.   \n \n함께 아파해 주는 사람 있고,\n뒤에서 좋아 죽는 사람 있어.   \n \n처음엔 그랬어...\n인격이나 인성이 부족한 사람 \n악한 사람이라 비웃었어. \n인생 한 번 사는 거 \n참 비겁하게 산다 비웃었어.  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사는 거 그렇다", text }); } catch (e) {}
     } else {

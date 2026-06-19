@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리 삶에 주는 충고\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리 삶에 주는 충고\n\n충고하는 이를 미워하지 마세요.\n그 사람이 정말\n당신을 아끼는 사람일테니까요.   \n \n험담하는 이와 얘기하지 마세요.\n그 사람은 분명\n당신 험담도 하고 다닐테니까요.   \n \n칭찬하는 이는 멀리하지 마세요.\n그 사람은 필히\n당신이 배울점이 있을테니까요.   \n \n불평하는 이와 약속하지 마세요.\n그 사람은 당신이 힘들땐\n부탁을 거절할 테니까요.   \n \n삶이 바쁜 이와 절교하지 마세요.\n그 사람은 훗날\n특별한 시간을 선물할 테니까요.   \n \n돈 못버는 이를 무시하지 마세요.\n그사람이 성공해\n도움...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리 삶에 주는 충고", text }); } catch (e) {}
     } else {

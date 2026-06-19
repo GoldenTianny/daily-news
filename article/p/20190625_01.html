@@ -190,7 +190,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑하는 이, 사랑받는 이\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑하는 이, 사랑받는 이\n\n사랑하는 이의 눈가엔\n늘 보이지 않는 눈물이 고여 있습니다.\n사랑받는 이의 눈가엔\n늘 당당한 승자의 미소가 묻어 있습니다. \n \n \n사랑하는 이는\n언제나 자신이 부족하다고 자책합니다. \n \n사랑받는 이는\n자신의 어떤 면이 매력적인지 \n \n간간히 생각합니다. \n \n \n사랑하는 이는\n단 한번의 고백을 위해\n참으로 많은 시간을 준비합니다.\n사랑받는 이는\n단 한번의 고백을\n그저 잔잔히 미소 지으며 웃어 넘깁니다. \n \n \n사랑하는 이는 좋은 옷을 보면\n그 옷이 상대에게 어울리겠다고 생각합니다. \n \n사랑...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑하는 이, 사랑받는 이", text }); } catch (e) {}
     } else {

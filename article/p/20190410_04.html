@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가족을 위한 기도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가족을 위한 기도\n\n나보다 가족을 먼저 생각하는 여유를 주시고 \n서로를 아끼고 사랑하며 믿음으로 \n하나 되게 하소서.  \n \n물질적인 풍요보다 마음의 풍요가 \n소중함을 느끼게 하시고 \n이기적인 마음 때문에 \n서로에게 고통을 주지 않도록 하소서.  \n \n없는 것에 대해 불평하기보다 \n저희에게 주신 것에 대해 감사할 줄 아는 \n여유와 은총을 주소서.  \n \n교만으로부터 오는 \n자존심과 허영심을 모두 버리고 \n겸손함과 정직함으로 살아가도록 하소서.  \n \n작은 지식으로 \n다른 사람을 판단하지 않도록 하시고 \n모든 사람을 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가족을 위한 기도", text }); } catch (e) {}
     } else {

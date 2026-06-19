@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 하는 말\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 하는 말\n\n사람들은 겉으로 보이는 것을 믿는다\n또한 수군거리거나 말한다 \n \n그의 영혼이 얼마나 시무룩한지 \n그의 가슴이 얼마나 아프고 시린지 \n내 알 바 아니라고 비웃듯이 말이다 \n \n마음이 말하는 것은 무엇일까..? \n사람들이 겉으로 보이는 것을 믿을 때\n그의 눈이 무엇을 말하는지\n들여다보라고 \n \n달콤한 사탕발림에 속지말고\n귀를 열고 들어보라고 \n속삭이는 것일까...?  \n \n사람들이 바쁘게 우왕좌왕 걸어갈 때 \n나도 바삐 걸어서 휩쓸리지 말고 \n조용히 눈을 감고 \n마음의 문을 열고 높푸른 하늘을 \n날...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 하는 말", text }); } catch (e) {}
     } else {

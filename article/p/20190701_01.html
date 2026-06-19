@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 나이 가을에서야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 나이 가을에서야\n\n젊었을 적\n내 향기가 너무 짙어서\n남의 향기를 맡을 줄 몰랐습니다 \n \n내 밥그릇이 가득차서\n남의 밥그릇이 빈 줄을 몰랐습니다 \n \n사랑을 받기만 하고\n사랑에 갈한 마음이 있는 줄 몰랐습니다 \n \n세월이 지나 퇴색의 계절\n반짝 반짝 윤이나고 풍성했던\n나의 가진 것들이 바래고\n향기도 옅어 지면서\n은은히 풍겨오는 다른 이의 향기를\n맡게 되었습니다 \n \n고픈 이들의 빈 소리도\n들려옵니다 \n \n목마른 이의 갈라지고 터진 마음도\n보입니다 \n \n이제서야 보이는\n이제서야 들리는\n내 삶의 늦은 깨달음.! \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 나이 가을에서야", text }); } catch (e) {}
     } else {

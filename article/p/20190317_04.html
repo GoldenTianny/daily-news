@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 보고싶다라는 말은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 보고싶다라는 말은\n\n사랑하는 마음을 표현하는 모든 말 중에\n그 의미의 간절함을\n가장 잘 전달하는 말은 '보고 싶다' 이다.  \n \n'보고 싶다' 는 말이 입에서 나올 때는\n벌써 눈앞에 사랑하는 사람의 모습이 \n선명하게 그려져 있다.\n사랑은 우리 눈 속에 있고\n사랑이란 말은 우리 마음속에 있다.  \n \n사랑이란 말은 우리 삶 속에 있다.\n사랑은 눈으로 먼저 찾아온다.\n사랑을 하면 그리움 속에 보고 싶어진다.  \n \n이 세상에 보고 싶은 사람이 있을 때\n우리의 모습이 어떻게 달라지는가 생각 해보라.\n참으로 기쁨이 넘치고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "보고싶다라는 말은", text }); } catch (e) {}
     } else {

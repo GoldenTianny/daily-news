@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 꼭 안아주고 싶은 그리운 당신\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 꼭 안아주고 싶은 그리운 당신\n\n당신을 느낍니다.\n당신의 향기인 듯. \n당신의 숨결인 듯.\n전해오는 바람의 향기에..\n당신이 창밖으로 불어오는\n바람속에서 무척 그리운 날 입니다. \n\n멀리 있어도 마음만은 늘\n함께 하고 있기에..\n그리운 마음에 당신 얼굴을 \n虛空(허공)에 그려봅니다.  \n\n하늘에 햇님 처럼 밝게 웃으면서도..\n가끔은 어두워 보이고 외로워 보이는.. \n그래서 꼭 안아 주고픈 그리운 당신. \n\n그런 당신은 神(신)께서 주신 \n내 生(생)에 최고의 膳物(선물)입니다.\n활짝 웃음 띤 당신 얼굴에서 \n나는 보았습니다. \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "꼭 안아주고 싶은 그리운 당신", text }); } catch (e) {}
     } else {

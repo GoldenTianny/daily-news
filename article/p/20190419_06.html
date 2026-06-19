@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세월이 흘러도 여전히 좋은 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세월이 흘러도 여전히 좋은 사람\n\n어느 누가 그랬던가요. \n사랑은 주어도 주어도 끝이 없다고 \n사랑은 아낌없이 주는 거라고 설령..  \n \n하루종일 주어도 모자란 듯 싶고 \n지금 방금 주어도 금방 또 주고 싶어서 \n가슴에 미련마저 남게 하는 사람  \n \n그렇게 주어도 주어도 아깝지않은 \n사랑을 주고 싶은 이가 바로 내사람 \n당신이랍니다.  \n \n잠시도 잊을 수 없기에 그리움이 \n스며들고 그 그리움속에 숨겨진 \n멈출 수 없는 사랑이 이렇게 애타게도 \n당신만을 찾아 부른답니다.  \n \n세월이 흘러도 여전히 좋은 사람 \n내 조그마한 가...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세월이 흘러도 여전히 좋은 사람", text }); } catch (e) {}
     } else {

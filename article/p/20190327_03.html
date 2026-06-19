@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신 때문에 행복한 사람이 있습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신 때문에 행복한 사람이 있습니다\n\n힘들어 하지마세요.\n좌절하지마세요. \n두려워마세요.  \n\n당신 때문에 \n행복해 하는 사람이 있습니다.  \n\n당신 때문에 \n살맛난다고 하는 사람이 있습니다.  \n\n당신이 있어 위안이 되고 \n감사해 하는 사람이 있습니다.   \n\n당신은 귀한 존재입니다.\n나 또한 당신과\n무슨 상관이겠습니까?  \n\n그러나 당신 때문에 \n때로는 웃음 찾고 \n행복해 하고 \n당신이 주는 따뜻함으로 \n살아가는 사람도 있습니다.   \n\n사랑이 아니라면 \n당신에 대한 믿음이 아니라면 \n이 모든 것을 \n나 역시 느끼지 못했을 것입니...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신 때문에 행복한 사람이 있습니다", text }); } catch (e) {}
     } else {

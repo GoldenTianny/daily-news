@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구에게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구에게\n\n우리 오랜 친구로 남아 있자. \n어떻게 변할지 모르는 인생, 지금 앞 서거니 뒤 서거니 계산하지 않는 \n그저 옆에 있어 주는 것 만으로도 위로가 되는 친구로 남아 있자.  \n \n도움이 되지는 못해도 누가 되지 않는 가까이 살지는 못해도 일이 있을 때 \n한 달음에 달려와 주는 허물없이 두 팔로 안을 수 있는 친구로 남아 있자.  \n \n우리가 함께한 추억이 세상 사는 기억으로 옅어질지라도 서로 만나면 \n밤늦도록 옛 추억 거리로 진한 향기 풍기는 라일락 같은 친구로 남아 있자. \n \n어찌 친구라 해서 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구에게", text }); } catch (e) {}
     } else {

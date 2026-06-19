@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 이런게 인연이지 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 이런게 인연이지 싶습니다\n\n살다보면 만나지는 인연중에\n참 닮았다고 여겨지는 사람이 있습니다\n영혼이라는 게 있다면 비슷하다 \n싶은 그런 사람이 있습니다 \n\n한 번을 보면 다 알아버리는 그 사람과\n속마음과 감추려는 아픔과 절망까지 \n다 보여지는 사람이 있습니다 \n\n아마도 전생에 무언가 하나로 엮어진게\n틀림이 없어 보이는 그런 사람이 있나봅니다 \n\n깜짝 깜짝 놀랍기도 하고\n화들짝 반갑기도 하고 \n어럼풋이 가슴에 메이기도 한\n그런 인연이 살다가 보면 만나지나 봅니다 \n\n겉으로 보여지는 것보단 속내가 더 닮은\n그래서 더 마음이 가고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "이런게 인연이지 싶습니다", text }); } catch (e) {}
     } else {

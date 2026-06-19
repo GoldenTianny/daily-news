@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람의 관계\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람의 관계\n\n사람의 관계는\n우연은 1% 노력은 99%입니다.  \n \n아무리 좋은 인연도\n서로의 노력 없이는 오래갈 수 없고  \n \n아무리 나쁜 인연도\n서로가 노력하면 좋은 인연이 됩니다.  \n \n모든 인연이 좋은 인연이 될 수 있게\n서로를 이해하고 배려할 줄 알아야합니다.  \n \n타인보다 내가 먼저\n좋은 사람이 되어주고\n고마운 사람이 되어주세요.  \n \n진실한 사람이 되어주고\n따뜻한 사람이 되어주세요.  \n \n착한 이별을 하고\n그리운 사람으로 남아\n오래도록 기억되는 사람이 되세요.  \n \n- 유지나 - \n\n....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람의 관계", text }); } catch (e) {}
     } else {

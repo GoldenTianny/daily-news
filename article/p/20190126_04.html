@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 자존심\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 자존심\n\n사람의 마음은 양파와 같습니다.\n마음속에 가진 것이라고는 자존심밖에 없으면서,\n뭔가 대단한 것을 가진 것처럼 큰소리를 칩니다.\n그리고 그 자존심을 지키기 위해\n고집부리고,\n불평하고,\n화내고,\n싸우고 다툽니다.\n그러나 마음의 꺼풀을 다 벗겨내면\n남는 것은 아무것도 없습니다. \n \n사람이 자존심을 버릴 나이가 되면\n공허함과 허무밖에 남지 않습니다.\n그리고 그 하나 하나를 벗겨내는 데는\n많은 시간과 아픔이 따릅니다.\n사람이 세상에 나올 때는 자존심 없이 태어납니다.\n그러나 세상을 살면서 반평생은\n자존심...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "자존심", text }); } catch (e) {}
     } else {

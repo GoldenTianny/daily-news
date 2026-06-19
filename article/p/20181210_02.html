@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리 서로 기쁜 사람이 되자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리 서로 기쁜 사람이 되자\n\n우리가 삶에 지쳤을 때나 \n무너지고 싶을 때 \n말없이 마주 보는 것만으로도 \n서로 마음 든든한 사람이 되고  \n \n때때로 힘겨운 인생의 무게로 하여 \n속 마음마져 막막할 때 \n우리 서로 위안이 되는 \n그런 사람이 되자.  \n \n누군가 사랑에는 조건이 따른다지만 \n우리의 바램은 지극히 작은 것이게 하고\n그리하여 더 주고 \n덜 받음에 섭섭해 말며  \n \n문득문득 스치고 지나가는 \n먼 회상 속에서도 \n우리 서로 기억마다 \n반가운 사람이 되자. \n \n어느날 불현듯 지쳐 \n쓰러질 것만 같은 시간에 \n우리 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리 서로 기쁜 사람이 되자", text }); } catch (e) {}
     } else {

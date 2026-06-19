@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생의 3가지 후회\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생의 3가지 후회\n\n사람은 죽을 때가 되면 \n지내온 일생을 회고하며 세 가지를 후회한다고 한다. \n\n첫째는,\n베풀지 못한 것에 대한 후회"라고한다. \n\n가난하게 산 사람이든 \n부유하게 산 사람이든 죽을 때가 되면 \n"좀 더 주면서살 수 있었는데..." \n\n이렇게 긁어모으고,움켜쥐어 봐도 별 것 아니었는데\n왜 좀 더 나누어주지 못했고 베풀며살지 못했을까? \n참 어리석게 살았구나.\n이런 생각이 자꾸 나서 이것이 가장 큰 후회란다. \n\n둘째는,\n참지 못한 것에 대한 후회"라고 한다. \n그때 내가 조금만 더 참았더라면 좋았...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생의 3가지 후회", text }); } catch (e) {}
     } else {

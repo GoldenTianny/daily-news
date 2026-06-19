@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음의 휴식이 필요할 때\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음의 휴식이 필요할 때\n\n삶에 대한 가치관들이 우뚝 서 있는 나날들에도\n때로는 흔들릴 때가 있습니다. \n \n가슴에 품어온 이루고픈 깊은 소망들을 때로는\n포기하고 싶을 때가 있습니다. \n \n긍정적으로 맑은 생각으로\n하루를 살다가도 때로는 모든 것들이\n부정적으로 보일 때가 있습니다. \n \n완벽을 추구하며 세심하게 살피는 나날 중에도\n때로는 건성으로 지나치고 싶을 때가 있습니다. \n \n정직함과 곧고 바름을 강조하면서도\n때로는 양심에 걸리는 행동을 할 때가 있습니다. \n \n포근한 햇살이 곳곳에\n퍼져있는 어느 날에도 마음에서는\n심...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음의 휴식이 필요할 때", text }); } catch (e) {}
     } else {

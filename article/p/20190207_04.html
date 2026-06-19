@@ -210,7 +210,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행운을 끌어당기는 방법 31가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행운을 끌어당기는 방법 31가지\n\n행운은 행복을 끌고 다니고\n불운은 불행을 끌고 다닌다.\n\n행운과 불운은 따로 있는 것이 아니라\n동전의 앞뒷면처럼 함께 있는 것이다. \n \n하나: 아침에 일어나면\n“모든것에 고맙습니다.” 하고\n큰 소리로 외쳐라.\n좋은 아침이 좋은 하루를 만든다. \n \n둘: 거울을 보며 활짝 웃어라.\n거울 속의 사람도 나를 보고 웃는다. \n \n셋: 가슴을 펴고 당당히 걸어라.\n비실비실 걷지 말라. \n \n넷: 사촌이 땅을 사면 기뻐하라.\n사촌이 잘되어야 나도 잘되게 마련이다. \n \n다섯: 마음 밭에 사랑을 심어라.\n그...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행운을 끌어당기는 방법 31가지", text }); } catch (e) {}
     } else {

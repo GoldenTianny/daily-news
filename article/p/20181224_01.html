@@ -128,7 +128,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 슬픈 건\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 슬픈 건\n\n내가 슬픈 건\n가는 세월을 못 잡아서가 아니라\n있는 시간도 못 쓰는 탓이다 \n\n내가 슬픈 건\n가슴 뛰는 설렘을 못 느껴서가 아니라\n어느새 무덤덤해진 탓이다 \n\n내가 슬픈 건\n펄떡이는 청춘이 그리워서가 아니라\n열정이 조금씩 사라지는 탓이다 \n\n내가 슬픈 건\n가진게 적어서가 아니라\n가진 것에 감사하지 못하는 탓이다 \n\n내가 슬픈 건\n마음만 바꾸면 행복한 줄 알면서도\n아프고 절망하며 사는 탓이다 \n\n- <결정했어 행복하기로>中 ,조미하 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 슬픈 건", text }); } catch (e) {}
     } else {

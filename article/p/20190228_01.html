@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 서로가 다르다는 것을 인정할 때\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 서로가 다르다는 것을 인정할 때\n\n자신의 생각이나 신념을 밝히는 일은\n다른 사람들과 함께 살아가기 위해서\n꼭 필요한 일입니다. \n \n그러나 내 신념을 다른 사람들에게\n강요하는 것은 옳지 않습니다.  \n \n만약 가까이 지내던 사람들과의 관계가\n소원해졌다면 자신도 모르게 상대에게\n뭔가를 강요하는 버릇이 있지 않은지\n생각해봐야 합니다.  \n \n남의 의견을 받아들이지 않고\n자기주장이 지나치게 강한 사람을\n옆에 두려고 하지 않는 것은,\n자신의 신념과 생각이 그 사람으로부터\n비평받고 함부로 평가되는 데서 오는\n불쾌감 때문입니다.  \n \n내 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "서로가 다르다는 것을 인정할 때", text }); } catch (e) {}
     } else {

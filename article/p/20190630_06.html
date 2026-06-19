@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모든 일이 잘 풀릴 것입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모든 일이 잘 풀릴 것입니다\n\n지금 나에게 실망을 주는 이 일로 인하여\n앞으로는 모든 일이 잘 풀릴 것입니다.\n오늘의 실패가 있기에\n나는 지금 일상에서 안주하지 않고\n내일에 대한 열정을 품고 열심히 살아가고 있으니까요. \n \n지금 나에게 고통을 주는 이 일로 인하여\n앞으로는 모든 일이 잘 풀릴 것입니다.\n지금 힘겨운 고통을 이겨내고 있으니\n앞으로 나에게 작은 평화라도 찾아오면\n그것을 큰 기쁨으로 삼고\n감사의 생활을 할 수 있을 테니까요. \n \n지금 내가 당하는 손해로 인하여\n앞으로 모든 일이 잘 풀릴 것입니다.\n지금의 작은 손...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모든 일이 잘 풀릴 것입니다", text }); } catch (e) {}
     } else {

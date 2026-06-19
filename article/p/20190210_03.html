@@ -210,7 +210,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아무것도 아닌것처럼\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아무것도 아닌것처럼\n\n그래도 해라.\n아무것도 아닌 것처럼  \n \n오늘은 슬피 울어도\n내일은\n기쁨이 찾아올지도 모른다  \n \n오늘은 분노로 가득 차나\n내일은\n소리내어 크게 웃을지도 모른다  \n \n오늘이\n인생의 마지막인 것처럼 허무해도,\n내일은 희망이\n푸른 날개를 퍼득이며\n찾아 올지도 모른다  \n \n아무것도 아닌 것처럼  \n \n오늘은 내 주머니가\n비록 초라하지만\n내일은 가득 찰지도 모른다  \n \n오늘은\n날 알아주는 이가 없어도\n내일은\n날 찾아주는 사람들로\n차고 넘칠지도 모른다  \n \n아무것도 아닌 것처럼  \n \n당신이 하...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아무것도 아닌것처럼", text }); } catch (e) {}
     } else {

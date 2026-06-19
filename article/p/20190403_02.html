@@ -125,7 +125,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신에게 좋은 일이 생길 겁니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신에게 좋은 일이 생길 겁니다\n\n어떤 사람이 화장실을 갔답니다. 하루를 살면서 가장 많이 가는 곳 중 한 장소… 우연히 눈을 들어 보니,앞에 짧막한 글귀가 조그마한 메모지에 적혀 있더랍니다.  \n \n‘당신에게 오늘 기쁜 일이 일어날 것이다.’  \n \n더도 덜도 아닌 그 한 마디… 피식 웃고 나왔는데 이상하게도, 그 한 줄의 글귀가 계속 기억에 남더랍니다. 웬지 정말로 자신에게 좋은 일이 생길 것 같은 이상한 느낌.  \n \n그 날은 매우 상쾌한 기분으로 하루를 보내고 집으로 돌아오는 길에 또다시 그 글귀가 생각나더랍니다. 집으로 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신에게 좋은 일이 생길 겁니다", text }); } catch (e) {}
     } else {

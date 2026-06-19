@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살면서 배울 인생의 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살면서 배울 인생의 지혜\n\n웃음소리가 나는 집에는 \n행복이 와서 들여다보고, \n고함소리가 나는 집에는 \n불행이 와서 들여다본다.  \n \n받는 기쁨은 짧고 주는 기쁨은 길다. \n늘 기쁘게 사는 사람은 \n주는 기쁨을 가진 사람이다.  \n \n어떤 이는 가난과 싸우고 \n어떤 이는 재물과 싸운다. \n가난과 싸워 이기는 사람은 많으나 \n재물과 싸워 이기는 사람은 적다.  \n \n넘어지지 않고 달리는 사람에게 \n사람들은 박수를 보내지 않는다. \n넘어졌다 일어나 다시 달리는 사람에게 \n사람들은 박수를 보낸다.  \n \n느낌없는 책 읽으나 마...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살면서 배울 인생의 지혜", text }); } catch (e) {}
     } else {

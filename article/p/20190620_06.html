@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 언제 이렇게 정이 들었을까\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 언제 이렇게 정이 들었을까\n\n정이 들었다는 건 \n서로를 생각하는 \n시간이 많아진다는 것 \n지금쯤 무얼할까? \n표정은 어떨까?   \n \n정이 들었다는 건 \n목소리 하나로 \n느낌을 알수 있다는 것   \n \n한껏 마음이 부풀어 있는지 \n기분이 우울해 있는지   \n \n언제 이렇게 정이 들었는지   \n \n깊은 정이 들었다는 건 \n서로를 걱정하는 \n시간이 많아진다는 것   \n \n아프지는 않을까 \n괴로움에 지치지는 않았을까.  \n \n깊은 정이 들었다는 건 \n나보다 당신이 \n행복했으면 좋겠다는 것   \n \n당신의 아픔이 \n나를 아프게 하고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "언제 이렇게 정이 들었을까", text }); } catch (e) {}
     } else {

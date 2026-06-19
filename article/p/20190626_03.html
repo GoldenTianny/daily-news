@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 찾지 말고 되자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 찾지 말고 되자\n\n좋은 친구를 찾지 말고\n좋은 친구가 되자  \n \n좋은 사람을 찾지 말고\n좋은 사람이 되자  \n \n좋은 조건을 찾지 말고\n좋은 조건이 되는 사람이 되자  \n \n좋은 사랑을 찾지 말고\n좋은 사랑을 주는 사람이 되자  \n \n좋은 하루가 되길 바라지 말고\n좋은 하루를 만들자  \n \n행복해지기를 바라지 말고\n행복해 하자  \n \n털어봐\n아프지 않는 사람있나  \n \n꾹짜봐\n슬프지 않는 사람있나  \n \n찾아봐\n힘들지 않는 사람 있나  \n \n건드려봐\n눈물 나지 않는 사람있나  \n \n물어봐\n사연없는 사람있나  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "찾지 말고 되자", text }); } catch (e) {}
     } else {

@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너무 욕심 부리지 말자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너무 욕심 부리지 말자\n\n욕심이 과하면 마음이 다친다.\n내 꺼 아닌 것에 욕심 내지 말자.\n소유하려는 생각 때문에 마음도 몸도 힘들어 하니까 그냥 놓아주자.  \n\n돈에 대한 욕심도,\n사랑에 대한 갈망도,\n갖고 싶은 물건들도 결국은 내면에서의 채워지지 않는\n마음에서 나오는 공허한 마음 때문이다.  \n\n소유하려는 욕심을 내려놓고,\n내 마음을 차곡차곡 채우는 연습을 하자. \n\n마음이 채워지면 조금 더 타인들 앞에 당당해지고\n스스로도 만족함을 느끼기 때문에\n소유욕에 대한 욕심이 조금은 줄어들 수 있다.  \n\n욕심은 채워도 채워도...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너무 욕심 부리지 말자", text }); } catch (e) {}
     } else {

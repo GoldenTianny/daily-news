@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 향기로운 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 향기로운 마음\n\n그 고운 얼굴 찌푸리지 마요.  \n \n머언 훗날 \n거울에 비칠 \n얼굴을 상상해 보세요  \n \n그 고운 입술로 험담 하지 마요.  \n \n시기심, 질투심의 말은 \n가시 돋친 꽃은 피우고  \n \n상냥하고\n부드러운 말은\n향기로운 꽃을 피어요.  \n \n부정적인 말로\n기운 빼지 마요.  \n \n긍정적인 말은 샛별보다\n빛나고 가슴엔 희망의 별이 뜬답니다.  \n \n따뜻한 말 한마디는 \n상처 입은 \n마음을 어루만져 주고\n살아갈 용기를 주기도 해요.  \n \n진심 어린 말 한마디는 \n누군가에게는 \n기쁨이 되고 행복이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "향기로운 마음", text }); } catch (e) {}
     } else {

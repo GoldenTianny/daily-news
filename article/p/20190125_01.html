@@ -176,7 +176,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생의 진실\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생의 진실\n\n젊어서는 재력이 있어야 살기가 편안하나,\n늙어서는 건강이 있어야 살기가 편안하다. \n\n젊어서는 재력을 쌓느라고 건강을 해치고,\n늙어서는 재력을 허물어 건강을 지키려한다. \n\n재산이 많을수록 죽는 것이 더욱 억울하고,\n인물이 좋을수록 늙는 것이 더욱 억울하다. \n\n재산이 많다 해도 죽으며 가져갈 방도는 없고,\n인물이 좋다 해도 죽어서 안 썩을 도리는 없다. \n\n노인학 교수도 제 늙음은 깊이 생각해 보지 못하고,\n호스피스 간병인도 제 죽음은 깊이 생각하지 않는다. \n\n옆에 미인이 앉으면 노인이라도 좋...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생의 진실", text }); } catch (e) {}
     } else {

@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 참으로 소중하기에\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 참으로 소중하기에\n\n우리는 대부분\n가족들 앞에서 너무 쉽게 화를 낸다.\n남들 앞에서는 침 한번 꿀꺽 삼키고\n참을 수도 있는 문제를\n가족이라는 이유로\n못 참아 하는 일이 얼마나 많은가?  \n \n서로 허물없다는 이유 때문에\n부담을 갖지 않아도 되는\n편한 관계라는 핑계로\n발가벗은 감정을 폭발시키는 경우가\n얼마나 흔한가?  \n \n하지만 그 어떤 경우라도 뜨거운\n불은 화살을 남기게 마련이다.\n불을 지른 쪽은 멀쩡할 수 있지만\n불길에 휩싸인 쪽은\n크건 작건 상처를 입을 수 밖에 없다.  \n \n게다가 불길에 가장 가까이 있는\n사...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "참으로 소중하기에", text }); } catch (e) {}
     } else {

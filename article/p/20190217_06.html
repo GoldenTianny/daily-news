@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 비우고 버리는 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 비우고 버리는 마음\n\n비우고 버리는 일은\n결코 소극적인 삶이 아니라 합니다.\n그것은 지혜로운 삶의 선택이라 합니다. \n \n비우고 버리지 않고서는\n새로운 것이 들어설 수가 없는 것일 테지요.\n일상의 소용돌이에서 한 생각 돌이켜\n선뜻 버리고 떠날 수 있는 용기 그것은\n새로운 삶의 출발로 이어질 수 있을 것입니다. \n \n미련 없이 자신을 떨치고\n때가 되면 푸르게 푸르게\n잎을 틔우는 나무를 보십시오. \n \n찌들고 지쳐서 뒷걸음치는\n일상의 삶에서 자유함을 얻으려면\n부단히 자신을 비우고 버릴 수 있는\n그런 결단과 용기가 있어야\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "비우고 버리는 마음", text }); } catch (e) {}
     } else {

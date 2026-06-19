@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘은 참 보고 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘은 참 보고 싶습니다\n\n오늘은 잘 있었냐구\n그동안 별일 없었냐구\n안부가 그리워\n다가가 묻고 싶은 한 사람 \n \n그저 다녀간 흔적조차\n그립다 말하고 싶어\n수줍은 그리움으로  \n \n머뭇거리는 마음은 \n그림자처럼 스쳐가는 발걸음속에\n전하고 싶은 간절한 안부 \n \n내가 궁금하지도 않았냐구\n보고 싶지도 않았냐구 \n \n그동안 가슴에 심어진\n그리움 한 조각 잘 크고 있냐고 \n묻고 싶은 한 사람  \n \n마주함이 있어 행복함이 아닌\n그저 바라봄으로 웃을 수 있는\n세상에서 느끼는 외로움 지울 수 있고  \n \n아픔으로 넘어졌던 마음\n당신으...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘은 참 보고 싶습니다", text }); } catch (e) {}
     } else {

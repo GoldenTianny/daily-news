@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 물처럼 사랑하고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 물처럼 사랑하고 싶다\n\n내 고운 사람아, \n당신을 물처럼 사랑하고 싶다. \n당신이 네모이면 네모의 사랑으로 \n당신이 둥글면 둥근 사랑으로 \n그저 당신의 마음따라 사랑하고 싶다. \n\n내 고운 사람아, \n물은 다툼이 없다. \n흐르다 돌이 있으면 비켜가고 \n길 따라 오직 한 곳으로 흘러만 간다. \n내 마음도 그런 마음이다. \n\n당신이 오라는 곳으로 당신이 숨 쉬는 곳으로. \n내 한 몸 당신을 향해 오직 사랑 하나만으로 \n유유히 흘러만 가고 싶구나. \n\n내 고운 사랑아, \n흐르다 흘러 바다인 당신의 가슴에 \n나의 마지막 종착지...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "물처럼 사랑하고 싶다", text }); } catch (e) {}
     } else {

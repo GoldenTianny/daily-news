@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 잠시 쉼표가 주는 여유\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 잠시 쉼표가 주는 여유\n\n아름다운 음악을 들으면서도 \n소리만 들릴 뿐 \n마음에 감동이 흐르지 않는다면 \n지금은 쉴 때입니다.  \n\n방글방글 웃고 있는 아기를 보고도 \n마음이 밝아지지 않는다면 \n지금은 쉴 때입니다. \n\n식구들 얼굴을 마주보고도 \n살짝 웃어 주지 못한다면 \n지금은 쉴 때입니다.  \n\n아침에 눈을 떴을 때 창문을 비추는 \n아침 햇살이 눈부시게 느껴지지 않는다면 \n지금은 쉴 때입니다.  \n\n오랜만에 걸려온 친구의 전화를 받고 \n"바쁘다"는 말만 하고 끊었다면 \n지금은 쉴 때입니다.  \n\n아름다운 음악을 들으면서...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "잠시 쉼표가 주는 여유", text }); } catch (e) {}
     } else {

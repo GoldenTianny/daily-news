@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 비워 내는 연습\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 비워 내는 연습\n\n많이 담는다고 해서 \n마음이 넉넉해지는 것은 아닙니다.  \n \n아무리 담고 채운다고 해도 넓은 마음이\n한없이 풍족해지는 것도 아닙니다.  \n \n그저 비워 내는 것이 \n담아두는 것보다 편할 때가 있습니다.  \n \n봄의 파릇함을 담아 두고 싶다고 해서 \n여름이 오지 않는 것도 아니며, \n가을의 낭만을 한없이 즐기고 싶다 해서 \n가슴 시린 겨울이 오지 않는 것도 아닙니다.  \n \n그저 오는 대로 담아 두지 말고 \n흘려보내면 됩니다.  \n \n사랑 만을 담아 두고 싶다고 해서 \n이별의 슬픔을 피할 수 있는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "비워 내는 연습", text }); } catch (e) {}
     } else {

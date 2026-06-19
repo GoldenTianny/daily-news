@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 함께 한다는 것\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 함께 한다는 것\n\n사람은 곁에서 누군가가 함께 있어야 \n심신이 건강해지는 존재다  \n \n함께 밥을 먹든지 얘기하든지, 잠자든지  \n \n이게 안되면 자주 아프고 서글퍼져 \n몸과 마음에 구멍이 생긴다  \n \n서로 목표나 생각이 조금씩 달라도 \n나 혼자가 아니구나 하는 위로가 필요하다  \n \n그렇게 함께 함으로써 \n마음에 쌓인 고단함이 사라진다  \n \n누군가를 만났고 알았다는 기쁨이야말로 \n가치 있는 사람의 감정이요  \n \n상처받기 쉬운 세상으로부터 벗어날 \n가장 따뜻한 삶의 순간이겠지  \n \n인생은 짧고 우리 여행 동...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "함께 한다는 것", text }); } catch (e) {}
     } else {

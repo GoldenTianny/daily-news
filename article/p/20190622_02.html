@@ -201,7 +201,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한번만 참으면 됩니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한번만 참으면 됩니다\n\n세상에는 해야 할 일과 해서는 \n안 되는 일들이 있습니다.  \n \n그런데 안타깝게도 해야 할 일들은 \n재미없고 ,힘들고, 지겹습니다.  \n \n그와 반대로 해서는 안 되는 일들의 \n대부분은 재미있고 흥미진진합니다.  \n \n철없는 사람은 해야 할 일보다 해서는 \n안 되는 일들을 선택하는 사람입니다. \n그는 재미있고 즐거운 일만을 하려고 합니다.  \n \n질서 없이, 순간의 필요에 따라 \n우왕좌왕하며 사는 것이 \n철없는 아이들의 특징입니다.  \n \n그러나 인생의 경력이 쌓이기 시작하면 \n재미없는 일을 스...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한번만 참으면 됩니다", text }); } catch (e) {}
     } else {

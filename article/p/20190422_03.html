@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한잔의 술처럼 마실 수 있다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한잔의 술처럼 마실 수 있다면\n\n한잔의 술처럼 마실 수 있다면 \n그대 그리움을 마시고 싶다  \n \n한잔의 술을 마셔 달래질 그리움이라면 \n밤새도록 취해도 좋겠다  \n \n취하지 않고는 이밤도 보낼 수가 없을만큼 \n그대가 보고 싶다  \n \n힘든 내삶에 비틀거리고\n그대 그리움에 비틀거릴바엔 \n밤새도록 술이라도 마시고 싶다  \n \n기억 한자락이라도 놓치지 않으려고 \n흐트러지지 않았는데\n오늘은 술이라도 마시고 싶다  \n \n내 모든것을 다 주어도 아깝지 않을 그대였는데 \n남은건 그리움뿐이다  \n \n곁에 있어 좋았고 흔적만으로도 반가웠는데 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한잔의 술처럼 마실 수 있다면", text }); } catch (e) {}
     } else {

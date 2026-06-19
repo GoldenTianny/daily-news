@@ -188,7 +188,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 인연인\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 인연인\n\n좋은 인연인 \n당신을 만나 행복합니다   \n\n우리가 \n어떠한 모습으로\n어떠한 인연인지는 몰라도   \n\n이렇게 좋은 하루속에\n함께 할수있음에 \n감사한 마음을 가져봅니다   \n\n좋은 마음 나누며 \n웃을수 있다면 더이상의 \n생각들은 않기로 합니다   \n\n늘 좋은날  \n행복하기를 바라는 마음속에   \n \n당신에게 전해질 \n간절한 마음으로 바랄뿐  \n \n이글이 당신에 마음에 \n작은 힘 이되고 위안이 된다면 \n저는 너무 행복하겠습니다   \n\n세월이 흐르면 \n우리도 기억속에 잊혀지겠지요   \n\n하지만 그 기억...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 인연인", text }); } catch (e) {}
     } else {

@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음에 두지 마라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음에 두지 마라\n\n마음에 담아두지 마라\n흐르는것은 흘러가게 놔둬라.\n바람도 담아두면 나를 흔들때가 있고,\n햇살도 담아두면 \n마음을 새까맣게 태울때가 있다  \n \n아무리 영롱한 이슬도 \n마음에 담으면 눈물이 되고,\n아무리 이쁜 사랑도 \n지나가고 나면 상처가 되니 \n그냥 흘러가게 놔둬라...  \n \n마음에 가두지마라 \n출렁이는 것은 반짝이면서 흐르게 놔둬라.\n물도 가두면 넘칠때가 있고,\n빗물도 가두면 소리내어 넘칠때가 있다.  \n \n아무리 즐거운 노래도\n혼자서 부르면 눈물이 되고,\n아무리 향기로운 꽃밭도 \n시들고나면 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음에 두지 마라", text }); } catch (e) {}
     } else {

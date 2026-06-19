@@ -206,7 +206,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 후회없이 살다 갑시다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 후회없이 살다 갑시다\n\n이성의 벽이 허물어지고 \n가는시간 가는순서 다 없어지니   \n \n남녀 구분없이 부담없는 좋은 친구 만나 \n산이 부르면 산으로 가고 \n바다가 손짓하면 바다로 가고   \n \n하고 싶은 취미생활 마음껏 다 하며\n남은 인생 후회없이 즐겁게 살다 갑시다.  \n \n한 많은 이세상 어느날 갑자기 \n소리없이 훌쩍 떠날적에 돈도 명예도 \n사랑도 미움도 가져갈 것 하나 없는 빈 손이요,   \n \n동행해 줄 사람 하나 없으니 \n자식들 뒷바라지 하느라 다 쓰고 \n쥐꼬리 만큼 남은 돈 있으면 \n자신을 위해 아낌없이 다 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "후회없이 살다 갑시다", text }); } catch (e) {}
     } else {

@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너는 너 자체로 소중한 사람이야\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너는 너 자체로 소중한 사람이야\n\n누군가 나를 인정하지 않는다고 해도\n나 자신은 여전히 완전한 빛이고\n여전히 완전한 사랑이라는 것은\n항상 변함 없어요  \n \n하지만 누군가에게\n인정받기 위해 무언가를 하고\n인정받지 못해 실망하는 우리..  \n \n혹시 지금 누군가 인정해주지 않는다고\n용기를 잃고 주저하고 있나요?  \n \n하지만 알아둬요\n밖에서 무엇이 어떻게 변하든\n우리는 완전한 빛이고 완전한 사랑인데\n우리가 그것을 몰랐을 뿐이고\n우리의 마음은\n지금까지 너무나 힘들었다는 것  \n \n많이 힘들고 많이 아프죠?\n많이 지치고 많이 실망했죠?...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너는 너 자체로 소중한 사람이야", text }); } catch (e) {}
     } else {

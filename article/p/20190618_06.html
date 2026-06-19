@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내게 이런 삶을 살게 하여 주소서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내게 이런 삶을 살게 하여 주소서\n\n연약할 때 자기를 알고\n힘을 기를 줄 아는 여유와\n두려울 때 자신을 잃지 않는 대담성과\n정직한 패배에 부끄러워하지 않고 태연하며\n승리에 겸손하고 온유한 마음을 갖게 하여 주소서.  \n \n사리를 판단할 때 고집으로 인하여\n판단을 흐리지 않게 하고\n생각하고 이해하여 사심이 없는 판단을 하며\n또한 평탄하고 안이한 길만이 삶의 전부라\n생각하지 말게 하고\n고난에 직면할 때 분투노력할 줄 알며\n패자를 관용할 줄 알도록 가르쳐 주소서.  \n \n마음을 항상 깨끗이 하고\n목표는 높이 설정하되\n남을 정복하려고 하기...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내게 이런 삶을 살게 하여 주소서", text }); } catch (e) {}
     } else {

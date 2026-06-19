@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑을 위한 7가지 필수 비타민\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑을 위한 7가지 필수 비타민\n\n1. Accept (인정하다. 받아들이다.)\n상대방을 고치려 들지 말고 있는 그대로 받아들이라는 뜻입니다.\n나와 다르다고 억지로 고치려 들다가는 \n오히려 관계를 그르치기 쉬우므로 \n있는 그대로를 인정하는 자세가 필요합니다.\n서로 다른 것을 인정할 때 비로소 같은 방향을 바라 볼 수 있습니다.  \n \n둘째. Believe (믿다.)\n사랑은, 믿음이라는 비타민을 먹고 큽니다. \n반면, 의심은 의심을 먹고 자꾸 커갑니다.\n믿음이 없는 사랑의 지속은 한계가 분명히 있으며 \n아름다울 수 있는 인연을 불행과...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑을 위한 7가지 필수 비타민", text }); } catch (e) {}
     } else {

@@ -128,7 +128,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 눈물 흘려도 돼\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 눈물 흘려도 돼\n\n비 좀 맞으믄 어때\n햇볕에 옷 말리믄 되지 \n \n길 가다 넘어지믄 어때\n다시 일어나 걸어가믄 되지 \n \n사랑하는 사람 떠나면 좀 어때\n가슴 좀 아프면 되지 \n \n살아가는게 좀 슬프면 어때\n눈물 좀 흘리면 되지 \n \n눈물 좀 흘리면 좀 어때\n어차피 울며 태어났잖아 \n \n기쁠 때는 좀 활짝 웃어\n슬플 때는 좀 실컷 울어 \n \n누가 뭐라 하면 어때\n누가 뭐라해도 내 인생이잖아 \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "눈물 흘려도 돼", text }); } catch (e) {}
     } else {

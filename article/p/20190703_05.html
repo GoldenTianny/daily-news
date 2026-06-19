@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 진정한 인연과 스쳐가는 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 진정한 인연과 스쳐가는 인연\n\n함부로 인연을 맺지마라...\n진정한 인연과\n스쳐가는 인연은\n구분을 해서 인연을 맺어야 한다...  \n \n진정한 인연이라면\n최선을 다해서\n좋은인연을 맺도록 노력하고\n스쳐가는 인연이라면\n무심코 지나쳐 버려야 한다...  \n \n그것을 구분하지 못하고\n만나는 모든 사람들과\n헤프게 인연을 맺어 놓으면\n쓸만한 인연을 만나지 못하는 대신에\n어설픈 인연을 만나게 되어\n그들에 의해 삶이 침해되는 고통을 받아야 한다  \n \n인연을 맺음에 너무 헤퍼서는 안된다\n옷깃을 한번 스친 사람들까지\n인연을 맺으려고 하는 것은\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "진정한 인연과 스쳐가는 인연", text }); } catch (e) {}
     } else {

@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 놓고 싶지 않은 아름다운 손\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 놓고 싶지 않은 아름다운 손\n\n힘들고 지쳐 있을 때\n잡아주는 손이 있다면\n얼마나 행복 할까요. \n\n슬프고 외로울 때\n흘리는 눈물을 닦아주는 손\n얼마나 큰 위로가 될까요. \n\n사랑하고 싶을 때\n양어깨를 잡아주는 손\n얼마나 포근할까요. \n\n쓸쓸히 걷는 인생길에\n조용히 다가와 잡아주는 손\n얼마나 따뜻할까요. \n\n사랑하는 사람의 손이 닿기만해도\n마술에 걸린 듯 전율이 흘러서\n더 잡고 싶은 고운 손. \n\n당신의 손이 있기에\n영원히 놓고 싶지 않은 아름다운\n당신의 손 입니다. \n\n- <참 좋은 당신을 만났습니다>中 ,송정림 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "놓고 싶지 않은 아름다운 손", text }); } catch (e) {}
     } else {

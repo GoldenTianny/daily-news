@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사소한 순간들이 따가울 때가 있다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사소한 순간들이 따가울 때가 있다\n\n이제는 굳이 \n새로운 사람을 알기 위해 애쓰지 않는다. \n\n누군가 내 이름을 \n제대로 기억하지 못해도 \n별로 개의치 않는다.\n이런 게 나이 드는 걸까. \n\n싫은 사람이 늘어날수록 \n그 앞에서 웃는 척 \n상황을 무마하는 내 자신도 싫어진다. \n\n'사회생활'이라는 이름으로 \n걸치고 있는 거적대기.\n나는 아량이 넓지도 않고, \n나조차도 아직 받아들이지 못한 \n내 한계점을 누군가 굳이 짚어주는 게 \n그리 유쾌하지 않다. \n\n사소한 순간들이 따가울 때가 있다.\n하지 않아도 좋았을 말을 했을 때가 그렇다.\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사소한 순간들이 따가울 때가 있다", text }); } catch (e) {}
     } else {

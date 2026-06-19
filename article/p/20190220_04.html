@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 하루의 시작\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 하루의 시작\n\n소리는 눈으로 보이지 않습니다.\n소리는 냄새로 알 수도 없습니다.\n소리는 손으로 만져볼 수도 없습니다.\n소리는 혀로 맛볼 수도 없습니다.  \n \n소리는 오직 귀로만 들을 수 있습니다.\n그래서 사랑하는 사람의 목소리는 \n눈을 감고 들어야 잘 들립니다.  \n \n이 아침, \n사랑하는 사람에게\n목소리를 전해보시면 어떨는지요.  \n \n향기는 코로 맛볼 수 있습니다.\n향기는 만지거나 눈으로 보는 것이\n아니기 때문입니다.  \n \n향기는 혀로 맛볼 수도 없습니다.\n향기는 촉감 없이\n눈을 감고 코로만 느껴야 \n제...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 하루의 시작", text }); } catch (e) {}
     } else {

@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 각인각심\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 각인각심\n\n오동나무는 천년을 묵어도 그 속에 노래를 지니고 있고, \n매화는 평생 추위와 살아도 향기를 팔지 않고, \n달빛은 천 번 이즈러져도 원래 모양은 남아 있고,  \n \n버드나무 줄기는 백 번 찢어내도 \n또 새로운 가지가 난답니다.  \n \n \n이렇듯 사람도 누구나 그사람만이 지니고 있는 \n마음씨가 있습니다.  \n \n없으면서도 남을 도우려고 하는 사람,\n자기도 바쁘지만 순서를 양보하는 사람, \n어떠한 어려움도 꿋꿋하게 이겨 내는 사람, \n어려울 때 보기만 해도 위로가 되는 사람,  \n \n어려움을 함께 해결...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "각인각심", text }); } catch (e) {}
     } else {

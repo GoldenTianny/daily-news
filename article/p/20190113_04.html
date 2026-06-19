@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 멋지게 나이 드는 법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 멋지게 나이 드는 법\n\n01. 우리 안에 잠든 힘을 깨워라\n02. 마음의 문을 열어라\n03. 인생을 즐겨라\n04. 스스로에게 관대하라\n05. 인생의 목표를 찾아라 \n06. 스스로의 미래를 만들어라\n07. 열정을 발견하라\n08. 긍정이 최선이다\n09. 기쁨의 자취를 남겨라\n10. 베풀어라 \n\n11. 마음 깊이 너그러워져라\n12. 아이들을 놓아 주어라\n13. 매력을 발산하라\n14. 받아들이는 태도를 결정하라\n15. 자신만의 길을 걸어라 \n16. 흐름에 몸을 맡겨라\n17. 내면의 소리에 귀를 기울여라\n18. 거리를 두어라\n1...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "멋지게 나이 드는 법", text }); } catch (e) {}
     } else {

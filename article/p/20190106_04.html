@@ -121,7 +121,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 시련이 없는 인생\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 시련이 없는 인생\n\n시련이 없는 인생은 향기 없는 꽃과 같습니다. 같은 꽃이지만 온실에서 자란 꽃보다 거친 들에서 자란 꽃이 더 향기롭습니다. 그 이유는 거친 들에서 자란 꽃이 온실에서 자란 꽃보다 더 혹독한 시련을 견뎌냈기 때문이지요. \n\n또 시련 속에는 어떤 것도 꺾지 못하는 절실함이 깃들려 있습니다. 사람도 마찬가지입니다. \n\n아무런 불편 없이 자란 사람보다 힘겨운 고난과 시련 속에서 자란 사람의 의지가 더 강합니다. 이런 사람에게는 시련을 이겨내야 할 분명한 이유와 꿈이 있기 때문이지요. \n\n살아가야 할 이유...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "시련이 없는 인생", text }); } catch (e) {}
     } else {

@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 주자의 후회 10가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 주자의 후회 10가지\n\n1, 不孝父母, 死後悔 불효부모 사후회\n一.부모에게 효도하지 않으면, 돌아가신 후에 뉘우친다. \n\n2, 不親家族, 疎後悔 불친가족 소후회\n一.가족에게 친절히 하지 않으면, 멀어진 뒤에 뉘우친다. \n\n3, 少不勤學, 老後悔 소불근학 노후회\n一.젊을 때 부지런히 배우지 않으면, 늙어서 뉘우친다. \n\n4, 安不思難, 敗後悔 안불사난 패후회\n一.편안할 때 어려움을 생각하지 않으면, 실패한 뒤에 후회한다. \n\n5, 富不儉用, 貧後悔 부불검용 빈후회\n一.부유할 때 아껴쓰지 않으면, 가난하게된 후 후회한다. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "주자의 후회 10가지", text }); } catch (e) {}
     } else {

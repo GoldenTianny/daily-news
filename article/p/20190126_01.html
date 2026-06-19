@@ -199,7 +199,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나를 위한 지혜의 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나를 위한 지혜의 글\n\n복은 \n검소함에서 생기고\n(福生於淸儉)  \n \n덕은 \n자신을 낮추고\n물러나는데서 생기며\n(德生於卑退)  \n \n지혜는 \n고요히 생각하는데서\n생긴다.\n(道生於安靜)  \n \n근심은 \n욕심이 많은데서 \n생기고\n(患生於多慾)   \n \n재앙은 \n탐하는 마음이 \n많은데서 생기며\n(禍生於多貪)  \n \n허물은 \n잘난 체하고 \n남을 하찮게 여기는데서\n생기고\n(過生於輕慢)  \n \n죄악은 \n어질지 못하는데서 \n생긴다.\n(罪生於不仁)  \n \n눈을 조심하여 \n남의 잘못된 점을 보지 말고\n(戒眼莫看他非)  \n \n입조심하여 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나를 위한 지혜의 글", text }); } catch (e) {}
     } else {

@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말투는 내용을 담는 그릇이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말투는 내용을 담는 그릇이다\n\n같은 말도 듣기 싫게 말하는 사람이 있다. 어투가 퉁명스럽거나 거친 용어를 사용하거나 목소리가 유난히 공격적일 때 그런 느낌을 준다. 그러나 말투가 좋지 않으면 말하는 사람의 의도와 전혀 다른 의미로 변질된다. \n \n당신의 좋은 말도 퉁명스러운 말투로 하면 그말을 듣는 사람은 나한테 화난것일까?라고 크게 오해할 수 있다. 당신의 거친 말투는 당신의 의도와 다르게 나를 겁주려는 것일까?라는 메시지로 변하기 때문이다. \n \n말이란 내용만 의미를 갖는것이 아니라 말하는 방법도 의미를 갖는다. 따라서 당...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말투는 내용을 담는 그릇이다", text }); } catch (e) {}
     } else {

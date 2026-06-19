@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아픈 손가락을 드러내지 마라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아픈 손가락을 드러내지 마라\n\n당신이 아픈 손가락을 \n먼저 나서서 드러내는 순간 \n모두가 그곳을 찌를 것이다. \n아프다고 하소연하는 버릇을 버려라.  \n \n악의는 늘 약한 곳을 노리며 \n아픈 곳만 찾아 돌아다닌다.  \n \n그리고 그 아픈 부위를 찌를 시도를 \n수천, 수만 번 반복한다.  \n \n때문에 신중한 사람은 결코 \n자신의 상처를 쉽게 드러내지 않으며, \n개인적인 불행을 여기저기 발설하지도 않는다.  \n \n때로는 운명조차도 당신의 가장 아픈 \n상처를 찔러대며 즐거움을 느낀다.  \n \n그러니 아픈 것도, \n기쁜 것도 쉽게 드...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아픈 손가락을 드러내지 마라", text }); } catch (e) {}
     } else {

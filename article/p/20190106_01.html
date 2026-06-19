@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생은 나를 찾아 가는 일\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생은 나를 찾아 가는 일\n\n삶이란 \n참으로 복잡하고 아슬아슬합니다.\n걱정이 없는 날이 없고\n부족함을 느끼지 않는 날이 없으니까요 \n \n어느 것 하나 결정하거나 \n결심하는 것도 쉽지 않습니다.\n내일을 알 수 없어 늘 흔들리기 때문이지요. \n \n말로는 쉽게 \n"행복하다", "기쁘다"고 하지만,\n누구에게나 힘든 일은 있기 마련입니다. \n \n얼마만큼 행복하고\n어느 정도 기쁘게 살아가고 있는지\n알 수는 없지만, 그저 모두들 바쁩니다. \n \n나이 들고 건강을 잃으면\n"아! 이게 아닌데..."하는 생각을 하게 될 터인데,,\n왜 그렇게 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생은 나를 찾아 가는 일", text }); } catch (e) {}
     } else {

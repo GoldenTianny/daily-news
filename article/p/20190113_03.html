@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복이란\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복이란\n\n행복은 작습니다.\n거창하고 큰 것에서 찾지 마세요.\n멀리 힘들게 헤매지 마세요.\n비록 작지만, 항상 당신 눈앞에 있답니다. \n\n행복은 이기적입니다.\n자신을 돌보는 사람만이 가질 수 있습니다.\n남의 시선 따위는 무시해 버려요.\n스스로 행복하지 않으면\n아무도 도울 수 없답니다. \n\n행복은 연습입니다.\n그냥 주어지는 행운의 습관이 아닙니다.\n부지런히 노력하고 연습해야\n얻을 수 있는 열매입니다.\n가는 길은 만 갈래지만 방법은 하나랍니다. \n\n행복은 투자입니다.\n미래가 아닌 현재를 위해 남김없이 투자하세요...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복이란", text }); } catch (e) {}
     } else {

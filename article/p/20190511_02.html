@@ -186,7 +186,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나이와 상관없이 해야하는 16가지 도전\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나이와 상관없이 해야하는 16가지 도전\n\n1. 웃어라.\n한국사람은 웃음에 대해 무지하다. \n왜 유머에 관련된 글이나 TV프로를 보면 웃으면서 \n사람을 만나면 저승사자가 되나.  \n \n2. 칭찬하라.\n처음에는 아부성이나 미친 사람 취급받을 수도 있다. \n한국 사회가 개개인에게 칭찬 한마디만 해도 \n우리나라 국민 소득은 3만불 아니 4만불도 쉽게 될 것이다.  \n \n3. 사랑하라.\n남부터 사랑하지 말고 본인부터 사랑하라. \n사랑 받기 위해 태어난 사람이라는 가사는 \n본인을 두고 하는 말이 아닌가 본다.  \n \n4. 책을 읽어라.\n적어도 책에...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나이와 상관없이 해야하는 16가지 도전", text }); } catch (e) {}
     } else {

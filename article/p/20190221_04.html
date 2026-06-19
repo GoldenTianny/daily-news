@@ -208,7 +208,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 덕담의 기적\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 덕담의 기적\n\n오늘은\n어제 사용한 말의 결실이고\n내일은\n오늘 사용한 말의 열매다.  \n \n내가 할말의 95%가\n나에게 영양을 미친다.  \n \n말은 뇌세포를 변화시킨다.\n말버릇을 고치면 운명도 변한다.  \n \n호수에 돌을 던지면\n파문이 일듯\n말의 파장이\n운명을 결정짓는다. \n \n아침에 첫마디는 중요하다.\n밝고 신나는 말로\n하루를 열어라.  \n \n말에는\n각인효과(刻印效果)가 있다.\n같은 말 반복하면 그대로 된다.  \n \n자나 깨나\n"감사 합니다"를\n반복한 말기암 환자가\n한순간 암세포가 사라졌다.  \n \n밝은 음색(...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "덕담의 기적", text }); } catch (e) {}
     } else {

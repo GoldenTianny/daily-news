@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살아있는 행복\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살아있는 행복\n\n인생을 너무 잘살아야겠다고 생각하면\n지금의 인생이 초라해집니다. \n \n인생은 그냥 길가에 풀 한포기가 나서\n사는 것과 같습니다. \n \n아침에 눈을 뜨면 ‘오늘도 살았네!’\n한 번씩만 외쳐 보세요.\n살았다는 느낌보다 \n인간에게 더 좋은 에너지를 주는 것은\n없습니다. \n \n인생에 너무 많은 의미를 두지 마세요.\n항상 현재에 살아야 합니다.\n현재에 가장 중요한 것은\n지금 살아있다는 것입니다. \n \n불행한 이유들을 만들어서\n움켜쥐고 있지 말고, 놓아버리고 \n살아있는 행복을 누리시면 좋겠습니다. \n\n- 법...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살아있는 행복", text }); } catch (e) {}
     } else {

@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋은 사람에게 있는 8가지 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋은 사람에게 있는 8가지 마음\n\n1. 향기로운 마음. \n \n향기로운 마음은 남을 위해 기도하는 마음입니다.\n나비에게, 벌에게, 바람에게,\n자기의 달콤함을 내주는 꽃처럼\n소중함과 아름다움을 베풀어 주는 마음입니다. \n \n \n2. 여유로운 마음. \n \n여유로운 마음은 풍요로움이 선사하는 평화입니다.\n바람과 구름이 평화롭게 머물도록\n끝없이 드넓어 넉넉한 하늘처럼\n비어 있어 가득 채울 수 있는 자유입니다. \n \n \n3. 사랑하는 마음. \n \n사랑하는 마음은 존재에 대한 나와의 약속입니다.\n끊어지지 않는 믿음의 날실에\n이해라는 구슬을 꿰...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋은 사람에게 있는 8가지 마음", text }); } catch (e) {}
     } else {

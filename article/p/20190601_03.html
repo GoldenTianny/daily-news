@@ -162,7 +162,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리 마음에 꼭 필요한 9가지 열매\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리 마음에 꼭 필요한 9가지 열매\n\n1. 사랑의 열매\n- 겸손하고 섬기는 마음\n- 자기 이익만 생각 아니하는 마음\n- 덮어 주고 감싸는 마음\n- 시기 질투하지 아니하는 진리를 기뻐하는 마음  \n \n2. 희락의 열매\n- 항상 기뻐하는 마음\n- 매사에 감사하고 만족감을 느끼는 마음\n- 매사에 긍정하는 마음\n- 좋은 것과 아름다움을 추구하고 창조하는 마음  \n \n3. 화평의 열매\n- 모든 사람과 평화하는 마음\n- 내가 옳다 하더라도 상대에 맞추는 마음\n- 모든 사람의 이익을 쫒아 은혜를 가지는 마음\n- 상대방에게 불편을 주지않는 융통성있...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리 마음에 꼭 필요한 9가지 열매", text }); } catch (e) {}
     } else {

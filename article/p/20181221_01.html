@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 물 흐르는 대로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 물 흐르는 대로\n\n물 흐르는 대로라는 말이 좋습니다 \n\n인연이 있을 때는 함께하고\n인연이 끝나면 떠납니다 \n\n사람만 아니라\n모든 것이 그렇습니다 \n\n원하든\n원하지 않든\n어김없이 계절이 오고 가는 것처럼 \n\n못 입고 못 먹고 장만했던 집도\n청춘 바쳤던 일터도\n눈에 아른거리도록 예뻐 샀던 가방도\n정성을 쏟았던 화분도\n인연이 끝나면 덤덤해지고 \n마음에서 떠납니다 \n\n아쉬움에 억지로 잡지 마세요\n마음만 뒤숭숭합니다 \n\n가벼이 여기며\n물 흐르듯 받아들이세요 \n\n- <결정했어 행복하기로>  ,조미하 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "물 흐르는 대로", text }); } catch (e) {}
     } else {

@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그냥\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그냥\n\n당신은 '그냥'이란 말은 의미를 아시나요?\n그냥이란 말 속에는 수천, 수만개의 \n간절한 그리움들이 숨겨져 있답니다. \n\n네가 그립다.\n네가 보고 싶다.\n네가 걱정된다.\n너랑 말하고 싶다.\n너와 함께 하고 싶다.\n너의 손을 잡고 싶다.\n너랑 놀고 싶다.\n너를 사랑한다.\n나 지금 힘들다\n나의 마음을 알아줘라\n나 외롭다.\n나 눈물 난다.\n나 네가 필요하다... \n\n그냥,\n그냥은 그냥이 아닙니다.\n당신을 부르는 애달픈 목소리입니다. \n\n'그냥'이라는 말을 그냥 흘러 버리지않길.. \n\n- <잘 지내고 있다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그냥", text }); } catch (e) {}
     } else {

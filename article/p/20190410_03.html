@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생을 바꾸고 싶다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생을 바꾸고 싶다면\n\n인생을 바꾸고 싶다면 \n세 가지 버릇을 바꿔라.  \n \n첫째는 마음 버릇이다. \n부정적인 생각은 버리고 \n항상 긍정적으로 생각하라.  \n \n둘째는 말 버릇이다. \n비난과 불평은 삼가고 \n칭찬과 감사를 입버릇으로 만들어라.  \n \n셋째는 몸 버릇이다. \n찌푸린 얼굴보다는 활짝 웃는 사람, \n맥없는 사람보다는 \n당당한 사람이 성공한다.  \n \n운명을 바꾸고 싶다면 \n독서와 교육, 그리고 훈련을 통해 \n마음 버릇, 말 버릇, 몸 버릇을 바꿔라.  \n \n성공도 버릇이요, 실패도 버릇이다.  \n \n- <비...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생을 바꾸고 싶다면", text }); } catch (e) {}
     } else {

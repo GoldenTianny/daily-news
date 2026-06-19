@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 배려가 아름다운 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 배려가 아름다운 사람\n\n나의 자유가 소중하듯이\n남의 자유도 나의 자유와 똑같이\n존중해주는 사람.  \n \n남이 실수를 저질렀을 때\n자기 자신이 실수를 저질렀을 때의\n기억을 떠올리며 그 실수를\n감싸주는 사람.  \n \n남이 나의 생각과 관점에 \n맞지 않는다고 해서\n옳지 않은 사람이라\n단정짓지 않는 사람.  \n \n나의 사랑이 소중하고 아름답듯\n남의 사랑이 아무리 작아 보일지라도\n그 역시 아름답고 값진 것임을 \n잘 아는 사람.  \n \n잘못을 저질렀을 때는\n너 때문에 라는 변명보다\n내 탓이야 라며\n멋쩍게 뒤통수를 긁을 줄 아는 사...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "배려가 아름다운 사람", text }); } catch (e) {}
     } else {

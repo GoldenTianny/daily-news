@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 겸손의 향기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 겸손의 향기\n\n매일 우리가 하는 말은\n역겨운 냄새가 아닌\n향기로운 말로\n향기로운 여운을 남기게 하소서..  \n \n우리의 모든 말들이\n이웃의 가슴에 꽂히는\n기쁨의 꽃이 되고,\n평화의 노래가 되어 \n세상이 조금씩 더 밝아지게 하소서..  \n \n누구에게도 도움이 될 리 없는\n험담과 헛된 소문을 실어나르지 않는\n깨끗한 마음으로\n깨끗한 말을 하게 하소서..  \n \n나보다 먼저\n상대방의 입장을 헤아리는\n사랑의 마음으로\n사랑의 말을 하게 하시고  \n \n남의 나쁜 점보다는\n좋은 점을 먼저 보는\n긍정적인 마음으로\n긍정적인 말을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "겸손의 향기", text }); } catch (e) {}
     } else {

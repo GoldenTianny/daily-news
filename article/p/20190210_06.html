@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신이 나때문에 행복했으면 좋겠습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신이 나때문에 행복했으면 좋겠습니다\n\n나로 인해\n작은 미소라도 지을 수 있었으면 좋겠습니다 \n \n설령 살아가는데\n큰 의미는 아닐지 언정\n한 가닥 연한\n즐거움이라도 되었으면 좋겠습니다 \n \n비오는 밤 창가에서\n빗줄기 너머\n희미한 안개 도시를 바라 보며 \n \n행여\n삶이 지치고 외롭다고 느끼실 때\n잠시나마 나를 기억해 주시고\n그 시름을 잊을 수만 있다면\n정말 좋겠습니다 \n \n누군가를 향한\n그리움으로 서성이던 당신 마음이\n내곁으로 와 준다면\n나 그대를 위해\n따뜻한 차 한잔을 준비 하겠습니다 \n \n언제부터인가 당신 가슴에\n희미한 안개처럼 쌓인...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신이 나때문에 행복했으면 좋겠습니다", text }); } catch (e) {}
     } else {

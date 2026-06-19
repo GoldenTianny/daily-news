@@ -169,7 +169,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름답게 늙는 지혜 아르테미스\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름답게 늙는 지혜 아르테미스\n\n혼자 지내는 버릇을 키우자.\n남이 나를 보살펴 주기를 기대하지 말자.\n남이 무엇인가 해 줄 것을 기대하지 말자.\n무슨 일이든 자기 힘으로 하자.\n죽는 날까지 일꺼리가 있다는 것을 최고의 행복이라 생각하자.  \n \n젋었을 때 보다 더 많이 움직이자.\n늙으면 시간이 많으니 항상 운동하자.\n당황하지 말고, 성급해 하지 말고, 뛰지 말자.\n체력, 기억력이 왕성하다고 뽐내지 말자.\n일찍 자고 일찍 일어나는 버릇을 기르자. \n \n나의 괴로움이 제일 크다고 생각하지 말자.\n편한 것 찾지 말고 외로움을 만들지 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름답게 늙는 지혜 아르테미스", text }); } catch (e) {}
     } else {

@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 울지마라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 울지마라\n\n아무렇지 않은 척하며 살고 있지만\n사실은 삶이 버겁고 \n\n겉으로는 웃고 있지만\n속으로는 늘 울고 있는 \n\n옛 과거의 나쁜 기억에서 발목을 잡혀\n매일매일 괴로워 신음하고 있는\n하루에도 몇 번씩 죽고 싶다고 생각하는 너에게 \n\n그렇게 특별하다 믿었던 자신이\n평범은 커녕 아예 무능력하다고 느끼는 순간이 있고 \n\n쳐다보는 것 만으로도 설레이던 이성으로부터 \n지루함을 느끼는 순간이 있고 \n\n분신이듯 잘 맞던 친구로부터 \n정이 뚝 떨어지는 순간이 있고 \n\n소름 돋던 노래가 지겨워지는 순간이 있고 \n\n자기가 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "울지마라", text }); } catch (e) {}
     } else {

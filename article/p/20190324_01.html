@@ -176,7 +176,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너무 힘들게 살지 마십시오\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너무 힘들게 살지 마십시오\n\n아무리 힘들어도 오늘은 갑니다\n아무리 힘들어도 또 내일은 옵니다\n너무 힘들게 살지 마십시오\n밤이 지나면 새벽이 오듯 모든 것은 변해갑니다\n오늘도 지구촌 어느 곳에는 지진이 일어나고\n재난으로 많은 사람이 죽었답니다\n단 하루도 예측하지 못하는 것이 우리들의 삶입니다.  \n \n너무 힘들게 살지 마십시오\n너무 근심하지 마십시오\n늘 슬픈 날도 없습니다\n늘 기쁜 날도 없습니다\n하늘도 흐리다가 맑고 맑다가도 바람이 붑니다\n때로는 길이 보이다가도 없고\n없다가도 다시 열리는 것이 인생입니다  \n \n당장은 어렵다고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너무 힘들게 살지 마십시오", text }); } catch (e) {}
     } else {

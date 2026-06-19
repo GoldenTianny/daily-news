@@ -190,7 +190,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 남자의 마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 남자의 마음\n\n어느날 아내가 남편한테 물었다.  \n \n"여보 내 잘못한걸 알면서 왜 자꾸 나한테 져줍니까?"  \n \n그러자 남편이 이렇게 대답했다.  \n \n" 당신은 내사람이요.\n내가당신과 싸워 이겨서 뭐하겠소?  \n \n내가 당신과싸워 이기면 당신을 잃는것이고\n당신을 잃으면 진것과 마찬가지요 "  \n \n그렇다.  \n \n남자들은  \n \n사장님과 싸워서 이기면\n한차례 직장을 잃고  \n \n고객과 싸워서 이기면\n한차례 돈 벌 기회를 잃겠지만  \n \n아내와 싸워서 이기면\n사람을 잃고 자식을 외롭게 한다.  \n \n \n아내...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "남자의 마음", text }); } catch (e) {}
     } else {

@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 먼저 손 내밀게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 먼저 손 내밀게\n\n"나" 라는 존재일때는 \n고민할 필요도 노력할 필요도 급하지 않다 \n나에 맞추면 되니까  \n\n그런데 \n"너"라는 존재를 더하면 \n문제는 반전으로 달라지게 된다  \n\n나에게 너를 맞추느냐... \n너에게 나를 맞추느냐... \n하지만 답은 없다 \n나든 \n너든 \n둘중 하나가 비우지 않는한 \n둘중 하나가 배려하지 않는한 \n둘중 하나가 이해하지 않는한 \n둘중 하나가 포용하지 않는한 \n둘중 하나가 용서하지 않는한  \n\n"너와나" \n우리가 되는거...\n오늘은 나먼저 너에게 손을 내밀어본다  \n\n나에게 너를 입히...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 먼저 손 내밀게", text }); } catch (e) {}
     } else {

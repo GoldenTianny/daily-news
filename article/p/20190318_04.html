@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생 이렇게 살아라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생 이렇게 살아라\n\n'웃으며 살아라'  \n \n고달픈 인생\n오죽하면 태어날 때 울기부터 했을까마는\n양껏 벌어도 먹는 건 세끼요\n기껏 살아도 백 년은 꿈인 것을\n못산다고 슬퍼 말고 못났다고 비관마라  \n \n재물이 늘어나면 근심도\n늘어나고\n지위가 높아지면 외로움도\n더하는 법  \n \n부자 중에 제일은 마음 편한 부자요\n자리 중에 제일은 마음 비운 자리이다  \n \n하늘이 무너질 걱정도\n하늘의 몫이지 사람의 몫이\n아닐 테니...  \n \n웃으며 살아라  \n \n맘껏 웃으며 살아라  \n \n웃어야 복이 오고\n웃어야 건강 하다.  \n ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생 이렇게 살아라", text }); } catch (e) {}
     } else {

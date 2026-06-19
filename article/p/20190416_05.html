@@ -166,7 +166,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 운을 불러오는 49가지 말\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 운을 불러오는 49가지 말\n\n1 ‘감사할 줄 아는 사람’에게 운이 찾아온다.\n2 운이 좋은 사람은 감사 답변도 빠르다.\n3 운이 좋은 사람은 자신의 미래를 예언한다. \n4 직감으로 움직이면 운도 따라 움직인다.\n5 기분 좋게 져주면 운이 좋아진다.  \n \n6 여행 등을 많이 다니는 사람에게 운이 따른다.\n7 운이 좋은 멘토에게 붙어라. \n8 ‘슬픈 과거’를 ‘운이 좋은 과거’로 바꾼다.\n9 행복을 준 사람이 많을수록 운은 좋아진다.\n10 ‘한턱내는 것’만으로도 운이 좋아진다.  \n \n11 기쁜 선물은 모두를 행복하게 한다.\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "운을 불러오는 49가지 말", text }); } catch (e) {}
     } else {

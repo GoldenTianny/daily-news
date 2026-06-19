@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나이가 들수록 가장 어려운일은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나이가 들수록 가장 어려운일은\n\n누군가를 사랑해버리는 일.\n어딘가로 갑자기 떠나버리는 일.\n오래 지니고 있던 물건을 버리는 일… \n\n나이 들수록 하기 어려운 것들입니다. \n\n그중 가장 어려운 일은\n친구를 사귀는 일입니다. \n\n살아갈수록\n사랑이라는 말보다는\n우정이라는 단어가 더 미덥습니다. \n\n우정은 뜨겁다기보다는 더운 것.\n그래서 금방 식어버리는 게 아니라\n은근히 뭉근히 오래가는 것. \n\n인생에서 가장 어렵고 중요한 건\n아무래도\n그런 사람을 얻는 일 같습니다. \n\n서로 마음이 통하는 친한 친구를\n‘지음’이라고 하죠. \n\n자신의 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나이가 들수록 가장 어려운일은", text }); } catch (e) {}
     } else {

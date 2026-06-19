@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나의 오늘 주문(呪文) 7가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나의 오늘 주문(呪文) 7가지\n\n1. 걱정하지 말자.\n두려움은 길을 밝히는 등불을 가리고, 실수와 절망의 도랑에서 헤어 나올 수 없게 한다. 이제 이 두려움의 질곡에서 벗어나야 한다. 걱정한다고 달라지는 것은 없다. 삶의 모든 도전들을 당당하고 의연하게 이겨 내야 한다. \n \n2. 나는 부자가 될 수 있다.\n소득은 내가 기대했던 곳과 기대하지 못했던 곳에서 온다. 나가는 돈보다는 들어오는 돈이 더 많다. 나는 내 삶을 책임지고 있으며, 현명하게 돈을 관리한다. 나는 일을 하고, 저축과 투자를 하며, 나와 다른 사람들을 위해 약간...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나의 오늘 주문(呪文) 7가지", text }); } catch (e) {}
     } else {

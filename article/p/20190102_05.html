@@ -148,7 +148,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연을 지키는 법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연을 지키는 법\n\n1. 존중하라 \n상대가 어떤 사람이든 그 사람을 \n고유의 인격체로서 존중해주어야 마음을 열 수 있다. \n아주 어린 아이조차도 자신을 존중하는지 아닌지를 \n100% 직감할 수 있다. \n하물며 성인은 어떻겠는가 \n\n2. 입장을 바꿔라 \n무엇이든 나의 마음을 전달하기 전에 \n그 사람이 어떻게 받아들일까를 먼저 생각해야 한다.\n그러면 그 사람이 원하는 것과 \n내가 주고자 하는 것을 일치시킬 수 있다. \n\n3. 꾸준한 관심을 가져라 \n일회성 관심은 무관심보다 서글프다. \n잠깐 신경쓰다가 이내 무심한 것은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연을 지키는 법", text }); } catch (e) {}
     } else {

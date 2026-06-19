@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인간관계에서 상처를 치유하는 방법\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인간관계에서 상처를 치유하는 방법\n\n인간관계에서 상처를 치유하는 \n첫 번째 방법은 ‘있는 그대로를 받아들이는 것’이다.  \n \n사람들이 나를 만나 인사를 안 할 수도 있고, \n내 욕을 할 수도 있고, \n날 싫어할 수도 있고, \n내가 최선을 다했음을 못 알아줄 수도 있고, \n오히려 비웃을 수도 있다는 것.  \n \n나아가 내가 좋아하는 사람도 그 사람의 사정에 따라 \n그를 만나고 싶은 순간에 못 만날 수도 있고, \n그에게 나보다 더 급하고 중요한 일이 생길 수도 있고, \n그러면 잠깐 내 존재를 소홀히 여기거나 \n잊어버릴 수 있다는 것을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인간관계에서 상처를 치유하는 방법", text }); } catch (e) {}
     } else {

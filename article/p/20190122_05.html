@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘만이 내 삶의 전부\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘만이 내 삶의 전부\n\n오늘이 있어\n감사함을 알게 하고, \n \n희망이 있어\n내일을 바라보고 싶습니다. \n \n하루라는 짧은 시간\n헛되게 보내지 말고, \n \n한가지라도 분명히\n해내는 내가 되고 싶습니다. \n \n모자람을\n채우는 내일이 있어, \n \n조급함을 버리고\n조금 실수를 하더라도, \n \n천천히 생각하는 느긋한\n마음으로 살고 싶습니다. \n \n오늘은\n시간을 어찌보낼까 보다는 \n \n할 일을\n미리 찾아 알찬 시간으로 \n \n오늘\n할일을 될 수 있으면, \n \n내일로 미루지 않는\n노력하는 삶을 살고 싶습니다. \n \n시작을 했으면\n마무...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘만이 내 삶의 전부", text }); } catch (e) {}
     } else {

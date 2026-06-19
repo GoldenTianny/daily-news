@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 벗이 있다면\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 벗이 있다면\n\n길이 멀어도\n찾아갈 벗이 있다면\n얼마나 좋으랴! \n\n문득 만나고픔에\n기별 없이 찾아가도\n가슴을 가득 채우는\n정겨움으로 맞이해주고 \n\n이런저런 사는 속내를\n밤새워 나눌 수 있다면\n정말 행복한 인생이지 않겠는가? \n\n부부간이라도 살다 보면\n털어놓을 수 없는 일이 있고\n피를 나눈 형제간이라도\n말못할 형편도 있는데 \n\n함께하는 술잔만으로도\n속마음이 이미 통하고\n무슨말이 더 필요하랴 \n\n마주함에 내 심정을\n벌써 아는 벗이 있었으면 좋겠다. \n\n좋을 때 성할 때\n이런저런 친구 많았어도\n힘들고 어려우면\n등 돌...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "벗이 있다면", text }); } catch (e) {}
     } else {

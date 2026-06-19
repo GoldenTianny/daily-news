@@ -152,7 +152,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모든 것을 다 버리고 떠나갈 인생\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모든 것을 다 버리고 떠나갈 인생\n\n언제 떠나는지 서로 몰라도 \n가다보면 서로 만나 웃기도 하고 \n울기도 하고 \n애절한 사연 서로 나누다 \n갈랫길 돌아서면, \n어차피 헤어질 사람들...  \n\n왜 그리 못난 자존심으로 \n용서하지 못하고 이해하지 못하고 \n비판하고 미워했는지...  \n\n사랑하며 살아도 너무 짧은 시간 \n베풀어 주고 또 줘도 남는 것들인데 \n웬 욕심으로 무거운 짐만 지고 가는 \n고달픈 나그네 신세인가...   \n\n그 날이 오면 다 벗고 갈 텐데...\n무거운 물질의 옷도, \n화려한 명예의 옷도, \n자랑스런 고운 모습도,\n더...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모든 것을 다 버리고 떠나갈 인생", text }); } catch (e) {}
     } else {

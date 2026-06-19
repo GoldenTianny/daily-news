@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 예쁜 하루\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 예쁜 하루\n\n사람을 좋아하고,\n만남을 그리워하며,\n작은 책 갈피에 끼워 놓은\n예쁜 사연을 사랑하고, \n\n살아있어 숨소리에 감사하며,\n커다란 머그잔에 담긴 커피 향처럼\n향기로운 아침이 행복합니다. \n\n어디서 끝이 날지 모르는\n여정의 길에,\n이야기 할수 있는\n사람이 있어서 좋고,\n말이 통하고 생각이 같고,\n눈빛 하나로 마음을 읽어주는\n좋은 친구가 있어\n행복합니다. \n\n녹슬어가는 인생에,\n사랑받는 축복으로\n고마운 사람들과 함께하는\n음악처럼, 흐르는 하루가 \n\n아침을 볼 수 있어 행복하고\n꿈이 있어 행복하고\n사랑을 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "예쁜 하루", text }); } catch (e) {}
     } else {

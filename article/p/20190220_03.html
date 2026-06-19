@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음의 원을 그리다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음의 원을 그리다\n\n사랑함에 있어 사랑하는 \n이의 허물까지 사랑하게 하옵소서  \n \n천만번의 영겁속에 맺어진 인연\n헛되이 여기지 않도록 하여주시옵고  \n \n그리하여 내 목숨다하는 \n그날까지 그 사랑을 위하여 \n최선을 다하도록 하옵소서  \n \n일을 함에 있어 항상 배움의 \n자세를 늦추지 않게 하옵시고  \n \n겸손함으로 자만함을 \n누르게 하옵시고  \n \n나로인해 상처받는 동료가 \n없도록 하옵소서  \n \n어느곳 어느자리에 있던지 \n최고가 되도록 끊임없이 발전해가는 \n모습이게 하옵소서  \n \n나 자신을 사랑함에 있어 \n세상...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음의 원을 그리다", text }); } catch (e) {}
     } else {

@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람 과 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람 과 사람\n\n사람을 가슴 ..\n아프게 하는것도\n사람이고 \n \n사람을 행복하게 ..\n하는것도 사람입니다. \n \n나로 인해 가슴..\n아픈이가 없기를 바라며 \n \n내가 스스로의\n마음을 다스린다면 \n \n어느 순간 ..\n나로인해 행복해지는\n사람도 생기겠지요. \n \n내가 누군가를 ..\n불편해 하고 밀어낸 다면 \n \n또 다른 누군가 나를\n불편 하다고 밀어 낼것 입니다. \n \n그저 사람의 ..\n좋은 점만 보고 또 보려합니다. \n \n그래도 그 사람에게서 ..\n사람이기에 그렇다고 생각하고 \n \n부드러운 마음과 ..\n가슴으로 받...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람 과 사람", text }); } catch (e) {}
     } else {

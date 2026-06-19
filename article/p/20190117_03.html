@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그런 식으로 고민하지 말아요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그런 식으로 고민하지 말아요\n\n그런 식으로 고민하지 말아요.  \n\n내버려둬도 만사는 흘러갈 방향으로 흘러가고,\n아무리 최선을 다해도 \n사람은 상처 입을 땐 상처를 입게 돼요.  \n\n인생이란 그런 거예요. \n\n대단한 것을 말하는 것 같지만, \n당신도 그런 인생살이를\n슬슬 배워도 좋을 무렵이에요. \n\n당신은 때때로 인생을 지나치게 \n자기 방식으로만 끌어들이려고 해요. \n\n정신 병원에 들어가고 싶지 않으면 \n좀 더 마음을 열고, \n인생의 흐름에 내 몸을 맡겨 봐요. \n\n나처럼 무력하고 불완전한 여자도 \n때로는 산다는 게 근사하다고 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그런 식으로 고민하지 말아요", text }); } catch (e) {}
     } else {

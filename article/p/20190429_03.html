@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가끔은 삶이 아프고 외롭게 할 때\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가끔은 삶이 아프고 외롭게 할 때\n\n참지 말아라.\n그러다 마음의 병 된다.\n아니 된다 생각되면 즉시 마음 돌려라.  \n \n한 번 아닌 일은 끝까지 아니더라.\n요행을 바라지 마라.\n세상엔 요행이란 글자가 참 무서운 것이더라.  \n \n아프냐\n그럼 아픈 만큼 더 열심히 살아라.\n세상에는 너보다 훨씬 큰 아픔을 안고\n살아가는 사람들이 있단다.  \n \n이 세상에 안 아픈 사람들은 없단다.\n그 아픔을 어떻게 이겨 나가는가는\n자신에게 달려있다.  \n \n아픔도 슬픔도 꼭 필요하기에\n신이 우리에게 부여했을지도 \n그저 살아있음에 누릴 수 있는 \n지상...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가끔은 삶이 아프고 외롭게 할 때", text }); } catch (e) {}
     } else {

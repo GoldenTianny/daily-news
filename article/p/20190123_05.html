@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어느 노인의 고백\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어느 노인의 고백\n\n하루 종일\n창밖을 내다보는 일이\n나의 일과가 되었습니다 \n \n누가 오지 않아도 창이 있어 고맙고\n하늘도 구름도 바람도 벗이 됩니다 \n \n내 지나온 날들을 빨래처럼 꼭 짜서\n햇살에 널어두고 봅니다 \n \n바람 속에 펄럭이는 희노애락이\n어느새 노을빛으로 물들어 있네요 \n \n이왕이면 외로움도 눈부시도록\n가끔은 음악을 듣습니다 \n \n이 세상을 떠나기 전 내가 용서할 일도\n용서받을 일도 참 많지만, 너무 조바심하거나\n걱정하진 않기로 합니다 \n \n죽음의 침묵은 용서하고\n용서받은 거라고 믿고 싶어요 \n \n고요하...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어느 노인의 고백", text }); } catch (e) {}
     } else {

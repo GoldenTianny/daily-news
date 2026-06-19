@@ -167,7 +167,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람으로 인하여\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람으로 인하여\n\n사람으로 인하여\n슬프고..\n아프고..\n속상하고 괴로워도\n그래도 사람이 좋습니다.  \n \n사람들과\n더불어 살아가는데 그런 일 들이\n없을 순 없으니까요. \n\n사람으로 인하여\n슬프고 괴로웠듯이,\n사람으로 인하여\n또한 기쁘고 행복하잖아요. \n\n사람이 산다는 것은\n결국 함께 일 때,\n모든 것에 의미가 있고\n행복이 있는 거랍니다. \n\n사람이 아닌\n다른 모든 것들은 중심이 아닌\n조건들에 불과 하답니다. \n\n지금 이 순간,\n어떤 사람 때문에 슬프고\n괴로운가요? \n \n고통은..\n살아있는 사람만의 특권이랍니다. \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람으로 인하여", text }); } catch (e) {}
     } else {

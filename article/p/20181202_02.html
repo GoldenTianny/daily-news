@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 한 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 한 사람\n\n애틋하지 않아도 좋다\n늘 보고 싶지 않아도 좋다\n날마다 그립지 않아도 좋다  \n \n문득 떠올렸을 때\n상쾌하고 기분 좋은 사람이라고 \n느꼈으면 좋겠다  \n \n울적한 어느 날\n마음에 환한 미소를 주는 사람이라\n생각하면 좋겠다  \n \n한없이 작아지고 초라해진 어느 날\n곁에 있는 것만으로 위로가 되는\n사람이라고 생각하면 좋겠다  \n \n뭔가 풀리지 않아\n복잡한 머리로 고민할 때\n명쾌한 답을 줄 거 같아\n만나고 싶은 한 사람이면 좋겠다 \n \n- <꿈이 있는 한 나이는 없다> , 조미하 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "한 사람", text }); } catch (e) {}
     } else {

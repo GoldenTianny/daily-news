@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연은 받아들이고 집착은 놓아라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연은 받아들이고 집착은 놓아라\n\n미워한다고 소중한 생명에 대하여 \n폭력을 쓰거나 괴롭히지 말며, \n좋아한다고 너무 집착하여 \n곁에두고자 애쓰지 말라.   \n \n사랑하는 사람에게는\n사랑과 그리움이 생기고 \n미워하는 사람에게는 증오와 원망이 생기나니   \n \n사랑과 미움을 다 놓아버리고 \n무소의 뿔처럼 혼자서 가라. \n너무 좋아할 것도 너무 싫어할 것도 없다.\n너무 좋아해도 괴롭고,너무 미워해도 괴롭다.   \n \n사실 우리가 알고 있고, \n겪고 있는 모든 괴로움은 좋아하고 \n싫어하는 이 두 가지 분별에서 \n온다고 해도 과언이 아니다...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연은 받아들이고 집착은 놓아라", text }); } catch (e) {}
     } else {

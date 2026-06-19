@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우리의 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우리의 인연\n\n만나고 헤어지는 사람들\n우린 인연이라 하죠  \n \n오랜 친구 같은 첫 끌림으로\n허물없이 다가오는 인연에\n속마음을 털어놓아도 좋을\n진실한 인연이 되기도 하고  \n \n지울 수 없는\n마음에 상처를 남기는\n인연이 되기도 하지요  \n \n첫 인상, 첫 느낌으로\n인연의 깊이를\n알 수 없기 때문입니다  \n \n우리의 인연은\n기쁜 일, 슬픈 일\n하께 나누는 따뜻함으로  \n \n웃음이 늘 곁에 머무는\n사시사철 은은한 꽃향기로 가득한\n인연이었으면 합니다.  \n \n \n- <가끔은 그렇게 살고 싶다> ,임숙희 - \n\n.\n#...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우리의 인연", text }); } catch (e) {}
     } else {

@@ -160,7 +160,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나의 소중한 친구에게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나의 소중한 친구에게\n\n손 잡는다고  \n넘어지지 않는건 아니지만  \n손 내미는 당신이 고맙습니다.  \n당신은 내 친구였습니다.   \n\n응원한다고 힘든 삶이  \n쉬워지는 건 아니지만  \n힘내라는 말,\n잘 한다는 말 고맙습니다.  \n당신은 내 친구였습니다.   \n\n일으켜준다고  \n상처가 아무는 건 아니지만  \n툭툭 흙 털어주는 당신이 고맙습니다.  \n당신은 내 친구였습니다.   \n\n물이 모자란다고  \n당장 숨 넘어가는 건 아니지만  \n생명수를 건네주는 당신이 고맙습니다.  \n당신은 내 친구였습니다.   \n\n혼자 간다고  \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나의 소중한 친구에게", text }); } catch (e) {}
     } else {

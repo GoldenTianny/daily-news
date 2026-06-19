@@ -133,7 +133,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너에게 하고 싶은 말\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너에게 하고 싶은 말\n\n시간을 낭비했다고\n속상할 필요는 없어\n그 낭비한 시간 속에\n값진 경험이 남아 있으니까 \n\n실패를 많이 했다고 \n주저앉을 필요는 없어\n성공한 사람의 대부분은\n실패를 거듭한 끝에 성공한 거니까 \n\n사람을 잃었다고\n좌절할 필요는 없어\n어차피 돌아설 사람이었으니까\n정말 내 사람은 내 곁을 지키고 있어 \n\n비전이 있는 사람을 만나\n꿈을 얘기하는 사람을 만나\n마음이 따뜻한 사람을 만나\n시들어 가는 열정이 되살아 나게 \n\n내가 누군가에게 \n만나고 싶은 사람이 되는 거야\n그러다 보면 또 다른 길이 보일 거야 \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너에게 하고 싶은 말", text }); } catch (e) {}
     } else {

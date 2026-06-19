@@ -123,7 +123,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 법정스님의 8가지 명언\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 법정스님의 8가지 명언\n\n1. 나는 누구인가? 스스로 물으라. 자신의 속 얼굴이 드러나 보일 때까지 묻고, 묻고, 또 물어야 한다. 건성으로 묻지 말고, 목소리 속의 목소리로 귀 속의 귀에 대고 간절하게 물어야 한다. 해답은 그 물음 속에 있다.  \n \n2. 무소유란 아무것도 갖지 않는다는 것이 아니라, 불필요한 것을 갖지 않는다는 뜻이다. 우리가 선택한 맑은 가난은 부보다 훨씬 값지고 고귀한 것이다.  \n \n3. 우리가 지금 이 순간 전 존재를 기울여 누군가를 사랑하고 있다면, 이 다음에는 더욱 많은 이웃들을 사랑할 수...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "법정스님의 8가지 명언", text }); } catch (e) {}
     } else {

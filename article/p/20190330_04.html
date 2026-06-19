@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 버려야 할 마음 5가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 버려야 할 마음 5가지\n\n1.의심\n자신이 행하고 있는 일, 자신이 가고 있는 길,\n자신이 보고 있는 것, 자신이 듣고 있는 것,\n자신의 생각, 자신의 판단력, 자신의 능력,\n자신의 귀한 존재를 의심하지 말자. \n \n2. 소심\n마음을 대범하게 쓰는 사람.\n무엇이 두렵겠는가.\n큰사람이 되자. 큰 마음을 갖자.\n당당함을 내 보이는 자가 되라. \n \n3. 변심\n끝은 처음과 꼭 같아야 한다.\n견고한 믿음으로부터 목표를 향해 언제나 첫마음으로 흔들리지 말자.\n유혹으로 부터 도전적 자세를 갖자. \n \n4. 교심\n교만해지면 사람을 잃는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "버려야 할 마음 5가지", text }); } catch (e) {}
     } else {

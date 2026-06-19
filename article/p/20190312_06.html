@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가슴으로 하는 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가슴으로 하는 사랑\n\n세상에서 가장 쉬운 일은\n사랑하는 일 인줄 알았습니다.  \n \n아무 것 가진 것 없어도\n마음 하나만 있으면\n충분한 것인 줄 알았습니다.  \n \n사랑은 바다처럼 넓고도 넓어\n채워도 채워도 목이 마르고\n주고 또 주어도 모자라고\n받고 또 받아도 모자랍디다.  \n \n사랑은 시작만 있고\n끝은 없는 줄 알았습니다.  \n \n마음에 차곡차곡 쌓아놓고\n가슴에 소복소복 모아놓고\n간직만 하고 있으면\n좋은 줄 알았습니다.  \n \n쌓아놓고 보니 모아놓고 보니\n병이 듭디다 상처가 납디다.  \n \n달아 날까봐 없어 질까봐\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가슴으로 하는 사랑", text }); } catch (e) {}
     } else {

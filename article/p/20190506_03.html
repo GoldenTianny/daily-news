@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 소중한 사람을 지키는 지혜 7가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 소중한 사람을 지키는 지혜 7가지\n\n1. 그를 인격체로 존중하라    \n상대방이 어떤 사람이든 고유의 인격체로 존중해주어야 그 사람의 마음을 열 수 있다. \n갓난아이조차도 자신이 존중받는지를 느낀다.   \n\n2. 그 사람 입장에 서보라    \n무엇이든 나의 마음을 전달하기 전에 그 사람이 어떻게 받아들일까를 먼저 생각해야 한다. \n그러면 그 사람이 원하는 것과 내가 주고자 하는것을 일치 시킬 수 있다.  \n \n3. 애정과 관심을 지속하라    \n일시적인 관심은 무관심보다 더 큰 상실감을 준다. 한두 번 존중하고 배려해주다가 참지 못...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "소중한 사람을 지키는 지혜 7가지", text }); } catch (e) {}
     } else {

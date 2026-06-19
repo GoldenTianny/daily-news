@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아침이 좋아질 땐\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아침이 좋아질 땐\n\n음악이 좋아질 땐,\n누군가가 그리운 거구요  \n \n바다가 좋아질 땐,\n누군가 사랑하는 거랍니다  \n \n별이 좋아질 때는,\n외로운 거구요...  \n \n하늘이 좋아질 때는 \n꿈을 꾸는 거랍니다  \n \n꽃이 좋아질 때는,\n마음이 허전해서 이구요  \n \n엄마가 좋아질 때는 \n힘이 드는 거래요...  \n \n친구가 좋아질 땐,\n대화의 상대가 필요한 거구요  \n \n창밖에 비가 좋아질땐,\n그 누군가를 기다리는 거래요.  \n \n먼 여행하고 싶을 때는\n마음 한 구석이 허전한 거래요  \n \n그리고~아침이 좋아질땐, ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아침이 좋아질 땐", text }); } catch (e) {}
     } else {

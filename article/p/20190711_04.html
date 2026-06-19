@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가슴 아파 하지 말고 나누며 살다 가자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가슴 아파 하지 말고 나누며 살다 가자\n\n버리고 비우면\n또 채워지는 것이 있으리니\n나누며 살다 가자 \n \n누구를 미워도\n누구를 원망도 하지 말자 \n \n많이 가진다고 행복한 것도\n적게 가졌다고 불행한 것도\n아니 세상살이 재물 부자이면\n걱정이 한 짐이요\n마음 부자이면 행복이 한 짐인 것을  \n \n죽을 때 가지고 가는 것은\n마음 닦은 것과 복지은 것 뿐이라오  \n \n누군가를 사랑하며\n살아갈 날도 많지 않은데\n누군가에게 감사하며\n살아갈 날도 많지 않은데\n남은 세월이 얼마나 된다고\n가슴 아파하며 살지 말자  \n \n버리고 비우면 또 채워지는 것이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가슴 아파 하지 말고 나누며 살다 가자", text }); } catch (e) {}
     } else {

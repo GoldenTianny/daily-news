@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 괜챦습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 괜챦습니다\n\n아무리 세상이 힘들다 해도\n나는 괜챦습니다. \n \n내 마음 안에는 소중한 꿈이 있고\n주어진 환경에서\n날마다 최선을 다하는 내 모습이 있으니\n나는 괜챦습니다. \n \n아무리 세상이 불안하다 해도\n나는 괜챦습니다. \n \n내 마음에 작은 촛불을 하나 밝혀두면\n어떤 불안도 어둠과 함께 사라지기에\n나는 괜챦습니다. \n \n아무리 큰 파도가 밀려와도\n나는 괜챦습니다. \n \n든든한 믿음의 밧줄을 걸었고\n사랑의 닻을 깊이 내렸으니\n나는 괜챦습니다. \n \n아무리 많은 사람들이 떠나간다 해도\n나는 괜챦습니다. \n \n변...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 괜챦습니다", text }); } catch (e) {}
     } else {

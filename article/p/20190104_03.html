@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 남편 나무\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 남편 나무\n\n어느 날 남편이라는 나무가 내 옆에 생겼습니다. 바람도 막아주고, 그늘도 만들어주니 언제나 함께하고 싶고 사랑스러웠습니다. \n\n그런데 언젠가부터 그 나무가 싫어지기 시작했습니다. 왜냐하면 그 나무 때문에 시야가 가리고 항상 내가 돌봐줘야 하기 때문에, 내가 하고 싶은 것을 하지 못할 때가 많았기 때문입니다.  \n\n비록 내가 사랑하는 나무이기는 했지만, 어느 날부터인가 그런 나무가 싫어지기 시작했습니다. 때로는 귀찮고 때로는 불편하게 함으로 날 힘들게 하는 나무가 밉기까지 했습니다. 그래서 괜한 짜...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "남편 나무", text }); } catch (e) {}
     } else {

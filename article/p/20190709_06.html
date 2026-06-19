@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 없으면 없는 대로\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 없으면 없는 대로\n\n없으면 없는 대로\n부족하면 부족한 대로\n불편하면 불편한 대로\n그냥 그런대로 살아갈 수도 있습니다.  \n \n없는 것을 만들려고 애쓰고\n부족한 것을 채우려고 애쓰고\n불편한 것을 못 참아 애쓰고 살지만\n때로는 없으면 없는대로  \n \n부족하면 부족한 대로\n또 불편하면 불편한 대로\n사는 것이 참 좋을 때가 있습니다.  \n \n그냥 지금 이 자리에서\n만족할 수 있다면\n애써 더 많이 더 좋게를\n찾지 않아도 충분하기 때문입니다.\n조금 없이 살고, 부족하게 살고,  \n \n불편하게 사는 것이 미덕입니다.\n자꾸만 꽉 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "없으면 없는 대로", text }); } catch (e) {}
     } else {

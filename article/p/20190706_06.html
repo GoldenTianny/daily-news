@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신은 소중한 사람입니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신은 소중한 사람입니다\n\n늘 반복되는 초라하고 지루한 일상 속에서\n마음과 생각이 통하여\n작은 것에도 웃음을 나눌 수 있는 소중한 사람들을\n곁에 두고 함께 있을 수 있으니\n행복해 할 수 있습니다. \n \n하루 하루를\n시행착오와 실수로 이어 가지만\n믿음과 애정으로 어떤 일에도 변함없이\n나를 지켜봐 주는 가족이 있으니\n행복할 수 있습니다. \n \n만나면 늘 불만으로 가득한\n투박한 말을 건네도 화낼줄 모르고\n묵묵히 고민을 들어 줄 수 있는\n좋은 친구가 곁에 있으니\n행복할 수 있습니다. \n \n더 많은 관?심과 사랑 받기를 갈망해\n질투...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신은 소중한 사람입니다", text }); } catch (e) {}
     } else {

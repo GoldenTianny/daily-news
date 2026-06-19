@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 끌리는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 끌리는 사람\n\n나도 모르게 끌리는 사람은 \n참을 줄 아는 사람이다 \n\n나도 모르게 끌리는 사람은 \n어디에 있어도 생각이 나는 사람이다 \n\n봐도 못 본 척 할 줄 알고 \n알면서도 모르는 척 해주는 모습 \n\n내 속 마음을 나보다 더 이해하고 알아주는 사람! \n\n나도 모르게 무심코 앉고 보면 \n그 사람 옆에 가 앉게 되는 사람 \n\n한참을 만나 이야기를 했으면서도 시간만 나면 \n또 다시 생각나는 사람!\n나도 모르게 끌리는 사람이다  \n\n일생을 살면서 이렇게 가슴 한 가득 \n오래 머물러 있는 사람이 된다는 것!  \n\n나...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "끌리는 사람", text }); } catch (e) {}
     } else {

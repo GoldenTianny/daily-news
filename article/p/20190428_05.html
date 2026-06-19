@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복한 생각이 행복한 말을 만든다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복한 생각이 행복한 말을 만든다\n\n인간은 누구나\n자신의 말과 행동을\n지나치게 믿기 때문에,\n자신의 생각을 그대로\n말과 행동으로 옮긴다. \n\n그러나 실제로\n말과 행동은\n훨씬 미묘하고\n변하기 쉬운 것이다. \n\n인간은 말과 행동으로\n어렵지 않게\n자신이 원하는 상태에\n자신을 놓아둘 수 있다.\n사랑이라는 감정도\n따지고 보면\n말이나 행동에 의해 생겨난다. \n\n한 사람의 상황을 행복하게도,\n불행하게도 만드는 말의 마력은\n정말 헤아릴 수도 없는\n강한 힘을 지니고 있다. \n\n중요한 것은\n이런 말을 만들어내는 것이\n그리 어렵지 않다는 것이다. \n\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복한 생각이 행복한 말을 만든다", text }); } catch (e) {}
     } else {

@@ -139,7 +139,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 가끔은 비가 되고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 가끔은 비가 되고 싶다\n\n비가 오는 날이면\n가끔은 비가 되고 싶다 \n \n비가 잎을 키우고 꽃을 피울 때\n초록비나 꽃비가 되어 나도\n세상의 무엇 하나 반듯하게 키워내고 싶다\n\n생명은 어디서 부터 오는가\n아버지의 탯줄 같도\n어머니의 젖줄 같은 물\n땅속에는 하늘의 물이 흐르고\n당신과 나 사이에는 사랑의 물이 흐른다\n\n하늘비는 이땅의 축복\n누구에게 축복의 이유가 되고 싶다\n\n비가 비 처럼 와서\n나무가 젖고 숲이 젖고 산이 젖고\n그리고 강으로 흘러갈 때\n비를 닮은 여자, 빗물 같은 여자\n당신에게 강물처럼 젖어들고 싶다\n하늘처럼 젖...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "가끔은 비가 되고 싶다", text }); } catch (e) {}
     } else {

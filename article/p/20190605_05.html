@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 처음이자 마지막 사랑이고 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 처음이자 마지막 사랑이고 싶습니다\n\n낯설지 않은\n당신이 좋았습니다. \n \n한 마디 말을 해도 다정한\n당신이 참 좋았습니다. \n \n항상 염려해주고\n아껴주고\n먼 곳이지만\n늘상 마음을 제게 열어두는\n당신이 고마웠습니다. \n \n바램 없는 그 편한 미소며\n거짓 없는 그 따사한 가슴이며\n세상에\n당신이 있다는 것이\n참 고마웠습니다. \n \n뭐 하나 줄 게 없는 나이지만\n그래도 당신은\n내 유일한 쉼이고\n내 유일한 소망입니다. \n \n- 배은미 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "처음이자 마지막 사랑이고 싶습니다", text }); } catch (e) {}
     } else {

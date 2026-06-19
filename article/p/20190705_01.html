@@ -161,7 +161,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 따뜻한 마음이 있기에\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 따뜻한 마음이 있기에\n\n살아가면서 서로를 소중히 그리고 아끼며 \n살아야 합니다.  \n \n운명이라는 것은 그림자와 같기에 \n언제 우리들 삶에 끼어 들어 \n서로를 갈라놓을지 모르기에 \n서로 함께 있을 때 소중함을 \n깨달을 수 있어야 합니다.  \n \n작은말 한마디라도 타인에게 \n상처를 주지 않았는지.. \n항상 자기자신을 돌아보아야 합니다.  \n \n화는 입에서 나와 몸을 망가지게 하므로 \n입을 조심하여 항상 겸손해야 하고 \n나는 타인에게 어떠한 사람인지 \n돌아보아야 합니다.  \n \n타인에게 있어 소중한 사람이 되려면 \n먼저 타...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "따뜻한 마음이 있기에", text }); } catch (e) {}
     } else {

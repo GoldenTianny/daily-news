@@ -167,7 +167,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 함께 가는 길\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 함께 가는 길\n\n인생길 가노라면\n누구나 힘이들고 지칠 때가 있습니다  \n \n그 힘든길 동반자가 있다면\n조금은 위안이 되겠지요  \n \n그대 위해 동행하며\n말벗되는 친구가 되어줄께요  \n \n잠시 쉬었다가 힘내어 갈 수 있도록\n내 어깨를 내어 주겠습니다.  \n \n때로는 인생의 여정이 험난하여\n포기하고 싶어질 때  \n \n손 내밀어 잡아주는 따뜻한 가슴으로\n다가가 동반자가 되어주겠습니다  \n \n그대 위해 무거운짐 다 짊어지고\n가더라도 함께라면 웃음 머금고  \n \n불평하지 않는 걸음으로 그길을\n동행하는 인생길 묵묵히 가겠습...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "함께 가는 길", text }); } catch (e) {}
     } else {

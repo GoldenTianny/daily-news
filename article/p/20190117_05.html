@@ -125,7 +125,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 노자의 인간관계 5계명\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 노자의 인간관계 5계명\n\n노자는 주나라의 궁전 도서실의 기록 계장이었다가 후에 궁중생활이 싫어 유랑의 길을 떠났다.\n노자의 행적에 대해선 알려져 있지 않지만, 노자의 '도덕경'에 나타난 사상에서 인간 관계론을 정리하면 다음과 같다. \n\n1. 진실함이 없는 아름다운 말을 늘어놓지 말라. \n남의 비위를 맞추거나 사람을 추켜세우거나 머지않아 밝혀질 사실을 감언이설로 회유하면서 재주로 인생을 살아가려는 사람이 너무나 많다. 그러나 언젠가는 신뢰받지 못하여 사람 위에 설 수 없게 된다. \n\n2. 말 많음을 삼가라. \n말이 없는 편...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "노자의 인간관계 5계명", text }); } catch (e) {}
     } else {

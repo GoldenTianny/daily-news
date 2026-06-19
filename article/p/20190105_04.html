@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 뿌리 깊은 나무\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 뿌리 깊은 나무\n\n어떤 일이 있어도\n어떤 말을 들어도\n어떤 사람을 만나도\n당당하고 자신 있게 \n\n뿌리 깊은 나무처럼\n흔들리지 않고 묵묵하게\n그 자리에 있기를 \n\n살다 보면 \n실망도 절망도 있겠지\n그때마다 바람에 흔들리듯\n아프고 방황할 수 있지만 \n\n바람을 탓하지 않고\n환경을 탓하지 않고\n중심을 지키는\n뿌리 깊은 나무의 \n지혜와 침묵과 인내를 생각할 것 \n\n- <꿈이 있는 한 나이는 없다>中 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀?\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "뿌리 깊은 나무", text }); } catch (e) {}
     } else {

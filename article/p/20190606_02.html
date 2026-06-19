@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나에겐 당신밖에 없습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나에겐 당신밖에 없습니다\n\n온 세상을 다 준데도 \n내 목숨과 바꿀 수 없듯이 \n당신과의 소중한 사랑 \n그 무엇과도 바꿀 수 없습니다  \n \n매일중에 특별하고 \n매사중에 으뜸인 당신 \n눈이 오나 비가 오나 \n나에겐 오직 당신 뿐입니다  \n \n당신이 온순한 흙이라면 \n나는 뿌리 깊은 나무로 묻힐 것이고 \n당신이 소망의 나무라면 \n나는 당신 어깨에 앉은 새가 되어 \n날마다 꾀꼬리같은 노래를 부를 것입니다  \n \n당신이 높은 하늘이라면 \n나는 유유히 흐르는 구름일 것이고 \n당신이 깊은 바다라면 \n나는 잔잔한 파도가 되어 출렁일 것...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나에겐 당신밖에 없습니다", text }); } catch (e) {}
     } else {

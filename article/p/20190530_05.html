@@ -164,7 +164,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 잘 웃는 사람이 되는 비결\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 잘 웃는 사람이 되는 비결\n\n자, 잘 웃는 사람이 되려면 \n어떻게 하면 좋을까요?\n간단합니다. 언제든지 생각날 때마다\n˝잘됐다, 다행이다˝라는 말을 떠 올리면 됩니다.  \n \n일상 속에서도 무슨 일이 있을 때마다\n˝잘됐다, 다행이다˝라고 하는 겁니다. \n길을 걷다가도 뭔가를 보게 될 때마다\n˝다행이다˝라고 하는 겁니다.  \n \n바보 같은 소리다, 그건 무리다, \n그렇게 생각 하시나요?\n나는 그렇지 않다고 생각 합니다. \n생각해 보세요. 칼이란 건 \n생명을 위협할 수도 있는 물건입니다. \n그런데 작은 상처로 끝났다고 생각하면 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "잘 웃는 사람이 되는 비결", text }); } catch (e) {}
     } else {

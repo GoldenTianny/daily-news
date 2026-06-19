@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 하루 살이\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 하루 살이\n\n이래도 하루\n저래도 하루면 \n그냥 즐겁게 보내야하리 \n\n달라질 것도 없고\n나아질 것도 없다면\n그냥 웃으며 살아야하리 \n\n겨울이 가고\n봄이 오듯이 \n모든게 순리라면\n굳이 마음 졸일것도\n흔들릴 것도 없지 않은가 \n\n이루어 질 일은 이루어지고\n안 될 일은 안되는 것을\n쥐어잡은 손아귀 \n힘 풀면 그뿐 아닌가 \n\n웃으며 행복하게\n살기에도 너무\n소중한 하루 \n\n- 전순옥 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "하루 살이", text }); } catch (e) {}
     } else {

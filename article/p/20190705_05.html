@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 소중한 친구에게 주고 싶은 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 소중한 친구에게 주고 싶은 글\n\n친구라는 말 보다 아름다운 것은 없습니다.\n우정보다 소중한 것도 없습니다. \n \n나는, 당신에게 아름다운 친구\n소중한 우정이길 바랍니다. \n \n가끔,\n사랑이란 말이 오고가도 아무 부담 없는 친구,\n혼자 울고 있을 때 아무 말 없이 다가와\n"힘내"라고 말해줄 수 있는 당신은 바로 내\n친구이기 때문입니다. \n \n나, 역시 당신의 어떤 마음도\n행복으로 받아들일 수 있는 친구이고 싶습니다. \n \n주위에 아무도 없어도 당신이 있으면\n당신도 내가 있으면 만족하는 그런 친구이고\n싶습니다. \n \n당신에게 행복이...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "소중한 친구에게 주고 싶은 글", text }); } catch (e) {}
     } else {

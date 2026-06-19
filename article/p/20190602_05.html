@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 깨달음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 깨달음\n\n얻으려 하지 말라.\n본래 얻을 것이 없는데 무엇을 얻을 것인가. \n \n잃었다 하지 말라.\n본래 잃을 것이 없는데 무엇을 잃었다 하는가. \n \n내가 했다 하지 말라.\n본래 내가 없는데 누가 나를 세우는가. \n \n이것이다 저것이다 하지말라.\n본래 둘로 나눌 수 없는데\n이것과 저것을 어디서 나누는가.\n어떤 것도 정하면 이미 아니네. \n \n도를 깨닫고자 하는가.\n태양이 뜨면 밝고 지면 어둡다.\n알겠는가. \n \n모르면 물을 마셔 보라.\n그래도 모르는가. \n \n밝고 어두운 것을\n아는 놈은 어떤 놈이며\n물 마...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "깨달음", text }); } catch (e) {}
     } else {

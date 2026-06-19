@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 근심을 덜어주는 인생 조언\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 근심을 덜어주는 인생 조언\n\n내 인생에 문제가 생겼다고\n안타까워하거나 슬퍼하지 마세요. \n이것 또한 지나갑니다. \n시간이 지나면 \n별 것 아닌 문제였다고\n얘기할 수도 있습니다. \n그러려니 하고 살면됩니다.  \n \n인생길에 내 마음 \n꼭 맞는 사람이 \n얼마나 있겠습니까. \n나라고 누구 마음에 \n꼭 맞겠습니까? \n그러려니 하고 \n살면 됩니다.  \n \n내 귀에 들리는 말들이\n좋게 들리지 않을 때가 있습니다. \n하지만 내 말도 더러는 \n남의 귀에 거슬릴 때가 있으니 \n그러려니 하고 살면 됩니다.  \n \n세상은 항상 내 마음대로\n풀리...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "근심을 덜어주는 인생 조언", text }); } catch (e) {}
     } else {

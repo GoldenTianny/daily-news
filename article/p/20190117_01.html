@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생에서 필요한 5가지 끈\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생에서 필요한 5가지 끈\n\n인생은 끈이다.\n사람은 끈을 따라 태어나고,\n끈을 따라 맺어지고, 끈이 다하면 끊어진다.\n끈은 길이요, 연결망이다.\n좋은 끈이 좋은 인맥, 좋은 사랑을 만든다. \n \n \n1. 매끈\n까칠한 사람이 되지 마라.\n보기 좋은 떡이 먹기 좋고,\n모난 돌은 정맞기 쉽다. 세련되게 입고,\n밝게 웃고, 자신감 넘치는 태도로\n매너 있게 행동하라.\n외모가 미끈하고 성품이 매끈한 사람이 되라! \n \n \n2. 발끈\n오기있는 사람이 되라.\n실패란 넘어지는 것이 아니라\n넘어진 자리에 머무는 것이다.\n동트기 전이 가장 어두...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생에서 필요한 5가지 끈", text }); } catch (e) {}
     } else {

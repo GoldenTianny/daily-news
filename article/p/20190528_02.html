@@ -142,7 +142,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 오늘만큼은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 오늘만큼은\n\n오늘만큼은\n"기분좋게 살자" \n\n남에게 상냥한 미소를 짓고, \n어울리는 복장으로 조용히 이야기하며, \n예절 바르게 행동하고, 아낌없이 남을 칭찬하자. \n\n오늘만큼은\n"이 하루가 보람되도록 하자" \n\n인생의 모든 문제는 한꺼번에 해결되지 않는다. \n하루가 인생의 시작인 것 같은 기분으로 오늘을 보내자. \n\n오늘만큼은\n"계획을 세우자" \n\n매 시간의 예정표를 만들자. \n조급함과 망설임이라는 \n두가지 해충을 없애도록 마음을 다지자. \n할 수 있는데까지 해 보자. \n\n오늘만큼은\n"30분정도의 휴식을 갖고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "오늘만큼은", text }); } catch (e) {}
     } else {

@@ -172,7 +172,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말 뒤집어 세상의 이치를 배우기\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말 뒤집어 세상의 이치를 배우기\n\n‘성실(誠實)’하지 않으면 \n일을 그르쳐 ‘실성(失性)’ 하고 \n\n‘지금’ 하지 않으면 \n언젠가는 ‘금지(禁止)’ 당할 날이 오며.. \n\n‘실상(實狀)’을 제대로 파악하지 않으면 \n‘상실(喪失)’의 아픔을 겪을 수 있지요.. \n\n‘체육(體育)’으로 몸을 단련하지 않으면 \n‘육체(肉體)’를 잃을 수 있으며, \n\n‘관습(慣習)’을 타파하지 않으면 \n나쁜 ‘습관(習慣)’에 얽매여 살게 됩니다.. \n\n‘작가(作家)’로서의 기질을 보여주지 않으면,\n‘가작(佳作)’도 탄생시킬 수 없으며 \n\n‘일생(一生)’을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말 뒤집어 세상의 이치를 배우기", text }); } catch (e) {}
     } else {

@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 만날때 마다 하면 좋은말 25가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 만날때 마다 하면 좋은말 25가지\n\n1. 상대의 걷잡을 수 없는 화를 가라앉히는 말 : 미안해 \n2. 겸손한 인격의 탑을 쌓는 말 : 고마워\n3. 상대의 어깨를 으쓱하게 하는 말 : 잘했어\n4. 화해와 평화를 부르는 말: 내가 잘못했어\n5. 존재감을 쑥쑥 키워주는 말 : 당신이 최고야  \n \n \n6. 상대의 기분을 '업' 시키는 말 : 오늘 아주 멋져 보여 \n7. 더 나은 결과를 이끌어내는 말 : 네 생각은 어때? \n8. 든든한 위로의 말 : 내가 뭐 도울 일 없어? \n9. 상대의 자신감을 하늘로 치솟게 하는 말 : 어떻게 그런 생...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "만날때 마다 하면 좋은말 25가지", text }); } catch (e) {}
     } else {

@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 어제와 다른 오늘\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 어제와 다른 오늘\n\n커튼 너머 햇살이 춤추면 \n덩달아 기분이 좋다.  \n\n온몸을 휘감는 청명함 \n부스스한 머리카락 쓸어 올리며  \n\n기지개는 \n덤으로 펴진다.  \n\n은은한 향의 모닝커피 \n하루의 행복을 보증이라도 하듯  \n\n이 시간 만은 \n어제의 아픔과 힘듦 떨쳐버리고  \n\n선물 받은 오늘 \n그저 감사할 뿐이다.  \n\n- <행복이 따로 있나요> 中 ,최유진 - \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언 #인생명언 #명언글 #명언글귀 #명언모음 #감성글 #감성글귀\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "어제와 다른 오늘", text }); } catch (e) {}
     } else {

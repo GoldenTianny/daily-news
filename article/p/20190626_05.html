@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 여섯 가지 도둑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 여섯 가지 도둑\n\n세상에 제일 고독한 도둑은\n바로 자기 몸 안에 있는 여섯 가지 도둑일세.  \n \n눈 도둑은\n보이는 것마다 가지려고 성화를 하지.  \n \n귀 도둑은\n그저 듣기 좋은 소리만 들으려 하네.  \n \n콧구멍 도둑은\n좋은 냄새는 제가 맡으려고 하고  \n \n혓바닥 도둑은\n온갖 거짓말에다 맛난 것만 먹으려 하지.  \n \n제일 큰 도둑은 훔치고 못된 짓 골라 하는 몸뚱이 도둑.  \n \n마지막 도둑은 생각 도둑.\n이놈은 싫다. 저놈은 없애야 한다. \n혼자 화내고 떠들며 난리를 치지.  \n \n그대들 복 받기를 바라거...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "여섯 가지 도둑", text }); } catch (e) {}
     } else {

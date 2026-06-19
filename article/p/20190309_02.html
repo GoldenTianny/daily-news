@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 웃음이 있는 자에겐 가난이 없다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 웃음이 있는 자에겐 가난이 없다\n\n거리를 거닐 때마다 \n놀라는 일중의 하나는\n지금 도시에 사는 \n사람들의 표정에\n웃음이 없다는 것입니다 \n \n아무리 살기가 험악한\n세상이라고 하지만\n이 세상에서 인간 외에\n웃을 수 있는 동물은 없습니다 \n\n사실 아무리 어려웠고 \n괴롭던 일들도\n몇 년이 지난 후에 돌이켜 보면\n얼마나 어리석게 \n느껴지는지 모릅니다 \n\n세상의 모든 것은 \n다 지나가고 맙니다 \n\n고통도 환난도 좌절도 \n실패도 적대감도 분노도\n노여움도 불만도 가난도..\n웃으면서 세상을 보면 \n다 우습게 보입니다 \n\n그래서 웃고 사는 한\n결...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "웃음이 있는 자에겐 가난이 없다", text }); } catch (e) {}
     } else {

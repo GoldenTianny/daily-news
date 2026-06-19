@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 행복한 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 행복한 사람\n\n걸을 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누군가는 지금 그렇게 기도를 합니다. \n\n설 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누군가는 지금 그렇게 기도를 합니다. \n\n들을 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누군가는 지금 그렇게 기도를 합니다. \n\n말할 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누군가는 지금 그렇게 기도를 합니다 \n\n볼 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누군가는 지금 그렇게 기도를 합니다. \n\n살 수만 있다면 더 큰 복은 바라지 않겠습니다.\n누...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "행복한 사람", text }); } catch (e) {}
     } else {

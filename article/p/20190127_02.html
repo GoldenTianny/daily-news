@@ -180,7 +180,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모든 것이 나로부터 시작이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모든 것이 나로부터 시작이다\n\n어릴 때는\n나보다 중요한 사람이 없고,\n나이 들면\n나만큼 대단한 사람이 없고,\n늙고 나면\n나보다 더 못한 사람이 없습니다.  \n\n돈에 맞춰 일하면 직업이고,\n돈을 넘어 일하면 소명입니다.  \n\n직업으로 일하면 월급을 받고,\n소명으로 일하면 선물을 받습니다.  \n\n칭찬에 익숙하면\n비난에 마음이 흔들리고,\n대접에 익숙하면\n푸대접에 마음이 상합니다.  \n\n문제는…\n익숙해져서 길들여진 내 마음입니다.  \n\n집은 좁아도\n같이 살 수 있지만,\n사람 속이 좁으면 같이 못 삽니다.  \n\n내 힘으로 할 수 없는 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모든 것이 나로부터 시작이다", text }); } catch (e) {}
     } else {

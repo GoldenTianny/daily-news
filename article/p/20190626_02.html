@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 왜 사느냐고 굳이 묻지마시게\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 왜 사느냐고 굳이 묻지마시게\n\n왜 사느냐고\n어떻게 살아 가느냐고\n굳이 묻지 마시게  \n \n사람 사는일에\n무슨 법칙이 있고\n삶에 무슨 공식 이라도 있다던가  \n \n그냥 세상이 좋으니\n순응하며 사는것이지  \n \n보이 시는가\n저기 푸른 하늘에\n두둥실 뜨는 한조각 흰구름\n그저 바람부는대로 흘러가지만\n그 얼마나 여유롭고 아름다운가  \n \n진정 여유있는 삶이란\n나 가진만큼 만족하고\n남의것 탐 하지도 보지도 아니하고\n누구하나 마음 아프게 아니하고  \n \n누구눈에 슬픈눈물 흐르게 아니하며\n오직 사랑하는 마음 하나 가슴에 담고\n물 흐르듯 구름...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "왜 사느냐고 굳이 묻지마시게", text }); } catch (e) {}
     } else {

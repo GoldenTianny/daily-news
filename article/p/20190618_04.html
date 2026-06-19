@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑해서 좋은사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑해서 좋은사람\n\n가을 하늘만큼이나\n투명한 사람이 있습니다\n날마다 햇살처럼 내려와\n내 가슴에 앉아 드는 사람이 있습니다  \n \n옷깃에 닿을 듯 말 듯\n살며시 스쳐 다가와서\n나의 살갗 깊숙이 머무는\n내 입김같은 사람이 있습니다  \n \n때문에\n내가 언제부터인지\n마음 한쪽을 깊게 도려내어\n가장 크게 들여놓고\n날마다 심장처럼 끌어안고 사는\n한 사람이 있습니다  \n \n그 사람은\n사랑해서 좋은 사람입니다\n가슴에 무한정 담아두어도\n세월이 흐를수록 진한 여운으로 다가오는\n포도주 같은 사람입니다\n마실수록 그 맛에 취하는\n진한 그리...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑해서 좋은사람", text }); } catch (e) {}
     } else {

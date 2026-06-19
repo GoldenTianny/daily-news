@@ -191,7 +191,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내삶을 아름답게 하는 긍정의 좋은글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내삶을 아름답게 하는 긍정의 좋은글\n\n길을 잃어도\n사람을 잃지 말라는 말처럼\n언제나 사람에 대한\n희망을 뜨겁게 간직하자.\n사람이 길이요,\n사람이 희망이요,\n사람이 가장 아름다운 꽃이다.  \n \n- 만남의 지혜 -  \n \n---------- \n \n살다보면 이런 일도 있고 저런 일도 있다.\n한 가지 일로 너무 상심하지 마라\n인생, 많은 수 있는 것 같으나\n딱, 두 수밖에 없다.\n이런 수 하나\n저런 수 하나\n그 뿐이다.  \n \n- 머물지 마라 그 아픈 상처에 -  \n \n---------- \n \n마음이 원하는 일을 하고\n마음이 원하는 사람을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내삶을 아름답게 하는 긍정의 좋은글", text }); } catch (e) {}
     } else {

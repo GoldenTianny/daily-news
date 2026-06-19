@@ -259,7 +259,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 흔들리며 사는 것이 인생이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 흔들리며 사는 것이 인생이다\n\n살아가는 것은\n흔들리는 것이다.  \n \n이 세상에 변하지\n않는 것은 아무 것도\n없고 또한 영원한\n것도 없다.  \n \n사람은 나이가 들면\n늙고 물건은 오래되면  \n \n상처를 입고 나무 또한\n그 언제인가는\n쓰러지거나 죽는다.  \n \n"흔들림" 그것은 바람에\n의해서 그 무엇에 의해서\n흔들리는 것이다.  \n \n허영이 되기도 하고\n욕망이 되기도 하고\n이루지 못한 꿈 때문에\n흔들리다가 쓰러지기도  \n \n하고 다시 제자리에 서\n있기도 하는 것이 인생이다.  \n \n그 누구도 흔들리지\n않는 인생은 없다.  \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "흔들리며 사는 것이 인생이다", text }); } catch (e) {}
     } else {

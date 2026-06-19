@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 딸아, 이런 남자와 결혼하지 마라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 딸아, 이런 남자와 결혼하지 마라\n\n잠이 많은 남자와 결혼하지 마라. 잠이 많아 게으른 사람이 다른 일에 부지런한 사람은 없다. 똑같은 24시간을 최대한 활용하는데는 잠을 줄일 수 밖에 없다. \n \n배 나온 남자와 결혼하지 마라. 자기 관리를 하지 않은 사람이 가족 관리를 성실히 한다고 본적이 없다. 운동 부족으로 인한 병치레로 평생을 불행속에 살지도 모른다. \n \n물건을 집어 던지는 사람과 결혼하지 마라. 나중에는 사람을 집어 던지기도 한다. 한대의 따귀가 습관이 되면 백대의 따귀도 시원찮은 법이다. \n \n부모에게 함부로 말하는 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "딸아, 이런 남자와 결혼하지 마라", text }); } catch (e) {}
     } else {

@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 인생의 소중한 사람들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 인생의 소중한 사람들\n\n어느 때인가\n내 인생의 소중함을\n깨닫게 되었을 때,  \n \n바람에\n떨어지는 나뭇잎\n길가에 피어 있는 작은 꽃\n작은 돌 하나까지도  \n \n내게는\n다 삶의 의미가 되었다.  \n \n그 중에서도\n내 인생의 가장 큰 의미는  \n \n내 이웃들의\n슬픈 이, 기쁜 이,\n외로운 이, 미운 이,\n착한 이, 가난한 이....,  \n \n이 모두는\n내 삶의 이유이다.  \n \n내 소중한\n이웃이 없다면 내 인생은\n무슨 의미가 있을까?  \n \n사랑하고 미워하고,\n함께 울고 웃고,\n괴로워할 수 있기에\n내 인생은 진정한\n의미가 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 인생의 소중한 사람들", text }); } catch (e) {}
     } else {

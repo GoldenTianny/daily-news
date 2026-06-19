@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세번 생각하고 말할 땐 늘 신중하라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세번 생각하고 말할 땐 늘 신중하라\n\n말 앞엔 3번 생각하고\n말 앞엔 늘 신중하라.  \n \n말 많으면 허물이 많아지고\n말 적으면 바보라도 지혜롭다.  \n \n남을 험담하면 자신의 인격을 \n드러내는 것이고 옆의 듣는 사람은 \n참고 들을 뿐이다.  \n \n자칫 남의 눈의 티끌은 보면서\n자기 눈의 들보는 보지 못하는 격  \n \n말은 오가지만 대화속의 \n꽃이 필수도 쓴뿌리가 될 수도 있다.  \n \n작금의 시간 속에 말 달리듯 말하면 \n자신의 허물만 드러내게 된다.  \n \n남을 축복하면 내가 축복받고 \n저주하면 역시자기에게 돌아온다.  \n \n누워...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세번 생각하고 말할 땐 늘 신중하라", text }); } catch (e) {}
     } else {

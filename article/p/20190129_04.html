@@ -141,7 +141,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음을 비우고 바라보는 세상\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음을 비우고 바라보는 세상\n\n알몸으로 태어나 옷한벌 얻었으니 그만이고.\n빈손으로 태어나 이만큼 채웠으니 그만이련만\n부귀 공명 꿈을꾸고 권세 영광을 누리려니\n세상만사가 다 헛되이 보이지 않는가 \n \n조금만 마음을 비우면 새털구름 만큼이나\n포근하고 매미 울음 만큼이나 시원할 터\n살아 있음에 감사하고 욕심을 비워내면\n살아 볼만한 세상인데 \n \n투명한 햇살 가슴에 퍼 담으면\n세상이 환해 보이고\n잔잔한 작은미소 얼굴에 피우면\n오늘 하루도 즐거워지는 것을 \n \n마지막 죽음 낭떠러지 생각한 들\n만사가 다 수포로 돌아가고\n그간의 나의 생도...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음을 비우고 바라보는 세상", text }); } catch (e) {}
     } else {

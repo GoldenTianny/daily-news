@@ -185,7 +185,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 읽어도 읽어도 참 좋은 글\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 읽어도 읽어도 참 좋은 글\n\n죽을만큼 사랑했던 사람도 \n모른체 지나가게 될 날이 오고...  \n \n한때는 비밀을 공유하던 \n가까웠던 친구가 \n전화 한통 없을만큼 \n멀어지는 날이 오고,  \n \n한때는 죽이고 싶을 만큼 \n미웠던 사람과 웃으며 \n다시 만나듯이...  \n \n시간이 지나면 \n이것 또한 아무것도 아니다.  \n \n변해버린 사람을 탓하지 않고.. \n떠나버린 사람을 붙잡지 말고.. \n그냥 그렇게 봄날이 가고 여름이 오듯  \n \n의도적으로 멀리하지 않아도 \n스치고 떠날 사람은 \n자연히 멀어지게 되고...  \n \n아둥바둥 매달...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "읽어도 읽어도 참 좋은 글", text }); } catch (e) {}
     } else {

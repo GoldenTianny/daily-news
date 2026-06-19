@@ -170,7 +170,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신은 가장 멋지고 좋은 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신은 가장 멋지고 좋은 사람\n\n살아가는데 기분을 좋게 하는\n그런 사람이 있습니다.  \n \n이런저런 이야기를\n많이 나눠서라기보다는\n그냥 떠올리기만 해도\n입가에 미소가 저절로\n한 아름 번지게 하는\n그런 사람이 있습니다.  \n \n가끔 안부를 묻고\n가끔 요즘 살기가 어떠냐고\n흘러가는 말처럼 건네줘도\n어쩐지 부담이 없고\n괜스레 마음이 끌리는 사람이 있습니다.  \n \n그 사람은\n꼭~ 가진 게 많아서도 아니고\n무엇을 나눠줘서도 아니며\n언제나 마음을 편안하게 해주는\n그런 사람입니다.  \n \n커피 한 잔을 마시며\n마음을 내려놓고 싶고  \n \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신은 가장 멋지고 좋은 사람", text }); } catch (e) {}
     } else {

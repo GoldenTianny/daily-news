@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 지우고 삭제할 줄 아는 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 지우고 삭제할 줄 아는 지혜\n\n세상을 살다보면 미운사람도 많습니다\n사랑하고픈, 좋아하고픈,\n친해보고픈 사람도 많습니다\n그래서 사랑하다 보면 아픔이 따릅니다. \n\n때로는 사랑해선 안 되는 사람이어서\n때로는 사랑할 수 없는 사람이어서\n아픔도 따르고 괴로움도 따릅니다\n그렇다고 사랑이 없이는 하루도 살 수 없습니다. \n\n괴로움, 슬픔, 아픔이 따른다고\n사랑을 하지 않는다면\n삶이란 것 자체도 괴로움의 연속이니\n살지 말라는 말과 같습니다\n아파도 괴로워도 우리는 살아야 하고\n사랑해야 합니다. \n\n그래서 좋아하고 그래서 사랑하다 보면\n때로는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "지우고 삭제할 줄 아는 지혜", text }); } catch (e) {}
     } else {

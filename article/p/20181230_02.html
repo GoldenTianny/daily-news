@@ -151,7 +151,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람의 관계란\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람의 관계란\n\n사람의 관계란 \n우연히 만나 관심을 가지면 \n인연이 되고 \n공을 들이면 필연이 됩니다  \n\n3번 만나면 관심이 생기고 \n5번 만나면 마음의 문이 열리고 \n7번 만나야 친밀감이 생깁니다  \n\n우리는 좋은 사람으로 만나\n착한 사람으로 헤어져\n그리운 사람으로 남아야 합니다  \n\n사람은 만나봐야 그 사람을 알고 \n사랑은 나눠봐야 그 사랑의\n진실을 알 수 있다  \n\n꼭 쥐고 있어야 내 것이 되는 \n인연은 진짜 내 인연이 아닙니다 \n잠깐 놓았는데도 내 곁에 머무는 \n사람이 진짜 내 사람입니다  \n\n얼굴이 먼...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람의 관계란", text }); } catch (e) {}
     } else {

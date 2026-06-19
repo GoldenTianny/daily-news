@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 적당한 거리의 법칙\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 적당한 거리의 법칙\n\n나무와 나무 사이엔\n적당한 거리가 필요합니다.\n너무 가까이 붙어 있으면\n한정된 영양분을 나눠 먹어야 하기에\n튼실하게 자랄 수 없습니다.  \n \n고슴도치와 고슴도치 사이엔\n적당한 거리가 필요합니다.\n너무 가까이 붙어 있으면\n뾰족한 가시 때문에\n서로에게 상처를 줄 수 있습니다.  \n \n사람도 마찬가지입니다.\n적당한 거리가 필요합니다.  \n \n서로 그리워할 만큼의 거리,\n서로 이해할 수 있을 만큼의 거리,\n서로 소유하지 않고\n자유를 줄 수 있는 거리,\n서로 불신하지 않고\n신뢰할 수 있는 거리\n그 거리를...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "적당한 거리의 법칙", text }); } catch (e) {}
     } else {

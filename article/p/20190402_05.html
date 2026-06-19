@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶이란\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶이란\n\n어제를 추억하고\n오늘을 후회하고\n내일을 희망한다. \n \n수없이 반복되는 습관처럼\n어제와 오늘을\n그리고 내일을 그렇게 산다. \n \n삶이 너무나 힘들어도\n세월은 위로해주지 않는다. \n \n버거운 짐을 내리지도 못하고\n끝없이 지고가야 하는데\n어깨가 무너져 내린다. \n \n한없이 삶에 속아\n희망에 속아도 희망을 바라며\n내일의 태양을 기다린다. \n \n낭떠러지인가 싶으면\n오를 곳을 찾아 헤메이고\n암흑인가 싶으면\n빛을 찾아 한없이 뛰어야 한다. \n \n죽음의 끝이 다가와도 애절하게\n삶에 부질없는 연민을 갖는다. \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶이란", text }); } catch (e) {}
     } else {

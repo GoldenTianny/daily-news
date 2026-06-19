@@ -192,7 +192,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생 두번은 살지못한다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생 두번은 살지못한다\n\n누가 그럽디다\n인생 나이별로 구분을 해보면 \n\n10대 나이 때\n부모님이 가는 곳은 ,\n무조건 좋아라\n따라 나섰던 나이...\n인생은 신기했습니다. \n\n20대 나이 때\n친구들과 함께라면\n무엇을 하든 어디를 가든\n그냥 좋았던 나이...\n남자는 여자를 여자는 남자를\n흠모하는 연보라빛 마음\n인생은 무지개 였습니다 \n\n30대 나이 때\n좋아하는 사람과 함께라면\n행선지를 묻지 않았던 나이...\n인생은 데이트 였습니다. \n\n40대 나이 때\n어디 한번 가려면\n애들 챙겨야 하고,\n이것저것 준비로\n걸리적거리는게 많지만...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생 두번은 살지못한다", text }); } catch (e) {}
     } else {

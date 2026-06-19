@@ -130,7 +130,7 @@ U nderstand ditterence
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ I Love 의 뜻\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ I Love 의 뜻\n\nI nspire warmth\n따뜻함을 불어 넣어 주고.. \n \nL isten to each other\n상대방의 말을 들어 주고.. \n \nO pen your heart\n당신의 마음을 열어 주고.. \n \nV alue your opinion\n당신을 가치 있게 평가 하고.. \n \nE xpress your trust\n당신의 신뢰를 표현 하고.. \n \nY ield to good sense\n좋은 말로 충고해 주고.. \n \nO verlook mistake\n실수를 덮어 주고.. \n \nU nderstand ditt...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "I Love 의 뜻", text }); } catch (e) {}
     } else {

@@ -159,7 +159,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 만남은.. 인연은..\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 만남은.. 인연은..\n\n그대 숨쉬는 하늘아래, \n그대 머무는 세상에서, \n추억 한줌으로 살 수 있음도 \n행복이라면 행복이지요 \n \n욕심부려 무엇합니까\n미우면 미운대로, \n슬프면 슬픈대로, \n세상사 순응하며 살 일이지요\n성급한 걸음으로 \n앞서 갈일 있겠습니까  \n \n사랑이 부족했다면, \n더 깊이 사랑하는 법을 배워야지요\n해답없는사랑, 규칙 없는사랑일지라도 \n만남은 소중해야 합니다\n인연은 아름다워야 합니다 \n \n인간은 홀로 존재할 수 없기에, \n젖은 어깨 털어주고 때묻은 마음 헹구어내 \n잘익은 봄의 가운데로 함께 걸어가야겠...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "만남은.. 인연은..", text }); } catch (e) {}
     } else {

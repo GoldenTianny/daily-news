@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 용서 한다는 것은\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 용서 한다는 것은\n\n용서 한다는 것은\n무척 어려운 일입니다...\n그러나 세상에서\n가장 훌륭한 사랑은\n용서하는 것이라 합니다...  \n \n나를 해롭게 하는 사람을\n용서하는 것만큼\n참 된 사랑은 없다고 합니다...  \n \n그리고 용서는\n사랑의 완성이라고 생각합니다...  \n \n사람들은 상대방으로부터\n상처를 받았을 때 어떻게\n보복할 것인가를 생각합니다...  \n \n하지만 보복은\n보복을 낳는 법입니다...  \n \n확실히 상대방을 보복하는 방법은 \n그를 용서하는 겁니다...  \n \n한 사람을 완전히 이해한다는 것은\n쉬운 일이...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "용서 한다는 것은", text }); } catch (e) {}
     } else {

@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내가 당신에게 행복이길\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내가 당신에게 행복이길\n\n내가 당신에게\n웃음이었으면 좋겠습니다. \n\n나의 손짓과 우스운 표정보다 \n내 마음속에 흐르는\n당신을 향한 뜨거운 사랑이 \n당신의 생활 속에 즐거움이 되어 \n당신의 삶의 미소가 되길 원합니다.   \n\n내가 당신에게 \n믿음이었으면 좋겠습니다.   \n\n백 마디 맹세와 말뿐인 다짐보다 \n내 가슴속에 흐르는\n당신을 향한 진실한 사랑이,\n당신의 생각 속에 미더움이되어 \n당신의 삶의 동반자가 되길 원합니다.   \n\n내가 당신에게 \n소망이었으면 좋겠습니다.   \n\n하늘에 구름 같은 신기루보다 \n내 생활 속에 흐...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내가 당신에게 행복이길", text }); } catch (e) {}
     } else {

@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 승자의 길\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 승자의 길\n\n“상대가 화를 낸다고\n나도 덩달아 화를 내는 사람은\n두 번 패배한 사람이다.   \n \n상대에게 끌려드니\n상대에게 진 것이고,\n자기 분을 못 이기니\n자기 자신에게도 진 것이다.”  \n \n바람을 향해 던진 흙이\n오히려 자신을 더럽히는 것과 같이,\n우리가 화내고 짜증내고 미워하는 것은\n남을 해치기 전에\n먼저 자기 자신을 해칩니다.  \n \n그런데 오늘 우리들은 어리석게도\n스스로를 해치는 행위가\n잘한 행위이고,\n그런 사람을 승리자라고 말합니다.\n이것은 승자의 길이 아니라\n패자의 길입니다.   \n \n상대가 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "승자의 길", text }); } catch (e) {}
     } else {

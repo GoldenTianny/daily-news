@@ -145,7 +145,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아직은 꽃이고 싶다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아직은 꽃이고 싶다\n\n아직은 꽃이고 싶다.\n작은 바람에도 흔들리고 \n깊은 밤 빗소리에\n흐느끼는 가슴으로 살고 싶다.  \n \n귀뚜라미 찾아오는 달밤이면\n한 권의 시집을 들고 \n달빛 아래 녹아드는\n촉촉한 그리움에 젖고\n가끔은 잊혀진 사랑을 기억해내는 \n아름다운 여인이고 싶다.  \n \n아줌마라고 부르지 마라.\n꽃보다 아름다운 여인이 되어\n저무는 중년을\n멋지게 살고 싶어하는 \n여인이라고 불러다오. \n \n내 이름을 불러다오.\n사랑스런 그대라고 불러다오.  \n \n가끔은 소주 한 잔에 취해\n비틀거리는 나이지만\n낙엽을 밟으면 바스락...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아직은 꽃이고 싶다", text }); } catch (e) {}
     } else {

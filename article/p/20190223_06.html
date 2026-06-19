@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우린, 이랬으면 좋겠습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우린, 이랬으면 좋겠습니다\n\n참 좋은 만남으로 맺어진\n언제까지나 변치않는\n마음으로 살면 좋겠습니다 \n \n가슴을 열어 놓고\n언제나 만나고픈\n그런 인연이었으면\n좋겠습니다. \n \n사소한 오해들로\n등 돌리지 않고\n오랜 시간 동안\n함께 할 수 있는\n그런 인연이었으면\n좋겠습니다. \n \n같은 눈으로\n같은 마음으로\n같이 볼 수 있는\n그런 인연이었으면\n좋겠습니다. \n \n서로 작은 비밀이 되어\n가슴에 묻은 채로\n좋은 나날이 계속되면\n좋겠습니다. \n \n무언가 기대하기 보다는\n주어도 아깝지 않을\n그런 인연이었으면\n좋겠습니다. \n \n서로를 소중하게...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우린, 이랬으면 좋겠습니다", text }); } catch (e) {}
     } else {

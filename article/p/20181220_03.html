@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모든 것은 때가 있다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모든 것은 때가 있다\n\n아끼지 마라\n좋은 음식 다음에 먹겠다고\n냉동실에 고이 모셔두지 마라\n어차피 냉동식품 되면\n싱싱함도 사라지고 맛도 변한다\n맛있는 것부터 먹어라 \n\n좋은 것부터 사용하라\n비싸고 귀한 거\n아껴뒀다 나중에 쓰겠다고\n애지중지하지 마라\n유행도 지나고 취향도 바뀌어\n몇 번 못 쓰고 버리는\n고물이 된다 \n\n특별한 날 기다리지 마라\n그런 날은 고작 일 년에 몇 번이다\n하루하루를 특별하게 만들어라\n모든 것은 내 맘에 달렸다\n오늘이 가장 소중한 날이다 \n\n때가 되면\n어떻게 하겠다는 생각을 버려라\n흰머리 가득해지고\n건...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모든 것은 때가 있다", text }); } catch (e) {}
     } else {

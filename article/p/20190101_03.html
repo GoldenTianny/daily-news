@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나이가 들수록 꼭 필요한 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나이가 들수록 꼭 필요한 사람\n\n사랑하는 사람보다는 \n좋은 친구가 더 필요할 때가 있습니다.  \n \n만나기 전부터 벌써 가슴이 뛰고 \n바라보는 것에 만족해야 하는 그런 사람보다는...  \n \n곁에 있다는 사실만으로 편안하게 느껴지는 \n그런 사람이 더 그리울 때가 있습니다  \n \n길을 걸을 때, \n옷깃 스칠 것이 염려되어 일정한 간격을 두고 걸어야하는 \n그런 사람보다는...  \n \n어깨에 손 하나 아무렇지 않게 걸치고 걸을 수 있는 사람이 \n더 간절해질 때가 있습니다.  \n \n너무 커서, 너무 소중하게 느껴져서 \n자신을 한없이 작...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나이가 들수록 꼭 필요한 사람", text }); } catch (e) {}
     } else {

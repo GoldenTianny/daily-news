@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 돌아보면 늘 혼자였다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 돌아보면 늘 혼자였다\n\n나를 사랑한다고 다가오는 사람에게 선\n내가 물러났고\n내가 사랑하는 사람에게 다가서면\n그가 물러났다  \n \n나에게서 물러선 그에게 다시 다가서면\n그가 부담스러워 나를 피했고\n내가 물러섰는데도 다가오는 이는\n내가 피하고 싶어 견딜 수 없었다  \n \n늘 나를 사랑해 주는 사람보다\n내가 사랑하는 사람이 더 아름다웠던 것을  \n \n내겐 늘 곁에 있어 줄 수 있는 이보다\n내가 곁에 있고 싶은 이가 필요했던 것을  \n \n만나고 싶은 사람은 만나지지 않고\n나를 만나고 싶다는 사람만이\n자꾸 만나지는 어이없는 삶\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "돌아보면 늘 혼자였다", text }); } catch (e) {}
     } else {

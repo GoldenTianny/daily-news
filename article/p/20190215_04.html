@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람의 됨됨이\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람의 됨됨이\n\n가난하다고\n다 인색한 것은 아니다 \n부자라고 \n모두가 후한 것도 아니다 \n그것은 \n사람의 됨됨이에 따라 다르다  \n \n후함으로 하여 \n삶이 풍성해지고 \n인색함으로 하여 \n삶이 궁색해 보이기도 하는데 \n생명은 어쨌거나 \n서로 나누며 소통하게 돼 있다 \n그렇게 아니하는 존재는 \n길가에 굴러 있는 \n한낱 돌멩이와 다를 바 없다  \n \n나는 인색함으로 하여 \n메마르고 보잘것없는 \n인생을 더러 보아 왔다 \n심성이 후하여 \n넉넉하고 생기에 찬 \n인생도 더러 보아 왔다  \n \n인색함은 검약이 아니다 \n후함은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람의 됨됨이", text }); } catch (e) {}
     } else {

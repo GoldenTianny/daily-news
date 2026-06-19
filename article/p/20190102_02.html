@@ -131,7 +131,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 그냥 아프고 말겠다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 그냥 아프고 말겠다\n\n내 곁에 있는 사람\n누구도\n떠나지 않을 \n사람 없다 \n\n내 곁에 있는 사람\n누구도\n끝까지 붙잡을 수 있는\n사람 없다 \n\n이 세상 사람 누구도\n이별을 경험하지 않은\n사람 없다 \n\n이 세상 사람 누구도\n아프지 않은\n사람 없다 \n\n떠나는 사람 누구든\n붙잡을 재간이 있다면\n아파하지 않아도 될 터인데 \n \n- 김현희 - \n\n#맑고좋은글 #좋은글 #좋은글귀 #감성글 #감성글귀 #명언글 #명언글귀 #명언모음\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "그냥 아프고 말겠다", text }); } catch (e) {}
     } else {

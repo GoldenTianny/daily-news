@@ -169,7 +169,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 투명한 사람이 참 좋다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 투명한 사람이 참 좋다\n\n목적을 두지 않는 편안한 만남이 좋다.  \n \n속에 무슨 생각을 할까\n짐작하지 않아도 되는 사람  \n \n말을 잘 하지 않아도\n선한 눈웃음이 정이 가는 사람  \n \n문득 생각나 차 한잔 하자고 전화하면\n밥 먹을 시간까지 스스름없이 내어주는 사람  \n \n장미처럼 화려하진 않아도\n풀꽃처럼 들꽃처럼 성품이 온유한 사람  \n \n머리를 써서 상대를 차갑고 냉철하게 하는 사람보다,\n가슴을 써서 만나고 나면 가슴이 따뜻해 지는 사람  \n \n마음이 힘든 날엔 떠올리기만 해도\n그냥 마음이 편안하고 위로가 되는 사람...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "투명한 사람이 참 좋다", text }); } catch (e) {}
     } else {

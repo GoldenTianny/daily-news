@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내일을 믿지 말고 내일을 기다리지 말라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내일을 믿지 말고 내일을 기다리지 말라\n\n우리는 퍽이나 내일에 속으며 살아간다. \n잡으려고 가까이 가면 저만큼 달아나 \n버리는 무지개와 같은 내일에 참으로 \n많은 기대를 걸어 놓고 산다.  \n\n그리하여 오늘 할 일을 내일로 미루고, \n오늘 살아야 할 삶을 내일로 미룬다. \n내일이 되면 어차피 내일로 미룰 것이면서 \n열심히 미루며 살아간다.  \n\n그러나 속지 말라. \n우리가 그토록 기다리는 내일은 \n목숨이 다하는 날까지 우리 앞에 나타나지 않는다.  \n\n끝까지 만나지 못하고 평행선으로 살아가는 철로의 슬픔처럼 \n나와 내일은 영원히 그 간격...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내일을 믿지 말고 내일을 기다리지 말라", text }); } catch (e) {}
     } else {

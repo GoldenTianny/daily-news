@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 잠시 스쳐가는 인연일지라도\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 잠시 스쳐가는 인연일지라도\n\n삶에서 만나지는\n잠시 스쳐가는 인연일지라도 \n헤어지는 마지막 모습이\n아름다운 사람이 되고 싶다.  \n \n오늘이 마지막인 것처럼 \n다시는 뒤돌아보지 않을 듯이 등돌려 가지만 \n사람의 인연이란 \n언제 다시 어떠한 모습으로 만나질 지 모른다.  \n \n혹여, 영영 만나지 못할지라도 \n좋은 기억만을 남게 하고 싶다.  \n \n실낱같은 희망을 주던 사람이든 \n설레임으로 가슴에 스며들었던 사람이든 \n혹은 칼날에 베인 듯이 \n시린 상처만을 남게 했던 사람이든 \n떠나가는 마지막 모습은 아름다운 사람이 되고 싶다. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "잠시 스쳐가는 인연일지라도", text }); } catch (e) {}
     } else {

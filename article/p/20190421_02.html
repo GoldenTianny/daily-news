@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 삶을 바꾼 말 한마디\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 삶을 바꾼 말 한마디\n\n'수고했어' 라는\n말 한마디가 피곤함을 씻어주고,  \n \n'고마워' 라는\n말 한마디가 새 힘을 얻게 하며,  \n \n'괜찮아' 라는\n말 한마디가 부담을 덜어주고,  \n \n'사랑한다' 는\n말 한 마디에 무한한 행복을 느끼고,  \n \n'고생한다' 는\n말 한마디에 힘든 줄 모르고,  \n \n'잘한다' 는\n말 한마디에 어깨가 으쓱해지고,  \n \n'행복하다' 는\n말 한마디에 자부심이 생깁니다.  \n \n이처럼 우리의 세심한 말 한마디가\n상처를 없애주고,\n때에 맞는 말 한마디가 긴장을 풀어주고,\n부드러운 말 한마...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "삶을 바꾼 말 한마디", text }); } catch (e) {}
     } else {

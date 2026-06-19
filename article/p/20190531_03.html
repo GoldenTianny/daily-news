@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 혜민 스님의 인생 관련 명언\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 혜민 스님의 인생 관련 명언\n\n사랑하면 사랑한다고 \n보고싶으면 보고싶다고 \n있는 그대로만 이야기하고 살자.  \n \n너무 어렵게셈하며 살지 말자 \n하나를 주었을 때 몇개가 돌아올까 \n두개를 주었을 때 몇개가 손해 볼까 \n계산없이 주고 싶은 만큼 주고 살자  \n \n너무 어렵게 등 돌리며 살지말자 \n등 돌린만큼 외로운게 사람이니 \n등 돌릴 힘까지 내어 사람에게 걸어 가자  \n \n좋은 것은 좋다고 하고 \n내게 충분한 것은 나눠 줄 줄도 알고 \n애써 등돌리려고도 하지도 말고 \n그렇게 함께 웃으며 편하게 살자  \n \n안그래도 어렵고 힘든...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "혜민 스님의 인생 관련 명언", text }); } catch (e) {}
     } else {

@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 온전한 내 편\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 온전한 내 편\n\n세상 살면서 \n수많은 사람들을 만나지만\n그 중에 온전한 내 편이 되어줄 \n한 사람을 만날 수 있다면\n더없이 감사한 일입니다 \n\n무슨 말을 해도 믿어줄 수 있는 사람\n어떤 행동을 해도 다 받아줄 수 있는 사람\n어떤 실수를 해도 다 덮어줄 수 있는 사람 \n\n그 한 사람이 온 세상이 되어\n마음에 선한 씨앗을 심어주고\n그 씨앗이 지라나 열매를 맺는 사이\n한 사람의 인연은 어느새 절대자와 같은 존재가 됩니다 \n\n한 사람의 우주를 밝힐 수 있는 존재자\n결코 많은 사람이 필요한 것이 아닙니다\n어떤 순간에도\n내...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "온전한 내 편", text }); } catch (e) {}
     } else {

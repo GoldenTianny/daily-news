@@ -161,7 +161,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사람이 선물이다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사람이 선물이다\n\n내가 행복한 사람은 \n남을 불행하게 만들려고 \n애쓰지 않습니다.  \n \n내가 불행한 사람은 \n남을 행복하게 할 \n능력이 없습니다.  \n \n어디서 태어날지 선택할 수 없지만,\n어디서 죽을지 선택할 수 있습니다.  \n \n어떤 얼굴로 태어날지 선택할 수 없지만, \n어떤 얼굴로 죽을지 선택할 수 있습니다.  \n \n사람은 실수하는 것이 정상이고,\n신은 용서하는 것이 정상입니다.  \n \n사랑이란, 실수하는 사람을 용서하는 것이\n정상 이라는 깨달음입니다.  \n \n사랑은 사람과 하늘이 나눠 가진 성품입니다.  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사람이 선물이다", text }); } catch (e) {}
     } else {

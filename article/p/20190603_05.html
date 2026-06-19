@@ -189,7 +189,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 좋아하는 것과 사랑하는 것의 차이라는거\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 좋아하는 것과 사랑하는 것의 차이라는거\n\n"좋아하는 건" \n그 사람으로 인해 내가 행복해졌으면 \n하는 것이고, \n"사랑하는 건" \n그 사람이 나로 인해 \n행복해 졌으면 하는 것입니다.  \n \n"좋아하면" \n욕심이 생기고,\n"사랑하면" \n그 욕심을 포기하게 되는 것입니다.  \n \n지구가 멸망해서 탈출하는 우주선이 있다면, \n"좋아하는 사람은" \n내 옆자리에 태우고 싶은데,\n"사랑하는 사람은" \n내 자리를 주고 싶어지는 것입니다.  \n \n"좋아해 는" \n들으면 가슴 설레는 것이고, \n"사랑해 는" \n들으면 눈물 나는 것입니다.  \n \n"꽃을...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "좋아하는 것과 사랑하는 것의 차이라는거", text }); } catch (e) {}
     } else {

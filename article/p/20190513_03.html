@@ -158,7 +158,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 모두가 지난 일\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 모두가 지난 일\n\n모두가 지난 일이지요\n다시 생각해보면\n아무것도 아니었지요\n아무런 일도 없었던 것처럼\n잊어버려요\n누구에게나\n있을 수 있는 일이지요. \n \n나 혼자만이 겪는 고통은\n아닌 것이지요\n주위를 돌아보면\n나보다 더 더한 고통도\n있는 거지요\n하지만\n모두가 극복하려 했고\n그것을 이겨내려고\n노력했던 것처럼\n스스로 해낼 수 있다는 것을\n보여주세요. \n \n자꾸 걸어왔던 슬픔의 길로\n되돌아가려 하지 말아요\n앞으로 가야 할 삶의 길에도\n슬픔의 시련은 있을 테니\n지금의 고통으로\n스스로를 성숙하고\n강하게 하는 계기로 삼아요....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "모두가 지난 일", text }); } catch (e) {}
     } else {

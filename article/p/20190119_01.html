@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나이만큼 그리움이 온다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나이만큼 그리움이 온다\n\n그리움에도 나이가 있답니다 \n그리움도 꼬박꼬박 나이를 먹거든요 \n그래서 우리들 마음 안에는 \n나이만큼 켜켜이 그리움이 쌓여 있어요.  \n\n그리움은 나이만큼 오는거예요 \n후두둑 떨어지는 빗방울에도 \n산들거리며 다가서는 바람의 노래 속에도 애틋한 그리움이 스며 있어요.  \n\n내 사랑하는 이는 \n내가 그리도 간절히 사랑했던 그 사람은 지금 어디서 무엇을 하고 있을까요? \n그사람도 나를 이만큼 그리워하고 있을까요?  \n\n내가 그리움의 나이를 먹은만큼 \n나이 만큼 그리움이 온다 \n그사람도 그리움의 나이테를...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나이만큼 그리움이 온다", text }); } catch (e) {}
     } else {

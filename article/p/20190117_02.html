@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 소유하지 않는 아름다운 사랑\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 소유하지 않는 아름다운 사랑\n\n갖고 싶은 욕심 때문에\n시기와 질투로 괴로워하며\n아픔만 따르는 것이\n소유하고픈 사랑입니다.  \n \n가지려 하지 마세요!  \n \n세상 어느 누구도\n당신이 가질 수는 없습니다  \n \n사랑하는 사람이라 해서\n무엇이든 알아야 한다는 생각은\n지나친 집착입니다.  \n \n높은 산 위에 올라가\n발아래 굽어보면\n인간사 세상이 한낱 헛되이 느껴집니다.\n소유하고픈 사랑도 지나친 집착도\n모두 부질없는 욕심일 뿐입니다.  \n \n하늘을 나는 새처럼\n유유히 흐르는 물처럼\n존재하는 모든 것은\n자유로울 때가 가장 아름답습니다....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "소유하지 않는 아름다운 사랑", text }); } catch (e) {}
     } else {

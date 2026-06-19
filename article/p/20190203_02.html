@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 감사하는 마음으로 살자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 감사하는 마음으로 살자\n\n사랑하는 마음으로 살자\n감사하는 마음으로 살자 \n\n사랑하기에도 모자라는 목숨\n감사하기에도 모자라는 목숨일진대 \n\n그 짧은 인생 길에서 언성을 \n높이지도 말며 서로의 가슴에 \n못질일랑 그만 거두어라 \n\n즐거워하는 마음으로 살자\n이해하는 너그러움으로 살자 \n\n즐거워하기에도 모자라는 목숨\n서로를 이해하기에도 모자라는 목숨일진대 \n\n그 짧은 삶의 길에서\n애닯은 마음으로 살지 말지니라\n누구에게나 한번뿐인 짧은 생을 위하여 \n\n슬픈 일일랑은 서로 감싸주고\n즐거운 일일랑은 서로 나누어야 하리니\n사랑하기에도 모...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "감사하는 마음으로 살자", text }); } catch (e) {}
     } else {

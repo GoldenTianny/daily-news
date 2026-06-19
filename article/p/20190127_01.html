@@ -168,7 +168,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 영혼을 일깨우는 벗을 찾아라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 영혼을 일깨우는 벗을 찾아라\n\n내 주변에 나쁜 친구를 가려내기 전에 \n나 자신이 과연 남에게 \n좋은 친구 역할을 하고 있는지 \n스스로 물어 봐야 합니다.  \n\n허물을 밖에서 찾을 것이 아니라 \n나 스스로가 좋은 친구를 \n만날수 있는 그런 바탕이 \n준비 되어 있는가 아닌가를 \n스스로 물어야 합니다.  \n\n좋은 친구란, \n나를 속속들이 잘 알고, \n나를 받아 주고 \n세상에선 다 내 치더라도 \n나를 이해해 주는 \n마음의 벗입니다.  \n\n좋은 친구란 \n내 모자람을 \n채워주는 존재입니다.  \n\n온전한 사람이 어디 있습니까? \n다 부족합...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "영혼을 일깨우는 벗을 찾아라", text }); } catch (e) {}
     } else {

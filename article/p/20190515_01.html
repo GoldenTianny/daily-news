@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생은 구름이고 바람인 것을\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생은 구름이고 바람인 것을\n\n누가 날 더러 청춘이 바람이냐고 묻거든\n나, 그렇다고 말하리니...\n그 누가 날더러 인생도 구름이냐고 묻거든\n나, 또한 그렇노라고 답하리라. \n \n왜냐고 묻거든 나, 또 말하리라.\n청춘도 한 번 왔다 가고 아니오며\n인생 또한 한 번 가면 되돌아올 수 없으니\n이 어찌 바람이라. 구름이라 말하지 않으리오.\n오늘 내 몸에 안긴 겨울 바람도 \n \n내일이면 또 다른 바람이 되어\n오늘의 나를 외면하며 스쳐 가리니 \n \n지금 나의 머리 위에 무심히 떠가는 저 구름도\n내일이면 또 다른 구름이 되어\n무량세상 두둥...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생은 구름이고 바람인 것을", text }); } catch (e) {}
     } else {

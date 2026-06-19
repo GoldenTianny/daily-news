@@ -143,7 +143,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나를 행복하게 해주는 생각들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나를 행복하게 해주는 생각들\n\n힘들 땐 푸른 하늘을 볼 수 있는\n눈이 있어서 나는 행복합니다.  \n \n외로워 울고 싶을 때 소리쳐\n부를 친구가 있는 나는 행복합니다.  \n \n잊지 못할 추억을 간직할 머리가 내게 있어\n나는 행복합니다.  \n \n잠이 오지 않는 밤에 별의\n따스함을 들을 수 있는 귀가 있기에\n나는 행복한 사람입니다.  \n \n슬플 때 거울 보며 웃을 수 있는 미소가\n내게 있기에 난 행복합니다.  \n \n소중한 사람들의 이름을 부를 수\n있는 목소리가 있기에\n나는 행복한 사람입니다.  \n \n \n온몸에 힘이 빠져 걷기도 힘들...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나를 행복하게 해주는 생각들", text }); } catch (e) {}
     } else {

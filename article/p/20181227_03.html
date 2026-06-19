@@ -136,7 +136,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 말한대로 이루어집니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 말한대로 이루어집니다\n\n생각이 말이 되고, \n말이 행동이 되고, \n행동이 습관이 되고, \n습관이 성격이 되고, \n성격이 운명이 되어, \n당신의 삶을 결정 짓습니다.  \n\n내 생각과 내 말이 내 삶을 결정합니다. \n진정 이러한 것을 안다면 생각과 말을 함부로 할 수 없습니다. \n함부로 했던 불평불만의 마음, 부정적인 말을 오늘 깨끗하게 다 지워 버립니다.  \n\n축복하는 마음, \n사랑하는 마음으로 긍정적이고 적극적인 말, \n상대를 세워주는 말을 함으로써 삶의 주름이 점점 펼쳐지는 아름다운 축복을 경험해 보시지 않으실래요? ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "말한대로 이루어집니다", text }); } catch (e) {}
     } else {

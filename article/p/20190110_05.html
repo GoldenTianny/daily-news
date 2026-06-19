@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 바쁠 때 꼭 생각해야 할 것들\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 바쁠 때 꼭 생각해야 할 것들\n\n아무리 사는 게 바쁘다 하더라도\n내가 무엇을 위해\n살아가고 있는지 알아가는\n시간을 가져야 합니다. \n\n전체를 보는 힘이 생기면\n작은 일에 우왕좌왕하지 않습니다. \n\n시간이 지나면 자연히 주어질 것들을\n지금 갖겠다고 매달리며\n힘을 빼고 있는지도 모를 일입니다. \n\n당장 내일 닥칠 일을 생각하며\n조급해 하기보다 \n\n긴 인생 중에 하루를 살고\n있다고 생각하면 \n\n조금은 통 크고 여유로운 삶이\n가능해지지 않을까요. \n\n- <괜찮아, 어떻게든 살아간다> 中 -\n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "바쁠 때 꼭 생각해야 할 것들", text }); } catch (e) {}
     } else {

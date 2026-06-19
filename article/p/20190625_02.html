@@ -178,7 +178,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살아가면서 필요한 주문\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살아가면서 필요한 주문\n\n1. 상대의 걷잡을 수 없는 화를 가라앉히는 주문\n▶미안해^^ \n \n2. 겸손한 인격의 탑을 쌓는 주문\n▶고마워^^  \n \n3. 상대의 어깨를 으쓱하게 하는 주문\n▶잘했어^^  \n \n4. 화해와 평화를 부르는 주문\n▶내가 잘못했어ㅠ.ㅠ  \n \n5. 존재감을 쑥 쑥 키워주는 주문\n▶당신이 최고야 :)  \n \n6. 상대의 기분을 '업' 시키는 주문 \n▶오늘 아주 멋져 보여^^  \n \n7. 더 나은 결과를 이끌어 내는 주문\n▶네 생각은 어때?  \n \n8. 든든한 위로의 주문\n▶내가 뭐 도울 일 없어? ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살아가면서 필요한 주문", text }); } catch (e) {}
     } else {

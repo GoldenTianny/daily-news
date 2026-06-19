@@ -156,7 +156,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 연잎의 지혜\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 연잎의 지혜\n\n빗방울이 연잎에 고이면 \n연잎은 한동안\n물방울의 유동으로 일렁이다가  \n \n어느만큼 고이면\n수정처럼 투명한 물을\n미련없이 쏟아 버린다.  \n \n그 물이 아래 연잎에 떨어지면 \n거기에서 또 일렁거리다가\n도르르 연못으로 비워 버린다.  \n \n연잎은 자신이 감당할 만한\n무게만을 싣고 있다가\n그 이상이 되면 비워 버린다.  \n \n그렇지 않고 욕심대로 받아들이면\n마침내 잎이 찢기거나\n줄기가 꺾이고 말 것이다.  \n \n세상사는 이치도 이와 마찬가지이다.  \n \n욕심은 바닷물과 같아서\n마시면 마실수록 목이 마...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "연잎의 지혜", text }); } catch (e) {}
     } else {

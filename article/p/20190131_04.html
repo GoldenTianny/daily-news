@@ -140,7 +140,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 서로 위안 되는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 서로 위안 되는 사람\n\n우리가 삶에 지쳐 무너지고 싶을 때\n말없이 마주 보는 것만으로도\n서로 마음 든든한 사람이 되고  \n \n때때로 힘겨운 인생의 무게로\n마음 마저 막막할 때\n우리 서로 \n위안이 되는 그런 사람이 되자  \n \n누군가 사랑에는 조건이 따른다지만\n우리의 바름은 지극히 작은 것이게 하고\n그리하여\n더 주고 덜 받음에 섭섭해 말며  \n \n문득 스치고 지나가는 먼 회상 속에서도\n우리 서로 기억마다\n반가운 사람이 되자  \n \n어느 날 불현듯 지쳐 쓰러질 것 같을 때\n우리 서로 마음 기댈 수 있는 사람이 되고\n혼자 견...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "서로 위안 되는 사람", text }); } catch (e) {}
     } else {

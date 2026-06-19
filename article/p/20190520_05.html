@@ -163,7 +163,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 다 이렇게 살면 될 것을\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 다 이렇게 살면 될 것을\n\n그리 모질게\n살지 않아도 되는 것을! \n\n바람의 말에\n귀를 기울이며, \n\n물처럼\n흐르며 살아도 되는 것을! \n\n악 쓰고\n소리 지르며, \n\n악착 같이\n살지 않아도 되는 것을! \n\n말 한 마디 참고,\n물 한 모금 먼저 건네고, \n\n잘난 것 만 보지 말고,\n못난 것들도 보듬으면서\n거울 속의 자신을 바라 보듯 \n\n원망하고 미워하지 말고\n용서하며 살 걸 그랬어.! \n\n세월의 흐름에 모든 게\n잠깐인 삶을 살아간다는 것을! \n\n무엇을 얼마나\n더 부귀영화를 누리겠다고\n아둥 바둥 살아 왔는지 몰라.! \n\n사랑도 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "다 이렇게 살면 될 것을", text }); } catch (e) {}
     } else {

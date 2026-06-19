@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 다시 만나고 싶은 사람이 되자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 다시 만나고 싶은 사람이 되자\n\n사람들은 무수한 인연을 맺고 살아간다.\n그 인연속에 고운 사랑도 엮어가지만\n그 인연속에 미움도 엮어지는게 있다. \n\n고운 사람이 있는 반면,\n미운 사람도 있고\n반기고 싶은 사람이 있는 반면.\n외면하고 싶은 사람도 있다. \n\n고운 인연도 있지만 피하고 싶은 악연도 있다. \n\n우린 사람을 만날 때\n반가운 사람일 때는 행복함이 충족해온다.\n그러나 어떤 사람을 만날 때는\n그다지 반갑지 않아 무료함이 몰려온다. \n\n나에게 기쁨을 주는 사람이 있는가 하면\n나에게 괴로움을 주는 사람도있다.\n과연 나는 타인에게...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "다시 만나고 싶은 사람이 되자", text }); } catch (e) {}
     } else {

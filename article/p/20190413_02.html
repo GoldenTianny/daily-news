@@ -146,7 +146,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 힘이 되어 주는 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 힘이 되어 주는 사람\n\n당신도 누군가에게 \n힘이 되어 주는 사람입니다.  \n \n힘들어하지 마세요. \n좌절하지 마세요. \n두려워하지 마세요.  \n \n당신 때문에 행복해 \n하는 사람이 있습니다. \n당신 때문에 살맛 난다고 \n하는 사람이 있습니다.  \n \n당신이 있어 위안이 되고\n감사해 하는 사람이 있습니다.  \n \n당신은 귀한 존재입니다.  \n \n나 또한 당신과 \n무슨 상관이겠습니까?  \n \n그러나 당신 때문에 \n때로는 웃음 찾고 행복해 하고\n당신이 주는 그리움으로 \n살아가는 사람도 있습니다.  \n \n사랑이 아니라면\n당신에...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "힘이 되어 주는 사람", text }); } catch (e) {}
     } else {

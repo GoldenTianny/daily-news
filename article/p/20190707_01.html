@@ -135,7 +135,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 너 있는 그대로 아름다우니\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 너 있는 그대로 아름다우니\n\n몸이 힘든 건 참아도\n마음이 힘든 건 참지 말라 하더라  \n \n머리로 참아야 하는 건 견뎌도\n가슴에서 우는 건 누리지 말라 하더라  \n \n착하게 보이려고 노력하는 게 때로 독이라고\n자신에게도 상대에게도 독이 된다 하더라  \n \n오히려 정직한 편이 당장은 힘들어도\n서로에게 유익이라 하더라  \n \n가슴에 깊은 호수가 생기기전에\n끝도 볼 수 없는 우물이 생기기 전에  \n \n마음에 비가 오거든 그대로 \n감추지 말고 투닥투닥, 첨벙첨벙, \n시끄럽도록 내버려두고\n희로애악 비켜가려 하지 말고  \n \n제발 웃는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "너 있는 그대로 아름다우니", text }); } catch (e) {}
     } else {

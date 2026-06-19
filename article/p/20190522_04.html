@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 人生의 시간\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 人生의 시간\n\n별것이 아니라고 보면 \n참으로 시시하고 쓸모없고, \n참 바보 같은 인생이지만,  \n \n귀하다고 여기면 \n너무나 귀하고 고귀하여 \n세상의 어느 것 보다 찬란한 인생\n참, \n살아볼 가치가 있는 우리의 삶,  \n \n물을 쓰지 않으면 썩어버리고 \n쇳덩이도 사용하지 않으면 \n녹이습니다.\n이제,\n그대의 인생을 갈고 닦아\n찬란하게 만들어야합니다. \n \n한정된 인생 한 순간도 \n그냥 스치게 하지마세요.  \n \n빈 그릇을 들 때는 가득찬\n물을 들 듯 하고 \n빈 방을 들어 갈때는 \n어른이 있는 듯 들어가세요.  \n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "人生의 시간", text }); } catch (e) {}
     } else {

@@ -186,7 +186,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 최강의 정신력을 가진 사람들의 9가지 특징\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 최강의 정신력을 가진 사람들의 9가지 특징\n\n1. 사물을 객관적으로 본다  \n \n(they see things objectively) \n세익스피어의 유명한 대사 중\n"세상에서 좋고 나쁜 것은 다 생각하기 나름이다" 라고 했다. \n상황을 어떻게 보느냐에 따라 득이 될 수도 있고, 실이 될 수도 있다. \n시련을 극복하기 위해서는 객관적으로 사물을 보라.  \n \n \n2. 내려 놓을 줄 안다  \n \n(they let go of entitlement) \n"언제나 원하는 것을 다 가져야 한다"는 생각은 버려라. \n정신력이 강한 사람들은 삶이 계획대로 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "최강의 정신력을 가진 사람들의 9가지 특징", text }); } catch (e) {}
     } else {

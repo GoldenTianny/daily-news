@@ -129,7 +129,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 황금 인생을 만드는 다섯가지 富\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 황금 인생을 만드는 다섯가지 富\n\n1. Money Rich\n2. Time Rich\n3. Friend Rich\n4. Hobby Rich\n5. Health Rich \n\n돈, 시간, 친구, 취미, 건강 이 다섯가지 부자가 되어야 합니다. \n\n☞ 첫째 '돈부자'는 얼마나 가졌느냐가 아니고 얼마나 쓰냐에 달려 있습니다. \n\n☞ 둘째 '시간부자'는 어느덧 인생의 2분의 1이 아닌 3분의 2가 끝나가고 있습니다. 쓸데 없는 일에 낭비하여 쫓기는 시간 가난뱅이가 되지말고 시간부자가 되세요. \n\n☞ 셋째 '친구부자'는 친구가 많은 사람은 인생 후...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "황금 인생을 만드는 다섯가지 富", text }); } catch (e) {}
     } else {

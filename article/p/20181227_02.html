@@ -130,7 +130,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 시간을 다스려라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 시간을 다스려라\n\n나이를 먹는 건\n천천히 혼자가 되는 것입니다 \n\n혼자 있는 시간이 많아지고\n혼자 하는 생각이 많아지고\n혼자 먹는 밥이 많아집니다 \n\n외로움을 느끼지 못하게\n취미를 가지세요\n공허와 슬픔이 밀려오지 않게\n자신을 바쁘게 하세요 \n\n둘러보면 할 일이 많습니다\n바쁜 생활에서 놓쳤던 것\n나만 생각하고 놓쳤던 것이\n우리를 생각하면 떠오를 것입니다 \n\n나이를 먹는 건\n자신을 되돌아볼 기회입니다\n끝없이 도전하면\n나이를 잊고 젊게 살 것입니다 \n\n- <결정했어 행복하기로>中 ,조미하 - \n\n.\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "시간을 다스려라", text }); } catch (e) {}
     } else {

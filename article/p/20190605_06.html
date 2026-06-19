@@ -132,7 +132,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 힘들었을 거야, 내가 알아\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 힘들었을 거야, 내가 알아\n\n힘들었을 거야, 내가 알아\n하지만, 지금껏 네가 해 왔던 노력은 \n헛되지 않았어.\n그 노력은 절대 하찮지 않아.\n너는 충분히 힘썼고, 최선을 다 했잖아.\n그럼 된거야.  \n \n훗날 너의 그 절실함은\n또 다른 어딘가에서 널 빛나게 해 줄 거야.\n꿈꿔 왔던 일을 포기하지 마.\n그 꿈이 사라진 게 아니야\n그 꿈이 좌절되었다면 다른 꿈을 꾸면 돼.\n그렇게 계속 꿈을 꿔.\n또 다른 꿈을 위해 노력하고\n최선을 다해 봐.  \n \n힘들었던 일은 잊게 되고\n즐거운 일들이 펼쳐질 거야\n스스로에게 위로의 말을 건네며...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "힘들었을 거야, 내가 알아", text }); } catch (e) {}
     } else {

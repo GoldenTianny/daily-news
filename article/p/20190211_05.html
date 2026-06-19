@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 내 마음에 그려 놓은 사람\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 내 마음에 그려 놓은 사람\n\n내 마음에 그려 놓은\n마음이 고운 그 사람이 있어서\n세상은 살맛나고\n나의 삶은 쓸쓸하지 않습니다. \n \n그리움은 누구나 안고 살지만\n이룰 수 있는 그리움이 있다면\n삶이 고독하지 않습니다. \n \n하루 해 날마다 뜨고 지고\n눈물 날 것 같은 그리움도 있지만\n나를 바라보는 맑은 눈동자 살아 빛나고\n날마다 무르익어 가는 사랑이 있어\n나의 삶은 의미가 있습니다. \n \n내 마음에 그려 놓은\n마음 착한 그 사람이 있어서\n세상이 즐겁고\n살아가는 재미가 있습니다. \n\n.\n#맑고좋은글 #좋은글 #좋은글귀 #좋은명언...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "내 마음에 그려 놓은 사람", text }); } catch (e) {}
     } else {

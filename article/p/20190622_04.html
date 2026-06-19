@@ -144,7 +144,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 90세 어르신의 인생 조언\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 90세 어르신의 인생 조언\n\n게으른 사람에게 돈이 따르지 않고, \n변명하는 사람에겐 발전이 따르지 않고,  \n \n거짓말하는 사람에겐 희망이 따르지 않고, \n간사한 사람에겐 친구가 따르지 않는다.  \n \n자기만 생각하는 사람에겐 사랑이 따르지 않고, \n비교하는 사람에겐 만족이 따르지 않는다.  \n \n먹을 것이 없어 굶는 사람도 딱하지만,먹을 것을 \n앞에 두고도 이가 없어 못 먹는 사람은 더 딱하다.  \n \n짝 없이 혼자 사는 사람도 딱하지만, \n짝을 두고도 정 없이 사는 사람은 더 딱하다.  \n \n땅은 절대 거짓말을 하지 않는...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "90세 어르신의 인생 조언", text }); } catch (e) {}
     } else {

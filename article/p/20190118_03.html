@@ -153,7 +153,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 매듭이 있다면 풀고 가세요\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 매듭이 있다면 풀고 가세요\n\n세상 살면서 어찌\n나를 싫어하고 질시하는 사람이 없겠습니까  \n \n내가 잘 나가던 못 나가던\n질시하거나 질타하는 이웃은 있습니다  \n \n그 문제를 잘 헤아리는 지혜가\n그 사람의 인생의 길을 결정해주는\n지표입니다  \n \n사람들의 심성은 대개가\n남을 칭찬하는 쪽보다 남을 흉보는 쪽으로\n치우쳐져 있습니다  \n \n그 치우쳐져 있는 것을 바르게 세우는 것이\n교육이요, 수련이며 자기 성찰입니다  \n \n그 모든 수단이\n자기에게 도전하는 적을 없애는 좋은 방법입니다  \n \n그래서 옛말에 이렇게들 말하지요\n백명의...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "매듭이 있다면 풀고 가세요", text }); } catch (e) {}
     } else {

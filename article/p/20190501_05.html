@@ -127,7 +127,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인간관계(人間關係) 10가지  마음\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인간관계(人間關係) 10가지  마음\n\n01. 열심 [熱心] - 형식적으로 대하지 말고 열심히 대하라.  \n\n02. 진심 [眞心] - 거짓으로 대하지 말고 진심으로 대하라.  \n\n03. 관심 [觀心] - 무관심이 아닌 깊은 관심을 가져라.  \n\n04. 선심 [善心] - 악한 마음 버리고 선한 마음으로 대하라.  \n\n05. 애심 [愛心] - 미워하지 말고 사랑하는 마음으로 대하라.  \n\n06. 조심 [操心] - 잘못이나 실수가 없도록 조심히 대하라.  \n\n07. 인심 [忍心] - 실수나 잘못은 모른척 눈감아 주면서 대하라.  \n\n08. ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인간관계(人間關係) 10가지  마음", text }); } catch (e) {}
     } else {

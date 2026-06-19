@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 고맙다 사랑 그립다 그대\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 고맙다 사랑 그립다 그대\n\n이 사람이 나를 얼마나 \n사랑하는 걸까\n궁금해하지도 말고 \n\n내가 이 사람을 얼마나 \n사랑하는 걸까\n헤아려 보지도 말고 \n\n이 사람이 내가 보이지 않을 때 \n딴 마음 품는 건 아닐까\n생각도 말고 \n\n이 사람이 내 곁에 없을 때\n괜히 관심을 타인에게 보이지 말고 \n\n이 사람에게 이 만큼 받았으니\n이만큼 줘야겠다 얌체 짓도 말고 \n\n둘 사이에 트러블이 생길 때\n욕을 해 줄 지언정\n뒷담화는 말고 \n\n뜨거우면 뜨거운 대로\n식으면 식은 대로\n사랑의 맛은 다 겪어 보고 \n\n두 사람 중\n누가 더 아깝다는 생각...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "고맙다 사랑 그립다 그대", text }); } catch (e) {}
     } else {

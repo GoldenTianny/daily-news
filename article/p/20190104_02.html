@@ -121,7 +121,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인연의 흐름\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인연의 흐름\n\n세상에서 절대 자기 뜻대로 할 수 없는 것이 하나 있다고 한다면 그건 바로 인연일 것입니다.  \n\n단순히 좋은 인간 관계를 맺는 것은 어느 정도 가능하겠지만 인연의 흐름을 마음대로 할 수는 없습니다.  \n\n떠나가는 인연은 잡을 수도 내게 다가오는 인연을 억지로 막을 수도 없죠. \n\n인연은 계획할 수 있는 것이 아닙니다. 인연의 흐름은 억지로 조종할 수 있는 것이 아닙니다. \n\n스스로 찾아오는 인연들 스스로 떠나가는 인연들을 받아 들이세요. \n\n"인연은 그 자리에서 있는 게 아니라 인연 스스로가 찾...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인연의 흐름", text }); } catch (e) {}
     } else {

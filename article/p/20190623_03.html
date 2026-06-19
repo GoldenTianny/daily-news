@@ -172,7 +172,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 세월아 천천히 가자\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 세월아 천천히 가자\n\n세월아 \n누가 행복하게 살기를 바라지 않으며 \n누군들 후회 없는 삶을 살다 가기를 원하지 않으리. \n한 해가 흘러간다. \n푸른 꿈 사랑도 친구도 모두같이  \n\n생경하고 냉랭한 낯선 여인숙의 하룻밤 같은 인생. \n일생이 긴 여정이지만 이렇듯 찰나같은 \n하룻밤 인생이란다.  \n\n그런데 세월아! \n너는 너대로 나는 나대로 이 한세상 \n아름다운 동행인으로 함께 가자  \n\n네가 혹여 놓치고 간 것 \n내가 뒤에서 거둬주고 추슬러 주며 \n너무 빨리 달아날 때 내가 좀 잡아주면 안되겠니.  \n\n행여 내가 \n잘났...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "세월아 천천히 가자", text }); } catch (e) {}
     } else {

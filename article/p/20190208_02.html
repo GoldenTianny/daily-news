@@ -206,7 +206,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음에 두면 좋은 11가지 메세지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음에 두면 좋은 11가지 메세지\n\n1. 첫 번째 메시지  \n \n누군가를 사랑하지만 그 사람에겐\n사랑받지 못하는 일은 가슴 아픈 일입니다.\n하지만 더욱 가슴 아픈 일은 누군가를\n사랑하지만 그 사람에게 당신이 그 사람을\n어떻게 느끼는지 차마 알리지 못하는\n일입니다.  \n \n \n2. 두 번째 메시지  \n \n우리가 무엇을 잃기 전까지는 그 잃어버린 것의\n소중함을 모르는 것이 사실입니다.\n하지만 우리가 무엇을 얻기 전까지는 우리에게\n무엇이 부족한지를 깨닫지 못하고 있는 것 또한\n사실입니다.  \n \n \n3. 세 번째 메시지  \n \n인생에서 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음에 두면 좋은 11가지 메세지", text }); } catch (e) {}
     } else {

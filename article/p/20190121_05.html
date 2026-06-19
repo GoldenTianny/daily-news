@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 마음이 상했을 때 대처법 10가지\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 마음이 상했을 때 대처법 10가지\n\n1. ‘참자!’ 라고 생각하라.\n감정 관리는 최초의 단계에서 성패가 좌우된다.\n'욱'하고 치밀어 오르는 화는 일단 참아야 한다.  \n \n2. ‘원래 그런 거.’ 라고 생각하라.\n예를 들어 고객이 속을 상하게 할 때는 고객이란\n'원래 그런 거'라고 생각하라.  \n \n3. ‘웃긴다.’ 고 생각하라.\n세상은 생각할수록 희극적 요소가 많다.\n괴로울 때는 심각하게 생각할수록 고뇌의 수렁에 더욱 깊이 빠져\n들어간다.\n웃긴다고 생각하며 문제를 단순화시켜 보라.  \n \n4. ‘좋다. 까짓 것.’ 이라고 생각하라...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "마음이 상했을 때 대처법 10가지", text }); } catch (e) {}
     } else {

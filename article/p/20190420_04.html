@@ -166,7 +166,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 德(덕)이 있는자 외롭지 않고 반드시 이웃이 있다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 德(덕)이 있는자 외롭지 않고 반드시 이웃이 있다\n\n德不孤必有隣 (덕불고필유인) \n\n가장 훌륭한 어머니는\n자식 앞에 눈물을 보이지 않은 어머니.\n가장 훌륭한 아버지는 \n남 몰래 눈물을 흘릴 줄 아는 아버지. \n\n가장 훌륭한 부인은 \n시부모님께 까닭없이 혼이나도 남편 앞에 미소짓는 부인.\n가장 훌륭한 남편은\n부인의 눈물을 닦아 주는 남편. \n\n가장 현명한 사람은 \n늘 배우려고 노력하며\n놀 때는 세상 모든 것을 잊고 놀며\n일할 때는 오로지 일에만 전념하는 사람이다. \n\n가장 훌륭한 정치가는\n떠나야 할 때가 되었다고 생각이 되면\n하던 일 후배에게 맡기고...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "德(덕)이 있는자 외롭지 않고 반드시 이웃이 있다", text }); } catch (e) {}
     } else {

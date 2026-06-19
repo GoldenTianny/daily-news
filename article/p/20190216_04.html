@@ -149,7 +149,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 인생의 빈잔에 채워질 아름다운 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 인생의 빈잔에 채워질 아름다운 인연\n\n삼동에 기나긴 밤\n얼어붙은 시린가슴을 열고\n켜켜이 쌓인 그리움을 말하면\n내가 곁에 있어줄께\n선뜻 대답하는 사람 있었으면 좋겠습니다.  \n \n감춰온 이슬 맺힌 사연 털어놓으면\n대접에 동동주를 가득따르며 같이 아파하고\n눈물까지 함께 하는\n친구같은 사람 하나 있었으면 좋겠습니다.  \n \n가면 갈수록 힘들고 험한 세상\n인생의 고삐가 조여져 아파하면\n바람부는대로 물결치면 치는대로 살자며\n내등을 토닥여줄 사람 있었으면 좋겠습니다.  \n \n앞서가길 어려워하면 뒤에 세우고 \n뒤서가기 어려워면 앞에 세우고\n슬픔의...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "인생의 빈잔에 채워질 아름다운 인연", text }); } catch (e) {}
     } else {

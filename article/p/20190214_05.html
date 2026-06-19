@@ -134,7 +134,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 사랑하는 이의 부탁\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 사랑하는 이의 부탁\n\n이 세상을 하직할 때\n사람들이 가장 많이 후회하는 일은\n다음의 세 가지 라고 합니다.  \n \n많이 웃을 걸,\n많이 베풀 걸,\n많이 사랑할 걸, \n \n그리고 청춘의 세월을 지내고 난\n사람들이 옛날을 돌아보며\n가장 후회하는 일도\n이 세가지 라고 합니다.  \n \n사랑한다고 고백할 걸,\n더 많이 다닐 걸,\n더 낭만적으로 살 걸,  \n \n죽은 후에는 그 곳에 갈 수 없습니다.\n죽은 후에는 일할 수 없고,\n죽은 후에는 노래할 수 없습니다.\n죽은 후에는 그 사람을 안을 수 없고,\n그에게 고백할 수도 없습니다....\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "사랑하는 이의 부탁", text }); } catch (e) {}
     } else {

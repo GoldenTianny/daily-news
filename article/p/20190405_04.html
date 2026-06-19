@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살다보니\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살다보니\n\n살다보니\n돈보다 \n잘난 거 보다\n많이 배운 거 보다 \n마음이 편한 게 좋다.  \n\n살아가다보니 \n돈이 많은 사람보다\n잘난 사람보다 \n많이 배운 사람보다\n마음이 편한 사람이 좋다.  \n\n내가 살려하니 \n돈이 다가 아니고\n잘난 게 다가 아니고 \n많이 배운 게 다가 아닌\n마음이 편한 게 좋다.  \n\n사람과 사람에 있어 \n돈보다는 \n마음을 잘남보다는 \n겸손을 배움보다는 \n깨달음을 반성할 줄\n알아야 한다.  \n\n내가 너를 대함에 있어 \n이유가 없고,\n계산이 없고,\n조건이 없고,\n언제와 오늘이 다르지 않은 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살다보니", text }); } catch (e) {}
     } else {

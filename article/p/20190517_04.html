@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 우연으로 시작된 인연\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 우연으로 시작된 인연\n\n살아가는 세상 속에서\n당신을 만났다는 것이 신기하지만\n찾아 낸 당신을 사랑할 수 있다는 것이\n더 신비로운 일입니다.  \n \n한 번도 만난 일 없고\n한 번도 생각해 본적 없는\n당신이 기다려 준 사람처럼\n내앞에 서 있다는\n사실이 모든 게 우연일까요?  \n \n수 많은 사람들이\n오고 가는 길 위에서\n우리가 만날 수 있다는 것은 하늘이\n맺어준 인연이라 생각합니다.  \n \n만날 수 있을 거라고 생각 할 수 없는\n인연들도 많고 많은데\n우린 행운아인가 봅니다.  \n \n많은 사람들 속에서\n찾아 낸 당신의 미소는\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "우연으로 시작된 인연", text }); } catch (e) {}
     } else {

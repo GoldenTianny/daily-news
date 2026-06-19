@@ -155,7 +155,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 살다보니 알겠더라\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 살다보니 알겠더라\n\n떠오르는 수많은 생각들 속에\n한잔의 커피에 목을 축인다.  \n \n살다보니 긴 터널도 지나야 하고\n안개 낀 산길도 홀로 걸어야 하고\n바다의 성난 파도도 만나지더라.\n?\n살다보니 알겠더라.  \n \n꼭 만나야 할 사람은 만나고\n스치고 지나야 하는 것들은\n꼭 지나야 한다는 것도.  \n \n떠나야 할 사람은 떠나고\n남아야 할 사람은 남겨지더라.\n?\n두손 가득 쥐고 있어도\n어느샌가 빈 손이 되어 있고\n빈손으로 있으려 해도\n그 무엇인지를 꼭 쥐고 있음을.\n?\n?소낙비가 내려 잠시 처마 밑에\n피하다 보면 멈출 줄...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "살다보니 알겠더라", text }); } catch (e) {}
     } else {

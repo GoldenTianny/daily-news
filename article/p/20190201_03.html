@@ -137,7 +137,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 당신이 참 좋습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 당신이 참 좋습니다\n\n"툭" 심장이 멈췄습니다. \n \n당신의 미소가\n당신의 마음이\n내 안으로 들어 왔습니다.\n심장이 콩닥콩닥\n그것은 셀렘이었습니다 \n \n푸른 하늘을 닮은 당신\n불어오는 바람을 닮은 당신\n걷고 있는 이 길을 닮은 당신\n낯설게 다가 왔던 당신\n셀렘으로 행복을 주었던 당신 \n \n당신의 환한 미소가\n부드러운 눈짓이\n다정한 몸짓이\n따뜻한 위로의 말도\n익숙함 속에 숨어버렸습니다. \n \n익숙함 속에 당신은\n따뜻함이고\n편안함입니다. \n \n그런 당신의 익숙함이 참 좋습니다. \n \n당신이 참 좋습니다. \n \n- <당신이...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "당신이 참 좋습니다", text }); } catch (e) {}
     } else {

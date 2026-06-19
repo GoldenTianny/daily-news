@@ -147,7 +147,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 용서하라, 그래야만 행복해진다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 용서하라, 그래야만 행복해진다\n\n용서는 우리로 하여금 세상의\n모든 존재를 향해 나아갈 수 있게 합니다.  \n \n우리를 힘들게 하고 상처를 준 사람들,\n우리가 '적'이라고 부르는 모든 사람을 포함해,\n용서는 그들과 다시 하나가 될 수 있게 합니다.  \n \n그들이 우리에게 무슨 짓을 했는가는 상관없이,\n세상 모든 존재는 우리 자신이 그렇듯\n행복해지기 위해 노력한다는 사실을 떠올려 보십시요.  \n \n고통을 이겨낼 수 있는 인내심을 키우기 위해서는,\n우리를 상처 입힌 누군가가 있어야 합니다.  \n \n그런 사람들이 있어서 우리는 용서를\n...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "용서하라, 그래야만 행복해진다", text }); } catch (e) {}
     } else {

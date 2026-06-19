@@ -164,7 +164,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 나는 이런 사람이 좋다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 나는 이런 사람이 좋다\n\n그리우면 그립다고 \n말할 줄 아는 사람이 좋고 \n불가능 속에서도 \n한줄기 빛을 보기 위해 애쓰는 사람이 좋고 \n다른 사람을 위해 \n호탕하게 웃어 줄 수 있는 사람이 좋다  \n \n옷차림이 아니더라도 \n편안함을 줄 수 있는 사람이 좋고 \n자기 부모형제를 끔찍이 \n사랑할 줄 아는 사람이 좋고 \n바쁜 가운데서도 \n여유를 누릴 줄 아는 사람이 좋다  \n \n어떠한 형편에서든 \n자기 자신을 지킬 줄 아는 사람이 좋고 \n노래를 썩 잘하지 못해도 \n즐겁게 부를 줄 아는 사람이 좋고 \n어린 아이와 노인들에게 \n좋은...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "나는 이런 사람이 좋다", text }); } catch (e) {}
     } else {

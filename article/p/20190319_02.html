@@ -154,7 +154,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 아름다운 친구이고 싶습니다\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 아름다운 친구이고 싶습니다\n\n보고 싶다고 말하면 \n더 보고 싶어 질까 봐 \n그저 살짝 미소만 짓습니다  \n \n그리워 한다 한들 마음 뿐이기에 \n줄 것이 없습니다 \n두 마음 함께 함에 감사할 뿐 입니다  \n \n느낌만으로도 만나니 \n사랑하는 마음에 행복이라 이르네요  \n \n사랑은 꿈과 같고 \n현실은 삶의 텃밭이라 \n시공간을 초월 할 수 없으니 \n당신에게 그저 행복한 미소를 보냅니다  \n \n늘 당신이 있어 내 삶이 향기롭고 \n늘 새로운 마음이지요  \n \n현실이란 벽에 \n그저 이슬 처럼  \n \n맑은 그리움 하나 품고 살아 \n아름다운...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "아름다운 친구이고 싶습니다", text }); } catch (e) {}
     } else {

@@ -150,7 +150,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 참 소중한 너라서\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 참 소중한 너라서\n\n지금 힘든 길을 걷고 있는 너에게  \n \n괜찮아\n네가 걸어가고 있는\n이 길이  \n \n아무리 \n아프고 힘들어도\n괜찮아\n무조건 괜찮아  \n \n넌 \n잘 헤쳐 나갈 거고  \n \n그 속에서도 \n결국 의미를\n찾게 될 테니까  \n \n조만간 \n길이 열릴 거고\n넌 이 시련을\n건너갈 거야  \n \n잘하고 있고\n앞으로도 잘할 거야  \n \n언젠가 너에게\n이렇게 말하는 순간이\n찾아올 거야  \n \n"그 시련을 겪지 않았다면\n난 아직도 철부지였을지도 몰라."  \n \n"참 힘들었는데, 지금 생각하니\n꼭 필요한 선물이었어."  ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "참 소중한 너라서", text }); } catch (e) {}
     } else {

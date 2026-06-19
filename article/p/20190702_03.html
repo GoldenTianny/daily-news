@@ -138,7 +138,7 @@ h1 { font-size: 21px; font-weight: 800; color: #5a4632; line-height: 1.45; margi
 <script>
 document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = location.href.split('#')[0];
-    const text = `✨ 친구\n\n— 가좌버핏 뉴스 좋은글\n${url}`;
+    const text = `✨ 친구\n\n친구라고 좋을 때만 있는 게 아니다\n날 서운하게 하는 날도 있고\n날 아프게도 하는 날도 있고\n내가 외로울 때\n날 내버려 두는 날도 허다하다 \n \n나 또한 너의 편에만\n서는 것도 아니어서\n너를 서운하게 하는 날도 있고\n아프게도 하는 날도 있으며\n네가 외로운 날 허허벌판에 내놓듯\n너를 내버려 두는 날도 허다하다 \n \n그래도 힘이 들 땐\n또다시 너를 찾게 되고\n기쁜 일이 있을 땐\n너의 이름부터 부르고\n슬픈 일이 있을 땐\n너의 전화번호를 먼저 누르고\n외로울 땐 너를 먼저 떠올린다 \n \n그렇게 우린\n힘이 ...\n\n${url}`;
     if (navigator.share) {
         try { await navigator.share({ title: "친구", text }); } catch (e) {}
     } else {
