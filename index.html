@@ -533,9 +533,36 @@ body {
 @media (min-width: 600px) {
     body { max-width: 720px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
 }
+
+/* 상단 메뉴바 */
+.topnav {
+    display: flex; align-items: center; gap: 6px;
+    background: #12274d; padding: 0 8px;
+    position: sticky; top: 0; z-index: 500;
+}
+.topnav a {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #dbe6fb; text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 14px; white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+@media (prefers-color-scheme: dark) {
+    .topnav { background: #0d1a33; }
+}
 </style>
 </head>
 <body>
+
+<!-- 상단 메뉴바 -->
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="tools/etf/">📊 ETF 검색</a>
+</nav>
 
 <!-- 헤더 -->
 <div class="hero">
