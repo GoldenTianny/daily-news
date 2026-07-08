@@ -310,9 +310,21 @@ async function loadDateData(date) {
     const resp = await fetch('data/' + date + '.json');
     const obj = await resp.json();
 
-    NAMES = obj.names;
-    DATA = obj.data;
     HOLDINGS = obj.holdings;
+    const ETFS = obj.etfs || {};
+    // holdings(ETF→종목)를 뒤집어 data(종목→ETF)와 names를 즉석 생성 (파일 용량 절감)
+    DATA = {};
+    const nameSet = new Set();
+    for (const code in HOLDINGS) {
+      const etfName = ETFS[code] || code;
+      const items = HOLDINGS[code];
+      for (let i = 0; i < items.length; i++) {
+        const comp = items[i][0], w = items[i][1];
+        (DATA[comp] || (DATA[comp] = [])).push([code, etfName, w]);
+        nameSet.add(comp);
+      }
+    }
+    NAMES = Array.from(nameSet).sort();
 
     dateInfo.textContent = NAMES.length.toLocaleString() + '개 종목 / ' + Object.keys(HOLDINGS).length.toLocaleString() + '개 ETF';
 

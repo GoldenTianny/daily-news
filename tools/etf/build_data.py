@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# ETF최신_YYYYMMDD.xlsm -> 검색기용 JSON (names / data / holdings)
-# 사용법: python3 build_data.py ../ETF최신_20260708.xlsm 2026-07-08
+# ETF최신_YYYYMMDD.xlsm -> 검색기용 JSON (etfs / holdings 만 저장, 나머지는 브라우저가 생성)
+# 사용법: python3 build_data.py ~/Downloads/ETF최신_20260708.xlsm 2026-07-08 data
 import sys, os, json, numbers
 import openpyxl
 
@@ -15,11 +15,11 @@ def build(xlsm_path, date_key, out_dir):
         row = rows[r]
         return row[c] if c < len(row) else None
 
-    DATA = {}       # 구성종목명 -> [[etfCode, etfName, weight], ...]
-    HOLDINGS = {}   # etfCode -> [[구성종목명, weight], ...]
-    name_set = set()
+    ETFS = {}        # etfCode -> etfName
+    HOLDINGS = {}    # etfCode -> [[구성종목명, weight], ...]
 
     n_etf = 0
+    comp_names = set()
     for b in range(nblocks):
         base = b * 5
         etf_code = cell(7, base)
@@ -29,7 +29,6 @@ def build(xlsm_path, date_key, out_dir):
         etf_code = str(etf_code).strip()
         etf_name = str(etf_name).strip()
 
-        # 이 ETF의 보유종목 수집
         holds = []          # (comp_name, amount, weight_pct_col)
         total_amt = 0.0
         for r in range(10, len(rows)):
@@ -59,12 +58,12 @@ def build(xlsm_path, date_key, out_dir):
             else:
                 w = None
             hlist.append([comp, w])
-            name_set.add(comp)
-            DATA.setdefault(comp, []).append([etf_code, etf_name, w])
+            comp_names.add(comp)
+        ETFS[etf_code] = etf_name
         HOLDINGS[etf_code] = hlist
 
-    names = sorted(name_set)
-    obj = {"date": date_key, "names": names, "data": DATA, "holdings": HOLDINGS}
+    # data(종목→ETF)와 names는 브라우저가 holdings에서 생성 → 파일에 저장 안 함(용량 절감)
+    obj = {"date": date_key, "etfs": ETFS, "holdings": HOLDINGS}
 
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, date_key + '.json')
@@ -85,11 +84,11 @@ def build(xlsm_path, date_key, out_dir):
     json.dump(dates, open(dates_path, 'w', encoding='utf-8'), ensure_ascii=False)
 
     size_mb = os.path.getsize(out_path) / 1e6
-    print(f"OK  ETF {n_etf}개 | 검색가능 종목 {len(names)}개 | {out_path} ({size_mb:.2f} MB)")
+    print(f"OK  ETF {n_etf}개 | 종목 {len(comp_names)}개 | {out_path} ({size_mb:.2f} MB)")
     print(f"    dates.json -> {dates}")
 
 if __name__ == '__main__':
-    xlsm = sys.argv[1] if len(sys.argv) > 1 else '../ETF최신_20260708.xlsm'
+    xlsm = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/Downloads/ETF최신_20260708.xlsm')
     date_key = sys.argv[2] if len(sys.argv) > 2 else '2026-07-08'
     out_dir = sys.argv[3] if len(sys.argv) > 3 else 'data'
     build(xlsm, date_key, out_dir)
