@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-# ETF최신_YYYYMMDD.xlsm -> 검색기용 JSON (etfs / holdings 만 저장, 나머지는 브라우저가 생성)
-# 사용법: python3 build_data.py ~/Downloads/ETF최신_20260708.xlsm 2026-07-08 data
+# ETF_Raw_YYYYMMDD.xlsx -> 검색기용 JSON (etfs / holdings 만 저장, 나머지는 브라우저가 생성)
+# raw 파일(가공 전 원본, Sheet1 = ETP Components) 그대로 사용. xlsm/가공본과 구조 동일.
+# 사용법: python3 build_data.py ~/Downloads/ETF_Raw_20260708.xlsx 2026-07-08 data
 import sys, os, json, numbers
 import openpyxl
 
@@ -88,7 +89,7 @@ def build(xlsm_path, date_key, out_dir):
     print(f"    dates.json -> {dates}")
 
 if __name__ == '__main__':
-    xlsm = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/Downloads/ETF최신_20260708.xlsm')
+    xlsm = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/Downloads/ETF_Raw_20260708.xlsx')
     date_key = sys.argv[2] if len(sys.argv) > 2 else '2026-07-08'
     out_dir = sys.argv[3] if len(sys.argv) > 3 else 'data'
     build(xlsm, date_key, out_dir)
