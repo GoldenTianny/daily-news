@@ -585,6 +585,8 @@ function showMultiStockResults() {
 
   const stockLabel = selectedStocks.join(' + ');
   const maxWeight = results.length > 0 ? results[0].total : 0;
+  // 최대 합산 비중은 "모두 보유한" ETF 기준 (단일종목 레버리지 등 일부 보유 ETF 제외)
+  const maxAllWeight = allMatch.length > 0 ? allMatch[0].total : 0;
 
   // Breadcrumb
   breadcrumb.innerHTML = '<span class="current">&#128200; ' + escHtml(stockLabel) + ' 합산 비중</span>';
@@ -594,7 +596,7 @@ function showMultiStockResults() {
   statsArea.innerHTML =
     '<div class="stat-card"><div class="label">검색 종목</div><div class="value small">' + escHtml(stockLabel) + '</div></div>' +
     '<div class="stat-card"><div class="label">모두 보유 ETF</div><div class="value">' + allMatch.length + '</div></div>' +
-    '<div class="stat-card"><div class="label">최대 합산 비중</div><div class="value">' + (maxWeight ? maxWeight.toFixed(2) + '%' : '-') + '</div></div>';
+    '<div class="stat-card"><div class="label">최대 합산 비중 (모두 보유)</div><div class="value">' + (maxAllWeight ? maxAllWeight.toFixed(2) + '%' : '-') + '</div></div>';
   statsArea.style.display = 'flex';
 
   // Table header: 합산 먼저, 개별 종목은 뒤에
