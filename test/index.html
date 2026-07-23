@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Advanced 시험 대비 문제풀이</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --paper:#FBFAF6; --ink:#1F2733; --sub:#6B7280; --line:#E5E1D8;
+  --hl:#FFE873; --ok:#2E7D46; --okbg:#EAF6EE; --no:#C2492F; --nobg:#FBEEEA;
+  --accent:#2F4A7A; --card:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;padding-bottom:80px}
+header{padding:28px 16px 12px;max-width:760px;margin:0 auto}
+header h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+header h1 span{background:linear-gradient(transparent 55%,var(--hl) 55%);padding:0 2px}
+header p{font-size:13px;color:var(--sub);margin-top:4px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;max-width:760px;margin:0 auto;-webkit-overflow-scrolling:touch}
+.tab{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.bar{position:sticky;top:0;z-index:10;background:rgba(251,250,246,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:760px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.score{font-size:14px;font-weight:700}
+.score b{color:var(--accent)}
+.bar button{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink)}
+.bar button.act{background:var(--accent);color:#fff;border-color:var(--accent)}
+.prog{height:5px;background:var(--line)}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+main{max-width:760px;margin:0 auto;padding:16px}
+.qc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(31,39,51,.04)}
+.qc .meta{font-size:11.5px;font-weight:700;color:var(--sub);letter-spacing:.4px;margin-bottom:6px}
+.qc .qt{font-size:15.5px;font-weight:700;margin-bottom:12px;word-break:keep-all}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px;cursor:pointer;transition:border-color .15s;word-break:keep-all}
+.opt .n{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid var(--sub);color:var(--sub);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt:hover{border-color:var(--accent)}
+.qc.done .opt{cursor:default}
+.opt.pick-ok{border-color:var(--ok);background:var(--okbg)}
+.opt.pick-ok .n{border-color:var(--ok);background:var(--ok);color:#fff}
+.opt.pick-no{border-color:var(--no);background:var(--nobg)}
+.opt.pick-no .n{border-color:var(--no);background:var(--no);color:#fff}
+.opt.reveal{border-color:var(--ok);background:var(--okbg)}
+.expl{display:none;margin-top:10px;border-left:3px solid var(--hl);background:#FFFDF2;padding:10px 12px;border-radius:0 8px 8px 0;font-size:13.5px;color:#4B5563;word-break:keep-all}
+.expl b{color:var(--ink)}
+.qc.done .expl{display:block}
+.badge{display:none;font-size:12px;font-weight:800;margin-left:6px}
+.qc.done .badge{display:inline}
+.badge.y{color:var(--ok)} .badge.x{color:var(--no)}
+.empty{text-align:center;color:var(--sub);padding:60px 0;font-size:14px}
+footer{max-width:760px;margin:24px auto 0;padding:0 16px;font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<header>
+  <h1>AI Advanced <span>시험 대비 문제풀이</span></h1>
+  <p>연습문제 3~6장 · 보기를 누르면 바로 채점되고 해설이 표시됩니다</p>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="bar">
+  <div class="bar-in">
+    <div class="score" id="score">0 / 0 · 정답 0</div>
+    <div style="flex:1"></div>
+    <button id="btnWrong">틀린 문제만</button>
+    <button id="btnShuffle">섞기</button>
+    <button id="btnReset">초기화</button>
+  </div>
+  <div class="prog"><i id="progFill"></i></div>
+</div>
+<main id="list"><div class="empty">문제를 불러오는 중입니다…<br><br>이 화면이 계속 보인다면 지금 사용 중인 뷰어가 스크립트를 실행하지 못하는 상태예요.<br><b>Chrome · Edge · Safari 같은 웹 브라우저</b>에서 이 파일을 열어주세요.<br>(파일 미리보기·메신저 내장 뷰어에서는 문제가 표시되지 않습니다)</div></main>
+<footer>AI_Advanced 강의노트 연습문제 기반 · 정답/해설은 원본 자료의 표기를 따랐습니다.</footer>
+<script>
+const CH=["3장 · LLM의 이해","4장 · 프롬프트 엔지니어링 & Agent","5장 · RAG","6장 · LLM Fine Tuning"];
+const DATA=[
+// ===== 3장 =====
+{c:0,q:"머신러닝에서 '분류(Classification)'와 '회귀(Regression)'의 차이에 대한 설명으로 올바른 것은?",o:["분류는 연속적인 수치를 예측하고, 회귀는 범주를 예측한다","분류는 범주(스팸/정상 등)를 예측하고, 회귀는 연속적인 수치(가격 등)를 예측한다","분류와 회귀는 같은 개념으로 혼용해서 사용한다","분류는 비지도학습이고, 회귀는 지도학습이다","분류는 텍스트에만 적용되고, 회귀는 숫자에만 적용된다"],a:1,e:"분류=범주 예측(스팸 여부 등), 회귀=연속 수치 예측(가격·기온). 둘 다 지도학습 유형입니다."},
+{c:0,q:"Transformer 아키텍처에서 Self-Attention의 역할로 올바른 것은?",o:["입력 데이터를 토큰으로 분할하는 역할","문장 내 각 단어가 다른 단어들과 어떤 관계를 가지는지 파악하는 역할","모델의 파라미터를 초기화하는 역할","출력 토큰을 하나씩 순차적으로 생성하는 역할","학습 데이터를 전처리하는 역할"],a:1,e:"예: 'The cat sat on the mat'에서 sat이 cat과 관련 있음을 파악. 토큰 분할은 토크나이저의 역할입니다."},
+{c:0,q:"Word2Vec에 대한 설명으로 옳지 않은 것은?",o:["'비슷한 맥락의 단어는 비슷한 의미를 가진다'는 분포 가설에 기반한다","King − Man + Woman ≈ Queen 같은 벡터 연산이 가능하다","어떤 문맥에서든 같은 단어는 같은 벡터를 가진다","CBOW와 Skip-gram 두 가지 학습 방식이 있다","문맥에 따라 단어의 벡터가 다르게 생성된다"],a:4,e:"Word2Vec은 문맥과 무관한 고정 벡터입니다. 문맥별 동적 벡터는 BERT 등 이후 모델의 특징입니다."},
+{c:0,q:"Transformer에서 Positional Encoding이 필요한 이유는?",o:["모델의 학습 속도를 높이기 위해","Self-Attention이 병렬로 처리되므로 토큰의 위치(순서) 정보를 따로 제공하기 위해","메모리 사용량을 줄이기 위해","다국어 처리를 가능하게 하기 위해","출력 토큰의 품질을 높이기 위해"],a:1,e:"RNN과 달리 병렬 처리라 순서 정보가 사라지므로, 위치 정보를 임베딩에 더해줍니다. 최근엔 RoPE도 사용됩니다."},
+{c:0,q:"토큰화(Tokenization)에서 한국어가 영어보다 토큰 효율이 낮은 이유는?",o:["한국어 문장이 영어보다 길기 때문에","한국어는 교착어로 조사가 붙어 단어 변형이 폭발적으로 증가하기 때문에","한국어에는 특수문자가 많기 때문에","토크나이저가 한국어를 지원하지 않기 때문에","한국어는 띄어쓰기가 없기 때문에"],a:1,e:"'가다 → 가서, 가면, 갔다, 가더라…'처럼 변형이 많아 토큰 수가 늘어납니다(영어는 go/goes/went/going 정도)."},
+{c:0,q:"Multi-Head Attention에 대한 설명으로 올바른 것은?",o:["여러 Attention을 순차적으로 실행하여 성능을 높인다","각 Head가 서로 다른 관점(문법·의미 등)에서 단어 간 관계를 분석한다","Head 수가 많을수록 무조건 성능이 좋아진다","Multi-Head는 Decoder에서만 사용된다","각 Head의 출력은 평균을 내어 최종 결과를 만든다"],a:1,e:"N명의 전문가가 각기 다른 관점으로 병렬 분석. 출력은 평균이 아니라 연결(Concatenation) 후 변환됩니다."},
+{c:0,q:"Transformer의 FFNN(Feed-Forward Network)의 역할로 올바른 것은?",o:["토큰 간 관계를 파악하는 역할","비선형성을 추가하여 Self-Attention이 놓친 복잡한 관계를 학습하는 역할","입력 데이터를 임베딩하는 역할","출력 토큰의 확률을 계산하는 역할","학습률을 조절하는 역할"],a:1,e:"토큰 간 관계 파악은 Self-Attention의 역할, FFNN은 활성화 함수를 통한 비선형 학습으로 이를 보완합니다."},
+{c:0,q:"BERT와 GPT의 차이에 대한 설명으로 올바른 것은?",o:["BERT는 Decoder 기반, GPT는 Encoder 기반이다","BERT는 단방향, GPT는 양방향으로 문맥을 파악한다","BERT는 Encoder 기반으로 양방향 문맥 파악(이해·분류)에, GPT는 Decoder 기반으로 텍스트 생성에 특화되어 있다","BERT와 GPT는 같은 구조로 학습 데이터만 다르다","BERT는 생성, GPT는 분류에 주로 사용된다"],a:2,e:"BERT=Encoder·양방향·이해(NLU), GPT=Decoder·단방향(자기회귀)·생성(NLG)."},
+{c:0,q:"GPT-3에서 새롭게 발견된 핵심 특성으로 올바른 것은?",o:["Transformer 구조의 도입","대화형 응답 능력","In-Context Learning과 Few-Shot Learning","멀티모달 처리 능력","MoE(Mixture of Experts) 기법"],a:2,e:"175B 규모로 스케일이 커지며 입력 맥락만으로 답하는 ICL, 소수 예시로 패턴을 파악하는 Few-Shot 능력이 발견됐습니다."},
+{c:0,q:"GPT-3.5가 GPT-3와 달라진 점으로 올바른 것은?",o:["파라미터 수가 10배 이상 증가했다","SFT와 RLHF(강화학습)를 적용하여 질의응답 능력이 크게 향상되었다","이미지 입력 처리가 가능해졌다","MoE 구조가 도입되었다","웹 문서 데이터로 사전학습을 시작했다"],a:1,e:"파라미터는 비슷(175B). SFT+RLHF로 지시·질의응답 능력이 향상되어 ChatGPT의 기반이 되었습니다."},
+{c:0,q:"SFT와 RLHF에 대한 설명으로 올바른 것은?",o:["SFT는 강화학습 기반, RLHF는 지도학습 기반이다","SFT는 정답 데이터로 행동을 가르치고, RLHF는 인간 선호를 기반으로 미세 조정한다","SFT와 RLHF는 함께 적용할 수 없다","RLHF가 SFT보다 먼저 수행된다","SFT는 Pre-training 단계에서 수행된다"],a:1,e:"순서는 Pre-training → SFT → RLHF. SFT=지도학습, RLHF=인간 피드백 기반 강화학습."},
+{c:0,q:"MoE(Mixture of Experts) 구조에 대한 설명으로 옳지 않은 것은?",o:["여러 전문가 중 일부만 활성화하여 계산 효율을 높인다","Router(Gating Network)가 입력에 따라 어떤 전문가를 쓸지 결정한다","전체 파라미터 대비 일부만 사용하므로 계산 비용이 절감된다","모든 전문가를 동시에 활성화하여 성능을 극대화한다","GPT-4에서 사용된 것으로 알려져 있다"],a:3,e:"MoE의 핵심은 '일부 전문가만' 활성화하는 것입니다. 전부 활성화하면 효율의 의미가 사라집니다."},
+{c:0,q:"상용 LLM과 오픈 LLM을 비교한 설명으로 올바른 것은?",o:["오픈 모델은 상용 모델보다 항상 성능이 떨어진다","상용 모델은 API로만 접근 가능하고 모델 가중치가 공개되지 않는다","오픈 모델은 어떤 경우든 무료로 상업적 사용이 가능하다","상용 모델만 미세조정(Fine-tuning)이 가능하다","오픈 모델은 보안 문제로 사용이 불가능하다"],a:1,e:"오픈 모델도 라이선스 제한이 있을 수 있고(예: Llama), 로컬 서버 실행이 가능해 프라이버시에 오히려 유리합니다."},
+{c:0,q:"o1, o3 같은 OpenAI o-시리즈 모델의 특징으로 올바른 것은?",o:["가장 빠른 응답 속도를 목표로 설계되었다","추론(Reasoning) 특화 모델로, 내부적으로 긴 사고 과정(CoT)을 거친다","멀티모달 처리를 최초로 지원한 모델이다","파라미터 수를 최소화한 경량 모델이다","코드 생성 기능을 제거한 모델이다"],a:1,e:"내부적으로 단계별 사고를 거쳐 수학·과학·코딩 등에서 높은 성능을 보이는 추론 특화 모델입니다."},
+{c:0,q:"Llama 시리즈에 대한 설명으로 옳지 않은 것은?",o:["Meta(구 Facebook)에서 개발한 오픈소스 모델이다","상세한 기술 보고서(Tech Report)가 공개되어 있다","완전한 오픈소스로 어떤 용도로든 제약 없이 사용 가능하다","Llama 3.1부터 405B까지 대형 모델이 출시되었다","멀티모달 기능을 지원하는 버전도 있다"],a:2,e:"월 이용자 7억 이상 서비스는 별도 라이선스 필요 등 이용 제한이 있습니다."},
+{c:0,q:"Phi 시리즈의 특징으로 올바른 것은?",o:["Google에서 개발한 대형 모델이다","Microsoft에서 개발했으며, 합성 데이터(Synthetic Data)를 활용해 작은 크기 대비 뛰어난 성능을 보인다","한국어 특화 모델이다","멀티모달 기능이 전혀 없다","오픈소스가 아닌 상용 모델이다"],a:1,e:"Phi-3.5는 비전 기능도 지원하며 오픈소스로 공개되어 있습니다. 단 한국어 토큰 효율은 낮은 편."},
+{c:0,q:"Qwen 시리즈에 대한 설명으로 올바른 것은?",o:["Microsoft에서 개발한 모델이다","영어 전용 모델로 다국어 지원이 부족하다","Alibaba에서 개발했으며, 다국어(특히 한국어)에 강하고 Dense/MoE 버전이 모두 있다","코드 생성 기능이 없는 모델이다","양자화가 불가능한 모델이다"],a:2,e:"Qwen-Coder 등 특화 버전도 있고, 다양한 크기·양자화 버전이 제공됩니다."},
+{c:0,q:"Gemma 모델에 대한 설명으로 올바른 것은?",o:["Meta에서 개발한 유료 모델이다","Google에서 개발했으며, 멀티모달 지원(PaliGemma)과 다국어 지원이 우수하다","양자화가 불가능한 모델이다","초대형 모델(100B 이상)만 제공된다","서버 전용으로 개발되었다"],a:1,e:"Gemma 3는 1B/4B/12B/27B 등 다양한 크기로 제공되는 오픈소스 모델입니다."},
+{c:0,q:"한국어 특화 LLM 모델이 아닌 것은?",o:["EXAONE (LG AI Research)","HyperCLOVA X (Naver)","Kanana (Kakao)","Solar (Upstage)","Mistral Large (Mistral AI)"],a:4,e:"Mistral은 프랑스 Mistral AI의 범용 모델. Small 3.2부터 한국어를 지원하지만 한국어 특화 모델은 아닙니다."},
+{c:0,q:"GPU 메모리(VRAM) 계산에 대한 설명으로 올바른 것은? (16bit 기준)",o:["7B 모델은 약 3.5GB의 VRAM이 필요하다","7B 모델은 약 14GB의 VRAM이 필요하다","7B 모델은 약 28GB의 VRAM이 필요하다","7B 모델은 약 70GB의 VRAM이 필요하다","GPU 메모리는 모델 크기와 관계없이 일정하다"],a:1,e:"16bit(FP16/BF16) 기준 대략적 계산: 파라미터 수(B) × 2 = VRAM(GB). 7B×2=14GB."},
+{c:0,q:"양자화(Quantization)의 목적으로 올바른 것은?",o:["모델의 학습 속도를 높이기 위해","모델의 정확도를 높이기 위해","파라미터를 더 적은 비트로 표현하여 메모리 사용량과 추론 속도를 개선하기 위해","새로운 데이터로 모델을 학습시키기 위해","모델의 레이어 수를 줄이기 위해"],a:2,e:"32/16bit를 8bit·4bit 등으로 낮춰 약간의 성능 저하를 감수하고 효율을 크게 높입니다."},
+{c:0,q:"GPTQ, AWQ 양자화 기법에 대한 설명으로 올바른 것은?",o:["둘 다 학습 시 양자화를 적용하는 QAT 기법이다","GPTQ는 중요도 기반으로 순차 양자화하며 오류를 보상하고, AWQ는 활성화(Activation) 값을 고려해 중요 가중치를 보호한다","AWQ가 GPTQ보다 항상 성능이 낮다","GPTQ는 CPU 전용, AWQ는 GPU 전용이다","두 기법 모두 8bit 양자화만 지원한다"],a:1,e:"둘 다 학습 후 적용하는 PTQ(Post-Training Quantization) 기법으로, 성능 저하를 최소화합니다."},
+{c:0,q:"GGUF/GGML 포맷에 대한 설명으로 올바른 것은?",o:["GPU에서만 실행 가능한 포맷이다","PyTorch 학습 전용 포맷이다","CPU 추론에 최적화된 포맷으로, llama.cpp·Ollama에서 사용된다","양자화가 불가능한 포맷이다","상용 모델 전용 포맷이다"],a:2,e:"전체 모델을 단일 파일로 저장해 배포·사용이 간편하고, Q4/Q8 등 다양한 양자화 레벨을 지원합니다."},
+{c:0,q:"sLLM(Small Large Language Model)에 대한 설명으로 올바른 것은?",o:["성능보다 크기를 우선시하여 정확도가 매우 낮다","일반적으로 10B 이하의 소형 모델로, 온디바이스 실행이나 비용 절감에 유리하다","클라우드에서만 실행 가능하다","대형 모델보다 학습 데이터가 적다","양자화가 필요 없다"],a:1,e:"가지치기(Pruning)·증류(Distillation) 등으로 경량화. Phi, Gemma 소형 버전 등이 대표적입니다."},
+{c:0,q:"Foundation Model에 대한 설명으로 올바른 것은?",o:["특정 태스크 전용으로 학습된 모델이다","대규모 데이터로 사전학습되어 다양한 다운스트림 태스크에 적용할 수 있는 모델이다","Fine-tuning이 불가능한 모델이다","오직 텍스트만 처리할 수 있는 모델이다","파라미터 수가 가장 적은 모델을 의미한다"],a:1,e:"GPT, BERT 등이 대표적. 분류·생성·질의응답 등에 Fine-tuning하여 활용합니다."},
+{c:0,q:"In-Context Learning에 대한 설명으로 올바른 것은?",o:["모델의 파라미터를 업데이트하여 새로운 태스크를 학습하는 방식이다","입력 프롬프트에 담긴 맥락을 바탕으로 파라미터 업데이트 없이 새 태스크를 수행하는 방식이다","대규모 데이터로 사전학습하는 방식이다","모델을 처음부터 다시 학습하는 방식이다","오직 하나의 태스크에만 적용되는 방식이다"],a:1,e:"프롬프트에 예시·설명을 넣으면 별도 학습 없이 태스크를 수행. GPT-3에서 발견된 핵심 특성입니다."},
+{c:0,q:"실무에서 LLM 활용 시 가장 강조되는 것은?",o:["가장 큰 모델을 사용하는 것","가장 비싼 API를 사용하는 것","결과 평가 방식과 데이터 처리 파이프라인","GPU 수를 늘리는 것","화려한 프롬프트 템플릿을 만드는 것"],a:2,e:"LLM 단독보다 정량/정성 평가 체계 설계와 데이터 파이프라인 구축이 핵심입니다."},
+{c:0,q:"Few-Shot Learning에 대한 설명으로 올바른 것은?",o:["수천 개의 예시로 모델을 학습시키는 방식이다","프롬프트에 소수의 예시(2~5개)를 포함하여 모델이 패턴을 파악하고 수행하게 하는 방식이다","예시 없이 태스크를 수행하는 Zero-Shot과 같은 개념이다","모델의 파라미터를 조정해야만 하는 방식이다","오직 대형 상용 모델에서만 지원되는 기능이다"],a:1,e:"파라미터 변경 없이 프롬프트만으로 작동. Zero-Shot은 예시 없음, Few-Shot은 소수 예시 제공."},
+{c:0,q:"GPT-4o의 'o'가 의미하는 것과 핵심 특징으로 올바른 것은?",o:["open — 오픈소스 모델이다","omni — 통합된 방식으로 텍스트/이미지/오디오를 하나의 모델에서 함께 처리한다","output — 출력 품질이 높은 모델이다","original — GPT-4의 원본 버전이다","optimized — 속도가 최적화된 모델이다"],a:1,e:"기존에는 모달리티별로 별도 모델이 필요했지만 GPT-4o는 통합 처리가 가능합니다."},
+// ===== 4장 =====
+{c:1,q:"프롬프트 엔지니어링에 대한 설명으로 옳은 것은?",o:["AI 모델을 처음부터 학습시키는 기술이다","AI에게 잘 질문하여 좋은 답변을 얻는 기술이다","AI 모델의 파라미터를 조정하는 기술이다","AI 모델을 배포하는 기술이다","AI 모델의 속도를 최적화하는 기술이다"],a:1,e:"어떻게 질문하느냐에 따라 답변 품질이 달라지므로 좋은 프롬프트 작성법을 연구하는 기술입니다."},
+{c:1,q:"프롬프트 엔지니어링의 변화에 대한 설명으로 옳은 것은?",o:["2025년에는 완전히 불필요해졌다","2023년에는 중요하지 않았지만 2025년에 더 중요해졌다","2023년에는 특정 직군의 전문 역량이었으나, 2025년에는 모든 사람이 갖춰야 할 기본 역량으로 변화했다","지금까지 동일하게 유지되고 있다","최신 모델에서는 프롬프트와 관계없이 같은 결과가 나온다"],a:2,e:"모델이 똑똑해지며 별도 직군보다는 전 구성원의 기본 역량으로 변화했습니다."},
+{c:1,q:"Google Gemini 팀이 제시한 좋은 프롬프트의 4가지 요소가 아닌 것은?",o:["Persona(역할)","Task(과제)","Context(맥락)","Format(형식)","Temperature(온도)"],a:4,e:"Temperature는 API 호출 파라미터이지 프롬프트 구성요소가 아닙니다."},
+{c:1,q:"프롬프트에서 역할(Persona) 부여에 대한 연구 결과로 옳은 것은?",o:["모든 상황에서 큰 성능 향상을 일으킨다","아무 효과가 없다","답변의 형식/스타일에는 유효하지만, 순수 지식 질문에서는 큰 효과가 없을 수 있다","특정 모델에서만 작동한다","영어 프롬프트에서만 효과가 있다"],a:2,e:"EMNLP 2024 연구(162개 역할 실험) 등 종합 결과, 페르소나는 지식 유도보다 형식·스타일 제어 역할."},
+{c:1,q:"프롬프트 구조화에서 사용되는 특수 문자의 역할로 옳지 않은 것은?",o:["# — 제목/섹션 구분","--- — 구역 분리","[ ]나 { } — 변수나 채울 항목 표시","** ** — 중요 내용 강조","@@ — AI 내부 명령어 호출"],a:4,e:"AI 내부 명령어라는 것은 존재하지 않습니다. 나머지는 마크다운 기반 구조화에 쓰입니다."},
+{c:1,q:"Prompt Chaining에 대한 설명으로 옳은 것은?",o:["하나의 긴 프롬프트로 모든 작업을 한 번에 처리하는 기법이다","복잡한 작업을 여러 단계로 나눠 순차적으로 진행하는 기법이다","여러 LLM을 동시에 호출하는 기법이다","프롬프트를 암호화하는 기법이다","LLM의 출력을 다른 언어로 변환하는 기법이다"],a:1,e:"LLM이 이전 대화를 기억하는 특성을 활용해 단계별로 진행 → 길이 단축·정확도 향상."},
+{c:1,q:"Prompt Chaining의 장점으로 해당하지 않는 것은?",o:["Context 길이 단축","정확도 향상","토큰 비용 절감","모델 파라미터 자동 업데이트","단계별 결과 검토 가능"],a:3,e:"파라미터 업데이트는 Fine-tuning에서 이루어집니다. Chaining은 프롬프트 기법일 뿐입니다."},
+{c:1,q:"Zero-shot CoT에서 사용되는 대표적 문구로 옳은 것은?",o:["Answer directly.","Let's think step by step.","Be brief.","Skip the explanation.","Use fewer words."],a:1,e:"이 한 문장만 추가해도 LLM이 단계별 추론을 시작합니다. 나머지는 CoT의 반대 방향."},
+{c:1,q:"Chain-of-Thought(CoT) Prompting의 핵심 아이디어로 옳은 것은?",o:["답을 더 빨리 생성하도록 유도한다","답을 내기 전에 풀이 과정을 보여주도록 요청하여 정답률을 높인다","여러 모델의 답변을 종합한다","프롬프트를 더 짧게 작성한다","모델의 학습 데이터를 변경한다"],a:1,e:"과정을 밟으며 생각하면 더 성숙한 결과가 나옵니다. 특히 문장형 수학 문제에 효과적."},
+{c:1,q:"Few-Shot Prompting에 대한 설명으로 옳은 것은?",o:["규칙만 자세히 설명하는 기법이다","LLM에게 몇 가지 예시를 보여주고 스스로 패턴을 인식해 따라하게 하는 기법이다","대량의 데이터로 모델을 학습시키는 기법이다","프롬프트의 길이를 최소화하는 기법이다","오직 영어로만 가능한 기법이다"],a:1,e:"규칙 설명보다 예시 제시가 효과적인 경우가 많습니다. 예: GPT-3.5 삼행시 만들기."},
+{c:1,q:"CoT 논문(2022)이 이후 LLM 발전에 준 핵심 인사이트는?",o:["모델을 크게 만들수록 성능이 좋아진다","출력(사고 과정)을 늘리는 것이 모델의 지능을 높인다","프롬프트는 짧을수록 좋다","영어로만 학습해야 한다","GPU 메모리가 성능의 핵심 요인이다"],a:1,e:"o1, GPT-5 등 추론 강화(Reasoning) 모델의 이론적 기반이 되었습니다."},
+{c:1,q:"Few-Shot 사용 시 주의해야 할 점으로 옳은 것은?",o:["예시는 많을수록 무조건 좋다","예시의 스타일·길이·어조가 결과에 직접 영향을 미친다","예시는 모두 같은 형식이어야 한다","예시는 정답만 포함해야 하며 오답 예시는 금지된다","예시와 실제 질문은 다른 주제여야 한다"],a:1,e:"긴 예시는 긴 결과를, 짧은 예시는 짧은 결과를 유도합니다. 예시의 다양성도 성능에 영향."},
+{c:1,q:"CoT의 최근 문제점인 'Over-Thinking'에 대한 설명으로 옳은 것은?",o:["모델이 너무 빨리 답변하는 문제이다","모델이 너무 많이 생각해서 오히려 성능이 떨어지는 문제이다","모델이 전혀 생각하지 않는 문제이다","프롬프트가 너무 긴 문제이다","GPU 메모리 부족으로 생기는 문제이다"],a:1,e:"맞은 답을 스스로 의심하거나 과잉 추론으로 환각이 강화될 수 있습니다. 추론이 길다고 항상 좋은 것은 아님."},
+{c:1,q:"Step-Back Prompting의 핵심 아이디어로 옳은 것은?",o:["답을 바로 만들지 않고, 먼저 문제의 구조와 요소를 파악한다","최대한 빠른 답변을 생성한다","프롬프트를 최소화한다","여러 모델의 답변을 비교한다","이전 답변을 삭제하고 다시 시작한다"],a:0,e:"한 발 물러난 추상화 질문으로 원리를 먼저 도출한 뒤 추론하는 기법입니다."},
+{c:1,q:"Step-Back Prompting의 활용 예시로 옳은 것은?",o:["코딩 작업 시 바로 코드를 작성하도록 요청한다","보고서 작성 시 먼저 목차와 핵심 개요를 요청한다","모든 질문에 한 문장으로 답변하도록 요청한다","예시를 최대한 많이 제공한다","모델을 변경한다"],a:1,e:"'좋은 제안서의 평가 기준을 먼저 만들어줘'처럼 제안서 평가에도 적용 가능합니다."},
+{c:1,q:"LangChain의 LCEL에서 '|' 기호의 역할은?",o:["논리적 OR 연산을 수행한다","각 단계를 파이프라인처럼 연결하여 데이터가 흘러가게 한다","주석을 표시한다","에러 처리를 담당한다","변수를 선언한다"],a:1,e:"prompt | llm | parser처럼 프롬프트→LLM→출력 처리를 체인으로 연결합니다."},
+{c:1,q:"LangChain의 템플릿/파서 유형과 설명이 옳게 짝지어진 것은?",o:["PromptTemplate — 대화형 메시지 구분용","ChatPromptTemplate — 변수만 바꿔 재사용하는 단순 프롬프트용","FewShotPromptTemplate — 예시를 포함하는 Few-Shot 학습용","StrOutputParser — 단순 대화형 프롬프트용","JsonOutputParser — 단순 문자열 프롬프트용"],a:2,e:"PromptTemplate=단순 재사용, ChatPromptTemplate=System/Human 등 대화형 구분, Str/JsonOutputParser=출력 변환."},
+{c:1,q:"LLM API의 토큰 비용에 대한 설명으로 옳은 것은?",o:["입력 토큰과 출력 토큰의 비용이 동일하다","출력 토큰 비용이 입력 토큰 비용보다 훨씬 비싸다","토큰 수와 관계없이 고정 비용이다","입력 토큰만 비용이 발생한다","출력 토큰만 비용이 발생한다"],a:1,e:"예: GPT-5 입력 $1.25 vs 출력 $10.00(100만 토큰당, 8배). 불필요하게 긴 답변은 비용 낭비입니다."},
+{c:1,q:"LLM의 한계가 아닌 것은?",o:["학습 시점 이후의 정보를 모름","복잡한 수치 계산에 약함","외부 연동(인터넷 검색·파일 저장 등) 불가","환각(Hallucination) — 없는 정보를 지어냄","텍스트 이해 능력 부족"],a:4,e:"텍스트 이해는 LLM의 핵심 능력입니다. 나머지 4개가 대표적 한계."},
+{c:1,q:"LLM의 한계를 극복하기 위한 3요소로 옳은 것은?",o:["Retrieval, Tools, Memory","GPU, CPU, TPU","Input, Process, Output","Training, Testing, Validation","Encoder, Decoder, Attention"],a:0,e:"Retrieval=검색 모듈 붙이기, Tools=외부 도구 연결, Memory=기존 대화 기억."},
+{c:1,q:"RAG(Retrieval-Augmented Generation)의 핵심 효과로 옳은 것은?",o:["모델 추론 속도 향상","환각(Hallucination) 완화","토큰 비용 감소","파라미터 수 감소","응답 시간 단축"],a:1,e:"답변 전에 실제 정보를 검색해 사실 기반으로 답하므로 지어내는 현상이 크게 줄어듭니다."},
+{c:1,q:"RAG 방식의 처리 순서로 옳은 것은?",o:["답변 → 검색 → 정제","검색 → 답변 → 질문 → 평가","질문 → 관련 정보 검색 → (검색 결과 + 질문) → 답변 생성","답변 → 질문 → 검색 → 수정","검색 → 학습 → 답변"],a:2,e:"질문이 들어오면 관련 문서를 먼저 검색하고, 검색 결과와 질문을 함께 넣어 답변을 생성합니다."},
+{c:1,q:"Tool Calling(Function Calling)의 동작 원리로 옳은 것은?",o:["LLM이 외부 도구나 API를 직접 실행하는 기능이다","LLM이 툴 호출이 필요함을 인식하고 함수명·파라미터를 생성하면, 실제 실행은 외부 시스템이 수행한다","LLM 내부에서 모든 계산이 이루어진다","Tool Calling은 코드 생성 기능을 의미한다","오직 상용 모델에서만 사용 가능하다"],a:1,e:"LLM은 파싱 가능한 호출 요청만 생성하고, 애플리케이션이 실행 후 결과를 LLM에 되돌려줍니다."},
+{c:1,q:"Tool Calling에서 Taker와 Giver의 역할에 대한 설명으로 옳은 것은?",o:["Taker는 Tool에 정보를 주고, Giver는 Tool로부터 정보를 받는다","Taker는 Tool로부터 정보를 받는 역할(예: 검색 API 결과 받기)이고, Giver는 Tool에 정보를 주는 역할(예: 파일 저장·이메일 전송)이다","Taker와 Giver는 같은 역할이다","Taker는 사용자, Giver는 LLM을 의미한다","두 개념 모두 함수 정의에만 관여한다"],a:1,e:"두 기능을 합치면 LLM은 '행동'을 할 수 있게 됩니다."},
+{c:1,q:"LLM의 Memory에 대한 설명으로 옳은 것은?",o:["LLM API는 기본적으로 모든 대화를 영구히 기억한다","LLM API는 기본적으로 상태가 없어(Stateless) 요청마다 이전 대화를 기억하지 못한다","Memory는 GPU 메모리를 의미한다","Memory는 모델의 파라미터 수를 의미한다","Memory는 학습 데이터 저장소를 의미한다"],a:1,e:"대화 맥락을 유지하려면 Checkpointer 등 별도 메모리 시스템이 필요합니다."},
+{c:1,q:"Memory의 두 가지 유형에 대한 설명으로 옳은 것은?",o:["Short-term은 영구 기억, Long-term은 단기 기억이다","Short-term은 한 대화 세션 내 기억(Checkpointer로 구현)이고, Long-term은 사용자별/작업별 영구 기억(DB에 저장)이다","두 유형 모두 GPU 메모리에 저장된다","Short-term Memory만 구현 가능하다","Long-term Memory는 모델 학습에만 사용된다"],a:1,e:"Long-term은 추론 시에도 활용됩니다."},
+{c:1,q:"AI Agent의 정의로 옳은 것은?",o:["단순한 질문-답변 시스템이다","LLM + 도구(Tools) + 자율 판단으로 스스로 생각하고 행동하는 시스템이다","모델 학습을 담당하는 시스템이다","데이터베이스 관리 시스템이다","프롬프트 생성 시스템이다"],a:1,e:"목표를 받으면 (생각→행동→관찰)을 반복하며 결과를 도출합니다."},
+{c:1,q:"일반 LLM과 Agent의 차이에 대한 설명으로 옳은 것은?",o:["Agent는 Tool을 쓸 수 없다","일반 LLM은 자동으로 Tool을 판단하고, Agent는 수동으로 Tool을 지정한다","Agent는 LLM이 스스로 Tool 필요 여부를 판단(자동)하고 복잡한 작업을 단계별로 분해하여 처리한다","일반 LLM과 Agent는 동일하다","Agent는 대화 기능이 없다"],a:2,e:"일반 LLM 사용은 Tool 지정이 수동이고 한 번에 처리하려 하지만, Agent는 자율 판단·분해 처리합니다."},
+{c:1,q:"ReAct Agent의 핵심 개념으로 옳은 것은?",o:["Retrieval + Action의 결합","Reasoning + Acting의 결합","Response + Activity의 결합","Research + Analysis의 결합","Recognition + Activation의 결합"],a:1,e:"LLM이 추론과 행동을 번갈아 수행하며 문제를 해결합니다."},
+{c:1,q:"ReAct Agent의 3단계 사이클 순서로 옳은 것은?",o:["Action → Thought → Observation","Observation → Thought → Action","Thought → Action → Observation","Thought → Observation → Action","Action → Observation → Thought"],a:2,e:"생각(계획) → 행동(도구 호출) → 관찰(결과 확인)을 반복합니다."},
+{c:1,q:"ReAct Agent의 장점으로 해당하지 않는 것은?",o:["해석 가능성 — 사고 과정을 볼 수 있음","환각 감소 — 실제 정보를 기반으로 답변","동적 계획 — 관찰 결과에 따라 계획 수정 가능","모델 파라미터 자동 업데이트","투명한 의사결정 과정"],a:3,e:"ReAct는 추론만 할 뿐 파라미터를 수정하지 않습니다."},
+{c:1,q:"Reflexion(2023)의 핵심 아이디어로 옳은 것은?",o:["여러 Agent가 협력하는 것","실패했을 때 왜 실패했는지 스스로 분석하고 그 교훈을 다음 시도에 활용하는 것","프롬프트를 자동으로 생성하는 것","모델을 더 크게 만드는 것","검색 결과를 캐싱하는 것"],a:1,e:"자기 반성 메커니즘: 실패 원인을 분석하고 교훈을 메모리에 저장해 같은 실수를 피합니다."},
+{c:1,q:"ReAct와 Reflexion의 차이점에 대한 설명으로 옳은 것은?",o:["ReAct는 자기 반성을 하고, Reflexion은 순차적 사고를 한다","ReAct는 순차적 사고(생각-행동-관찰)로 작업을 진행하고, Reflexion은 실패 원인을 반성해 다음 시도에서 개선한다","두 방식은 완전히 같다","Reflexion이 ReAct보다 먼저 개발되었다","ReAct는 Tool을 사용하지 않는다"],a:1,e:"ReAct(2022) → Reflexion(2023) 순서입니다."},
+{c:1,q:"Reflexion의 활용 도메인 예시로 옳지 않은 것은?",o:["Decision Making — 가상 환경에서 물건 찾기·이동하기","Programming — 코드 작성 후 테스트, 실패 시 수정","Reasoning — 추론 문제 풀기","Hardware Design — 반도체 회로 설계","위 1~3은 모두 올바른 도메인이다"],a:3,e:"Hardware Design은 문서에서 언급된 Reflexion 도메인이 아닙니다."},
+{c:1,q:"Agent Q(2024)의 핵심 구성요소로 옳은 것은?",o:["LSTM + CNN + RNN","MCTS(몬테카를로 트리 탐색) + Self-Critique(자기평가) + RL(강화학습, DPO)","Encoder + Decoder + Attention","Pre-training + Fine-tuning + RLHF","Tokenizer + Embedding + Softmax"],a:1,e:"여러 경로를 탐색·평가해 최적의 경로를 선택합니다."},
+{c:1,q:"Agent Q의 Actor-Critic 구조에 대한 설명으로 옳은 것은?",o:["Actor가 평가하고 Critic이 행동을 생성한다","Actor(LLM)가 여러 가능한 행동을 생성하고, Critic(LLM)이 각 행동의 유망도를 평가한다","Actor와 Critic은 같은 역할을 한다","Actor만 사용되고 Critic은 사용되지 않는다","Critic만 사용되고 Actor는 사용되지 않는다"],a:1,e:"행동 생성 → 유망도 평가 → 최적 선택의 구조입니다."},
+{c:1,q:"Agent Q의 성과로 옳은 것은?",o:["웹 예약 작업에서 Llama-3의 성공률을 18.6%에서 95.4%로 향상시켰다","이미지 생성 품질을 10배 향상시켰다","모델 크기를 90% 축소시켰다","학습 시간을 1000배 단축시켰다","토큰 비용을 99% 절감시켰다"],a:0,e:"약 340% 상승으로 사람 수준에 근접한 성과를 보였습니다."},
+{c:1,q:"다단계 Tool Calling의 실패 원인으로 옳은 것은?",o:["GPU 메모리 부족","Tool 미사용 / 중간 결과(컨텍스트) 누락 / 무한 반복","프롬프트가 너무 긺","모델 파라미터가 너무 작음","학습 데이터 부족"],a:1,e:"필요할 때 Tool을 호출하지 않거나, 이전 단계 결과를 다음 단계에 전달하지 않거나, 같은 작업을 반복하는 것이 주요 실패 원인."},
+{c:1,q:"단일 Agent의 한계로 옳은 것은?",o:["Tool을 쓸 수 없다","Context 폭발, 능력의 한계, 역할 충돌이 생길 수 있다","대화 기능이 없다","인터넷 연결이 불가능하다","한 가지 언어만 지원한다"],a:1,e:"검색 결과가 쌓여 Context가 폭발하고, 검색·분석·작성 등 다른 역할을 한 Agent가 다 수행하며 충돌합니다."},
+{c:1,q:"Workflow와 Agentic Work의 차이에 대한 설명으로 옳은 것은?",o:["Workflow는 LLM이 매번 판단하고, Agentic은 고정된 흐름이다","Workflow는 흐름을 미리 정해놓은 구조이고, Agentic은 실행 중 LLM이 스스로 판단한다","두 개념은 동일하다","Workflow만 구현 가능하다","Agentic Work만 구현 가능하다"],a:1,e:"기본은 Workflow, 판단이 필요한 곳만 Agent가 원칙. 둘을 조합해 사용합니다."},
+{c:1,q:"Multi-Agent 아키텍처의 3가지 유형으로 옳은 것은?",o:["Input, Process, Output","Supervisor, Network, Hierarchical","Encoder, Decoder, Attention","Training, Validation, Testing","CPU, GPU, TPU"],a:1,e:"Supervisor=중앙 관리, Network=Agent 간 직접 통신, Hierarchical=계층 구조."},
+{c:1,q:"완전 자율 Agent의 문제점으로 해당하지 않는 것은?",o:["속도 저하 — 매 단계마다 LLM 호출","비용 급증","예측 불가능한 실행 경로","모델 손상","디버깅 어려움"],a:3,e:"Agent는 추론만 할 뿐 파라미터를 수정하지 않으므로 모델이 손상되지 않습니다."},
+{c:1,q:"Supervisor 아키텍처에 대한 설명으로 옳은 것은?",o:["Agent들이 서로 직접 통신한다","중앙 컨트롤러(Supervisor)가 Agent들을 관리하며, 독립적 작업의 병렬 처리에 적합하다","계층 구조로 상위/하위 Agent가 있다","단일 Agent만 사용한다","고정된 Workflow만 사용한다"],a:1,e:"직접 통신은 Network, 계층 구조는 Hierarchical 아키텍처입니다."},
+{c:1,q:"Hierarchical 아키텍처에 대한 설명으로 옳은 것은?",o:["모든 Agent가 동등한 관계이다","계층 구조로 상위 Agent가 여러 Sub-Agent를 관리하며, 복잡하고 큰 규모의 작업에 적합하다","중앙 컨트롤러 없이 Agent들이 직접 통신한다","단일 Agent만 사용한다","Agent 없이 Tool만 사용한다"],a:1,e:"Sub-Agent는 더 세분화된 작업을 담당할 수 있습니다."},
+{c:1,q:"Stanford STORM 시스템의 목적으로 옳은 것은?",o:["이미지 생성","Wikipedia 스타일의 긴 전문 글 자동 생성","음성 인식","코드 컴파일","데이터베이스 관리"],a:1,e:"다양한 관점 발견 → 페르소나 생성 → 시뮬레이션 대화 → 개요 설계·섹션 작성 과정을 거칩니다."},
+{c:1,q:"STORM의 작동 과정에 포함되지 않는 것은?",o:["다양한 관점 발견","페르소나 생성","페르소나 간 시뮬레이션 대화","모델 파라미터 업데이트","개요 설계 후 섹션별 작성"],a:3,e:"STORM은 추론만 수행하며 파라미터를 업데이트하지 않습니다."},
+{c:1,q:"LangChain Open Deep Research의 3단계 순서로 옳은 것은?",o:["Writing → Planning → Research","Research → Planning → Writing","Planning/Structure → Research → Writing","Research → Writing → Planning","Writing → Research → Planning"],a:2,e:"주제 구성/계획 → 검색·수집 → 선별·통합 작성 순서입니다."},
+{c:1,q:"2024-2025년 최신 모델의 Tool Calling 발전에 대한 설명으로 옳은 것은?",o:["Tool Calling 기능이 완전히 제거되었다","모델 자체가 Tool Calling을 네이티브로 지원하게 되었다","Tool Calling은 더 이상 사용되지 않는다","프롬프트 기법으로만 Tool Calling이 가능하다","오픈소스 모델만 Tool Calling을 지원한다"],a:1,e:"이전엔 ReAct 등 프롬프트 기법으로 구현했지만, 최근 모델들은 네이티브 지원으로 프롬프트 기법이 덜 필요해졌습니다."},
+{c:1,q:"Agent 기술의 발전 순서로 옳은 것은?",o:["Agent Q → Reflexion → ReAct","Reflexion → ReAct → Agent Q","ReAct → Agent Q → Reflexion","ReAct → Reflexion → Agent Q","Agent Q → ReAct → Reflexion"],a:3,e:"ReAct(2022, 추론+행동) → Reflexion(2023, 자기반성) → Agent Q(2024, 탐색+강화학습)."},
+{c:1,q:"소형 오픈소스 모델(sLLM)에서 Tool Calling 문제를 해결하는 방법으로 옳은 것은?",o:["더 큰 GPU를 사용한다","Tool 수를 제한하고 단순화하거나 Prompt로 형식을 안내한다","Tool을 모두 제거한다","모델을 처음부터 다시 학습시킨다","영어로만 사용한다"],a:1,e:"Tool 제거는 해결책이 아니며, 하드웨어·언어 문제도 아닙니다."},
+// ===== 5장 =====
+{c:2,q:"LLM의 Knowledge Cutoff(지식 마감일)에 대한 설명으로 옳은 것은?",o:["LLM이 정보를 학습할 수 있는 최대 용량이다","LLM은 학습 데이터의 수집 시점까지만 알고, 그 이후 정보는 알 수 없다","LLM의 응답 시간 제한이다","LLM이 처리할 수 있는 최대 토큰 수이다","LLM의 업데이트 주기이다"],a:1,e:"'어제 발표된 정보'에는 답할 수 없습니다. 최대 토큰 수는 Context Length입니다."},
+{c:2,q:"Hallucination(환각) 현상에 대한 설명으로 옳은 것은?",o:["LLM이 응답을 거부하는 현상이다","LLM이 존재하지 않는 정보를 그럴듯하게 만들어내는 현상이다","LLM이 느리게 응답하는 현상이다","LLM이 같은 답변을 반복하는 현상이다","LLM이 언어를 인식하지 못하는 현상이다"],a:1,e:"답변이 자연스러워 진짜인지 가짜인지 구분하기 어렵다는 점이 문제입니다."},
+{c:2,q:"RAG를 한 문장으로 정의하면 가장 적절한 것은?",o:["모델을 처음부터 재학습시키는 것","검색 + In-Context Learning","모델의 파라미터를 변경하는 것","여러 모델을 앙상블하는 것","데이터를 압축하는 것"],a:1,e:"질문 관련 정보를 검색해 프롬프트를 증강한 뒤 LLM이 답변을 생성합니다(학습 아님)."},
+{c:2,q:"In-Context Learning에 대한 설명으로 옳은 것은?",o:["LLM의 파라미터가 업데이트되는 학습 방식이다","입력 프롬프트에 포함된 정보를 이해·활용해 답변을 생성하는 것으로, 파라미터는 변하지 않는다","대규모 데이터로 사전학습하는 방식이다","GPU를 많이 쓰는 학습 방식이다","오프라인에서만 가능한 방식이다"],a:1,e:"오픈북 시험처럼 책(검색된 문서)을 보면서 문제에 답하는 것과 같습니다."},
+{c:2,q:"RAG의 전체 명칭으로 옳은 것은?",o:["Rapid Automated Generation","Retrieval Augmented Generation","Recursive Algorithm Generation","Random Access Generation","Response Augmented Gateway"],a:1,e:"검색(Retrieval)으로 증강(Augmented)된 생성(Generation)."},
+{c:2,q:"RAG와 파인튜닝의 비교에서 옳은 것은?",o:["RAG는 모델 내부에 지식을 저장한다","파인튜닝은 DB 내용만 변경하면 즉시 반영된다","RAG는 외부 DB에서 검색한 지식을 프롬프트에 추가하고, 파인튜닝은 모델 자체를 재학습하여 파라미터를 변경한다","RAG가 파인튜닝보다 모든 경우 더 좋은 성능을 낸다","파인튜닝은 학습 과정이 필요 없다"],a:2,e:"RAG는 DB 수정·롤백이 쉽고 환각이 줄지만, 검색 단계 때문에 속도는 파인튜닝보다 느립니다."},
+{c:2,q:"RAG에 대한 설명으로 옳지 않은 것은?",o:["실제 검색된 문서 기반으로 답변하여 환각이 감소한다","DB 내용만 변경하면 재학습 없이 즉시 반영된다","검색·처리 단계가 추가되어 응답 시간이 늘어날 수 있다","모델 파라미터가 변경되어 지식이 영구적으로 저장된다","최신 정보에 대응할 수 있다"],a:3,e:"RAG는 모델 파라미터를 변경하지 않습니다. 파라미터 변경은 파인튜닝의 특성입니다."},
+{c:2,q:"RAG 파이프라인 5단계의 순서로 옳은 것은?",o:["Processing → Indexing → Searching → Augmenting → Generating","Indexing → Processing → Searching → Augmenting → Generating","Searching → Indexing → Processing → Generating → Augmenting","Generating → Augmenting → Searching → Processing → Indexing","Augmenting → Indexing → Searching → Processing → Generating"],a:1,e:"Indexing(DB 구성) → Processing(질의 전처리) → Searching(검색) → Augmenting(프롬프트 구성) → Generating(답변 생성)."},
+{c:2,q:"최신 LLM이 긴 Context를 처리할 수 있는데도 문서 전체를 한 번에 넣지 않는 이유는?",o:["비용이 무료이기 때문에","처리할 수 있어도, 필요한 부분만 나눠 처리하는 것이 더 정확하고 효율적이기 때문에","LLM이 긴 문서를 읽지 못하기 때문에","전체 문서를 넣으면 항상 오류가 발생하기 때문에","API에서 긴 문서를 지원하지 않기 때문에"],a:1,e:"법률 질문에 전체 법전을 넣기보다 관련 조항만 넣는 것이 더 정확한 답을 얻습니다."},
+{c:2,q:"청킹(Chunking)에 대한 설명으로 옳은 것은?",o:["문서를 압축하는 과정이다","큰 문서를 작은 단위(Chunk)로 나누는 과정이다","문서를 암호화하는 과정이다","문서를 삭제하는 과정이다","문서를 번역하는 과정이다"],a:1,e:"검색과 처리를 효율적으로 하기 위해 필요합니다. 최적 사이즈는 도메인/데이터마다 다릅니다."},
+{c:2,q:"청크 크기의 트레이드오프에 대한 설명으로 옳은 것은?",o:["작은 청크는 검색 정확도가 높지만 주변 맥락 정보가 부족하다","큰 청크는 검색 정확도가 높고 맥락도 풍부하다","청크 크기는 성능에 영향을 주지 않는다","작은 청크가 무조건 좋다","큰 청크가 무조건 좋다"],a:0,e:"큰 청크는 맥락은 보존되지만 검색 정확도가 저하됩니다. 청킹의 딜레마입니다."},
+{c:2,q:"청크 오버랩(Overlap)에 대한 설명으로 옳은 것은?",o:["청크들이 완전히 분리되어 중복이 없는 것이다","인접한 청크들이 일부 내용을 공유하여 의미가 끊기지 않게 하는 것이다","청크를 삭제하는 것이다","청크의 순서를 바꾸는 것이다","청크를 암호화하는 것이다"],a:1,e:"일반적으로 청크 크기의 10~20% 정도를 오버랩합니다."},
+{c:2,q:"임베딩(Embedding)에 대한 설명으로 옳은 것은?",o:["텍스트를 이미지로 변환하는 것이다","텍스트를 숫자 벡터로 변환하여 의미를 고차원 공간의 점으로 표현하는 것이다","텍스트를 압축하는 것이다","텍스트를 삭제하는 것이다","텍스트를 복호화하는 것이다"],a:1,e:"의미가 비슷한 텍스트는 벡터 공간에서 가까운 위치에 놓입니다."},
+{c:2,q:"질문 전처리에서 '맥락화(Contextualize)'의 목적으로 옳은 것은?",o:["질문을 삭제하는 것이다","짧거나 모호한 질문을 이전 대화 내역을 고려하여 명확하게 만드는 것이다","질문을 암호화하는 것이다","질문의 언어를 바꾸는 것이다","질문을 저장하는 것이다"],a:1,e:"예: 이전 대화가 '삼성전자 주가'였다면 '어제는 어땠어?' → '삼성전자 주가가 어제 어땠나요?'로 변환."},
+{c:2,q:"HyDE(Hypothetical Document Embedding)의 핵심 아이디어로 옳은 것은?",o:["사용자 질문을 삭제하고 새 질문을 만든다","질문으로 바로 검색하는 대신, LLM에게 가상의 답변(문서)을 먼저 생성하게 하고 그 답변으로 검색한다","여러 모델을 사용하여 검색한다","검색을 하지 않고 바로 답변한다","오직 키워드로만 검색한다"],a:1,e:"LLM이 생성한 가상 답변에는 관련 전문 용어가 담겨 있어 검색 정확도가 높아집니다."},
+{c:2,q:"HyDE의 한계로 옳은 것은?",o:["검색 속도가 너무 빠르다","LLM이 해당 주제를 모르면 가상 답변도 엉뚱해져 검색 결과가 나빠질 수 있다","비용이 전혀 들지 않는다","항상 완벽한 결과를 제공한다","오직 영어만 지원한다"],a:1,e:"가상 답변의 품질이 검색 결과에 직접 영향을 미칩니다."},
+{c:2,q:"Multi-Querying에 대한 설명으로 옳은 것은?",o:["하나의 질문만 사용하여 검색한다","하나의 질문을 여러 각도의 질문으로 변환하여 검색 범위를 넓힌다","질문을 삭제한다","검색을 하지 않는다","오직 하나의 결과만 반환한다"],a:1,e:"예: '환불 바꿔줘' → '환불 조건', '교환 방법' 등 여러 질문으로 변환 후 결과를 통합."},
+{c:2,q:"Semantic Search(의미 기반 검색)의 특징으로 옳은 것은?",o:["정확히 일치하는 키워드에만 높은 점수를 준다","정확히 일치하지 않아도 의미가 비슷하면 찾을 수 있다","동의어나 유사 표현을 인식하지 못한다","BM25 알고리즘을 사용한다","임베딩을 사용하지 않는다"],a:1,e:"임베딩 벡터 유사도 기반. '강아지 건강'으로 '반려견 웰빙' 문서를 찾을 수 있습니다."},
+{c:2,q:"Lexical Search(키워드 기반 검색)의 특징으로 옳은 것은?",o:["의미가 비슷하면 찾을 수 있다","항상 임베딩을 사용한다","정확히 일치하는 키워드에 높은 점수를 주며, 모델명·코드·법률 조항 검색에 유용하다","동의어를 자동으로 인식한다","벡터 유사도를 계산한다"],a:2,e:"BM25, TF-IDF 알고리즘을 사용하는 정확 매칭 중심 검색입니다."},
+{c:2,q:"하이브리드 검색에 대한 설명으로 옳은 것은?",o:["Semantic Search만 사용한다","Lexical Search만 사용한다","Semantic Search와 Lexical Search를 결합하여 검색한다","검색을 하지 않는다","오직 이미지 검색만 한다"],a:2,e:"두 방식의 장점을 결합해(예: 50:50) 더 좋은 결과를 얻습니다. RRF 등으로 결과를 통합."},
+{c:2,q:"TF-IDF에서 IDF(역 문서 빈도)의 의미로 옳은 것은?",o:["검색어가 문서에 자주 나올수록 점수가 높아진다","검색어가 전체 문서에서 드물수록 점수가 높아진다","문서의 길이가 길수록 점수가 높아진다","검색어가 제목에 있으면 점수가 높아진다","최신 문서일수록 점수가 높아진다"],a:1,e:"흔한 단어(the 등)는 낮게, 드문 전문 용어는 높게 평가합니다. 문서 내 빈도는 TF."},
+{c:2,q:"BM25가 TF-IDF를 개선한 점으로 옳은 것은?",o:["임베딩을 사용한다","단어 빈도 포화(Saturation)와 문서 길이 정규화를 적용한다","신경망을 사용한다","GPU 가속을 지원한다","이미지 검색을 지원한다"],a:1,e:"100번 vs 200번 등장을 비슷하게 처리하고, 긴 문서가 불공정하게 유리하지 않도록 보정합니다."},
+{c:2,q:"RRF(Reciprocal Rank Fusion)의 원리로 옳은 것은?",o:["각 검색 결과에서 문서의 순위를 확인하고, 순위의 역수를 점수로 계산하여 합산한다","문서의 길이로 점수를 계산한다","문서의 생성 날짜로 점수를 계산한다","랜덤하게 문서를 선택한다","첫 번째 검색 결과만 사용한다"],a:0,e:"1위=1점, 2위=0.5점, 3위=0.33점… 여러 검색에서 일관되게 상위인 문서가 최종 상위에 오릅니다."},
+{c:2,q:"벡터 DB(Vector Database)에 대한 설명으로 옳은 것은?",o:["관계형 데이터만 저장한다","벡터 형태의 데이터 저장 및 검색에 최적화된 데이터베이스이다","오직 텍스트만 담을 수 있다","검색 기능이 없다","오픈소스 제품이 없다"],a:1,e:"Pinecone(클라우드), Milvus, Qdrant, Chroma, Weaviate(오픈소스) 등이 있습니다."},
+{c:2,q:"HNSW 알고리즘에 대한 설명으로 옳은 것은?",o:["모든 벡터를 순차적으로 비교하는 알고리즘이다","계층 구조를 활용하여 최상위에서 점점 아래로 내려가며 검색하는 근사 최근접 이웃(ANN) 알고리즘이다","텍스트만 검색할 수 있는 알고리즘이다","O(n²) 복잡도를 가진다","키워드 매칭 알고리즘이다"],a:1,e:"구글맵을 축소→확대하듯 큰 점프 레이어에서 정밀 레이어로 내려가며 O(log n)으로 검색."},
+{c:2,q:"Cosine Similarity(코사인 유사도)에 대한 설명으로 옳은 것은?",o:["두 벡터 사이의 직선 거리를 측정한다","두 벡터 사이 각도의 코사인 값을 측정하며, 유사도 측정에서 가장 일반적인 방법이다","벡터의 크기만 비교한다","텍스트의 길이를 비교한다","문서의 생성 날짜를 비교한다"],a:1,e:"직선 거리는 Euclidean Distance. 코사인 유사도는 방향(각도)을 비교하며 값 범위는 -1~1."},
+{c:2,q:"MMR(Maximal Marginal Relevance)의 목적으로 옳은 것은?",o:["검색 속도를 높인다","검색 결과가 너무 비슷한 것들로만 채워지는 것을 방지하여 다양성을 확보한다","검색 결과를 삭제한다","가장 오래된 결과만 반환한다","검색 비용을 줄인다"],a:1,e:"첫 결과는 질문과 가장 유사한 것, 다음 결과는 유사하면서도 앞의 것과 다른 것을 선택합니다."},
+{c:2,q:"Small2Big Chunking의 원리로 옳은 것은?",o:["검색과 답변 모두 큰 청크를 사용한다","검색과 답변 모두 작은 청크를 사용한다","검색은 작은 청크로, 답변용 Context는 큰 청크(Parent Document)로 사용한다","검색은 큰 청크로, 답변용 Context는 작은 청크로 사용한다","청크를 사용하지 않는다"],a:2,e:"작은 청크로 정밀 검색 후, 해당 청크의 부모 문서 전체를 제공해 맥락을 보존합니다."},
+{c:2,q:"RAFT(Retrieval Augmented Fine-Tuning)를 '오픈북 시험'에 비유할 때 가장 적절한 설명은?",o:["책을 다 암기해서 시험 보기","공부 없이 책만 보고 시험 보기","책을 미리 공부하고, 책을 보면서 시험 보기","책을 찢어 버리고 시험 보기","시험을 보지 않기"],a:2,e:"암기만=일반 파인튜닝, 책만=일반 RAG. RAFT는 불필요한 정보는 무시하고 핵심만 추출하는 능력을 훈련합니다."},
+{c:2,q:"Contextual Retrieval에서 청크에 맥락을 추가하는 이유로 옳은 것은?",o:["청크의 크기를 줄이기 위해","청크만으로는 '언제?', '무슨 서비스?', '이전 이용자 수는?' 등의 정보가 부족하여 검색이 어렵기 때문","청크를 삭제하기 위해","검색을 느리게 하기 위해","비용을 증가시키기 위해"],a:1,e:"LLM으로 청크 앞에 맥락 설명을 추가하면 검색 정확도가 향상됩니다."},
+{c:2,q:"Lost in the Middle 현상에 대한 설명으로 옳은 것은?",o:["LLM이 짧은 Context를 처리하지 못하는 현상이다","LLM이 긴 Context에서 앞부분과 뒷부분은 잘 기억하지만 중간 부분은 잘 기억하지 못하는 현상이다","LLM이 모든 부분을 똑같이 기억하는 현상이다","LLM이 오직 앞부분만 기억하는 현상이다","LLM이 오직 중간 부분만 기억하는 현상이다"],a:1,e:"정확도 곡선이 U자형을 그립니다."},
+{c:2,q:"Lost in the Middle 현상의 원인으로 옳은 것은?",o:["GPU 메모리 부족","LLM의 어텐션 메커니즘이 시작과 끝에 집중하고, 긴 시퀀스에서 중간 정보의 접근성이 저하되기 때문","학습 데이터 부족","프롬프트가 짧기 때문","네트워크 문제"],a:1,e:"하드웨어·네트워크 문제가 아니라 어텐션의 구조적 특성입니다."},
+{c:2,q:"Reranker의 목적으로 옳은 것은?",o:["검색을 건너뛰는 것","1차 검색(Retriever)으로 얻은 후보를 더 정밀한 모델로 재정렬하여 품질을 높이는 것","검색 결과를 삭제하는 것","검색 속도를 늦추는 것","검색 비용을 늘리는 것"],a:1,e:"1차로 Top 30 등을 뽑고 Cross-Encoder 등으로 재정렬해 Top 10을 선별합니다."},
+{c:2,q:"Bi-Encoder와 Cross-Encoder의 비교에서 옳은 것은?",o:["Bi-Encoder가 Cross-Encoder보다 정확도가 높다","Cross-Encoder가 Bi-Encoder보다 속도가 빠르다","Bi-Encoder는 질문·문서를 따로 벡터화해 빠르고(1차 검색용), Cross-Encoder는 질문+문서를 함께 입력해 더 정확하다(2차 재정렬용)","두 방식은 동일하다","Bi-Encoder는 2차 재정렬에 사용된다"],a:2,e:"속도는 Bi, 정확도는 Cross. 대량 검색→소량 재정렬로 역할을 나눕니다."},
+{c:2,q:"Reordering에서 Lost in the Middle을 고려한 전략으로 옳은 것은?",o:["모든 정보를 중간에 배치한다","중요한 정보는 맨 앞이나 맨 뒤에 배치한다","정보의 순서는 중요하지 않다","가장 중요한 정보를 정중앙에 배치한다","모든 정보를 삭제한다"],a:1,e:"지그재그 배치(1위-맨앞, 2위-맨뒤, 3위-두번째…)도 사용됩니다."},
+{c:2,q:"Agentic RAG에 대한 설명으로 옳은 것은?",o:["검색 없이 답변하는 시스템이다","검색 결과를 평가하고 정확함/애매함/부정확함에 따라 분기하여 처리하는 동적 워크플로우이다","오직 하나의 검색만 수행하는 시스템이다","사람이 직접 모든 판단을 하는 시스템이다","검색 결과를 모두 삭제하는 시스템이다"],a:1,e:"예: Corrective RAG(2024) — 정확하면 바로 답변, 애매하면 재검색, 부정확하면 웹 검색."},
+{c:2,q:"멀티모달 RAG에서 처리해야 할 요소가 아닌 것은?",o:["텍스트","이미지","표(테이블)","차트","GPU 온도"],a:4,e:"멀티모달 임베딩이나 이미지 캡셔닝으로 이미지·표 등을 벡터 DB에 저장합니다."},
+{c:2,q:"Docling에 대한 설명으로 옳은 것은?",o:["GPU 제조 회사이다","IBM에서 만든 오픈소스 도구로, PDF·PPT·DOC·HTML 등 다양한 문서 형식에서 텍스트/이미지/테이블을 추출한다","데이터베이스 관리 시스템이다","프로그래밍 언어이다","운영 체제이다"],a:1,e:"문서 파싱을 수행하는 문서 처리 도구입니다."},
+{c:2,q:"RAG 평가 지표 중 'Answer Relevance'의 의미로 옳은 것은?",o:["검색된 문서 중 관련 문서의 비율","답변이 사용자의 질문에 잘 맞고 있는지","답변이 Context에 얼마나 충실한지","환각(거짓 정보) 비율","검색 속도"],a:1,e:"Context 충실도는 Faithfulness입니다."},
+{c:2,q:"RAG 파이프라인 '실행 단계'의 순서로 옳은 것은?",o:["Generation → Reranking → Searching → Processing → Augmenting","Processing → Searching → Reranking → Reordering → Augmenting → Generation","Augmenting → Generation → Processing → Searching → Reranking","Searching → Processing → Augmenting → Generation → Reranking","Reranking → Reordering → Processing → Searching → Generation"],a:1,e:"전처리(Multi-Query 등) → 하이브리드 검색 → 재정렬 → 중요 정보 위치 최적화 → 프롬프트 구성 → LLM 답변 생성."},
+{c:2,q:"RAG 평가 지표 중 'Faithfulness'의 의미로 옳은 것은?",o:["검색된 문서 중 관련 문서의 비율","답변이 질문에 잘 맞고 있는지","답변이 Context(검색된 문서)에만 근거하여 얼마나 충실한지","응답 속도","토큰 비용"],a:2,e:"Context에 없는 정보를 만들어내지 않았는지 평가합니다. RAGAS 등의 프레임워크로 측정."},
+{c:2,q:"RAG에서 기억해야 할 핵심 포인트로 옳지 않은 것은?",o:["RAG = 검색 + In-Context Learning (학습이 아님)","청킹은 트레이드오프: 작으면 정확, 크면 맥락 보존","하이브리드 검색이 최선: 의미+키워드 결합","Lost in the Middle 주의: 중요 정보는 중간에 배치","Reranker로 품질 향상: 1차 검색 후 2차 재정렬"],a:3,e:"중요 정보는 중간이 아니라 맨 앞/뒤에 배치해야 합니다."},
+{c:2,q:"RAG의 파인튜닝 대비 지식 업데이트 장점으로 옳은 것은?",o:["재학습이 필요하다","DB 내용만 변경하면 즉시 반영된다","Machine-unlearning이 쉽다는 점은 파인튜닝의 장점이다","모델 파라미터가 변경된다","GPU 비용이 더 많이 든다"],a:1,e:"파인튜닝은 재학습이 필요하고 학습된 지식 제거(unlearning)가 어렵습니다."},
+{c:2,q:"임베딩 모델 중 긴 텍스트 처리가 가능한 모델로 옳은 것은?",o:["E-5 (500토큰 제한)","Qwen3 (30,000토큰까지 처리 가능)","BM25","TF-IDF","HNSW"],a:1,e:"BM25/TF-IDF는 임베딩 모델이 아닌 키워드 알고리즘, HNSW는 검색 알고리즘입니다."},
+{c:2,q:"RAG에서 'Context에 답이 없을 때' 권장되는 처리 방법은?",o:["아무 답변이나 생성한다","환각으로 답변을 만들어낸다","'모르겠습니다' 또는 '답변할 수 없습니다'라고 답하도록 지시한다","검색을 무한 반복한다","시스템을 종료한다"],a:2,e:"프롬프트에 'Context에 없으면 모르겠습니다라고 답하세요' 같은 지시를 포함해 환각을 방지합니다."},
+{c:2,q:"Contextual Retrieval에서 비용 절감을 위해 활용되는 기법은?",o:["모델 크기 축소","Prompt Caching (반복되는 입력을 캐시에 저장)","레이어 제거","검색 비활성화","청크 삭제"],a:1,e:"모든 청크에 맥락을 추가할 때 반복 입력을 캐싱해 비용을 절감합니다(Claude, OpenAI, Gemini 지원)."},
+// ===== 6장 =====
+{c:3,q:"Fine Tuning에 대한 설명으로 옳은 것은?",o:["모델을 처음부터 새 데이터로 학습시키는 것이다","이미 학습된 LLM에 특정 데이터를 추가로 학습시켜 특정 목적에 맞게 성능을 향상시키는 것이다","프롬프트에 Context를 추가하는 것이다","모델의 추론 속도를 높이는 것이다","모델의 파라미터 수를 줄이는 것이다"],a:1,e:"Pre-training이 학부 교육이라면, Fine Tuning은 대학원에서 특정 전문 분야를 심화 학습하는 것과 같습니다."},
+{c:3,q:"Pre-training에 대한 설명으로 옳은 것은?",o:["소량의 데이터로 학습하는 과정이다","인터넷의 방대한 데이터를 '다음 단어 예측' 방식으로 학습하는 과정이다","질문-답변 쌍으로 학습하는 과정이다","인간 피드백을 활용하는 과정이다","모델을 압축하는 과정이다"],a:1,e:"수조 개 토큰, 수천 GPU, 수개월, 수백억~수천억 원의 비용이 소요됩니다."},
+{c:3,q:"Fine Tuning이 Pre-training보다 효율적인 이유는?",o:["Fine Tuning이 더 많은 데이터가 필요하기 때문","Base Model이 이미 언어의 기본 구조·문법·세상 상식을 알고 있어, 특정 능력만 추가하면 되기 때문","Fine Tuning이 더 많은 GPU가 필요하기 때문","Fine Tuning이 더 많은 시간이 걸리기 때문","Fine Tuning은 학습이 불가능하기 때문"],a:1,e:"빠른 수렴(몇 시간~며칠)과 낮은 비용으로 가능합니다."},
+{c:3,q:"Prompt Engineering과 Fine Tuning의 차이에 대한 설명으로 옳은 것은?",o:["둘 다 모델의 파라미터를 변경한다","PE는 파라미터를 조정하고, FT는 입력 텍스트를 변경한다","PE는 입력 텍스트(프롬프트)를 변경하고, FT는 모델 자체의 파라미터를 조정해 '사고 회로'를 변경한다","둘 다 매번 Context 제공이 필요하다","둘 다 1회성 비용만 발생한다"],a:2,e:"PE='매번 설명서를 주며 일 시키기', FT='아예 지식을 머릿속에 심기'. PE는 반복 비용(토큰 과금)이 발생합니다."},
+{c:3,q:"Fine Tuning의 4가지 주요 목적이 아닌 것은?",o:["지식(Knowledge) — 최신 정보나 도메인 지식 주입","능력(Capability) — 수학·코딩·요약 등 특정 작업 수행 능력 향상","형식(Format) — 응답 스타일·길이·출력 형식 조정","안전(Safety) — 유해한 요청 거부, 윤리적 응답","속도(Speed) — 추론 속도 향상"],a:4,e:"속도는 양자화 등 최적화 기법으로 개선하는 영역입니다."},
+{c:3,q:"Fine Tuning의 3가지 접근법으로 옳은 것은?",o:["Pre-training, Post-training, Re-training","새로운 지식 학습(CPT), 입력-출력 학습(SFT), 강화 학습(RL)","압축, 양자화, 증류","검색, 생성, 평가","인코딩, 디코딩, 어텐션"],a:1,e:"CPT=언어/지식의 토양 변경, SFT=특정 작업 특화, RL(PPO·DPO·GRPO)=보상 기반 최적화."},
+{c:3,q:"Fine Tuning 파이프라인 5단계의 순서로 옳은 것은?",o:["SFT → CPT → Rejection Sampling → DPO → Alignment","CPT → Instruction Tuning → Rejection Sampling+SFT → 선호도 학습(DPO/PPO) → Alignment","Alignment → DPO → CPT → SFT → Instruction Tuning","DPO → PPO → SFT → CPT → Alignment","Instruction Tuning → CPT → SFT → DPO → Alignment"],a:1,e:"도메인 지식 주입(CPT) → 질의응답 학습 → 고품질 선별 학습 → 선호도 최적화 → 정렬 순서입니다."},
+{c:3,q:"Base Model의 한계에 대한 설명으로 옳은 것은?",o:["질문에 정확히 답변한다","'다음 단어 예측'만 학습했기 때문에 질문에 답하는 대신 문장을 이어가는 방식으로 응답한다","대화 능력이 뛰어나다","안전한 응답만 생성한다","모든 언어를 완벽하게 지원한다"],a:1,e:"예: '프랑스의 수도는 어디야?'에 답 대신 인터넷에서 본 패턴대로 문장을 이어갈 수 있습니다."},
+{c:3,q:"모델 이름 뒤의 'Instruct Model'에 대한 설명으로 옳은 것은?",o:["순수 학습만 된 모델로 대화 기능이 없다","용량이 축소된 경량 모델이다","질의응답이 가능하도록 Instruction Tuning된 모델이다","추론 능력이 강화된 모델이다","Pre-training 전의 모델이다"],a:2,e:"예: Qwen2.5-7B-Instruct. 채팅 배포에 사용됩니다."},
+{c:3,q:"SFT(Supervised Fine-Tuning)에 대한 설명으로 옳은 것은?",o:["강화학습을 사용하는 방법이다","정답이 있는 데이터를 통해 모델을 학습시키는 방식이다","인간 피드백을 활용하는 방법이다","보상 모델을 학습시키는 방법이다","모델을 처음부터 학습시키는 방법이다"],a:1,e:"'이 질문에는 이렇게 답해야 해'를 가르쳐 정답 출력 확률을 높입니다."},
+{c:3,q:"SFT의 한계로 옳은 것은?",o:["학습이 너무 빠르다","고품질 정답 데이터가 필요하고, 모든 답을 '100% 정답'으로 취급해 미묘한 선호 차이의 표현이 어렵다","구현이 너무 복잡하다","예측이 불가능하다","강화 학습보다 비용이 높다"],a:1,e:"데이터 구축 비용, 일반화 한계, '좋음'의 정도 차이 표현 불가가 한계입니다."},
+{c:3,q:"CPT(Continuous Pre-Training)에 대한 설명으로 옳은 것은?",o:["질문-답변 쌍으로 학습하는 방식이다","이미 Pre-trained된 모델에 다시 대량의 텍스트를 추가로 학습시키는 방식이다","소량의 데이터로 학습하는 방식이다","인간 피드백을 활용하는 방식이다","모델을 압축하는 방식이다"],a:1,e:"'다음 단어 예측' 방식으로 언어/지식의 토양 자체를 변화시킵니다. 새 언어를 배우는 것과 유사."},
+{c:3,q:"CPT의 주의사항으로 옳은 것은?",o:["소량의 데이터로도 효과가 좋다","대량의 데이터(수십억 토큰)가 필요하며, 소량이면 기존 능력이 손상될 수 있고 Instruct Model에는 비권장이다","강화 학습보다 안정적이다","모든 상황에서 권장된다","파라미터 수가 줄어든다"],a:1,e:"Instruct Model에 하면 대화 능력이 손상될 수 있어 비권장입니다."},
+{c:3,q:"CPT의 활용 사례로 옳은 것은?",o:["ChatGPT의 대화 능력 강화","SK Telecom의 A.X 4.0 — Qwen2.5 모델에 한국어 데이터로 추가 Pre-training","이미지 생성 모델 학습","음성 인식 모델 학습","번역 모델의 속도 향상"],a:1,e:"한국어 능력이 크게 향상된 모델입니다. ChatGPT는 RLHF 사례."},
+{c:3,q:"Instruction Tuning의 목적으로 옳은 것은?",o:["모델의 추론 속도를 높이는 것","모델에게 '지시를 따르는 법'을 가르쳐 질문에 답하고 요청을 수행할 수 있게 하는 것","모델을 압축하는 것","메모리 사용량을 줄이는 것","새로운 언어를 학습시키는 것"],a:1,e:"Base Model은 문장을 이어가지만, Instruction Tuning 후에는 질의응답·요청 수행이 가능해집니다."},
+{c:3,q:"LIMA 논문(Meta, 2023)의 핵심 주장으로 옳은 것은?",o:["대량의 데이터가 항상 필요하다","LLM의 핵심 지식은 Pre-training에서 학습되고, Instruction Tuning은 형식/스타일을 가르치며, 1,000개의 고품질 데이터만으로도 충분하다","RL이 SFT보다 항상 좋다","Fine Tuning은 불필요하다","대형 모델만 효과가 있다"],a:1,e:"65B LLaMA를 1,000개 데이터만으로 학습해 GPT-4에 준하는 성능을 보였습니다. 양보다 품질."},
+{c:3,q:"RAFT(Retrieval-Augmented Fine-Tuning)의 목적으로 옳은 것은?",o:["모델의 속도를 높이는 것","모델이 RAG(검색 후 생성)를 잘 수행하도록 학습시키는 것","모델을 압축하는 것","새로운 언어를 학습시키는 것","이미지를 생성하는 것"],a:1,e:"'노이즈 속에서 정답 찾기'를 훈련 — 검색된 문서 중 관련 있는 것만 보고 답하게 합니다."},
+{c:3,q:"RAFT 학습 데이터의 구성으로 옳은 것은?",o:["오직 정답 문서만 포함","Negative 문서(방해물) 여러 개 + Positive 문서(정답 포함) 1개","질문만 포함","답변만 포함","이미지와 텍스트 쌍"],a:1,e:"예: 문서 4개 중 정답이 있는 것만 보고 답변하도록 학습. CoT 답변(근거 인용)도 포함됩니다."},
+{c:3,q:"RLHF에 대한 설명으로 옳은 것은?",o:["정답 데이터만 사용하는 지도학습 방법이다","인간의 피드백을 활용하여 인간이 선호하는 방식으로 응답하도록 강화 학습하는 방법이다","모델을 압축하는 방법이다","Pre-training 방법이다","검색 기반 방법이다"],a:1,e:"OpenAI가 ChatGPT를 만들 때 사용한 핵심 기술입니다."},
+{c:3,q:"RLHF의 3단계 순서로 옳은 것은?",o:["강화 학습 → 보상 모델 학습 → 인간 평가","보상 모델 학습 → 인간 평가 → 강화 학습","인간이 답변 평가(A>B 비교) → 보상 모델 학습 → 강화 학습","강화 학습 → 인간 평가 → 보상 모델 학습","보상 모델 학습 → 강화 학습 → 인간 평가"],a:2,e:"인간 선호 데이터로 좋은/나쁜 답변을 구분하는 보상 모델을 만들고, 그 점수를 높이는 방향으로 학습합니다."},
+{c:3,q:"보상 모델(Reward Model)에 대한 설명으로 옳은 것은?",o:["답변을 생성하는 모델이다","'이 답변이 얼마나 좋은가?'를 점수로 매기는 모델이다","검색을 수행하는 모델이다","이미지를 생성하는 모델이다","코드를 실행하는 모델이다"],a:1,e:"질문+답변을 입력받아 점수(예: 0.85)를 출력. chosen vs rejected 비교 방식으로 학습됩니다."},
+{c:3,q:"PPO에서 KL Divergence가 필요한 이유로 옳은 것은?",o:["학습 속도를 높이기 위해","보상 해킹 방지와 언어 능력 유지를 위해(원본 모델에서 너무 멀어지지 않도록)","메모리 사용량을 줄이기 위해","데이터 양을 늘리기 위해","추론 속도를 높이기 위해"],a:1,e:"보상 점수만 올리려다 이상한 편법을 학습해 기본 언어 능력이 붕괴하는 것을 막습니다."},
+{c:3,q:"PPO의 한계로 옳은 것은?",o:["구현이 매우 간단하다","복잡한 구조(3~4개 모델 동시 운영), 높은 비용, 불안정한 학습","성능이 매우 낮다","데이터가 필요 없다","학습이 매우 빠르다"],a:1,e:"학습 중 모델·레퍼런스 모델·보상 모델 등을 동시 구동해 오버헤드가 크고 하이퍼파라미터에 민감합니다."},
+{c:3,q:"DPO(Direct Preference Optimization)의 핵심 아이디어로 옳은 것은?",o:["더 큰 보상 모델을 사용한다","보상 모델 없이 직접 선호도를 최적화한다 ('언어 모델 자체가 보상 모델의 역할을 할 수 있다')","더 많은 GPU를 사용한다","Pre-training을 다시 수행한다","검색 결과를 활용한다"],a:1,e:"2023년 Stanford 발표. 선호 답변의 확률을 높이고 비선호 답변의 확률을 낮추는 방향으로 학습합니다."},
+{c:3,q:"DPO와 PPO의 비교에서 옳은 것은?",o:["DPO는 보상 모델이 필요하다","PPO가 DPO보다 구현이 쉽다","DPO는 보상 모델 불필요, 구현 쉬움, 안정적, 리소스 절약이며 성능은 동등하거나 더 좋다","DPO가 PPO보다 항상 성능이 낮다","두 방법은 동일하다"],a:2,e:"필요 모델 2개(vs PPO 3~4개), 난이도는 일반 학습 수준입니다."},
+{c:3,q:"Rejection Sampling + SFT의 작동 방식으로 옳은 것은?",o:["모든 답변을 학습에 사용한다","모델에게 같은 질문으로 여러 답변을 생성시키고, 그중 좋은 답변만 선별(Rejection)하여 SFT를 수행한다","답변을 거부하는 방법을 학습시킨다","검색 결과를 거부한다","사용자 입력을 거부한다"],a:1,e:"보상 모델이나 평가 기준으로 점수를 매겨 선별 → 학습 데이터 품질이 향상됩니다."},
+{c:3,q:"PEFT(Parameter Efficient Fine-Tuning)의 핵심 아이디어로 옳은 것은?",o:["모든 파라미터를 업데이트한다","기존 파라미터는 고정(freeze)하고 작은 어댑터만 추가하여 학습한다","모델을 처음부터 학습시킨다","파라미터를 삭제한다","더 큰 모델을 사용한다"],a:1,e:"학습 파라미터를 0.1~1%로 줄여 메모리·시간을 절약하고 원본 모델을 보존합니다."},
+{c:3,q:"Full Fine Tuning 대비 PEFT의 장점으로 해당하지 않는 것은?",o:["학습 파라미터 수 대폭 감소(0.1~1%)","GPU 메모리 감소","학습 시간 단축","원본 모델 보존","항상 Full Fine Tuning보다 성능이 높음"],a:4,e:"'LoRA Learns Less' — 학습 효과가 덜할 수 있습니다. 항상 성능이 높은 것은 아님."},
+{c:3,q:"LoRA(Low-Rank Adaptation)의 핵심 원리로 옳은 것은?",o:["모든 가중치 행렬을 업데이트한다","기존 가중치 W는 고정하고, 저차원 행렬 B×A만 학습하여 W + B×A로 출력한다","가중치를 삭제한다","새로운 모델을 만든다","검색을 수행한다"],a:1,e:"rank(r)는 보통 4~64로 작아 학습 파라미터가 약 1/750 수준까지 감소합니다."},
+{c:3,q:"LoRA의 학습 파라미터 수 공식으로 옳은 것은? (원래 d×d 가중치, rank r)",o:["d × d","2 × r × d","d + r","d ÷ r","d − r"],a:1,e:"B(d×r) + A(r×d) = 2rd. 예: d=3000, r=2이면 Full 9,000,000개 vs LoRA 12,000개."},
+{c:3,q:"LoRA가 작동하는 이유인 'Intrinsic Rank 가설'에 대한 설명으로 옳은 것은?",o:["모든 파라미터가 똑같이 중요하다","Fine Tuning 시 필요한 변화는 사실 저차원이므로, 핵심적인 몇 가지 방향만 조정하면 된다","고차원 변화가 반드시 필요하다","랜덤한 변화가 필요하다","변화가 전혀 필요 없다"],a:1,e:"Full FT가 집 전체 리모델링이라면, LoRA는 핵심 소품만 교체하는 것(효과는 비슷)."},
+{c:3,q:"\"LoRA Learns Less and Forgets Less\"의 의미로 옳은 것은?",o:["LoRA가 Full Fine Tuning보다 항상 성능이 좋다","LoRA는 Full FT보다 학습 효과가 덜할 수 있지만, 원본 파라미터가 고정되어 Catastrophic Forgetting도 적다","LoRA는 아무것도 학습하지 않는다","LoRA는 모든 것을 잊는다","LoRA와 Full FT는 동일하다"],a:1,e:"소규모 스타일 조정에는 적합, CPT 같은 대규모 지식 변화에는 부적합합니다."},
+{c:3,q:"QLoRA에 대한 설명으로 옳은 것은?",o:["LoRA보다 훨씬 많은 메모리가 필요하다","Quantization + LoRA로, 모델을 4비트로 양자화(용량 1/4)한 후 LoRA를 적용하여 적은 자원으로 Fine Tuning이 가능하다","LoRA를 제거하는 방법이다","새로운 Pre-training 방법이다","검색 기반 방법이다"],a:1,e:"NF4(분위수 기반) 양자화 방식을 제안한 논문에서 나왔습니다."},
+{c:3,q:"Catastrophic Forgetting(파멸적 망각)에 대한 설명으로 옳은 것은?",o:["모델이 아무것도 학습하지 못하는 현상이다","새로운 것을 배우면서 기존에 알던 것을 잊어버리는 현상이다","모델의 속도가 느려지는 현상이다","모델이 같은 답변만 하는 현상이다","모델이 환각을 일으키는 현상이다"],a:1,e:"예: 코딩을 가르치자 언어 능력 감소, 한국어를 가르치자 영어 능력 감소. 해결책: LoRA, 일반 데이터 혼합, 데이터 다양성 확보."},
+{c:3,q:"GRPO(Group Relative Policy Optimization)의 핵심 특징으로 옳은 것은?",o:["Critic 모델이 반드시 필요하다","Critic(가치) 모델을 제거하고 그룹 내 상대 비교로 보상을 계산하여 메모리를 절약한다","PPO보다 더 많은 모델이 필요하다","검색 기반 학습이다","Pre-training 방법이다"],a:1,e:"PPO의 한계(별도 Critic 모델 필요, 높은 비용)를 해결한 방식. DeepSeek이 공개했습니다."},
+{c:3,q:"GRPO의 작동 방식으로 옳은 것은?",o:["하나의 답변만 생성한다","하나의 질문에 여러 답변 생성 → 각 답변 점수 계산 → 그룹 평균/표준편차로 정규화 → 높은 점수의 답변을 더 잘 생성하도록 학습","검색 결과를 평가한다","모델을 압축한다","Pre-training을 수행한다"],a:1,e:"예: 답변 8개를 생성하고 상대 점수를 매겨 학습합니다."},
+{c:3,q:"RLVR(Reinforcement Learning with Verifiable Reward)의 핵심 아이디어로 옳은 것은?",o:["인간 평가가 반드시 필요하다","객관적으로 검증 가능한 문제(수학, 코딩, 형식 등)를 사용하여 인간 평가 없이 자동화된 강화 학습이 가능하다","주관적인 평가만 사용한다","검색 결과만 평가한다","이미지를 평가한다"],a:1,e:"명확한 보상 신호로 안정적 학습 가능. DeepSeek R1의 Thinking 학습에 활용됐습니다."},
+{c:3,q:"OpenAI o1과 DeepSeek R1의 비교에서 옳은 것은?",o:["둘 다 오픈소스이다","o1은 학습 방법이 비공개이고, R1은 모델과 학습 방법이 공개된 오픈소스이다","DeepSeek R1이 먼저 발표되었다","둘 다 학습 방법이 비공개이다","o1이 오픈소스이다"],a:1,e:"o1(2024.9) → R1(2025.1). 중국 스타트업이 o1급 모델을 전부 공개해 업계에 충격을 주었습니다."},
+{c:3,q:"DeepSeek R1-Zero 실험에서 발견된 'Aha Moment'에 대한 설명으로 옳은 것은?",o:["모델이 전혀 학습하지 못했다","아무도 가르치지 않았는데 모델이 스스로 자기 성찰·검증·긴 추론 능력을 발현했다","모델이 영어만 사용했다","모델이 짧은 답변만 생성했다","모델이 학습을 거부했다"],a:1,e:"순수 강화학습(GRPO + Rule-Based Reward)만으로 '잠깐, 다른 접근법이 있나?' 같은 성찰이 나타났습니다."},
+{c:3,q:"DeepSeek R1-Zero의 한계로 옳은 것은?",o:["한계가 없다","가독성 문제(영어/중국어 혼합 출력), 출력 형식 불안정","학습이 불가능했다","메모리 사용량이 적다","항상 완벽한 답변을 생성한다"],a:1,e:"이 한계를 극복하기 위해 R1의 4단계 파이프라인이 설계되었습니다."},
+{c:3,q:"DeepSeek-R1 4단계 파이프라인의 순서로 옳은 것은?",o:["Reasoning GRPO → Cold-Start SFT → All-Scenario RL → Rejection Sampling","All-Scenario RL → Rejection Sampling → Cold-Start SFT → Reasoning GRPO","Cold-Start SFT → Reasoning GRPO → Rejection Sampling+SFT → All-Scenario RL","Rejection Sampling → All-Scenario RL → Cold-Start SFT → Reasoning GRPO","Cold-Start SFT → All-Scenario RL → Reasoning GRPO → Rejection Sampling"],a:2,e:"① 콜드스타트 SFT(R1-Zero 데이터, 붕괴 방지) ② 추론 강화 GRPO(언어 일관성 보상) ③ 거부샘플링+SFT(80만개 선별) ④ 전 시나리오 RL(추론+대화+안전성)."},
+{c:3,q:"DeepSeek-R1의 Stage 3(Rejection Sampling+SFT)에서 사용된 데이터 양으로 옳은 것은?",o:["1,000개","10,000개","800,000개 (600k Reasoning + 200k Non-Reasoning)","1억 개","100개"],a:2,e:"좋은 답만 생성·선별한 고품질 80만 개 데이터로 SFT를 수행했습니다."},
+{c:3,q:"SFT와 RL에 대한 최종 결론으로 옳은 것은?",o:["SFT만으로 충분하다","RL만으로 충분하다","SFT+RL 결합이 최선이며, 각각의 장점(SFT: 지식/추론 패턴/형식 습득, RL: 추론 경로 최적화·일반화)을 모두 갖춰야 한다","둘 다 필요 없다","Pre-training만 필요하다"],a:2,e:"SFT만으로는 자연스러운 추론까지 어렵고, RL만으로는 기반 지식의 한계가 있습니다. 좋은 베이스 모델도 중요."},
+{c:3,q:"Distillation(지식 증류)에 대한 설명으로 옳은 것은?",o:["모델을 삭제하는 방법이다","큰 '선생님' 모델의 지식을 작은 '학생' 모델에게 전달하는 방법이다","모델 압축(양자화)과 동일하다","Pre-training과 동일하다","검색 기반 학습이다"],a:1,e:"큰 모델(예: R1 671B)로 고품질 데이터를 생성해 작은 모델(1.5B~70B 등)을 학습시킵니다."},
+{c:3,q:"RL vs Distillation 비교에서 옳은 것은?",o:["RL이 Distillation보다 비용이 낮다","Distillation은 저비용·안정적이지만 선생 모델의 능력에 제한되고, RL은 새로운 능력 개발이 가능하지만 비용이 높고 불안정하다","RL과 Distillation은 동일하다","Distillation은 항상 성능이 낮다","RL이 훨씬 더 안정적이다"],a:1,e:"작은 모델을 처음부터 RL로 학습시키면 Distillation보다 비용은 높고 성능은 낮을 수 있습니다."},
+{c:3,q:"RL이 SFT와 다르게 기여하는 점으로 옳은 것은?",o:["RL은 형식만 개선한다","RL은 이미 가진 지식을 잘 쓰는 경로를 선택하도록 유도하여 추론 경로를 최적화한다","RL은 학습이 불가능하다","RL은 SFT와 완전히 동일하다","RL은 메모리만 절약한다"],a:1,e:"SFT만 적용한 모델이 틀리는 문제도 SFT+RL 모델은 맞히는 경우가 있는데, RL이 추론 경로를 최적화하기 때문입니다."},
+{c:3,q:"지식 증류(Knowledge Distillation)에 대한 설명으로 옳은 것은?",o:["모델의 파라미터를 제거하는 기법이다","큰 모델(Teacher)의 지식(출력 분포)을 작은 모델(Student)에게 전달하는 기법이다","파라미터의 비트 수를 줄이는 기법이다","학습 데이터를 증강하는 기법이다","모델의 레이어를 늘리는 기법이다"],a:1,e:"파라미터 제거는 Pruning, 비트 감소는 Quantization. DeepSeek-R1-Distill 시리즈가 대표 예."},
+{c:3,q:"Pruning(가지치기)에 대한 설명으로 옳은 것은?",o:["모델에 새 파라미터를 추가하는 기법이다","학습 데이터를 정제하는 기법이다","중요도가 낮은 파라미터나 연결을 제거하여 모델을 경량화하는 기법이다","모델의 출력을 정규화하는 기법이다","여러 모델을 앙상블하는 기법이다"],a:2,e:"기여도가 낮은 가중치·뉴런·레이어를 제거해 크기를 줄이고 속도를 높입니다."},
+{c:3,q:"MCP(Model Context Protocol)에 대한 설명으로 옳은 것은?",o:["모델 학습을 위한 프로토콜이다","Anthropic에서 개발한 도구 연동 표준 프로토콜로, 외부 서비스와 LLM을 표준화된 방식으로 연결한다","GPU 메모리 관리 프로토콜이다","모델 압축 프로토콜이다","데이터 전처리 프로토콜이다"],a:1,e:"USB처럼 플러그 앤 플레이 방식의 도구 연결을 가능하게 합니다."},
+{c:3,q:"LLM 활용 전략의 일반적인 적용 순서로 옳은 것은?",o:["Fine-tuning → RAG → Prompt Engineering → Agent","RAG → Fine-tuning → Agent → Prompt Engineering","Prompt Engineering → RAG → Fine-tuning → Agent","Agent → RAG → Prompt Engineering → Fine-tuning","순서와 관계없이 모두 동시에 적용해야 한다"],a:2,e:"비용이 낮은 방법부터: 프롬프트 개선 → 외부 지식 검색 → 도메인 지식 학습 → 도구 활용."},
+{c:3,q:"RoPE(Rotary Position Embedding)에 대한 설명으로 옳은 것은?",o:["절대적 위치 정보만 인코딩하는 방식이다","회전 행렬(Rotation Matrix)을 사용하여 상대적 위치 정보를 함께 인코딩하는 방식이다","위치 정보를 사용하지 않는 방식이다","토큰을 회전시켜 순서를 바꾸는 방식이다","오직 Encoder에서만 쓰이는 방식이다"],a:1,e:"긴 시퀀스에서도 위치 정보를 잘 유지하는 장점이 있어 2023년 이후 널리 사용됩니다."},
+{c:3,q:"OpenAI API의 temperature 파라미터에 대한 설명으로 옳은 것은?",o:["값이 높을수록 결정적(deterministic)인 출력을 생성한다","값이 0에 가까울수록 무작위성이 높아진다","값의 범위는 0~2이며, 0에 가까울수록 결정적인(일관된) 출력을 생성한다","출력 토큰의 최대 개수를 설정한다","API 호출 비용을 조절한다"],a:2,e:"높을수록 다양하고 창의적인 출력, 낮을수록 일관된 출력. 최대 토큰 수는 max_tokens."},
+{c:3,q:"Ollama에 대한 설명으로 옳은 것은?",o:["클라우드에서만 실행 가능한 유료 서비스이다","GGUF 포맷의 양자화된 오픈소스 LLM을 로컬에서 간단한 명령으로 실행할 수 있는 추론(Inference) 도구이다","상용 모델 전용 학습 서비스이다","모델 학습 전용 도구이다","GPU가 반드시 필요한 도구이다"],a:1,e:"CPU에서도 실행 가능한 것이 장점입니다."},
+{c:3,q:"LLM 로컬 실행 판단 기준으로 적절하지 않은 것은?",o:["성능 — 일정 크기 이상이면 준수한 성능이 나온다","비용 — API 호출 비용 vs GPU 구매/임대 비용 비교","프라이버시 — 민감한 데이터는 로컬 모델 + 자체 서버 권장","한국어 — Qwen, Gemma 등 한국어에 강한 모델 권장","항상 가장 큰 모델을 선택해야 한다"],a:4,e:"비용·속도·필요 성능을 고려해 적절한 크기의 모델을 선택해야 합니다."},
+{c:3,q:"Auto-Regressive 생성 방식에 대한 설명으로 옳은 것은?",o:["모든 출력 토큰을 동시에 병렬로 생성한다","이전에 생성된 토큰을 다음 생성의 입력으로 사용하여 순차적으로 생성한다","무작위로 토큰을 선택하여 생성한다","입력과 출력의 길이가 같아야 한다","Encoder에서만 사용되는 방식이다"],a:1,e:"&lt;BOS&gt; → 토큰1 → 토큰2 → … → &lt;EOS&gt; 순서로 한 토큰씩 생성. 생성 모델(Decoder)의 핵심 방식."},
+];
+// ===== 앱 로직 =====
+let state=DATA.map(()=>({pick:null}));
+let cur="all",wrongOnly=false,order=DATA.map((_,i)=>i);
+const tabsEl=document.getElementById("tabs"),listEl=document.getElementById("list");
+function buildTabs(){
+  const names=["전체",...CH];
+  tabsEl.innerHTML="";
+  names.forEach((n,i)=>{
+    const b=document.createElement("button");b.className="tab";
+    const key=i===0?"all":String(i-1);
+    const cnt=key==="all"?DATA.length:DATA.filter(d=>d.c===i-1).length;
+    b.textContent=n+" ("+cnt+")";
+    if(key===cur)b.classList.add("on");
+    b.onclick=()=>{cur=key;wrongOnly=false;render();};
+    tabsEl.appendChild(b);
+  });
+}
+function visible(){
+  return order.filter(i=>{
+    if(cur!=="all"&&DATA[i].c!==Number(cur))return false;
+    if(wrongOnly&&!(state[i].pick!==null&&state[i].pick!==DATA[i].a))return false;
+    return true;
+  });
+}
+function render(){
+  buildTabs();
+  const idxs=visible();
+  listEl.innerHTML="";
+  if(idxs.length===0){listEl.innerHTML='<div class="empty">표시할 문제가 없습니다.<br>틀린 문제가 없거나 아직 풀지 않았어요 👍</div>';}
+  idxs.forEach((i,n)=>{
+    const d=DATA[i],st=state[i];
+    const card=document.createElement("div");card.className="qc"+(st.pick!==null?" done":"");
+    const ok=st.pick===d.a;
+    card.innerHTML='<div class="meta">'+CH[d.c]+' · Q'+(n+1)+'/'+idxs.length+
+      '<span class="badge '+(ok?"y":"x")+'">'+(st.pick===null?"":(ok?"정답!":"오답"))+'</span></div>'+
+      '<div class="qt">'+d.q+'</div>';
+    d.o.forEach((op,oi)=>{
+      const el=document.createElement("div");el.className="opt";
+      el.innerHTML='<span class="n">'+(oi+1)+'</span><span>'+op+'</span>';
+      if(st.pick!==null){
+        if(oi===st.pick)el.classList.add(oi===d.a?"pick-ok":"pick-no");
+        else if(oi===d.a)el.classList.add("reveal");
+      }else{
+        el.onclick=()=>{state[i].pick=oi;render();window.scrollBy(0,0);};
+      }
+      card.appendChild(el);
+    });
+    const ex=document.createElement("div");ex.className="expl";
+    ex.innerHTML='<b>정답 '+(d.a+1)+'번</b> · '+d.e;
+    card.appendChild(ex);
+    listEl.appendChild(card);
+  });
+  const inCh=order.filter(i=>cur==="all"||DATA[i].c===Number(cur));
+  const done=inCh.filter(i=>state[i].pick!==null).length;
+  const right=inCh.filter(i=>state[i].pick===DATA[i].a).length;
+  document.getElementById("score").innerHTML="풀이 "+done+" / "+inCh.length+" · 정답 <b>"+right+"</b>"+(done?" ("+Math.round(right/done*100)+"%)":"");
+  document.getElementById("progFill").style.width=(inCh.length?done/inCh.length*100:0)+"%";
+  document.getElementById("btnWrong").classList.toggle("act",wrongOnly);
+}
+document.getElementById("btnWrong").onclick=()=>{wrongOnly=!wrongOnly;render();};
+document.getElementById("btnShuffle").onclick=()=>{
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  render();window.scrollTo(0,0);
+};
+document.getElementById("btnReset").onclick=()=>{
+  if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null}));wrongOnly=false;render();window.scrollTo(0,0);}
+};
+render();
+</script>
+</body>
+</html>
