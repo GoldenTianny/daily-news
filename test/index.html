@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Advanced 시험 대비 문제풀이</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2F4A7A">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AI 문제풀이">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
@@ -332,6 +339,8 @@ document.getElementById("btnReset").onclick=()=>{
   if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null}));try{localStorage.removeItem(SAVE_KEY)}catch(e){};wrongOnly=false;render();window.scrollTo(0,0);}
 };
 render();
+// PWA: 서비스워커 등록 (홈 화면 설치 + 오프라인 지원)
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
