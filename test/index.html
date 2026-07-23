@@ -54,7 +54,7 @@ footer{max-width:760px;margin:24px auto 0;padding:0 16px;font-size:12px;color:va
 <body>
 <header>
   <h1>AI Advanced <span>시험 대비 문제풀이</span></h1>
-  <p>연습문제 3~6장 · 보기를 누르면 바로 채점되고 해설이 표시됩니다</p>
+  <p>연습문제 3~6장 · 보기를 누르면 바로 채점되고 해설이 표시됩니다<br>풀이 기록은 이 브라우저에 자동 저장됩니다 (초기화 버튼으로 삭제)</p>
 </header>
 <div class="tabs" id="tabs"></div>
 <div class="bar">
@@ -258,7 +258,14 @@ const DATA=[
 {c:3,q:"Auto-Regressive 생성 방식에 대한 설명으로 옳은 것은?",o:["모든 출력 토큰을 동시에 병렬로 생성한다","이전에 생성된 토큰을 다음 생성의 입력으로 사용하여 순차적으로 생성한다","무작위로 토큰을 선택하여 생성한다","입력과 출력의 길이가 같아야 한다","Encoder에서만 사용되는 방식이다"],a:1,e:"&lt;BOS&gt; → 토큰1 → 토큰2 → … → &lt;EOS&gt; 순서로 한 토큰씩 생성. 생성 모델(Decoder)의 핵심 방식."},
 ];
 // ===== 앱 로직 =====
+// 풀이 기록은 localStorage에 자동 저장 (문항 수가 바뀌면 기록 초기화)
+const SAVE_KEY="aiquiz-picks-v1-"+DATA.length;
 let state=DATA.map(()=>({pick:null}));
+try{
+  const saved=JSON.parse(localStorage.getItem(SAVE_KEY));
+  if(Array.isArray(saved)&&saved.length===DATA.length)state=saved.map(p=>({pick:p}));
+}catch(e){}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state.map(s=>s.pick)))}catch(e){}}
 let cur="all",wrongOnly=false,order=DATA.map((_,i)=>i);
 const tabsEl=document.getElementById("tabs"),listEl=document.getElementById("list");
 function buildTabs(){
@@ -300,7 +307,7 @@ function render(){
         if(oi===st.pick)el.classList.add(oi===d.a?"pick-ok":"pick-no");
         else if(oi===d.a)el.classList.add("reveal");
       }else{
-        el.onclick=()=>{state[i].pick=oi;render();window.scrollBy(0,0);};
+        el.onclick=()=>{state[i].pick=oi;saveState();render();window.scrollBy(0,0);};
       }
       card.appendChild(el);
     });
@@ -322,7 +329,7 @@ document.getElementById("btnShuffle").onclick=()=>{
   render();window.scrollTo(0,0);
 };
 document.getElementById("btnReset").onclick=()=>{
-  if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null}));wrongOnly=false;render();window.scrollTo(0,0);}
+  if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null}));try{localStorage.removeItem(SAVE_KEY)}catch(e){};wrongOnly=false;render();window.scrollTo(0,0);}
 };
 render();
 </script>
