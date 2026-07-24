@@ -61,7 +61,7 @@ footer{max-width:760px;margin:24px auto 0;padding:0 16px;font-size:12px;color:va
 <body>
 <header>
   <h1>AI Advanced <span>시험 대비 문제풀이</span></h1>
-  <p>연습문제 3~6장 · 보기를 누르면 바로 채점되고 해설이 표시됩니다<br>풀이 기록은 이 브라우저에 자동 저장됩니다 (초기화 버튼으로 삭제)</p>
+  <p>연습문제 3~6장 + 기출 복기 3개 회차 · 객관식은 보기를 누르면 채점, 기출은 정답 확인 후 스스로 채점하세요<br>풀이 기록은 이 브라우저에 자동 저장됩니다 (초기화 버튼으로 삭제)</p>
 </header>
 <div class="tabs" id="tabs"></div>
 <div class="bar">
@@ -77,7 +77,7 @@ footer{max-width:760px;margin:24px auto 0;padding:0 16px;font-size:12px;color:va
 <main id="list"><div class="empty">문제를 불러오는 중입니다…<br><br>이 화면이 계속 보인다면 지금 사용 중인 뷰어가 스크립트를 실행하지 못하는 상태예요.<br><b>Chrome · Edge · Safari 같은 웹 브라우저</b>에서 이 파일을 열어주세요.<br>(파일 미리보기·메신저 내장 뷰어에서는 문제가 표시되지 않습니다)</div></main>
 <footer>AI_Advanced 강의노트 연습문제 기반 · 정답/해설은 원본 자료의 표기를 따랐습니다.</footer>
 <script>
-const CH=["3장 · LLM의 이해","4장 · 프롬프트 엔지니어링 & Agent","5장 · RAG","6장 · LLM Fine Tuning"];
+const CH=["3장 · LLM의 이해","4장 · 프롬프트 엔지니어링 & Agent","5장 · RAG","6장 · LLM Fine Tuning","기출 복기"];
 const DATA=[
 // ===== 3장 =====
 {c:0,q:"머신러닝에서 '분류(Classification)'와 '회귀(Regression)'의 차이에 대한 설명으로 올바른 것은?",o:["분류는 연속적인 수치를 예측하고, 회귀는 범주를 예측한다","분류는 범주(스팸/정상 등)를 예측하고, 회귀는 연속적인 수치(가격 등)를 예측한다","분류와 회귀는 같은 개념으로 혼용해서 사용한다","분류는 비지도학습이고, 회귀는 지도학습이다","분류는 텍스트에만 적용되고, 회귀는 숫자에만 적용된다"],a:1,e:"분류=범주 예측(스팸 여부 등), 회귀=연속 수치 예측(가격·기온). 둘 다 지도학습 유형입니다."},
@@ -263,16 +263,86 @@ const DATA=[
 {c:3,q:"Ollama에 대한 설명으로 옳은 것은?",o:["클라우드에서만 실행 가능한 유료 서비스이다","GGUF 포맷의 양자화된 오픈소스 LLM을 로컬에서 간단한 명령으로 실행할 수 있는 추론(Inference) 도구이다","상용 모델 전용 학습 서비스이다","모델 학습 전용 도구이다","GPU가 반드시 필요한 도구이다"],a:1,e:"CPU에서도 실행 가능한 것이 장점입니다."},
 {c:3,q:"LLM 로컬 실행 판단 기준으로 적절하지 않은 것은?",o:["성능 — 일정 크기 이상이면 준수한 성능이 나온다","비용 — API 호출 비용 vs GPU 구매/임대 비용 비교","프라이버시 — 민감한 데이터는 로컬 모델 + 자체 서버 권장","한국어 — Qwen, Gemma 등 한국어에 강한 모델 권장","항상 가장 큰 모델을 선택해야 한다"],a:4,e:"비용·속도·필요 성능을 고려해 적절한 크기의 모델을 선택해야 합니다."},
 {c:3,q:"Auto-Regressive 생성 방식에 대한 설명으로 옳은 것은?",o:["모든 출력 토큰을 동시에 병렬로 생성한다","이전에 생성된 토큰을 다음 생성의 입력으로 사용하여 순차적으로 생성한다","무작위로 토큰을 선택하여 생성한다","입력과 출력의 길이가 같아야 한다","Encoder에서만 사용되는 방식이다"],a:1,e:"&lt;BOS&gt; → 토큰1 → 토큰2 → … → &lt;EOS&gt; 순서로 한 토큰씩 생성. 생성 모델(Decoder)의 핵심 방식."},
+// ===== 기출 복기 =====
+{c:4,t:1,q:"【5/8】 텍스트 전처리 과정에서 정규표현식(regex)을 사용하는 목적은?",o:["패턴을 가진 문자열을 식별하기 위해 — 키워드를 추출할 때 사용"],a:0},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — 검색은 작은 청크로 하고, 답변용 Context는 앞뒤 문맥을 포함하는 큰 청크(Parent Document)로 사용한다",o:["Small2Big (Chunking)"],a:0},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — LangChain의 컴포넌트들을 파이프라인처럼 연결하는 표현 방식",o:["LCEL (LangChain Expression Language)"],a:0,e:"Prompt Chaining과 헷갈리기 쉽지만 '컴포넌트를 파이프(|)로 연결하는 문법'은 LCEL입니다."},
+{c:4,t:1,q:"【5/8】 프롬프트 말고도 순서나 출력방식 등이 중요한데, 이를 설명하는 개념은?",o:["Context Engineering"],a:0},
+{c:4,t:1,q:"【5/8】 RAG에서 인덱싱(Indexing) 단계의 목적은?",o:["데이터를 검색 가능하게 벡터화하여 저장한다"],a:0},
+{c:4,t:1,q:"【5/8】 디코더(Decoder) 구조를 사용하여 현대 LLM의 기반을 마련한 모델은?",o:["GPT"],a:0},
+{c:4,t:1,q:"【5/8】 temperature가 0에 가까울 때 옳은 것은?",o:["결정적인(일관된) 출력을 생성한다"],a:0},
+{c:4,t:1,q:"【5/8】 RAG에서 청크 사이즈가 지나치게 작은 경우 일어날 수 있는 현상은?",o:["주변 문맥 정보가 부족해 의미 파악이 어렵다"],a:0},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — 검색된 여러 청크를 LLM에 전달하기 전에, 중간에 의미를 잃어버릴 수 있어 순서를 다시 배치하는 과정",o:["Reordering"],a:0,e:"복기자 메모: 설명은 Reordering인데 보기에 없어 Rerank를 선택했다고 함 → Reordering(순서 재배치)과 Reranking(재정렬 채점) 구분 필수!"},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — 답을 바로 말하지 않고 풀이 과정을 출력 / 내부적으로 긴 사고",o:["CoT (Chain-of-Thought)"],a:0},
+{c:4,t:1,q:"【5/8】 Fine Tuning의 목적 예시로 올바르지 않은 것을 고르는 문제",o:["지식·능력·형식·안전에 해당하지 않는 보기를 선택"],a:0,e:"지식(Knowledge)=최신 정보/도메인 주입 · 능력(Capability)=작업 수행력 향상 · 형식(Format)=출력 스타일/길이/말투 조정 · 안전(Safety)=유해 요청 거부·윤리적 응답"},
+{c:4,t:1,q:"【5/8】 프롬프트를 구조화하는 이유는?",o:["모델이 프롬프트의 각 요소를 명확히 구분하고 집중하도록 하기 위해"],a:0},
+{c:4,t:1,q:"【5/8】 1:1로 모든 벡터를 비교하지 않고, 최근접한 것을 찾는 방법은?",o:["ANN (Approximate Nearest Neighbors)"],a:0},
+{c:4,t:1,q:"【5/8】 오버라이딩(Overriding)의 개념은?",o:["부모(parent)의 메서드를 자식(child)에서 같은 이름으로 재정의하는 것"],a:0},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — 새로운 것을 배우면서 기존에 알던 것을 잊어버리는 현상",o:["Catastrophic Forgetting (파국적 망각)"],a:0},
+{c:4,t:1,q:"【5/8】 numpy에서 시작, 종료, 구간을 지정하고 이에 맞게 범위 배열을 생성하는 문법은?",o:["np.arange()"],a:0},
+{c:4,t:1,q:"【5/8】 아래에서 설명하는 것은? — 답을 바로 만들지 말고, 먼저 필요한 구조와 요소를 파악하자",o:["Step-Back Prompting"],a:0},
+{c:4,t:1,q:"【5/8】 Zero-shot CoT를 위해서 넣어주는 문구는?",o:["Let's think step by step"],a:0},
+{c:4,t:1,q:"【5/8】 제품 코드나 법률용어 등 정확한 키워드 검색에 사용되는 검색 방식은?",o:["Lexical Search"],a:0},
+{c:4,t:1,q:"【5/8】 LLM의 근본적 한계가 아닌 것을 고르는 문제 (한계에 해당하는 보기 4개는?)",o:["① 학습 시점 이후의 정보를 모름 ② 복잡한 수학 계산에 약함 ③ 외부 연동(인터넷 검색·파일 저장 등) 불가 ④ 환각(Hallucination)"],a:0,e:"※ 여기부터는 복기자가 출제 여부 헷갈린다고 한 문제군 (이 중 한 문제 출제)"},
+{c:4,t:1,q:"【5/8】 ReAct Agent의 3단계 사이클 순서는?",o:["Thought → Action → Observation"],a:0},
+{c:4,t:1,q:"【5/8】 Supervisor 아키텍처에 대한 올바른 설명은?",o:["중앙 컨트롤러가 Agent들을 관리하며, 독립적 작업의 병렬 처리에 적합하다"],a:0},
+{c:4,t:1,q:"【5/8】 벡터 데이터베이스(Vector DB)에 대한 올바른 설명은?",o:["벡터 형태의 데이터 저장 및 검색에 최적화된 데이터베이스"],a:0},
+{c:4,t:1,q:"【5/8 주관식】 Runnables 기본 — 'LCEL의 기본 단위로, 입력을 받아 출력을 생성하는 기본 단위. llm, prompt, chain 등이 모두 이 구조에 해당' 빈칸은?",o:["Runnable"],a:0,e:"복기자 메모: 문제에 다 제시되어 있고 그대로 빈칸 채우기만 하면 됨"},
+{c:4,t:1,q:"【5/8 주관식】 체인의 직전 출력을 그대로 가져오도록 사용하는 LangChain 기능과 코드 빈칸은?",o:["RunnablePassthrough — from langchain_core.runnables import RunnablePassthrough / chain2 = RunnablePassthrough.assign(poem=chain1) | chain1_5"],a:0,e:"import 부분과 assign 부분(빨간 글씨)을 채우는 문제였음"},
+{c:4,t:1,q:"【5/15】 MoE(Mixture of Experts) 구조에 대한 옳은 설명은?",o:["여러 전문가 네트워크 중 일부만 활성화하여 계산 효율을 높인다 (Self-Attention은 공유)"],a:0},
+{c:4,t:1,q:"【5/15】 벡터 데이터베이스(Vector DB)에 대한 올바른 설명은?",o:["벡터 형태의 데이터 저장 및 검색에 최적화된 데이터베이스"],a:0,e:"복기자 메모: '좌표로 기억한다'"},
+{c:4,t:1,q:"【5/15】 ReAct 설명 중 틀린 것은?",o:["'무조건 Tool Calling이 필요하다' ← 틀린 보기"],a:0},
+{c:4,t:1,q:"【5/15】 정규표현식(Regex)에서 한글을 가져오는 패턴은?",o:["[가-힣]"],a:0},
+{c:4,t:1,q:"【5/15】 파이썬의 특징이 아닌 것은?",o:["'파이썬은 꼭 타입 선언한 후 써야 된다' ← 틀린 보기"],a:0,e:"파이썬은 동적 타이핑 언어로 타입 선언이 필수가 아닙니다."},
+{c:4,t:1,q:"【5/15】 Catastrophic Forgetting(파국적 망각)에 대한 올바른 설명은?",o:["새로운 것을 배우면서 기존에 알던 것을 잊어버리는 현상이다"],a:0},
+{c:4,t:1,q:"【5/15】 Chain-of-Thought(CoT) Prompting의 핵심 아이디어로 가장 적절한 것은?",o:["답을 바로 말하지 않고 풀이 과정을 보여주도록 요청하여 정답률을 높인다"],a:0},
+{c:4,t:1,q:"【5/15】 청킹 시 문장 시작부분이 잘려 문맥이 손실되는 것을 방지하고자, 청크의 앞부분에 상위 레벨의 요약이나 제목을 추가하는 기법은?",o:["Contextual Retrieval"],a:0},
+{c:4,t:1,q:"【5/15】 Pandas에서 Groupby 이후 여러 열에 대해 각기 다른 사칙연산이나 통계량을 한 번에 적용할 수 있는 함수는?",o:["agg()"],a:0,e:"describe()=기본 통계 분석 · apply()=값 변환/함수 적용/새 컬럼 생성 · groupby()=기준으로 묶어 통계 · agg()=여러 연산을 한 번에. 복기자는 apply()로 답했으나 정답은 agg()인 느낌이라고 함"},
+{c:4,t:1,q:"【5/15】 Positional Encoding의 정의를 설명한 후 무엇에 대한 설명인지 고르기",o:["Positional Encoding"],a:0},
+{c:4,t:1,q:"【5/15】 AWQ의 정의를 설명한 후 무엇에 대한 설명인지 고르기",o:["AWQ (Activation-aware Weight Quantization)"],a:0},
+{c:4,t:1,q:"【5/15】 LLM이 이전 대화를 기억하는 특성을 활용하여, 복잡한 작업을 여러 단계로 나누어 진행하는 기법은?",o:["프롬프트 체이닝 (Prompt Chaining)"],a:0},
+{c:4,t:1,q:"【5/15】 프롬프트 엔지니어링의 정의를 설명한 후 무엇에 대한 설명인지 고르기",o:["프롬프트 엔지니어링"],a:0},
+{c:4,t:1,q:"【5/15】 RAG 구성요소가 아닌 것 고르기",o:["무관한 항목(예: CPU 온도?)을 고르는 문제"],a:0,e:"복기자도 어떤 보기가 나왔는지 정확히 기억 못함 — 연습문제의 '멀티모달 RAG 처리 요소 아닌 것(GPU 온도)'과 유사 유형"},
+{c:4,t:1,q:"【5/15】 RAG vs Fine Tuning의 차이는?",o:["RAG는 외부 DB에서 검색 후 프롬프트에 추가하고, 파인튜닝은 모델 자체를 추가 학습한다"],a:0},
+{c:4,t:1,q:"【5/15】 Semantic Search vs Lexical Search 설명으로 옳은 것은?",o:["Semantic Search는 정확히 일치하지 않아도 의미가 비슷하면 찾을 수 있다"],a:0},
+{c:4,t:1,q:"【5/15】 Lexical Search(키워드 기반 검색)의 특징으로 올바른 것은?",o:["정확히 일치하는 키워드에 높은 점수를 주며, 제품 코드나 법률 조항 번호 검색에 유용하다"],a:0},
+{c:4,t:1,q:"【5/15】 Hypothetical Document Embedding에 대해 설명하고 어떤 것에 대한 설명인지 고르기",o:["HyDE (Hypothetical Document Embedding)"],a:0},
+{c:4,t:1,q:"【5/15】 프롬프트에서 구조화하는 이유는?",o:["AI가 사용자의 의도를 명확히 파악하고, 일관성 있으며 품질 높은 결과물을 생성하도록 유도하기 위해"],a:0},
+{c:4,t:1,q:"【5/15】 DPO(Direct Preference Optimization)의 핵심 아이디어로 올바른 것은?",o:["보상 모델 없이 직접 선호도를 최적화한다 ('언어 모델 자체가 이미 보상 모델의 역할을 할 수 있다')"],a:0},
+{c:4,t:1,q:"【5/15 주관식】 주관식 유형 정보",o:["수정 가능한(소스가 쓰여진) 박스칸 위에 문제 및 설명이 있고, 어떤 기능을 사용하라고 나와 있어 눈치껏 복붙해서 풀 수 있는 수준이었다고 함"],a:0},
+{c:4,t:1,q:"【5/29】 Dictionary 자료형에 대해 다음 보기 중 옳지 않은 것은?",o:["'Index를 통해 데이터를 탐색할 수 있다' ← 틀린 보기"],a:0,e:"Dictionary는 인덱스가 아니라 키(key)로 값에 접근합니다."},
+{c:4,t:1,q:"【5/29】 벡터 연산에서 내적(dot product)에 대해 알맞은 것은?",o:["벡터의 방향 유사도 측정에 활용"],a:0},
+{c:4,t:1,q:"【5/29】 Pandas 라이브러리를 사용하여 JSON 파일을 로드하는 알맞은 구문은?",o:["pd.read_json()"],a:0,e:"오답 보기: pd.read_csv(), pd.load_json() 등"},
+{c:4,t:1,q:"【5/29】 Task 없이 언어 패턴만을 학습하는 단계는? (대규모 사전 학습 기반의 '파운데이션 모델')",o:["Pretraining (사전학습)"],a:0},
+{c:4,t:1,q:"【5/29】 모델의 크기를 압축하여 활용성을 높이는 방법을 일컫는 말은?",o:["양자화 (Quantization)"],a:0},
+{c:4,t:1,q:"【5/29】 Google에서 가이드한 효과적인 프롬프트 요소 중 '원하는 출력 형식 명시'에 해당하는 것은?",o:["Format"],a:0,e:"다른 보기: Persona, Task, Context, Memory(?)"},
+{c:4,t:1,q:"【5/29】 CoT 예시를 제공하지 않고, 출력 형식을 변화시키는 방법으로 'Let's Think Step by Step' 구문을 사용하는 것은?",o:["Zero-shot Chain-of-Thought"],a:0},
+{c:4,t:1,q:"【5/29】 답을 내기 전에 답변에 필요한 것을 먼저 도출하는 방식은?",o:["Step-back Prompting"],a:0},
+{c:4,t:1,q:"【5/29】 LLM Tool Calling 시에 어떠한 도구를 사용하도록 명시하는 개념은?",o:["Tool Schema (복기자: 지문이랑 답이 헷갈렸고, 답이 맞는지 불확실)"],a:0,e:"다른 보기: Tool Template 등"},
+{c:4,t:1,q:"【5/29】 여러 에이전트들을 병렬로 실행하며 중앙 제어하는 방식은?",o:["Supervisor / Worker"],a:0},
+{c:4,t:1,q:"【5/29】 RAG와 파인튜닝에 대한 설명으로 알맞은 것은?",o:["RAG는 외부 DB에 저장하지만, 파인튜닝은 모델 파라미터를 변경하여 사용"],a:0},
+{c:4,t:1,q:"【5/29】 모든 벡터를 1:1로 계산하는 것은 시간이 오래 걸리기에, 가장 유사한 데이터를 찾아내는 것은?",o:["ANN (Approximated Nearest Neighbors)"],a:0},
+{c:4,t:1,q:"【5/29】 Small2Big Chunking과 Sliding Window의 공통점은?",o:["청크 사이즈를 작게 구성하고, 검색 이후 해당 청크의 주변 정보를 포함하여 전달"],a:0},
+{c:4,t:1,q:"【5/29】 Corrective RAG에 대한 설명으로 알맞은 것은?",o:["검색 결과를 평가하고 분기하는 Workflow"],a:0},
+{c:4,t:1,q:"【5/29】 전체 문서를 그래프 형식으로 저장하여 검색하는 방법은?",o:["GraphRAG"],a:0},
+{c:4,t:1,q:"【5/29】 이미지와 텍스트를 동일 공간에 임베딩하는 것을 무엇이라 하는가?",o:["멀티모달 (임베딩)"],a:0},
+{c:4,t:1,q:"【5/29】 LLM에 추가 학습을 진행하자, 모델의 기존 능력이 감소하는 현상은?",o:["Catastrophic Forgetting (파멸적 망각)"],a:0},
+{c:4,t:1,q:"【5/29】 DPO에 대한 설명으로 올바른 것은?",o:["보상 모델이 없으며 데이터 쌍을 이용하여 답변 확률을 계산"],a:0},
+{c:4,t:1,q:"【5/29】 다음 중 회사와 LLM의 매핑이 잘못된 것은?",o:["앤트로픽 - Mistral AI ← 잘못된 매핑"],a:0,e:"올바른 매핑 보기: LG - ExaOne, 마이크로소프트 - Phi 등 (Mistral AI는 별도 프랑스 회사, 앤트로픽은 Claude)"},
+{c:4,t:1,q:"【5/29】 RAG에서 Indexing 단계의 목적으로 알맞는 것은?",o:["데이터를 검색할 수 있도록 벡터화하는 단계"],a:0},
+{c:4,t:1,q:"【5/29 주관식】 Retriever 메서드 사용하기 — 빈칸 풀이 요령은?",o:["Python 코드가 순차 구현되어 있고 '여기에 입력하시오' 빈칸에 넣는 문제. 상단 import만 있는 커맨드창에서 help(~~~Retriever)를 실행해 문서를 보고, method에 명시된 from_llm을 찾아 입력"],a:0,e:"복기자 메모: 문제의 맥락을 보며 help, print 사용하면 충분히 풀이 가능"},
+{c:4,t:1,q:"【5/29 주관식】 Hybrid Search 구현하기 — 빈칸 풀이 요령은?",o:["Semantic과 Lexical을 사용하는 각각의 Class 선언 후 Hybrid 검색이 가능하게끔 합치는 문제. 빈칸에는 위에 주석으로 되어 있는 Class명을 넣으면 됨"],a:0,e:"1·2번 모두 빈칸 입력 후 Python 코드를 실행해 결과 확인 가능. 에러가 나면 정상 수행될 때까지 시도해보면 됨. 단, 문제 외 기존 코드는 건드리면 안 됨"},
 ];
 // ===== 앱 로직 =====
 // 풀이 기록은 localStorage에 자동 저장 (문항 수가 바뀌면 기록 초기화)
-const SAVE_KEY="aiquiz-picks-v1-"+DATA.length;
-let state=DATA.map(()=>({pick:null}));
+const SAVE_KEY="aiquiz-picks-v2-"+DATA.length;
+let state=DATA.map(()=>({pick:null,rev:false}));
 try{
   const saved=JSON.parse(localStorage.getItem(SAVE_KEY));
-  if(Array.isArray(saved)&&saved.length===DATA.length)state=saved.map(p=>({pick:p}));
+  if(Array.isArray(saved)&&saved.length===DATA.length)state=saved.map(s=>({pick:s[0],rev:!!s[1]}));
 }catch(e){}
-function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state.map(s=>s.pick)))}catch(e){}}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state.map(s=>[s.pick,s.rev?1:0])))}catch(e){}}
+const isRight=i=>DATA[i].t?state[i].pick===1:state[i].pick===DATA[i].a;
 let cur="all",wrongOnly=false,order=DATA.map((_,i)=>i);
 const tabsEl=document.getElementById("tabs"),listEl=document.getElementById("list");
 function buildTabs(){
@@ -291,7 +361,7 @@ function buildTabs(){
 function visible(){
   return order.filter(i=>{
     if(cur!=="all"&&DATA[i].c!==Number(cur))return false;
-    if(wrongOnly&&!(state[i].pick!==null&&state[i].pick!==DATA[i].a))return false;
+    if(wrongOnly&&!(state[i].pick!==null&&!isRight(i)))return false;
     return true;
   });
 }
@@ -303,10 +373,34 @@ function render(){
   idxs.forEach((i,n)=>{
     const d=DATA[i],st=state[i];
     const card=document.createElement("div");card.className="qc"+(st.pick!==null?" done":"");
-    const ok=st.pick===d.a;
+    const ok=isRight(i);
     card.innerHTML='<div class="meta">'+CH[d.c]+' · Q'+(n+1)+'/'+idxs.length+
       '<span class="badge '+(ok?"y":"x")+'">'+(st.pick===null?"":(ok?"정답!":"오답"))+'</span></div>'+
       '<div class="qt">'+d.q+'</div>';
+    if(d.t){
+      if(!st.rev){
+        const b=document.createElement("div");b.className="opt";
+        b.innerHTML='<span class="n">?</span><span><b>정답 보기</b> — 먼저 머릿속으로 답해보세요</span>';
+        b.onclick=()=>{state[i].rev=true;saveState();render();};
+        card.appendChild(b);
+      }else{
+        const ans=document.createElement("div");ans.className="opt reveal";
+        ans.innerHTML='<span class="n">A</span><span>'+d.o[0]+'</span>';
+        card.appendChild(ans);
+        if(st.pick===null){
+          const row=document.createElement("div");row.style.cssText="display:flex;gap:8px";
+          const y=document.createElement("div");y.className="opt";y.style.flex="1";
+          y.innerHTML='<span>⭕ 맞았어요</span>';y.onclick=()=>{state[i].pick=1;saveState();render();};
+          const nn=document.createElement("div");nn.className="opt";nn.style.flex="1";
+          nn.innerHTML='<span>❌ 틀렸어요</span>';nn.onclick=()=>{state[i].pick=0;saveState();render();};
+          row.appendChild(y);row.appendChild(nn);card.appendChild(row);
+        }
+        if(d.e){
+          const ex=document.createElement("div");ex.className="expl";ex.style.display="block";
+          ex.innerHTML=d.e;card.appendChild(ex);
+        }
+      }
+    }else{
     d.o.forEach((op,oi)=>{
       const el=document.createElement("div");el.className="opt";
       el.innerHTML='<span class="n">'+(oi+1)+'</span><span>'+op+'</span>';
@@ -321,11 +415,12 @@ function render(){
     const ex=document.createElement("div");ex.className="expl";
     ex.innerHTML='<b>정답 '+(d.a+1)+'번</b> · '+d.e;
     card.appendChild(ex);
+    }
     listEl.appendChild(card);
   });
   const inCh=order.filter(i=>cur==="all"||DATA[i].c===Number(cur));
   const done=inCh.filter(i=>state[i].pick!==null).length;
-  const right=inCh.filter(i=>state[i].pick===DATA[i].a).length;
+  const right=inCh.filter(i=>state[i].pick!==null&&isRight(i)).length;
   document.getElementById("score").innerHTML="풀이 "+done+" / "+inCh.length+" · 정답 <b>"+right+"</b>"+(done?" ("+Math.round(right/done*100)+"%)":"");
   document.getElementById("progFill").style.width=(inCh.length?done/inCh.length*100:0)+"%";
   document.getElementById("btnWrong").classList.toggle("act",wrongOnly);
@@ -336,7 +431,7 @@ document.getElementById("btnShuffle").onclick=()=>{
   render();window.scrollTo(0,0);
 };
 document.getElementById("btnReset").onclick=()=>{
-  if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null}));try{localStorage.removeItem(SAVE_KEY)}catch(e){};wrongOnly=false;render();window.scrollTo(0,0);}
+  if(confirm("모든 풀이 기록을 초기화할까요?")){state=DATA.map(()=>({pick:null,rev:false}));try{localStorage.removeItem(SAVE_KEY)}catch(e){};wrongOnly=false;render();window.scrollTo(0,0);}
 };
 render();
 // PWA: 서비스워커 등록 (홈 화면 설치 + 오프라인 지원)
