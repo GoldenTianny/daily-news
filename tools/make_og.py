@@ -25,8 +25,14 @@ REPO = Path(__file__).resolve().parent.parent
 OG_DIR = REPO / 'assets' / 'og'
 FONT_BOLD = str(REPO / 'assets' / 'fonts' / 'Pretendard-Bold.otf')
 FONT_MEDIUM = str(REPO / 'assets' / 'fonts' / 'Pretendard-Medium.otf')
-# Pretendard에 없는 한자(美·中·英 등)는 Apple SD Gothic Neo로 폴백.
-HANJA_FALLBACK = '/System/Library/Fonts/AppleSDGothicNeo.ttc'
+# Pretendard에 없는 한자(美·中·英 등)는 시스템 CJK 폰트로 폴백 (mac/linux 순차 탐색).
+_HANJA_CANDIDATES = [
+    ('/System/Library/Fonts/AppleSDGothicNeo.ttc', True),   # macOS (ttc index 지원)
+    ('/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc', False),  # linux
+    ('/usr/share/fonts/opentype/unifont/unifont.otf', False),
+]
+HANJA_FALLBACK, HANJA_HAS_INDEX = next(
+    ((p, i) for p, i in _HANJA_CANDIDATES if os.path.exists(p)), (None, False))
 W, H = 1200, 630
 
 # Pretendard 단일 파일(weight별로 다른 파일). 의미별 weight 지정용 상수.
@@ -72,9 +78,13 @@ def fnt(size, weight=WEIGHT_HEAVY):
 
 
 def _hanja_fnt(size, weight):
-    """한자 폴백 폰트 (Apple SD Gothic Neo)."""
-    idx = 8 if weight >= WEIGHT_BOLD else 4
-    return ImageFont.truetype(HANJA_FALLBACK, size, index=idx)
+    """한자 폴백 폰트 (없으면 본문 폰트로 대체)."""
+    if HANJA_FALLBACK is None:
+        return fnt(size, weight)
+    if HANJA_HAS_INDEX:
+        idx = 8 if weight >= WEIGHT_BOLD else 4
+        return ImageFont.truetype(HANJA_FALLBACK, size, index=idx)
+    return ImageFont.truetype(HANJA_FALLBACK, size)
 
 
 def _is_hanja(c):
