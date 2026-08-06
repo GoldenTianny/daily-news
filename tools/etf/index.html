@@ -136,6 +136,16 @@
   }
   .weight-bar.green { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
 
+  /* 비중 변화(Δ) 컬럼 */
+  .dcell { text-align: right; white-space: nowrap; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .d-up { color: #c62828; font-weight: 600; }
+  .d-down { color: #2a5ca8; font-weight: 600; }
+  .d-flat { color: #999; }
+  .code-sub { font-size: 11px; color: #999; font-family: monospace; font-weight: 400; }
+  thead th.th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+  thead th.th-sort:hover { color: #1a237e; }
+  thead th.th-sort.on { color: #1a237e; }
+
   /* States */
   .intro { text-align: center; padding: 60px 20px; color: #999; }
   .intro .emoji { font-size: 48px; margin-bottom: 16px; }
@@ -258,6 +268,9 @@
 let DATA = {};
 let NAMES = [];
 let HOLDINGS = {};
+let DATES = [];        // 저장된 영업일 목록 (오름차순)
+let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
+let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let currentDate = null;
 let currentView = null;
 let acIndex = -1;
@@ -285,6 +298,7 @@ async function init() {
     const resp = await fetch('data/dates.json');
     const dates = await resp.json();
 
+    DATES = dates;
     dateSelect.innerHTML = dates.map(d =>
       '<option value="' + d + '">' + d + '</option>'
     ).join('');
@@ -300,6 +314,31 @@ async function init() {
 }
 
 // ===== Load date data =====
+// 날짜 하나의 데이터를 로드: 1차 Parquet(DB), 실패 시 JSON 폴백
+async function fetchDateMap(date) {
+  try {
+    const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
+    const rows = await hyparquet.parquetReadObjects({ file: buf });
+    const etfs = {}, holdings = {};
+    for (const r of rows) {
+      etfs[r.etf_code] = r.etf_name;
+      (holdings[r.etf_code] || (holdings[r.etf_code] = []))
+        .push([r.stock_name, r.weight == null ? null : Math.round(r.weight * 1000) / 1000]);
+    }
+    return { etfs: etfs, holdings: holdings };
+  } catch (e) {
+    const obj = await (await fetch('data/' + date + '.json')).json();
+    return { etfs: obj.etfs || {}, holdings: obj.holdings };
+  }
+}
+
+// N영업일 전 대비 비중 변화(%p). ETF가 비교일에 없으면 null, 미보유였으면 +현재비중(신규 편입)
+function deltaFor(code, stock, curW, off) {
+  const c = COMPS[off];
+  if (!c || curW == null || !c.codes.has(code)) return null;
+  return curW - (c.w.get(code + '|' + stock) || 0);
+}
+
 async function loadDateData(date) {
   currentDate = date;
   currentView = null;
@@ -317,26 +356,25 @@ async function loadDateData(date) {
   searchInput.disabled = true;
 
   try {
-    let etfsMap, holdingsMap;
-    try {
-      // 1차: 분석용 DB(Parquet, JSON 대비 1/5 용량)에서 로드
-      const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
-      const rows = await hyparquet.parquetReadObjects({ file: buf });
-      etfsMap = {}; holdingsMap = {};
-      for (const r of rows) {
-        etfsMap[r.etf_code] = r.etf_name;
-        (holdingsMap[r.etf_code] || (holdingsMap[r.etf_code] = []))
-          .push([r.stock_name, r.weight == null ? null : Math.round(r.weight * 1000) / 1000]);
-      }
-    } catch (e) {
-      // 2차: 기존 JSON 폴백
-      const obj = await (await fetch('data/' + date + '.json')).json();
-      holdingsMap = obj.holdings;
-      etfsMap = obj.etfs || {};
-    }
+    // 현재 날짜 + 비교 날짜(1·5·10 영업일 전)를 병렬 로드
+    const idx = DATES.indexOf(date);
+    const offs = [1, 5, 10].filter(o => idx - o >= 0);
+    const [cur, ...comps] = await Promise.all(
+      [date, ...offs.map(o => DATES[idx - o])].map(fetchDateMap));
 
-    HOLDINGS = holdingsMap;
-    const ETFS = etfsMap;
+    COMPS = {};
+    offs.forEach((o, i) => {
+      const h = comps[i].holdings;
+      const w = new Map(), codes = new Set();
+      for (const code in h) {
+        codes.add(code);
+        for (let j = 0; j < h[code].length; j++) w.set(code + '|' + h[code][j][0], h[code][j][1]);
+      }
+      COMPS[o] = { date: DATES[idx - o], w: w, codes: codes };
+    });
+
+    HOLDINGS = cur.holdings;
+    const ETFS = cur.etfs;
     // holdings(ETF→종목)를 뒤집어 data(종목→ETF)와 names를 즉석 생성
     DATA = {};
     const nameSet = new Set();
@@ -405,40 +443,66 @@ function showStockResults(name) {
   }
   currentView = { type: 'stock', name: name };
   backBtnArea.style.display = viewHistory.length > 0 ? '' : 'none';
-  entries.sort((a, b) => (b[2] || 0) - (a[2] || 0));
-  const maxWeight = entries.reduce((m, e) => Math.max(m, e[2] || 0), 0);
+
+  // 비중 + N영업일 전 대비 변화(%p) 계산
+  const rows = entries.map(e => ({
+    code: e[0] || '-', name: e[1], w: e[2],
+    d1: deltaFor(e[0], name, e[2], 1),
+    d5: deltaFor(e[0], name, e[2], 5),
+    d10: deltaFor(e[0], name, e[2], 10)
+  }));
+  const key = stockSort;
+  rows.sort((a, b) => ((b[key] == null ? -1e9 : b[key]) - (a[key] == null ? -1e9 : a[key])));
+  const maxWeight = rows.reduce((m, r) => Math.max(m, r.w || 0), 0);
 
   breadcrumb.innerHTML = '<span class="current">&#128200; ' + escHtml(name) + ' 보유 ETF</span>';
   breadcrumb.style.display = 'flex';
 
   statsArea.innerHTML =
     '<div class="stat-card"><div class="label">검색 종목</div><div class="value small">' + escHtml(name) + '</div></div>' +
-    '<div class="stat-card"><div class="label">보유 ETF 수</div><div class="value">' + entries.length.toLocaleString() + '</div></div>' +
+    '<div class="stat-card"><div class="label">보유 ETF 수</div><div class="value">' + rows.length.toLocaleString() + '</div></div>' +
     '<div class="stat-card"><div class="label">최대 비중</div><div class="value">' + (maxWeight ? maxWeight.toFixed(2) + '%' : '-') + '</div></div>';
   statsArea.style.display = 'flex';
 
-  thead.innerHTML = '<tr><th style="width:50px">#</th><th>ETF 종목명</th><th>ETF 코드</th><th style="text-align:right;min-width:120px">비중(%)</th></tr>';
+  const sortTh = (k, label, tip) => '<th class="th-sort' + (stockSort === k ? ' on' : '') +
+    '" style="text-align:right" title="' + tip + '" onclick="setStockSort(\'' + k + '\')">' +
+    label + (stockSort === k ? ' &#9660;' : '') + '</th>';
+  thead.innerHTML = '<tr><th style="width:50px">#</th><th>ETF 종목명</th>' +
+    sortTh('w', '비중(%)', '현재 비중 기준 정렬') +
+    sortTh('d1', '&Delta;1일', (COMPS[1] ? COMPS[1].date + ' 대비 변화(%p)' : '비교 데이터 없음')) +
+    sortTh('d5', '&Delta;5일', (COMPS[5] ? COMPS[5].date + ' 대비 변화(%p)' : '비교 데이터 없음')) +
+    sortTh('d10', '&Delta;10일', (COMPS[10] ? COMPS[10].date + ' 대비 변화(%p)' : '비교 데이터 없음')) + '</tr>';
+
+  const dcell = d => d == null ? '<td class="dcell">-</td>' :
+    '<td class="dcell ' + (d > 0.005 ? 'd-up' : d < -0.005 ? 'd-down' : 'd-flat') + '">' +
+    (d >= 0 ? '+' : '') + d.toFixed(2) + '</td>';
 
   let html = '';
-  entries.forEach((e, i) => {
-    const code = e[0] || '-';
-    const etfName = e[1];
-    const weight = e[2];
-    const barWidth = maxWeight > 0 && weight ? (weight / maxWeight * 80) : 0;
-    html += '<tr class="clickable" onclick="showEtfHoldings(\'' + safeAttr(code) + '\',\'' + safeAttr(etfName) + '\')">' +
+  rows.forEach((r, i) => {
+    const barWidth = maxWeight > 0 && r.w ? (r.w / maxWeight * 60) : 0;
+    html += '<tr class="clickable" onclick="showEtfHoldings(\'' + safeAttr(r.code) + '\',\'' + safeAttr(r.name) + '\')">' +
       '<td class="rank">' + (i + 1) + '</td>' +
-      '<td class="etf-link">' + escHtml(etfName) + '</td>' +
-      '<td class="code">' + escHtml(code) + '</td>' +
+      '<td class="etf-link">' + escHtml(r.name) + '<div class="code-sub">' + escHtml(r.code) + '</div></td>' +
       '<td class="weight">' +
-        (weight != null ? '<span class="weight-bar" style="width:' + barWidth + 'px"></span>' + weight.toFixed(2) + '%' : '-') +
-      '</td></tr>';
+        (r.w != null ? '<span class="weight-bar" style="width:' + barWidth + 'px"></span>' + r.w.toFixed(2) + '%' : '-') +
+      '</td>' + dcell(r.d1) + dcell(r.d5) + dcell(r.d10) + '</tr>';
   });
   tbody.innerHTML = html;
 
-  document.getElementById('resultTitle').textContent = '"' + name + '" 보유 ETF (' + entries.length + '개)';
-  document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬';
+  const sortLabel = { w: '비중(%)', d1: '1일 비중변화(%p)', d5: '5일 비중변화(%p)', d10: '10일 비중변화(%p)' };
+  document.getElementById('resultTitle').textContent = '"' + name + '" 보유 ETF (' + rows.length + '개)';
+  document.getElementById('sortInfo').textContent = sortLabel[stockSort] + ' 기준 내림차순 · 저장된 영업일 기준';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+}
+
+function setStockSort(k) {
+  stockSort = k;
+  if (currentView && currentView.type === 'stock') {
+    const nm = currentView.name;
+    currentView = null;  // 히스토리 중복 방지 (같은 화면 재렌더)
+    showStockResults(nm);
+  }
 }
 
 // ===== ETF HOLDINGS VIEW =====
