@@ -88,6 +88,14 @@ def build(xlsm_path, date_key, out_dir):
     print(f"OK  ETF {n_etf}개 | 종목 {len(comp_names)}개 | {out_path} ({size_mb:.2f} MB)")
     print(f"    dates.json -> {dates}")
 
+    # 분석용 DB(db/etf/*.parquet)도 함께 생성 (duckdb 미설치 시 안내만)
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import build_db
+        build_db.build(date_key, force=True)
+    except ImportError:
+        print("    (duckdb/pandas 미설치 — 'pip install duckdb pandas' 후 tools/etf/build_db.py 실행 필요)")
+
 if __name__ == '__main__':
     xlsm = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/Downloads/ETF_Raw_20260708.xlsx')
     date_key = sys.argv[2] if len(sys.argv) > 2 else '2026-07-08'
