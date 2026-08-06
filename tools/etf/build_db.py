@@ -42,7 +42,7 @@ def build(date_key, force=False):
     con.execute(f"""
         COPY (SELECT CAST(date AS DATE) AS date, etf_code, etf_name, stock_name,
                      CAST(weight AS DOUBLE) AS weight FROM df)
-        TO '{dst}' (FORMAT PARQUET, COMPRESSION ZSTD)""")
+        TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
     size_kb = os.path.getsize(dst) / 1024
     print(f"OK  {date_key}: {len(rows):,}행 -> {os.path.relpath(dst, REPO)} ({size_kb:,.0f} KB)")
     return True

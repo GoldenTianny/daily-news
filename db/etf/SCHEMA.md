@@ -4,7 +4,9 @@
 
 - 원천: HTS 다운로드 엑셀 → `tools/etf/data/YYYY-MM-DD.json`(웹 검색기용) → 본 Parquet(분석용)
 - 생성: `tools/etf/build_data.py` 실행 시 자동 생성 (단독 재생성은 `python3 tools/etf/build_db.py`)
-- 규모: 날짜당 약 67,000행 (ETF 918개 × 보유종목), 파일당 약 285KB
+- 규모: 날짜당 약 67,000행 (ETF 918개 × 보유종목), 파일당 약 380KB
+- 압축: SNAPPY — ETF 검색기 웹페이지(hyparquet)가 브라우저에서 직접 읽는 코덱
+- 소비처: ① 분석(DuckDB/pandas) ② ETF 검색기 웹(1차 소스, JSON은 폴백)
 
 ## 스키마 (롱 포맷)
 

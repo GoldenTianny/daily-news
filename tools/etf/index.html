@@ -252,6 +252,7 @@
   </div>
 </div>
 
+<script src="hyparquet.min.js"></script>
 <script>
 // ===== STATE =====
 let DATA = {};
@@ -316,12 +317,27 @@ async function loadDateData(date) {
   searchInput.disabled = true;
 
   try {
-    const resp = await fetch('data/' + date + '.json');
-    const obj = await resp.json();
+    let etfsMap, holdingsMap;
+    try {
+      // 1차: 분석용 DB(Parquet, JSON 대비 1/5 용량)에서 로드
+      const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
+      const rows = await hyparquet.parquetReadObjects({ file: buf });
+      etfsMap = {}; holdingsMap = {};
+      for (const r of rows) {
+        etfsMap[r.etf_code] = r.etf_name;
+        (holdingsMap[r.etf_code] || (holdingsMap[r.etf_code] = []))
+          .push([r.stock_name, r.weight == null ? null : Math.round(r.weight * 1000) / 1000]);
+      }
+    } catch (e) {
+      // 2차: 기존 JSON 폴백
+      const obj = await (await fetch('data/' + date + '.json')).json();
+      holdingsMap = obj.holdings;
+      etfsMap = obj.etfs || {};
+    }
 
-    HOLDINGS = obj.holdings;
-    const ETFS = obj.etfs || {};
-    // holdings(ETF→종목)를 뒤집어 data(종목→ETF)와 names를 즉석 생성 (파일 용량 절감)
+    HOLDINGS = holdingsMap;
+    const ETFS = etfsMap;
+    // holdings(ETF→종목)를 뒤집어 data(종목→ETF)와 names를 즉석 생성
     DATA = {};
     const nameSet = new Set();
     for (const code in HOLDINGS) {
