@@ -2,11 +2,12 @@
 
 국내 상장 ETF 전 종목의 일별 보유내역 스냅샷. **날짜별 Parquet 파일 1개**(불변)로 저장됩니다.
 
-- 원천: HTS 다운로드 엑셀 → `tools/etf/data/YYYY-MM-DD.json`(웹 검색기용) → 본 Parquet(분석용)
-- 생성: `tools/etf/build_data.py` 실행 시 자동 생성 (단독 재생성은 `python3 tools/etf/build_db.py`)
+- 원천: HTS 다운로드 엑셀 → 본 Parquet (`tools/etf/build_data.py`가 직접 생성)
+- 생성: `python3 tools/etf/build_data.py <원본.xlsx> <YYYY-MM-DD> tools/etf/data` — 재생성 시에도 원본 엑셀 필요
 - 규모: 날짜당 약 67,000행 (ETF 918개 × 보유종목), 파일당 약 380KB
 - 압축: SNAPPY — ETF 검색기 웹페이지(hyparquet)가 브라우저에서 직접 읽는 코덱
-- 소비처: ① 분석(DuckDB/pandas) ② ETF 검색기 웹(1차 소스, JSON은 폴백)
+- 소비처: ① 분석(DuckDB/pandas) ② ETF 검색기 웹 — 본 Parquet가 유일한 데이터 소스
+  (날짜별 JSON 폴백은 2026-08-11 폐지, `tools/etf/data/`에는 날짜 목록 인덱스 `dates.json`만 유지)
 
 ## 스키마 (롱 포맷)
 
@@ -45,4 +46,4 @@ pandas는 `pd.read_parquet('db/etf/2026-08-07.parquet')`로 바로 읽을 수 �
 - 결측일: 주말·공휴일 및 미업로드일은 파일이 없습니다 (수집일만 존재)
 - 날짜 의미: 2026-08-07 이전 업로드분은 업로드일 기준으로 저장돼 있던 것을 전 영업일(종가 기준일)로 일괄 정정함 (2026-08-08 정비). 이후 업로드분은 파일명에 종가 기준일을 사용
 - `weight`는 ETF별 원본 데이터 기준이라 합계가 정확히 100이 아닐 수 있습니다
-- 과거 데이터 정정 시 해당 날짜 파일을 `--force`로 재생성하면 됩니다 (git 이력에 변경 기록 남음)
+- 과거 데이터 정정 시 원본 엑셀로 `build_data.py`를 다시 실행하면 해당 날짜 파일이 덮어써집니다 (git 이력에 변경 기록 남음)

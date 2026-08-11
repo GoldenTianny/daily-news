@@ -314,22 +314,17 @@ async function init() {
 }
 
 // ===== Load date data =====
-// 날짜 하나의 데이터를 로드: 1차 Parquet(DB), 실패 시 JSON 폴백
+// 날짜 하나의 데이터를 로드 (db/etf/*.parquet를 hyparquet로 직접 읽음)
 async function fetchDateMap(date) {
-  try {
-    const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
-    const rows = await hyparquet.parquetReadObjects({ file: buf });
-    const etfs = {}, holdings = {};
-    for (const r of rows) {
-      etfs[r.etf_code] = r.etf_name;
-      (holdings[r.etf_code] || (holdings[r.etf_code] = []))
-        .push([r.stock_name, r.weight == null ? null : Math.round(r.weight * 1000) / 1000]);
-    }
-    return { etfs: etfs, holdings: holdings };
-  } catch (e) {
-    const obj = await (await fetch('data/' + date + '.json')).json();
-    return { etfs: obj.etfs || {}, holdings: obj.holdings };
+  const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
+  const rows = await hyparquet.parquetReadObjects({ file: buf });
+  const etfs = {}, holdings = {};
+  for (const r of rows) {
+    etfs[r.etf_code] = r.etf_name;
+    (holdings[r.etf_code] || (holdings[r.etf_code] = []))
+      .push([r.stock_name, r.weight == null ? null : Math.round(r.weight * 1000) / 1000]);
   }
+  return { etfs: etfs, holdings: holdings };
 }
 
 // N영업일 전 대비 비중 변화(%p). ETF가 비교일에 없으면 null, 미보유였으면 +현재비중(신규 편입)
