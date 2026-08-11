@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-# ETF_Raw_YYYYMMDD.xlsx -> 검색기용 JSON (etfs / holdings 만 저장, 나머지는 브라우저가 생성)
+# ETF_Raw_YYYYMMDD.xlsx -> 분석용 DB(db/etf/YYYY-MM-DD.parquet) + dates.json 갱신
 # raw 파일(가공 전 원본, Sheet1 = ETP Components) 그대로 사용. xlsm/가공본과 구조 동일.
+# 검색기 웹은 db/etf/*.parquet를 hyparquet로 직접 읽음 (날짜별 JSON은 2026-08-11 폐지)
 # 사용법: python3 build_data.py ~/Downloads/ETF_Raw_20260708.xlsx 2026-07-08 data
 import sys, os, json, numbers
 import openpyxl
+
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DB_DIR = os.path.join(REPO, 'db', 'etf')
+
 
 def build(xlsm_path, date_key, out_dir):
     wb = openpyxl.load_workbook(xlsm_path, read_only=True, data_only=True)
@@ -16,9 +21,7 @@ def build(xlsm_path, date_key, out_dir):
         row = rows[r]
         return row[c] if c < len(row) else None
 
-    ETFS = {}        # etfCode -> etfName
-    HOLDINGS = {}    # etfCode -> [[구성종목명, weight], ...]
-
+    db_rows = []     # (date, etf_code, etf_name, stock_name, weight)
     n_etf = 0
     comp_names = set()
     for b in range(nblocks):
@@ -49,7 +52,6 @@ def build(xlsm_path, date_key, out_dir):
             continue
         n_etf += 1
 
-        hlist = []
         for comp, amt, wpct in holds:
             # 비중: 금액 기준 우선, 없으면 엑셀 비중(%) 열, 그것도 없으면 null
             if total_amt > 0 and amt is not None:
@@ -58,20 +60,23 @@ def build(xlsm_path, date_key, out_dir):
                 w = round(wpct, 3)
             else:
                 w = None
-            hlist.append([comp, w])
+            db_rows.append((date_key, etf_code, etf_name, comp, w))
             comp_names.add(comp)
-        ETFS[etf_code] = etf_name
-        HOLDINGS[etf_code] = hlist
 
-    # data(종목→ETF)와 names는 브라우저가 holdings에서 생성 → 파일에 저장 안 함(용량 절감)
-    obj = {"date": date_key, "etfs": ETFS, "holdings": HOLDINGS}
+    # Parquet 저장 (SNAPPY — 검색기 웹의 hyparquet가 읽는 코덱)
+    import duckdb
+    import pandas as pd
+    os.makedirs(DB_DIR, exist_ok=True)
+    dst = os.path.join(DB_DIR, date_key + '.parquet')
+    df = pd.DataFrame(db_rows, columns=['date', 'etf_code', 'etf_name', 'stock_name', 'weight'])
+    con = duckdb.connect()
+    con.execute(f"""
+        COPY (SELECT CAST(date AS DATE) AS date, etf_code, etf_name, stock_name,
+                     CAST(weight AS DOUBLE) AS weight FROM df)
+        TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
 
+    # dates.json 갱신 (기존 날짜 + 새 날짜, 오름차순) — 검색기의 날짜 목록 인덱스
     os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, date_key + '.json')
-    with open(out_path, 'w', encoding='utf-8') as f:
-        json.dump(obj, f, ensure_ascii=False, separators=(',', ':'))
-
-    # dates.json 갱신 (기존 날짜 + 새 날짜, 오름차순)
     dates_path = os.path.join(out_dir, 'dates.json')
     dates = []
     if os.path.exists(dates_path):
@@ -84,17 +89,10 @@ def build(xlsm_path, date_key, out_dir):
     dates = sorted(set(dates))
     json.dump(dates, open(dates_path, 'w', encoding='utf-8'), ensure_ascii=False)
 
-    size_mb = os.path.getsize(out_path) / 1e6
-    print(f"OK  ETF {n_etf}개 | 종목 {len(comp_names)}개 | {out_path} ({size_mb:.2f} MB)")
+    size_kb = os.path.getsize(dst) / 1024
+    print(f"OK  ETF {n_etf}개 | 종목 {len(comp_names)}개 | {len(db_rows):,}행 -> {os.path.relpath(dst, REPO)} ({size_kb:,.0f} KB)")
     print(f"    dates.json -> {dates}")
 
-    # 분석용 DB(db/etf/*.parquet)도 함께 생성 (duckdb 미설치 시 안내만)
-    try:
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import build_db
-        build_db.build(date_key, force=True)
-    except ImportError:
-        print("    (duckdb/pandas 미설치 — 'pip install duckdb pandas' 후 tools/etf/build_db.py 실행 필요)")
 
 if __name__ == '__main__':
     xlsm = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/Downloads/ETF_Raw_20260708.xlsx')
