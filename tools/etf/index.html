@@ -291,6 +291,7 @@ let HOLDINGS = {};
 let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
+let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let currentDate = null;
@@ -409,6 +410,60 @@ async function loadPrices(date, etfMap) {
   return { d0: d0, d5: d5, d20: d20, top5: rank(d5), top20: rank(d20) };
 }
 
+// ===== 목표주가 모멘텀 (db/market/consensus 월별 컨센서스) =====
+// 각 ETF에 대해 Σ(구성종목 목표주가의 20영업일 변화율 × 비중)을 계산
+async function loadConsensus(date) {
+  const months = [];
+  const [y, m] = [parseInt(date.slice(0, 4)), parseInt(date.slice(5, 7))];
+  for (let k = 2; k >= 0; k--) {
+    const mm = m - k, yy = y + Math.floor((mm - 1) / 12), mo = ((mm - 1) % 12 + 12) % 12 + 1;
+    months.push(yy + '-' + String(mo).padStart(2, '0'));
+  }
+  const chunks = await Promise.all(months.map(async mo => {
+    try {
+      const resp = await fetch('/db/market/consensus/' + mo + '.parquet');
+      if (!resp.ok) return [];
+      return await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
+    } catch (e) { return []; }
+  }));
+
+  const dateSet = new Set();
+  const tp = new Map();   // 종목명 -> Map(dateStr -> 목표주가)
+  for (const rows of chunks) {
+    for (const r of rows) {
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date) continue;
+      dateSet.add(d);
+      let m2 = tp.get(r.name);
+      if (!m2) tp.set(r.name, m2 = new Map());
+      m2.set(d, r.target_price);
+    }
+  }
+  const ds = Array.from(dateSet).sort();
+  if (ds.length < 21 || tp.size === 0) return null;
+  const d0 = ds[ds.length - 1];
+  const d20 = ds[ds.length - 21];
+
+  // ETF별 가중 목표주가 변화율 (커버리지 비중 20% 이상만)
+  const scores = [];
+  for (const code in HOLDINGS) {
+    const etfName = ETFS_CUR[code] || '';
+    if (LEV.test(etfName)) continue;
+    let score = 0, cov = 0;
+    for (const [stock, w] of HOLDINGS[code]) {
+      if (w == null) continue;
+      const m2 = tp.get(stock);
+      if (!m2) continue;
+      const t0 = m2.get(d0), t1 = m2.get(d20);
+      if (t0 > 0 && t1 > 0) { score += (t0 / t1 - 1) * w / 100; cov += w; }
+    }
+    if (cov >= 20) scores.push([code, score, cov]);
+  }
+  scores.sort((a, b) => b[1] - a[1]);
+  return { d0: d0, d20: d20, up: scores.slice(0, 10),
+           down: scores.filter(s => s[1] < 0).slice(-10).reverse() };
+}
+
 // ===== 초기화면 위젯 =====
 // 현금·채권·선물 등 비주식 항목은 랭킹에서 제외
 const NONEQ = /현금|예금|달러|엔화|유로|위안|스왑|선물|국고|통안|콜론|CD금리|KOFR|SOFR|전단채|채권|사채|만기|T-?Bill/i;
@@ -491,7 +546,33 @@ function renderIntro() {
   topD.forEach((t, i) => {
     html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
   });
-  html += '</div></div>';
+  html += '</div>';
+
+  // 목표주가 모멘텀 위젯 (컨센서스 로드 후 채워짐)
+  const tpmRow = (i, t) => {
+    const name = ETFS_CUR[t[0]] || t[0];
+    return '<div class="wrow" onclick="showEtfHoldings(\'' + safeAttr(t[0]) + '\',\'' + safeAttr(name) + '\')">' +
+      '<span class="wrank">' + (i + 1) + '</span>' +
+      '<span class="wname">' + escHtml(name) + '<span class="wsub">커버 ' + t[2].toFixed(0) + '%</span></span>' +
+      '<span class="wval ' + (t[1] >= 0 ? 'up' : 'down') + '">' + (t[1] >= 0 ? '+' : '') + (t[1] * 100).toFixed(1) + '%</span></div>';
+  };
+  const tpmWidget = (title, emoji, list) => {
+    let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
+    if (!TPM) {
+      h += '<div class="sub">컨센서스 불러오는 중&hellip;</div>';
+    } else if (!list || !list.length) {
+      h += '<div class="sub">데이터가 없습니다</div>';
+    } else {
+      h += '<div class="sub">구성종목 목표주가의 20영업일(' + TPM.d20 + '&rarr;' + TPM.d0 +
+        ') 변화율 &times; 비중 가중합 · 커버리지 20% 이상 · 레버리지 제외</div>';
+      list.forEach((t, i) => { h += tpmRow(i, t); });
+    }
+    return h + '</div>';
+  };
+  html += tpmWidget('목표주가 상향 모멘텀 TOP 10', '&#127919;', TPM && TPM.up);
+  html += tpmWidget('목표주가 하향 모멘텀 TOP 10', '&#129482;', TPM && TPM.down);
+
+  html += '</div>';
 
   introArea.innerHTML = html;
 }
@@ -555,12 +636,18 @@ async function loadDateData(date) {
 
     renderIntro();
 
-    // 수익률 랭킹은 가격 파일 로드 후 비동기로 채움 (검색 사용을 막지 않음)
+    // 수익률·목표주가 모멘텀 랭킹은 가격·컨센서스 파일 로드 후 비동기로 채움 (검색 사용을 막지 않음)
     RET = null;
+    TPM = null;
     const reqDate = date;
     loadPrices(date, ETFS).then(ret => {
       if (currentDate !== reqDate) return;   // 로드 중 날짜가 바뀐 경우 무시
       RET = ret || { d0: null, d5: null, d20: null, top5: [], top20: [] };
+      if (introArea.style.display !== 'none') renderIntro();
+    });
+    loadConsensus(date).then(t => {
+      if (currentDate !== reqDate) return;
+      TPM = t || { d0: null, d20: null, up: [], down: [] };
       if (introArea.style.display !== 'none') renderIntro();
     });
   } catch (err) {
