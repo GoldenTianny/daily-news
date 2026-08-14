@@ -2,7 +2,7 @@
 
 국내 상장 ETF 전 종목의 일별 보유내역 스냅샷. **날짜별 Parquet 파일 1개**(불변)로 저장됩니다.
 
-- 원천: HTS 다운로드 엑셀 → 본 Parquet (`tools/etf/build_data.py`가 직접 생성)
+- 원천: HTS 다운로드 엑셀 → 본 Parquet (`tools/etf/build_data.py`가 직접 생성) — `ETF_Raw_*.xlsx`(Sheet1)와 통합본 `ETF_price_concensus_*.xlsx`('ETF raw' 시트) 모두 지원
 - 생성: `python3 tools/etf/build_data.py <원본.xlsx> <YYYY-MM-DD> tools/etf/data` — 재생성 시에도 원본 엑셀 필요
 - 규모: 날짜당 약 67,000행 (ETF 918개 × 보유종목), 파일당 약 380KB
 - 압축: SNAPPY — ETF 검색기 웹페이지(hyparquet)가 브라우저에서 직접 읽는 코덱

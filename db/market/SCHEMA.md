@@ -2,8 +2,8 @@
 
 수정주가·목표주가 컨센서스 시계열. **월별 Parquet 파일**(YYYY-MM.parquet)로 저장됩니다.
 
-- 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus`)
-- 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 내용이 같은 달은 건너뛰므로 재실행 시 최근 달만 갱신됨
+- 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus` — `ETF raw` 시트는 `tools/etf/build_data.py` 담당)
+- 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 원본에 담긴 날짜만 교체하고 나머지는 유지(병합)하므로, 짧은 기간(예: 최근 2일)만 담긴 일일 원본을 올려도 과거 데이터가 지워지지 않음. 내용이 같은 달은 건너뜀
 - 압축: SNAPPY
 
 ## db/market/price/ — 수정주가
