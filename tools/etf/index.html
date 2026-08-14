@@ -356,9 +356,13 @@ function deltaFor(code, stock, curW, off) {
   return curW - (c.w.get(code + '|' + stock) || 0);
 }
 
+// 레버리지 ETF(인버스2X 포함)는 수익률·편입 비중 랭킹에서 제외
+const LEV = /레버리지|인버스\s*2X|곱버스/i;
+
 // ===== ETF 수익률 (db/market/price 월별 수정주가) =====
 // 기준일 포함 최근 3개월 파일을 읽어 5·20영업일 수익률 랭킹을 계산
-async function loadPrices(date, etfCodes) {
+async function loadPrices(date, etfMap) {
+  const etfCodes = new Set(Object.keys(etfMap).filter(c => !LEV.test(etfMap[c] || '')));
   const months = [];
   const [y, m] = [parseInt(date.slice(0, 4)), parseInt(date.slice(5, 7))];
   for (let k = 2; k >= 0; k--) {
@@ -415,7 +419,7 @@ function renderIntro() {
   for (const name in DATA) {
     if (NONEQ.test(name)) continue;
     let s = 0, n = 0;
-    for (const e of DATA[name]) if (e[2] != null) { s += e[2]; n++; }
+    for (const e of DATA[name]) if (e[2] != null && !LEV.test(e[1])) { s += e[2]; n++; }
     if (n > 0) sums.push([name, s, n]);
   }
   sums.sort((a, b) => b[1] - a[1]);
@@ -430,6 +434,7 @@ function renderIntro() {
       if (NONEQ.test(name)) continue;
       let d = 0, has = false;
       for (const e of DATA[name]) {
+        if (LEV.test(e[1])) continue;
         const dd = deltaFor(e[0], name, e[2], off);
         if (dd != null) { d += dd; has = true; }
       }
@@ -463,7 +468,7 @@ function renderIntro() {
     } else if (!top || !top.length) {
       h += '<div class="sub">가격 데이터가 없습니다</div>';
     } else {
-      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준</div>';
+      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준 · 레버리지 제외</div>';
       top.forEach((t, i) => { h += retRow(i, t[0], t[1]); });
     }
     return h + '</div>';
@@ -472,7 +477,7 @@ function renderIntro() {
   html += retWidget('20영업일 수익률 TOP 10', '&#128200;', RET && RET.top20, RET && RET.d20);
 
   html += '<div class="widget"><h3>&#127942; ETF 편입 비중합 TOP 10</h3>' +
-    '<div class="sub">' + currentDate + ' 기준 · 전체 ETF에 담긴 비중(%)의 합</div>';
+    '<div class="sub">' + currentDate + ' 기준 · ETF에 담긴 비중(%)의 합 · 레버리지 제외</div>';
   const maxW = topW.length ? topW[0][1] : 0;
   topW.forEach((t, i) => {
     html += row(i, t[0], t[2] + '개 ETF', maxW ? Math.max(4, t[1] / maxW * 56) : 0, '',
@@ -481,7 +486,7 @@ function renderIntro() {
   html += '</div>';
 
   html += '<div class="widget"><h3>&#128293; 편입 비중 증가 TOP 10</h3>' +
-    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p)' : '비교할 과거 데이터가 없습니다') + '</div>';
+    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지 제외' : '비교할 과거 데이터가 없습니다') + '</div>';
   const maxD = topD.length ? topD[0][1] : 0;
   topD.forEach((t, i) => {
     html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
@@ -553,7 +558,7 @@ async function loadDateData(date) {
     // 수익률 랭킹은 가격 파일 로드 후 비동기로 채움 (검색 사용을 막지 않음)
     RET = null;
     const reqDate = date;
-    loadPrices(date, new Set(Object.keys(ETFS))).then(ret => {
+    loadPrices(date, ETFS).then(ret => {
       if (currentDate !== reqDate) return;   // 로드 중 날짜가 바뀐 경우 무시
       RET = ret || { d0: null, d5: null, d20: null, top5: [], top20: [] };
       if (introArea.style.display !== 'none') renderIntro();
