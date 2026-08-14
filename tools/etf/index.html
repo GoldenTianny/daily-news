@@ -163,6 +163,7 @@
   .widget .wbar.hot { background: linear-gradient(90deg, #c62828, #ef9a9a); }
   .widget .wval { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; flex: none; }
   .widget .wval.up { color: #c62828; }
+  .widget .wval.down { color: #2a5ca8; }
   @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
 
   /* States */
@@ -289,6 +290,8 @@ let NAMES = [];
 let HOLDINGS = {};
 let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
+let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
+let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let currentDate = null;
 let currentView = null;
@@ -353,6 +356,55 @@ function deltaFor(code, stock, curW, off) {
   return curW - (c.w.get(code + '|' + stock) || 0);
 }
 
+// ===== ETF 수익률 (db/market/price 월별 수정주가) =====
+// 기준일 포함 최근 3개월 파일을 읽어 5·20영업일 수익률 랭킹을 계산
+async function loadPrices(date, etfCodes) {
+  const months = [];
+  const [y, m] = [parseInt(date.slice(0, 4)), parseInt(date.slice(5, 7))];
+  for (let k = 2; k >= 0; k--) {
+    const mm = m - k, yy = y + Math.floor((mm - 1) / 12), mo = ((mm - 1) % 12 + 12) % 12 + 1;
+    months.push(yy + '-' + String(mo).padStart(2, '0'));
+  }
+  const chunks = await Promise.all(months.map(async mo => {
+    try {
+      const resp = await fetch('/db/market/price/' + mo + '.parquet');
+      if (!resp.ok) return [];
+      return await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
+    } catch (e) { return []; }
+  }));
+
+  const dateSet = new Set();
+  const pm = new Map();   // code -> Map(dateStr -> close)
+  for (const rows of chunks) {
+    for (const r of rows) {
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date) continue;
+      dateSet.add(d);
+      if (!etfCodes.has(r.code)) continue;
+      let m2 = pm.get(r.code);
+      if (!m2) pm.set(r.code, m2 = new Map());
+      m2.set(d, r.close);
+    }
+  }
+  const ds = Array.from(dateSet).sort();
+  if (ds.length < 6 || pm.size === 0) return null;   // 가격 데이터 없음/부족
+  const d0 = ds[ds.length - 1];
+  const d5 = ds[ds.length - 6];
+  const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
+
+  const rank = (dPast) => {
+    if (!dPast) return [];
+    const arr = [];
+    for (const [code, m2] of pm) {
+      const p0 = m2.get(d0), p1 = m2.get(dPast);
+      if (p0 > 0 && p1 > 0) arr.push([code, p0 / p1 - 1]);
+    }
+    arr.sort((a, b) => b[1] - a[1]);
+    return arr.slice(0, 10);
+  };
+  return { d0: d0, d5: d5, d20: d20, top5: rank(d5), top20: rank(d20) };
+}
+
 // ===== 초기화면 위젯 =====
 // 현금·채권·선물 등 비주식 항목은 랭킹에서 제외
 const NONEQ = /현금|예금|달러|엔화|유로|위안|스왑|선물|국고|통안|콜론|CD금리|KOFR|SOFR|전단채|채권|사채|만기|T-?Bill/i;
@@ -394,7 +446,30 @@ function renderIntro() {
     '<span class="wbar' + (barCls ? ' ' + barCls : '') + '" style="width:' + bar + 'px"></span>' +
     '<span class="wval' + (valCls ? ' ' + valCls : '') + '">' + val + '</span></div>';
 
-  let html = '<div class="intro-hint">검색창에 종목명을 입력하거나, 아래 종목을 눌러보세요</div><div class="widgets">';
+  let html = '<div class="intro-hint">검색창에 종목명을 입력하거나, 아래 항목을 눌러보세요</div><div class="widgets">';
+
+  // ETF 수익률 위젯 (가격 데이터 로드 후 채워짐, 클릭 시 보유내역으로 이동)
+  const retRow = (i, code, r) => {
+    const name = (typeof ETFS_CUR !== 'undefined' && ETFS_CUR[code]) || code;
+    return '<div class="wrow" onclick="showEtfHoldings(\'' + safeAttr(code) + '\',\'' + safeAttr(name) + '\')">' +
+      '<span class="wrank">' + (i + 1) + '</span>' +
+      '<span class="wname">' + escHtml(name) + '</span>' +
+      '<span class="wval ' + (r >= 0 ? 'up' : 'down') + '">' + (r >= 0 ? '+' : '') + (r * 100).toFixed(1) + '%</span></div>';
+  };
+  const retWidget = (title, emoji, top, dPast) => {
+    let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
+    if (!RET) {
+      h += '<div class="sub">수정주가 불러오는 중&hellip;</div>';
+    } else if (!top || !top.length) {
+      h += '<div class="sub">가격 데이터가 없습니다</div>';
+    } else {
+      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준</div>';
+      top.forEach((t, i) => { h += retRow(i, t[0], t[1]); });
+    }
+    return h + '</div>';
+  };
+  html += retWidget('5영업일 수익률 TOP 10', '&#128640;', RET && RET.top5, RET && RET.d5);
+  html += retWidget('20영업일 수익률 TOP 10', '&#128200;', RET && RET.top20, RET && RET.d20);
 
   html += '<div class="widget"><h3>&#127942; ETF 편입 비중합 TOP 10</h3>' +
     '<div class="sub">' + currentDate + ' 기준 · 전체 ETF에 담긴 비중(%)의 합</div>';
@@ -452,6 +527,7 @@ async function loadDateData(date) {
 
     HOLDINGS = cur.holdings;
     const ETFS = cur.etfs;
+    ETFS_CUR = ETFS;
     // holdings(ETF→종목)를 뒤집어 data(종목→ETF)와 names를 즉석 생성
     DATA = {};
     const nameSet = new Set();
@@ -473,6 +549,15 @@ async function loadDateData(date) {
     searchInput.focus();
 
     renderIntro();
+
+    // 수익률 랭킹은 가격 파일 로드 후 비동기로 채움 (검색 사용을 막지 않음)
+    RET = null;
+    const reqDate = date;
+    loadPrices(date, new Set(Object.keys(ETFS))).then(ret => {
+      if (currentDate !== reqDate) return;   // 로드 중 날짜가 바뀐 경우 무시
+      RET = ret || { d0: null, d5: null, d20: null, top5: [], top20: [] };
+      if (introArea.style.display !== 'none') renderIntro();
+    });
   } catch (err) {
     introArea.innerHTML = '<div class="intro"><div class="emoji">&#9888;&#65039;</div>' +
       '<p>' + date + ' 데이터를 불러올 수 없습니다.</p></div>';
