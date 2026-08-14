@@ -146,6 +146,25 @@
   thead th.th-sort:hover { color: #1a237e; }
   thead th.th-sort.on { color: #1a237e; }
 
+  /* 초기화면 위젯 (편입 비중합·비중 증가 TOP) */
+  .intro-hint { text-align: center; padding: 18px 16px 0; color: #999; font-size: 13px; }
+  .widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; padding: 16px 20px 22px; }
+  .widget h3 { font-size: 14px; color: #1a237e; margin-bottom: 2px; }
+  .widget .sub { font-size: 11px; color: #999; margin-bottom: 8px; }
+  .widget .wrow {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 8px; border-radius: 8px; cursor: pointer; font-size: 13px;
+  }
+  .widget .wrow:hover { background: #e8eaf6; }
+  .widget .wrank { width: 20px; text-align: center; font-weight: 700; color: #1a237e; font-size: 12px; flex: none; }
+  .widget .wname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+  .widget .wname .wsub { font-size: 11px; color: #999; font-weight: 400; margin-left: 6px; }
+  .widget .wbar { height: 5px; border-radius: 3px; flex: none; background: linear-gradient(90deg, #3f51b5, #7986cb); }
+  .widget .wbar.hot { background: linear-gradient(90deg, #c62828, #ef9a9a); }
+  .widget .wval { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; flex: none; }
+  .widget .wval.up { color: #c62828; }
+  @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
+
   /* States */
   .intro { text-align: center; padding: 60px 20px; color: #999; }
   .intro .emoji { font-size: 48px; margin-bottom: 16px; }
@@ -334,6 +353,69 @@ function deltaFor(code, stock, curW, off) {
   return curW - (c.w.get(code + '|' + stock) || 0);
 }
 
+// ===== 초기화면 위젯 =====
+// 현금·채권·선물 등 비주식 항목은 랭킹에서 제외
+const NONEQ = /현금|예금|달러|엔화|유로|위안|스왑|선물|국고|통안|콜론|CD금리|KOFR|SOFR|전단채|채권|사채|만기|T-?Bill/i;
+
+function renderIntro() {
+  // ① 편입 비중합 TOP: 전체 ETF에 담긴 비중의 합 (해당일 기준)
+  const sums = [];
+  for (const name in DATA) {
+    if (NONEQ.test(name)) continue;
+    let s = 0, n = 0;
+    for (const e of DATA[name]) if (e[2] != null) { s += e[2]; n++; }
+    if (n > 0) sums.push([name, s, n]);
+  }
+  sums.sort((a, b) => b[1] - a[1]);
+  const topW = sums.slice(0, 10);
+
+  // ② 편입 비중 증가 TOP: N영업일 전 대비 비중합 변화(%p), 10일 우선
+  const off = COMPS[10] ? 10 : COMPS[5] ? 5 : COMPS[1] ? 1 : null;
+  let topD = [];
+  if (off) {
+    const deltas = [];
+    for (const name in DATA) {
+      if (NONEQ.test(name)) continue;
+      let d = 0, has = false;
+      for (const e of DATA[name]) {
+        const dd = deltaFor(e[0], name, e[2], off);
+        if (dd != null) { d += dd; has = true; }
+      }
+      if (has && d > 0.005) deltas.push([name, d]);
+    }
+    deltas.sort((a, b) => b[1] - a[1]);
+    topD = deltas.slice(0, 10);
+  }
+
+  const row = (i, name, sub, bar, barCls, val, valCls) =>
+    '<div class="wrow" onclick="searchComponent(\'' + safeAttr(name) + '\')">' +
+    '<span class="wrank">' + (i + 1) + '</span>' +
+    '<span class="wname">' + escHtml(name) + (sub ? '<span class="wsub">' + sub + '</span>' : '') + '</span>' +
+    '<span class="wbar' + (barCls ? ' ' + barCls : '') + '" style="width:' + bar + 'px"></span>' +
+    '<span class="wval' + (valCls ? ' ' + valCls : '') + '">' + val + '</span></div>';
+
+  let html = '<div class="intro-hint">검색창에 종목명을 입력하거나, 아래 종목을 눌러보세요</div><div class="widgets">';
+
+  html += '<div class="widget"><h3>&#127942; ETF 편입 비중합 TOP 10</h3>' +
+    '<div class="sub">' + currentDate + ' 기준 · 전체 ETF에 담긴 비중(%)의 합</div>';
+  const maxW = topW.length ? topW[0][1] : 0;
+  topW.forEach((t, i) => {
+    html += row(i, t[0], t[2] + '개 ETF', maxW ? Math.max(4, t[1] / maxW * 56) : 0, '',
+      t[1].toLocaleString(undefined, { maximumFractionDigits: 0 }) + '%', '');
+  });
+  html += '</div>';
+
+  html += '<div class="widget"><h3>&#128293; 편입 비중 증가 TOP 10</h3>' +
+    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p)' : '비교할 과거 데이터가 없습니다') + '</div>';
+  const maxD = topD.length ? topD[0][1] : 0;
+  topD.forEach((t, i) => {
+    html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
+  });
+  html += '</div></div>';
+
+  introArea.innerHTML = html;
+}
+
 async function loadDateData(date) {
   currentDate = date;
   currentView = null;
@@ -390,8 +472,7 @@ async function loadDateData(date) {
     searchInput.placeholder = '종목명을 입력하세요 (예: 삼성전자, NVIDIA, SK하이닉스)';
     searchInput.focus();
 
-    introArea.innerHTML = '<div class="intro"><div class="emoji">&#128200;</div>' +
-      '<p>위 검색창에 종목명을 입력해보세요.<br>해당 종목을 보유한 모든 ETF를 확인할 수 있습니다.</p></div>';
+    renderIntro();
   } catch (err) {
     introArea.innerHTML = '<div class="intro"><div class="emoji">&#9888;&#65039;</div>' +
       '<p>' + date + ' 데이터를 불러올 수 없습니다.</p></div>';
@@ -576,8 +657,7 @@ function removeStock(name) {
   selectedStocks = selectedStocks.filter(s => s !== name);
   renderTags();
   if (selectedStocks.length === 0) {
-    introArea.innerHTML = '<div class="intro"><div class="emoji">&#128200;</div>' +
-      '<p>위 검색창에 종목명을 입력해보세요.<br>해당 종목을 보유한 모든 ETF를 확인할 수 있습니다.</p></div>';
+    renderIntro();
     introArea.style.display = '';
     resultArea.style.display = 'none';
     statsArea.style.display = 'none';
@@ -591,8 +671,7 @@ function removeStock(name) {
 function clearAllStocks() {
   selectedStocks = [];
   renderTags();
-  introArea.innerHTML = '<div class="intro"><div class="emoji">&#128200;</div>' +
-    '<p>위 검색창에 종목명을 입력해보세요.<br>해당 종목을 보유한 모든 ETF를 확인할 수 있습니다.</p></div>';
+  renderIntro();
   introArea.style.display = '';
   resultArea.style.display = 'none';
   statsArea.style.display = 'none';
