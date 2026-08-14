@@ -166,6 +166,22 @@
   .widget .wval.down { color: #2a5ca8; }
   @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
 
+  /* 종목 차트 (수정주가 vs 목표주가) */
+  .chart-card {
+    background: white; border-radius: 12px; padding: 16px 20px 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08); margin-bottom: 20px;
+  }
+  .chart-title { font-weight: 600; font-size: 15px; }
+  .chart-sub { font-size: 12px; color: #999; margin: 2px 0 8px; }
+  .chart-loading { color: #999; font-size: 13px; padding: 28px 0; text-align: center; }
+  .chart-wrap { position: relative; }
+  .chart-wrap svg { display: block; width: 100%; }
+  .chart-tip {
+    position: absolute; pointer-events: none; display: none; z-index: 10;
+    background: rgba(26,35,126,0.94); color: #fff; font-size: 12px;
+    padding: 6px 10px; border-radius: 6px; white-space: nowrap; line-height: 1.5;
+  }
+
   /* States */
   .intro { text-align: center; padding: 60px 20px; color: #999; }
   .intro .emoji { font-size: 48px; margin-bottom: 16px; }
@@ -259,6 +275,7 @@
   </div>
   <div id="breadcrumb" class="breadcrumb" style="display:none"></div>
   <div id="statsArea" style="display:none" class="stats"></div>
+  <div id="chartArea" style="display:none"></div>
 
   <div class="result-section" id="resultSection">
     <div id="introArea">
@@ -311,6 +328,7 @@ const introArea = document.getElementById('introArea');
 const tbody = document.getElementById('tbody');
 const thead = document.getElementById('thead');
 const breadcrumb = document.getElementById('breadcrumb');
+const chartArea = document.getElementById('chartArea');
 const backBtnArea = document.getElementById('backBtnArea');
 const tagsArea = document.getElementById('tagsArea');
 let viewHistory = [];
@@ -464,6 +482,155 @@ async function loadConsensus(date) {
            down: scores.filter(s => s[1] < 0).slice(-10).reverse() };
 }
 
+// ===== 종목 차트: 최근 1년 수정주가 vs 목표주가 =====
+const FILE_BUFS = new Map();     // 'p|YYYY-MM' / 'c|YYYY-MM' -> ArrayBuffer|null (네트워크 캐시)
+const SERIES_CACHE = new Map();  // '종목명|기준일' -> {price:[[d,v]], tp:[[d,v]]}
+let chartToken = 0;
+
+function monthsList(date, n) {
+  const out = [];
+  const [y, m] = [parseInt(date.slice(0, 4)), parseInt(date.slice(5, 7))];
+  for (let k = n - 1; k >= 0; k--) {
+    const mm = m - k, yy = y + Math.floor((mm - 1) / 12), mo = ((mm - 1) % 12 + 12) % 12 + 1;
+    out.push(yy + '-' + String(mo).padStart(2, '0'));
+  }
+  return out;
+}
+
+async function readMonth(kind, mo) {
+  const key = kind + '|' + mo;
+  let buf = FILE_BUFS.get(key);
+  if (buf === undefined) {
+    try {
+      const resp = await fetch('/db/market/' + (kind === 'p' ? 'price' : 'consensus') + '/' + mo + '.parquet');
+      buf = resp.ok ? await resp.arrayBuffer() : null;
+    } catch (e) { buf = null; }
+    FILE_BUFS.set(key, buf);
+  }
+  if (!buf) return [];
+  return hyparquet.parquetReadObjects({ file: buf });
+}
+
+async function loadStockSeries(name) {
+  const key = name + '|' + currentDate;
+  if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
+  const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
+  const price = [], tp = [];
+  await Promise.all(monthsList(currentDate, 13).map(async mo => {
+    const [prows, crows] = await Promise.all([readMonth('p', mo), readMonth('c', mo)]);
+    for (const r of prows) {
+      if (r.name !== name) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d >= from && d <= currentDate && r.close > 0) price.push([d, r.close]);
+    }
+    for (const r of crows) {
+      if (r.name !== name) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d >= from && d <= currentDate && r.target_price > 0) tp.push([d, r.target_price]);
+    }
+  }));
+  price.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  tp.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  const res = { price: price, tp: tp, from: from };
+  SERIES_CACHE.set(key, res);
+  return res;
+}
+
+function showStockChart(name) {
+  const tok = ++chartToken;
+  chartArea.style.display = '';
+  chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
+    ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
+  loadStockSeries(name).then(s => {
+    if (tok !== chartToken) return;
+    if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
+    renderStockChart(name, s);
+  });
+}
+
+function hideStockChart() {
+  chartToken++;
+  chartArea.style.display = 'none';
+  chartArea.innerHTML = '';
+}
+
+function renderStockChart(name, s) {
+  if (s.price.length < 2 && s.tp.length < 2) {
+    chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
+      ' &middot; 최근 1년</div><div class="chart-loading">이 종목의 가격 데이터가 없습니다 (국내 상장 종목만 제공)</div></div>';
+    return;
+  }
+  const W = Math.max(320, chartArea.clientWidth - 40);
+  const H = 260, L = 62, R = 14, T = 16, B = 26;
+  const x0 = Date.parse(s.from), x1 = Date.parse(currentDate);
+  let vmin = Infinity, vmax = -Infinity;
+  for (const [, v] of s.price) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+  for (const [, v] of s.tp) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+  const pad = (vmax - vmin) * 0.06 || vmax * 0.05;
+  vmin -= pad; vmax += pad;
+  const X = d => L + (Date.parse(d) - x0) / (x1 - x0) * (W - L - R);
+  const Y = v => T + (vmax - v) / (vmax - vmin) * (H - T - B);
+  const path = pts => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('');
+  const fmt = v => Math.round(v).toLocaleString();
+
+  let g = '';
+  for (let i = 0; i <= 4; i++) {           // 가로 그리드 + Y 라벨
+    const v = vmin + (vmax - vmin) * i / 4, y = Y(v).toFixed(1);
+    g += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y + '" stroke="#eee"/>' +
+      '<text x="' + (L - 8) + '" y="' + y + '" text-anchor="end" dominant-baseline="middle" font-size="11" fill="#999">' + fmt(v) + '</text>';
+  }
+  const mos = monthsList(currentDate, 13);  // X 라벨 (격월)
+  for (let i = 1; i < mos.length; i += 2) {
+    const t = Date.parse(mos[i] + '-01');
+    if (t < x0 || t > x1) continue;
+    const x = X(mos[i] + '-01').toFixed(1);
+    g += '<text x="' + x + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#999">' +
+      mos[i].slice(2).replace('-', '.') + '</text>';
+  }
+  let lines = '';
+  if (s.price.length > 1) lines += '<path d="' + path(s.price) + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
+  if (s.tp.length > 1) lines += '<path d="' + path(s.tp) + '" fill="none" stroke="#c62828" stroke-width="1.6" stroke-dasharray="5 3"/>';
+
+  const last = s.price.length ? s.price[s.price.length - 1][1] : null;
+  const lastTp = s.tp.length ? s.tp[s.tp.length - 1][1] : null;
+  const upside = (last && lastTp) ? ' &middot; 괴리율 ' + ((lastTp / last - 1) * 100).toFixed(1) + '%' : '';
+  const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
+    (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스' : ' (목표주가 컨센서스 없음)');
+
+  chartArea.innerHTML = '<div class="chart-card">' +
+    '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
+    '<div class="chart-sub">' + legend + upside + '</div>' +
+    '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + lines +
+    '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    '</svg><div class="chart-tip" id="chartTip"></div></div></div>';
+
+  // 호버 툴팁: 가장 가까운 거래일의 수정주가·목표주가 표시
+  const wrap = chartArea.querySelector('.chart-wrap');
+  const svg = wrap.querySelector('svg');
+  const tip = document.getElementById('chartTip');
+  const cross = document.getElementById('chartCross');
+  const at = (arr, d) => {                 // d 이하 가장 최근 값
+    let v = null;
+    for (const p of arr) { if (p[0] <= d) v = p[1]; else break; }
+    return v;
+  };
+  svg.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const mx = (ev.clientX - r.left) / r.width * W;
+    if (mx < L || mx > W - R || !s.price.length) { tip.style.display = 'none'; cross.style.display = 'none'; return; }
+    let best = s.price[0];
+    for (const p of s.price) if (Math.abs(X(p[0]) - mx) < Math.abs(X(best[0]) - mx)) best = p;
+    const d = best[0], tpv = at(s.tp, d);
+    cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
+    tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '');
+    tip.style.display = 'block';
+    const px = X(d) / W * r.width;
+    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
+    tip.style.top = '8px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+}
+
 // ===== 초기화면 위젯 =====
 // 현금·채권·선물 등 비주식 항목은 랭킹에서 제외
 const NONEQ = /현금|예금|달러|엔화|유로|위안|스왑|선물|국고|통안|콜론|CD금리|KOFR|SOFR|전단채|채권|사채|만기|T-?Bill/i;
@@ -584,6 +751,7 @@ async function loadDateData(date) {
   selectedStocks = [];
   backBtnArea.style.display = 'none';
   tagsArea.style.display = 'none';
+  hideStockChart();
 
   introArea.innerHTML = '<div class="loading"><div class="spinner"></div><p>' + date + ' 데이터를 불러오는 중...</p></div>';
   introArea.style.display = '';
@@ -683,6 +851,7 @@ function safeAttr(s) {
 function showStockResults(name) {
   const entries = DATA[name];
   if (!entries) {
+    hideStockChart();
     introArea.innerHTML = '<div class="intro"><p>검색 결과가 없습니다.</p></div>';
     introArea.style.display = '';
     resultArea.style.display = 'none';
@@ -747,6 +916,7 @@ function showStockResults(name) {
   document.getElementById('sortInfo').textContent = sortLabel[stockSort] + ' 기준 내림차순 · 저장된 영업일 기준';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+  showStockChart(name);
 }
 
 function setStockSort(k) {
@@ -770,6 +940,7 @@ function showEtfHoldings(etfCode, etfName) {
   if (currentView) viewHistory.push({...currentView});
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
   backBtnArea.style.display = '';
+  hideStockChart();
 
   items.sort((a, b) => (b[1] || 0) - (a[1] || 0));
   const maxWeight = items.reduce((m, e) => Math.max(m, e[1] || 0), 0);
@@ -834,6 +1005,7 @@ function removeStock(name) {
   selectedStocks = selectedStocks.filter(s => s !== name);
   renderTags();
   if (selectedStocks.length === 0) {
+    hideStockChart();
     renderIntro();
     introArea.style.display = '';
     resultArea.style.display = 'none';
@@ -848,6 +1020,7 @@ function removeStock(name) {
 function clearAllStocks() {
   selectedStocks = [];
   renderTags();
+  hideStockChart();
   renderIntro();
   introArea.style.display = '';
   resultArea.style.display = 'none';
@@ -913,6 +1086,7 @@ function showMultiStockResults() {
   const partialMatch = results.filter(r => r.count < selectedStocks.length);
 
   currentView = { type: 'multi', names: [...selectedStocks] };
+  hideStockChart();
 
   const stockLabel = selectedStocks.join(' + ');
   const maxWeight = results.length > 0 ? results[0].total : 0;
@@ -1017,7 +1191,10 @@ function updateAutocomplete() {
   const q = searchInput.value.trim();
   if (q.length === 0) { autocompleteEl.style.display = 'none'; acFiltered = []; acIndex = -1; return; }
   const ql = q.toLowerCase();
-  acFiltered = NAMES.filter(n => n.toLowerCase().includes(ql)).slice(0, 50);
+  // 정확 일치 > 접두 일치 > 포함 순으로 정렬
+  const score = n => { const nl = n.toLowerCase(); return nl === ql ? 0 : nl.startsWith(ql) ? 1 : 2; };
+  acFiltered = NAMES.filter(n => n.toLowerCase().includes(ql))
+    .sort((a, b) => score(a) - score(b) || (a < b ? -1 : 1)).slice(0, 50);
   acIndex = -1;
   if (acFiltered.length === 0) { autocompleteEl.style.display = 'none'; return; }
   autocompleteEl.innerHTML = acFiltered.map((n, i) =>
