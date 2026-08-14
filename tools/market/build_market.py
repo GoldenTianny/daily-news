@@ -63,14 +63,19 @@ def write_monthly(records, sub, value_col):
     df = pd.DataFrame(records, columns=['date', 'code', 'name', value_col])
     n_new = n_same = 0
     for ym, g in df.groupby(df['date'].map(lambda d: f'{d.year:04d}-{d.month:02d}')):
-        g = g.sort_values(['date', 'code']).reset_index(drop=True)
         dst = os.path.join(out_dir, ym + '.parquet')
         if os.path.exists(dst):
+            # 기존 월 파일과 병합: 이번 원본에 있는 날짜만 교체, 없는 날짜는 유지
+            # (원본 엑셀이 짧은 기간만 담고 있어도 과거 데이터가 지워지지 않도록)
             old = pd.read_parquet(dst)
             old['date'] = pd.to_datetime(old['date']).dt.date
-            if old.reset_index(drop=True).equals(g):
+            g = pd.concat([old[~old['date'].isin(set(g['date']))], g])
+            g = g.sort_values(['date', 'code']).reset_index(drop=True)
+            if old.sort_values(['date', 'code']).reset_index(drop=True).equals(g):
                 n_same += 1
                 continue
+        else:
+            g = g.sort_values(['date', 'code']).reset_index(drop=True)
         con = duckdb.connect()
         con.execute(f"""
             COPY (SELECT CAST(date AS DATE) AS date, code, name,

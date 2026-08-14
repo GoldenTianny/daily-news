@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-# ETF_Raw_YYYYMMDD.xlsx -> 분석용 DB(db/etf/YYYY-MM-DD.parquet) + dates.json 갱신
-# raw 파일(가공 전 원본, Sheet1 = ETP Components) 그대로 사용. xlsm/가공본과 구조 동일.
+# ETF 원본 엑셀 -> 분석용 DB(db/etf/YYYY-MM-DD.parquet) + dates.json 갱신
+# 지원 원본: ETF_Raw_YYYYMMDD.xlsx(Sheet1) 또는 통합본 ETF_price_concensus_YYYYMMDD.xlsx('ETF raw' 시트)
 # 검색기 웹은 db/etf/*.parquet를 hyparquet로 직접 읽음 (날짜별 JSON은 2026-08-11 폐지)
-# 사용법: python3 build_data.py ~/Downloads/ETF_Raw_20260708.xlsx 2026-07-08 data
+# 사용법: python3 build_data.py ~/Downloads/ETF_price_concensus_20260814.xlsx 2026-08-14 data
 import sys, os, json, numbers
 import openpyxl
 
@@ -12,7 +12,10 @@ DB_DIR = os.path.join(REPO, 'db', 'etf')
 
 def build(xlsm_path, date_key, out_dir):
     wb = openpyxl.load_workbook(xlsm_path, read_only=True, data_only=True)
-    ws = wb['Sheet1']
+    sheet = next((s for s in ('Sheet1', 'ETF raw') if s in wb.sheetnames), None)
+    if sheet is None:
+        sys.exit(f"오류: 'Sheet1' 또는 'ETF raw' 시트가 없습니다 (시트: {wb.sheetnames})")
+    ws = wb[sheet]
     rows = list(ws.iter_rows(values_only=True))
     ncol = max(len(r) for r in rows)
     nblocks = (ncol + 4) // 5
