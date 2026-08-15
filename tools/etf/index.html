@@ -196,6 +196,8 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   tbody tr.highlighted { background: #fff8e1; }
   tbody tr.highlighted td { font-weight: 600; }
+  tbody tr.sum-row { background: #eef1fa; }
+  tbody tr.sum-row td { font-weight: 700; border-bottom: 2px solid #c5cae9; }
 
   /* Tags */
   .tags-area {
@@ -311,6 +313,7 @@ let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
+let stockSortDir = -1; // -1 내림차순, 1 오름차순 (같은 컬럼 재클릭 시 토글)
 let currentDate = null;
 let currentView = null;
 let acIndex = -1;
@@ -874,8 +877,23 @@ function showStockResults(name) {
     d10: deltaFor(e[0], name, e[2], 10)
   }));
   const key = stockSort;
-  rows.sort((a, b) => ((b[key] == null ? -1e9 : b[key]) - (a[key] == null ? -1e9 : a[key])));
+  // 선택 방향으로 정렬하되 값 없는 행은 항상 뒤로
+  rows.sort((a, b) => {
+    const av = a[key], bv = b[key];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return stockSortDir < 0 ? bv - av : av - bv;
+  });
   const maxWeight = rows.reduce((m, r) => Math.max(m, r.w || 0), 0);
+
+  // 합계 (표시 중인 전체 ETF 기준)
+  const sum = { w: 0, d1: null, d5: null, d10: null };
+  rows.forEach(r => {
+    if (r.w != null) sum.w += r.w;
+    for (const k of ['d1', 'd5', 'd10'])
+      if (r[k] != null) sum[k] = (sum[k] || 0) + r[k];
+  });
 
   breadcrumb.innerHTML = '<span class="current">&#128200; ' + escHtml(name) + ' 보유 ETF</span>';
   breadcrumb.style.display = 'flex';
@@ -887,8 +905,8 @@ function showStockResults(name) {
   statsArea.style.display = 'flex';
 
   const sortTh = (k, label, tip) => '<th class="th-sort' + (stockSort === k ? ' on' : '') +
-    '" style="text-align:right" title="' + tip + '" onclick="setStockSort(\'' + k + '\')">' +
-    label + (stockSort === k ? ' &#9660;' : '') + '</th>';
+    '" style="text-align:right" title="' + tip + ' (재클릭 시 방향 전환)" onclick="setStockSort(\'' + k + '\')">' +
+    label + (stockSort === k ? (stockSortDir < 0 ? ' &#9660;' : ' &#9650;') : '') + '</th>';
   thead.innerHTML = '<tr><th style="width:50px">#</th><th>ETF 종목명</th>' +
     sortTh('w', '비중(%)', '현재 비중 기준 정렬') +
     sortTh('d1', '&Delta;1일', (COMPS[1] ? COMPS[1].date + ' 대비 변화(%p)' : '비교 데이터 없음')) +
@@ -899,7 +917,11 @@ function showStockResults(name) {
     '<td class="dcell ' + (d > 0.005 ? 'd-up' : d < -0.005 ? 'd-down' : 'd-flat') + '">' +
     (d >= 0 ? '+' : '') + d.toFixed(2) + '</td>';
 
-  let html = '';
+  // 합계 행 (정렬과 무관하게 항상 맨 위)
+  let html = '<tr class="sum-row"><td class="rank">&Sigma;</td>' +
+    '<td>합계 <span class="code-sub">' + rows.length + '개 ETF</span></td>' +
+    '<td class="weight">' + sum.w.toFixed(2) + '%</td>' +
+    dcell(sum.d1) + dcell(sum.d5) + dcell(sum.d10) + '</tr>';
   rows.forEach((r, i) => {
     const barWidth = maxWeight > 0 && r.w ? (r.w / maxWeight * 60) : 0;
     html += '<tr class="clickable" onclick="showEtfHoldings(\'' + safeAttr(r.code) + '\',\'' + safeAttr(r.name) + '\')">' +
@@ -913,14 +935,16 @@ function showStockResults(name) {
 
   const sortLabel = { w: '비중(%)', d1: '1일 비중변화(%p)', d5: '5일 비중변화(%p)', d10: '10일 비중변화(%p)' };
   document.getElementById('resultTitle').textContent = '"' + name + '" 보유 ETF (' + rows.length + '개)';
-  document.getElementById('sortInfo').textContent = sortLabel[stockSort] + ' 기준 내림차순 · 저장된 영업일 기준';
+  document.getElementById('sortInfo').textContent = sortLabel[stockSort] + ' 기준 ' +
+    (stockSortDir < 0 ? '내림차순' : '오름차순') + ' · 저장된 영업일 기준';
   introArea.style.display = 'none';
   resultArea.style.display = '';
   showStockChart(name);
 }
 
 function setStockSort(k) {
-  stockSort = k;
+  if (stockSort === k) stockSortDir = -stockSortDir;   // 같은 컬럼 재클릭 -> 방향 전환
+  else { stockSort = k; stockSortDir = -1; }
   if (currentView && currentView.type === 'stock') {
     const nm = currentView.name;
     currentView = null;  // 히스토리 중복 방지 (같은 화면 재렌더)
