@@ -1,0 +1,23 @@
+{
+  "name": "가좌버핏 뉴스",
+  "short_name": "가좌버핏",
+  "description": "매일의 경제·산업·국제 뉴스 요약과 심층분석, ETF 검색기",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff6d1",
+  "theme_color": "#1a3a6c",
+  "lang": "ko",
+  "icons": [
+    { "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/pwa/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/pwa/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "ETF 종목 검색기",
+      "url": "/tools/etf/",
+      "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

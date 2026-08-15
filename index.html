@@ -8,8 +8,14 @@
 <meta name="description" content="가좌버핏 뉴스 — 매일의 경제·산업·국제 뉴스 요약과 심층분석">
 
 <!-- 파비콘 (브라우저 탭 아이콘) -->
-<link rel="icon" type="image/png" href="assets/title.png">
-<link rel="apple-touch-icon" href="assets/title.png">
+<link rel="icon" type="image/png" href="assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="assets/pwa/apple-touch-icon.png">
+
+<!-- PWA (홈 화면 설치 + 오프라인) -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="가좌버핏">
 
 <!-- 링크 공유 미리보기 (카톡/SNS 등) -->
 <meta property="og:type" content="website">
@@ -1401,5 +1407,12 @@ body {
 })();
 </script>
 
+<script>
+// PWA 서비스워커 등록 (오프라인 캐시 + 홈 화면 설치)
+if ('serviceWorker' in navigator &&
+    (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+</script>
 </body>
 </html>
