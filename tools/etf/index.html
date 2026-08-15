@@ -521,15 +521,17 @@ async function readMonth(kind, mo) {
   return hyparquet.parquetReadObjects({ file: buf });
 }
 
-async function loadStockSeries(name) {
-  const key = name + '|' + currentDate;
+// name으로 매칭(일반 종목: 컨센서스 포함) 또는 code로 매칭(ETF: 수정주가만)
+async function loadStockSeries(name, code) {
+  const key = (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
   const price = [], tp = [];
   await Promise.all(monthsList(currentDate, 13).map(async mo => {
-    const [prows, crows] = await Promise.all([readMonth('p', mo), readMonth('c', mo)]);
+    const [prows, crows] = await Promise.all(
+      [readMonth('p', mo), code ? Promise.resolve([]) : readMonth('c', mo)]);
     for (const r of prows) {
-      if (r.name !== name) continue;
+      if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
       if (d >= from && d <= currentDate && r.close > 0) price.push([d, r.close]);
     }
@@ -558,6 +560,18 @@ function showStockChart(name) {
   });
 }
 
+function showEtfChart(code, name) {
+  const tok = ++chartToken;
+  chartArea.style.display = '';
+  chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
+    ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
+  loadStockSeries(name, code).then(s => {
+    if (tok !== chartToken) return;
+    if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
+    renderStockChart(name, Object.assign({ isEtf: true }, s));
+  });
+}
+
 function hideStockChart() {
   chartToken++;
   chartArea.style.display = 'none';
@@ -567,7 +581,8 @@ function hideStockChart() {
 function renderStockChart(name, s) {
   if (s.price.length < 2 && s.tp.length < 2) {
     chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
-      ' &middot; 최근 1년</div><div class="chart-loading">이 종목의 가격 데이터가 없습니다 (국내 상장 종목만 제공)</div></div>';
+      ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터가 없습니다' +
+      (s.isEtf ? '' : ' (국내 상장 종목만 제공)') + '</div></div>';
     return;
   }
   const W = Math.max(320, chartArea.clientWidth - 40);
@@ -605,7 +620,8 @@ function renderStockChart(name, s) {
   const lastTp = s.tp.length ? s.tp[s.tp.length - 1][1] : null;
   const upside = (last && lastTp) ? ' &middot; 괴리율 ' + ((lastTp / last - 1) * 100).toFixed(1) + '%' : '';
   const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
-    (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스' : ' (목표주가 컨센서스 없음)');
+    (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스'
+      : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)'));
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
@@ -971,7 +987,7 @@ function showEtfHoldings(etfCode, etfName) {
   if (currentView) viewHistory.push({...currentView});
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
   backBtnArea.style.display = '';
-  hideStockChart();
+  showEtfChart(etfCode, etfName);
 
   items.sort((a, b) => (b[1] || 0) - (a[1] || 0));
   const maxWeight = items.reduce((m, e) => Math.max(m, e[1] || 0), 0);
