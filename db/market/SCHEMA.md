@@ -4,6 +4,7 @@
 
 - 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus` — `ETF raw` 시트는 `tools/etf/build_data.py` 담당)
 - 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 원본에 담긴 날짜만 교체하고 나머지는 유지(병합)하므로, 짧은 기간(예: 최근 2일)만 담긴 일일 원본을 올려도 과거 데이터가 지워지지 않음. 내용이 같은 달은 건너뜀
+- 이후 `python3 tools/market/build_rs.py`를 실행해 RS 등급(`db/market/rs/`)을 갱신
 - 압축: SNAPPY
 
 ## db/market/price/ — 수정주가
@@ -32,6 +33,23 @@
 | `target_price` | DOUBLE | 목표주가(원) |
 
 - 범위: 2025-08-14 ~ (업로드일), 파일당 약 40KB
+
+## db/market/rs/ — 오닐식 RS 등급
+
+각 거래일 기준 상대강도 등급(1~99). `tools/market/build_rs.py`가 수정주가 DB에서 계산합니다.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` | DATE | 기준일 |
+| `code` | VARCHAR | 종목코드 |
+| `name` | VARCHAR | 종목명 |
+| `rs` | UTINYINT | RS 등급 1~99 (99=최상위) |
+
+- 산식: 최근 4개 분기 수익률(거래일 63/126/189/252 기준)을 **40/20/20/20 가중**한 점수의 백분위 순위
+- 모집단: **ETF와 일반 종목을 분리**해 각각 순위 산정 (ETF 코드는 `db/etf/`에서 추출)
+- 252거래일 이력이 있는 날짜·종목만 포함 (신규 상장은 1년 후부터 등급 부여)
+- 범위: 2025-09 ~ (가격 DB 시작일 + 1년), 월당 약 7만 행·250KB
+- 갱신: `python3 tools/market/build_rs.py` — 미계산 날짜만 추가하므로 일일 실행은 수 초
 
 ## 쿼리 예시 (DuckDB)
 
