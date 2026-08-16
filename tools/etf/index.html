@@ -507,12 +507,13 @@ function monthsList(date, n) {
   return out;
 }
 
+const DB_DIR = { p: 'price', c: 'consensus', r: 'rs' };
 async function readMonth(kind, mo) {
   const key = kind + '|' + mo;
   let buf = FILE_BUFS.get(key);
   if (buf === undefined) {
     try {
-      const resp = await fetch('/db/market/' + (kind === 'p' ? 'price' : 'consensus') + '/' + mo + '.parquet');
+      const resp = await fetch('/db/market/' + DB_DIR[kind] + '/' + mo + '.parquet');
       buf = resp.ok ? await resp.arrayBuffer() : null;
     } catch (e) { buf = null; }
     FILE_BUFS.set(key, buf);
@@ -553,64 +554,29 @@ function showStockChart(name) {
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  Promise.all([loadStockSeries(name), loadKospiBase()]).then(([s, base]) => {
+  Promise.all([loadStockSeries(name), loadRsSeries(name)]).then(([s, rs]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
-    renderStockChart(name, Object.assign({ base: base, ratingKey: 'N:' + name }, s));
+    renderStockChart(name, Object.assign({ rs: rs }, s));
   });
 }
 
-// 코스피 프록시: KODEX 코스피(A226490) 수정주가 — RS선 기준지수
-function loadKospiBase() {
-  return loadStockSeries('KODEX 코스피', 'A226490').then(s => s.price).catch(() => []);
-}
-
-// 오닐식 RS 등급(1~99): 최근 4개 분기 수익률을 40/20/20/20 가중 후 전체 대비 백분위
-// (ETF와 일반 종목은 서로 다른 모집단으로 각각 순위 산정)
-let RS_RATINGS = null;
-function loadRsRatings() {
-  if (RS_RATINGS) return RS_RATINGS;
-  RS_RATINGS = (async () => {
-    const ds = (await loadKospiBase()).map(p => p[0]);   // 거래일 달력
-    if (ds.length < 60) return null;
-    const n = ds.length;
-    const pick = k => ds[Math.max(0, n - 1 - k)];
-    const anchors = [pick(0), pick(63), pick(126), pick(189), pick(252)];
-    const need = new Set(anchors);
-    const months = Array.from(new Set(anchors.map(d => d.slice(0, 7))));
-
-    const px = new Map();   // code -> {name, v:{date:close}}
-    await Promise.all(months.map(async mo => {
-      for (const r of await readMonth('p', mo)) {
-        const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
-        if (!need.has(d)) continue;
-        let e = px.get(r.code);
-        if (!e) px.set(r.code, e = { name: r.name, v: {} });
-        e.v[d] = r.close;
-      }
-    }));
-
-    const scored = [];
-    for (const [code, e] of px) {
-      const v = anchors.map(d => e.v[d]);
-      if (v.some(x => !(x > 0))) continue;
-      scored.push({
-        code: code, name: e.name, etf: !!ETFS_CUR[code],
-        s: 0.4 * (v[0] / v[1]) + 0.2 * (v[1] / v[2]) + 0.2 * (v[2] / v[3]) + 0.2 * (v[3] / v[4])
-      });
+// 오닐식 RS 등급(1~99) 시계열 — db/market/rs (빌드 단계에서 전 종목 순위로 산정)
+async function loadRsSeries(name, code) {
+  const key = 'R:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
+  if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
+  const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
+  const out = [];
+  await Promise.all(monthsList(currentDate, 13).map(async mo => {
+    for (const r of await readMonth('r', mo)) {
+      if (code ? r.code !== code : r.name !== name) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d >= from && d <= currentDate) out.push([d, r.rs]);
     }
-    const out = new Map();
-    for (const isEtf of [true, false]) {
-      const g = scored.filter(x => x.etf === isEtf).sort((a, b) => b.s - a.s);
-      g.forEach((x, i) => {
-        const rating = g.length < 2 ? 50 : Math.round((1 - i / (g.length - 1)) * 98) + 1;
-        out.set('C:' + x.code, rating);
-        out.set('N:' + x.name, rating);
-      });
-    }
-    return out;
-  })().catch(() => null);
-  return RS_RATINGS;
+  }));
+  out.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  SERIES_CACHE.set(key, out);
+  return out;
 }
 
 function showEtfChart(code, name) {
@@ -618,11 +584,10 @@ function showEtfChart(code, name) {
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  Promise.all([loadStockSeries(name, code), loadKospiBase()]).then(([s, base]) => {
+  Promise.all([loadStockSeries(name, code), loadRsSeries(name, code)]).then(([s, rs]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
-    renderStockChart(name, Object.assign(
-      { isEtf: true, base: code === 'A226490' ? [] : base, ratingKey: 'C:' + code }, s));
+    renderStockChart(name, Object.assign({ isEtf: true, rs: rs }, s));
   });
 }
 
@@ -639,16 +604,8 @@ function renderStockChart(name, s) {
       (s.isEtf ? '' : ' (국내 상장 종목만 제공)') + '</div></div>';
     return;
   }
-  // 오닐식 RS선: 종목 ÷ 코스피 비율 (절대 수치는 무의미 — 방향과 신고가 갱신이 핵심)
-  const baseMap = new Map(s.base || []);
-  let rs = [];
-  if (s.price.length > 1 && baseMap.size > 1) {
-    for (const [d, p] of s.price) {
-      const k = baseMap.get(d);
-      if (k > 0) rs.push([d, p / k]);
-    }
-    if (rs.length < 2) rs = [];
-  }
+  // 오닐식 RS 등급(1~99) 추이 — 우측 고정축, 80 이상이 강세 기준
+  const rs = (s.rs && s.rs.length > 1) ? s.rs : [];
 
   const W = Math.max(320, chartArea.clientWidth - 40);
   const H = 260, L = 62, R = rs.length ? 32 : 14, T = 16, B = 26;   // RS 축 자리를 우측에 확보
@@ -683,40 +640,27 @@ function renderStockChart(name, s) {
   if (s.price.length > 1) lines += '<path d="' + path(s.price, Y) + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
   if (s.tp.length > 1) lines += '<path d="' + path(s.tp, Y) + '" fill="none" stroke="#c62828" stroke-width="1.6" stroke-dasharray="5 3"/>';
 
-  // RS선 오버레이 — 우측 0~100 축(12개월 범위 내 위치)으로 절대 수치를 읽게 함
-  // 범위 전체를 선형 환산하므로 선의 모양은 원비율(종목÷코스피)과 동일
-  let rsAt = null, rsNewHigh = false, rsChg = null, rsNow = null;
+  // RS 등급 추이 — 우측 0~100 고정축(절대 등급), 80·50 기준선
+  let rsAt = null, rsNow = null;
   if (rs.length) {
-    let rmin = Infinity, rmax = -Infinity;
-    for (const [, v] of rs) { if (v < rmin) rmin = v; if (v > rmax) rmax = v; }
-    const span = (rmax - rmin) || rmax * 0.05 || 1;
     const rsTop = T + 6, rsBot = mainB - 6;
-    const U = v => (v - rmin) / span * 100;                  // 0=12개월 최저, 100=최고
-    const YR = v => rsBot - U(v) / 100 * (rsBot - rsTop);
-    const lastR = rs[rs.length - 1][1];
-    rsNow = U(lastR);
-    rsNewHigh = rsNow >= 99.9;                               // RS선 12개월 신고가
-    rsChg = (lastR / rs[0][1] - 1) * 100;                    // 기간 중 코스피 대비 초과 성과
+    const YR = v => rsBot - v / 100 * (rsBot - rsTop);
+    rsNow = rs[rs.length - 1][1];
 
-    // 우측 0~100 축 + 기준선(0·50·100)
-    for (const u of [0, 25, 50, 75, 100]) {
-      const y = (rsBot - u / 100 * (rsBot - rsTop)).toFixed(1);
-      if (u % 50 === 0) {
+    for (const u of [0, 50, 80, 100]) {
+      const y = YR(u).toFixed(1);
+      if (u === 50 || u === 80) {
         g += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y +
-          '" stroke="#2e7d32" stroke-opacity="' + (u === 50 ? 0.28 : 0.16) + '" stroke-dasharray="4 4"/>';
+          '" stroke="#2e7d32" stroke-opacity="' + (u === 80 ? 0.4 : 0.2) + '" stroke-dasharray="4 4"/>';
       }
-      g += '<text x="' + (W - R + 5) + '" y="' + y +
-        '" dominant-baseline="middle" font-size="10" fill="#2e7d32" opacity="0.8">' + u + '</text>';
+      g += '<text x="' + (W - R + 5) + '" y="' + y + '" dominant-baseline="middle" font-size="10" fill="#2e7d32" opacity="' +
+        (u === 80 ? '1' : '0.75') + '"' + (u === 80 ? ' font-weight="700"' : '') + '>' + u + '</text>';
     }
-    // RS선은 가격선 아래 레이어로(먼저 그림) — 가격이 주(主), RS는 참조선
-    lines = '<path d="' + path(rs, YR) + '" fill="none" stroke="#2e7d32" stroke-width="1.4" opacity="0.85"/>' +
+    // 등급선은 가격선 아래 레이어로(먼저 그림) — 가격이 주(主)
+    lines = '<path d="' + path(rs, YR) + '" fill="none" stroke="#2e7d32" stroke-width="1.5" opacity="0.9"/>' +
       '<text x="' + (L + 4) + '" y="' + (YR(rs[0][1]) - 7).toFixed(1) +
       '" font-size="10" font-weight="700" fill="#2e7d32" opacity="0.9">RS</text>' + lines;
-    rsAt = d => {
-      let v = null;
-      for (const p of rs) { if (p[0] <= d) v = p[1]; else break; }
-      return v == null ? null : U(v);
-    };
+    rsAt = d => { let v = null; for (const p of rs) { if (p[0] <= d) v = p[1]; else break; } return v; };
   }
 
   const last = s.price.length ? s.price[s.price.length - 1][1] : null;
@@ -725,31 +669,16 @@ function renderStockChart(name, s) {
   const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
     (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스'
       : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
-    (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS선 <b style="color:#2e7d32">' +
-      rsNow.toFixed(0) + '</b><span style="color:#bbb">/100 (우측축 · 12개월 범위) · 코스피 대비 ' +
-      (rsChg >= 0 ? '+' : '') + rsChg.toFixed(0) + '%</span>' +
-      (rsNewHigh ? ' <b style="color:#2e7d32">&#9650; 신고가</b>' : '') : '');
+    (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
+      (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
+      '<span style="color:#bbb">/99 (우측축 · 전 종목 순위)</span>' : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
-    '<div class="chart-sub">' + legend + upside + '<span id="rsBadge"></span></div>' +
+    '<div class="chart-sub">' + legend + upside + '</div>' +
     '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + lines +
     '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + mainB + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
     '</svg><div class="chart-tip" id="chartTip"></div></div></div>';
-
-  // 오닐식 RS 등급(1~99)은 전 종목 스캔이라 렌더 후 비동기로 채움
-  if (s.ratingKey) {
-    const tok = chartToken;
-    loadRsRatings().then(m => {
-      const el = document.getElementById('rsBadge');
-      if (tok !== chartToken || !m || !el) return;
-      const v = m.get(s.ratingKey);
-      if (v == null) return;
-      el.innerHTML = ' &middot; <span style="font-weight:600;color:' +
-        (v >= 80 ? '#2e7d32' : v >= 50 ? '#666' : '#c62828') + '">RS 등급 ' + v + '</span>' +
-        '<span style="color:#bbb"> / 99</span>';
-    });
-  }
 
   // 호버 툴팁: 가장 가까운 거래일의 수정주가·목표주가 표시
   const wrap = chartArea.querySelector('.chart-wrap');
@@ -771,7 +700,7 @@ function renderStockChart(name, s) {
     const rsv = rsAt ? rsAt(d) : null;
     cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
     tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '') +
-      (rsv != null ? '<br>RS선 ' + rsv.toFixed(0) + ' <span style="opacity:.7">/100</span>' : '');
+      (rsv != null ? '<br>RS 등급 ' + rsv + ' <span style="opacity:.7">/99</span>' : '');
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
