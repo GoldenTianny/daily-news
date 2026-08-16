@@ -553,11 +553,16 @@ function showStockChart(name) {
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  loadStockSeries(name).then(s => {
+  Promise.all([loadStockSeries(name), loadKospiBase()]).then(([s, base]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
-    renderStockChart(name, s);
+    renderStockChart(name, Object.assign({ base: base }, s));
   });
+}
+
+// 코스피 프록시: KODEX 코스피(A226490) 수정주가 — RS(상대강도) 기준선
+function loadKospiBase() {
+  return loadStockSeries('KODEX 코스피', 'A226490').then(s => s.price).catch(() => []);
 }
 
 function showEtfChart(code, name) {
@@ -565,10 +570,10 @@ function showEtfChart(code, name) {
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  loadStockSeries(name, code).then(s => {
+  Promise.all([loadStockSeries(name, code), loadKospiBase()]).then(([s, base]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
-    renderStockChart(name, Object.assign({ isEtf: true }, s));
+    renderStockChart(name, Object.assign({ isEtf: true, base: code === 'A226490' ? [] : base }, s));
   });
 }
 
@@ -585,8 +590,26 @@ function renderStockChart(name, s) {
       (s.isEtf ? '' : ' (국내 상장 종목만 제공)') + '</div></div>';
     return;
   }
+  // RS(상대강도) 시리즈: (종목/코스피)를 기간 시작=100으로 정규화
+  const baseMap = new Map(s.base || []);
+  let rs = [];
+  if (s.price.length > 1 && baseMap.size > 1) {
+    let p0 = null, k0 = null;
+    for (const [d, p] of s.price) {
+      const k = baseMap.get(d);
+      if (!k) continue;
+      if (p0 === null) { p0 = p; k0 = k; }
+      rs.push([d, (p / p0) / (k / k0) * 100]);
+    }
+    if (rs.length < 2) rs = [];
+  }
+
   const W = Math.max(320, chartArea.clientWidth - 40);
-  const H = 260, L = 62, R = 14, T = 16, B = 26;
+  const L = 62, R = 14, T = 16;
+  const mainB = rs.length ? 232 : 234;     // 주가 패널 하단
+  const rsT = mainB + 24, rsB = rsT + 74;  // RS 패널
+  const H = rs.length ? rsB + 26 : 260;
+  const xLabelY = H - 8;
   const x0 = Date.parse(s.from), x1 = Date.parse(currentDate);
   let vmin = Infinity, vmax = -Infinity;
   for (const [, v] of s.price) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
@@ -594,12 +617,12 @@ function renderStockChart(name, s) {
   const pad = (vmax - vmin) * 0.06 || vmax * 0.05;
   vmin -= pad; vmax += pad;
   const X = d => L + (Date.parse(d) - x0) / (x1 - x0) * (W - L - R);
-  const Y = v => T + (vmax - v) / (vmax - vmin) * (H - T - B);
-  const path = pts => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('');
+  const Y = v => T + (vmax - v) / (vmax - vmin) * (mainB - T);
+  const path = (pts, yf) => pts.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + yf(p[1]).toFixed(1)).join('');
   const fmt = v => Math.round(v).toLocaleString();
 
   let g = '';
-  for (let i = 0; i <= 4; i++) {           // 가로 그리드 + Y 라벨
+  for (let i = 0; i <= 4; i++) {           // 주가 패널 그리드 + Y 라벨
     const v = vmin + (vmax - vmin) * i / 4, y = Y(v).toFixed(1);
     g += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y + '" stroke="#eee"/>' +
       '<text x="' + (L - 8) + '" y="' + y + '" text-anchor="end" dominant-baseline="middle" font-size="11" fill="#999">' + fmt(v) + '</text>';
@@ -609,25 +632,48 @@ function renderStockChart(name, s) {
     const t = Date.parse(mos[i] + '-01');
     if (t < x0 || t > x1) continue;
     const x = X(mos[i] + '-01').toFixed(1);
-    g += '<text x="' + x + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#999">' +
+    g += '<text x="' + x + '" y="' + xLabelY + '" text-anchor="middle" font-size="11" fill="#999">' +
       mos[i].slice(2).replace('-', '.') + '</text>';
   }
   let lines = '';
-  if (s.price.length > 1) lines += '<path d="' + path(s.price) + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
-  if (s.tp.length > 1) lines += '<path d="' + path(s.tp) + '" fill="none" stroke="#c62828" stroke-width="1.6" stroke-dasharray="5 3"/>';
+  if (s.price.length > 1) lines += '<path d="' + path(s.price, Y) + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
+  if (s.tp.length > 1) lines += '<path d="' + path(s.tp, Y) + '" fill="none" stroke="#c62828" stroke-width="1.6" stroke-dasharray="5 3"/>';
+
+  // RS 패널
+  let YR = null, rsAt = null, lastRs = null;
+  if (rs.length) {
+    let rmin = 100, rmax = 100;
+    for (const [, v] of rs) { if (v < rmin) rmin = v; if (v > rmax) rmax = v; }
+    const rpad = (rmax - rmin) * 0.1 || 2;
+    rmin -= rpad; rmax += rpad;
+    YR = v => rsT + (rmax - v) / (rmax - rmin) * (rsB - rsT);
+    lastRs = rs[rs.length - 1][1];
+    g += '<text x="' + L + '" y="' + (rsT - 8) + '" font-size="11" fill="#666" font-weight="600">상대강도 RS (코스피=100)</text>';
+    for (const v of [rmin + rpad, rmax - rpad]) {
+      g += '<text x="' + (L - 8) + '" y="' + YR(v).toFixed(1) + '" text-anchor="end" dominant-baseline="middle" font-size="10" fill="#999">' + v.toFixed(0) + '</text>';
+    }
+    if (100 > rmin && 100 < rmax) {
+      const y100 = YR(100).toFixed(1);
+      g += '<line x1="' + L + '" y1="' + y100 + '" x2="' + (W - R) + '" y2="' + y100 + '" stroke="#ccc" stroke-dasharray="3 3"/>';
+    }
+    lines += '<path d="' + path(rs, YR) + '" fill="none" stroke="#2e7d32" stroke-width="1.6"/>';
+    rsAt = d => { let v = null; for (const p of rs) { if (p[0] <= d) v = p[1]; else break; } return v; };
+  }
 
   const last = s.price.length ? s.price[s.price.length - 1][1] : null;
   const lastTp = s.tp.length ? s.tp[s.tp.length - 1][1] : null;
   const upside = (last && lastTp) ? ' &middot; 괴리율 ' + ((lastTp / last - 1) * 100).toFixed(1) + '%' : '';
   const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
     (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스'
-      : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)'));
+      : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
+    (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS ' + lastRs.toFixed(0) +
+      ' <span style="color:#bbb">(코스피 대비 ' + (lastRs >= 100 ? '+' : '') + (lastRs - 100).toFixed(0) + '%)</span>' : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
     '<div class="chart-sub">' + legend + upside + '</div>' +
     '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + lines +
-    '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + (rs.length ? rsB : mainB) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
     '</svg><div class="chart-tip" id="chartTip"></div></div></div>';
 
   // 호버 툴팁: 가장 가까운 거래일의 수정주가·목표주가 표시
@@ -647,8 +693,10 @@ function renderStockChart(name, s) {
     let best = s.price[0];
     for (const p of s.price) if (Math.abs(X(p[0]) - mx) < Math.abs(X(best[0]) - mx)) best = p;
     const d = best[0], tpv = at(s.tp, d);
+    const rsv = rsAt ? rsAt(d) : null;
     cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
-    tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '');
+    tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '') +
+      (rsv != null ? '<br>RS ' + rsv.toFixed(1) : '');
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
