@@ -651,7 +651,7 @@ function renderStockChart(name, s) {
   }
 
   const W = Math.max(320, chartArea.clientWidth - 40);
-  const H = 260, L = 62, R = 14, T = 16, B = 26;
+  const H = 260, L = 62, R = rs.length ? 32 : 14, T = 16, B = 26;   // RS 축 자리를 우측에 확보
   const mainB = H - B;
   const xLabelY = H - 8;
   const x0 = Date.parse(s.from), x1 = Date.parse(currentDate);
@@ -683,22 +683,40 @@ function renderStockChart(name, s) {
   if (s.price.length > 1) lines += '<path d="' + path(s.price, Y) + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
   if (s.tp.length > 1) lines += '<path d="' + path(s.tp, Y) + '" fill="none" stroke="#c62828" stroke-width="1.6" stroke-dasharray="5 3"/>';
 
-  // RS선 오버레이 — 가격과 별개 스케일(절대값 무의미)로 같은 패널에 겹쳐 그림
-  let rsAt = null, rsNewHigh = false, rsChg = null;
+  // RS선 오버레이 — 우측 0~100 축(12개월 범위 내 위치)으로 절대 수치를 읽게 함
+  // 범위 전체를 선형 환산하므로 선의 모양은 원비율(종목÷코스피)과 동일
+  let rsAt = null, rsNewHigh = false, rsChg = null, rsNow = null;
   if (rs.length) {
     let rmin = Infinity, rmax = -Infinity;
     for (const [, v] of rs) { if (v < rmin) rmin = v; if (v > rmax) rmax = v; }
-    const rpad = (rmax - rmin) * 0.10 || rmax * 0.05;
-    const lo = rmin - rpad, hi = rmax + rpad;
-    const YR = v => T + (hi - v) / (hi - lo) * (mainB - T);
+    const span = (rmax - rmin) || rmax * 0.05 || 1;
+    const rsTop = T + 6, rsBot = mainB - 6;
+    const U = v => (v - rmin) / span * 100;                  // 0=12개월 최저, 100=최고
+    const YR = v => rsBot - U(v) / 100 * (rsBot - rsTop);
     const lastR = rs[rs.length - 1][1];
-    rsNewHigh = lastR >= rmax * 0.999;          // 12개월 RS선 신고가
-    rsChg = (lastR / rs[0][1] - 1) * 100;       // 기간 중 코스피 대비 초과 성과
-    // RS선은 가격선 아래 레이어로(먼저 그림) — 가격이 주(主), RS는 배경 참조선
+    rsNow = U(lastR);
+    rsNewHigh = rsNow >= 99.9;                               // RS선 12개월 신고가
+    rsChg = (lastR / rs[0][1] - 1) * 100;                    // 기간 중 코스피 대비 초과 성과
+
+    // 우측 0~100 축 + 기준선(0·50·100)
+    for (const u of [0, 25, 50, 75, 100]) {
+      const y = (rsBot - u / 100 * (rsBot - rsTop)).toFixed(1);
+      if (u % 50 === 0) {
+        g += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y +
+          '" stroke="#2e7d32" stroke-opacity="' + (u === 50 ? 0.28 : 0.16) + '" stroke-dasharray="4 4"/>';
+      }
+      g += '<text x="' + (W - R + 5) + '" y="' + y +
+        '" dominant-baseline="middle" font-size="10" fill="#2e7d32" opacity="0.8">' + u + '</text>';
+    }
+    // RS선은 가격선 아래 레이어로(먼저 그림) — 가격이 주(主), RS는 참조선
     lines = '<path d="' + path(rs, YR) + '" fill="none" stroke="#2e7d32" stroke-width="1.4" opacity="0.85"/>' +
       '<text x="' + (L + 4) + '" y="' + (YR(rs[0][1]) - 7).toFixed(1) +
       '" font-size="10" font-weight="700" fill="#2e7d32" opacity="0.9">RS</text>' + lines;
-    rsAt = d => { let v = null; for (const p of rs) { if (p[0] <= d) v = p[1]; else break; } return v; };
+    rsAt = d => {
+      let v = null;
+      for (const p of rs) { if (p[0] <= d) v = p[1]; else break; }
+      return v == null ? null : U(v);
+    };
   }
 
   const last = s.price.length ? s.price[s.price.length - 1][1] : null;
@@ -707,8 +725,9 @@ function renderStockChart(name, s) {
   const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
     (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스'
       : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
-    (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS선 <span style="color:#bbb">(코스피 대비 ' +
-      (rsChg >= 0 ? '+' : '') + rsChg.toFixed(0) + '%)</span>' +
+    (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS선 <b style="color:#2e7d32">' +
+      rsNow.toFixed(0) + '</b><span style="color:#bbb">/100 (우측축 · 12개월 범위) · 코스피 대비 ' +
+      (rsChg >= 0 ? '+' : '') + rsChg.toFixed(0) + '%</span>' +
       (rsNewHigh ? ' <b style="color:#2e7d32">&#9650; 신고가</b>' : '') : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
@@ -752,7 +771,7 @@ function renderStockChart(name, s) {
     const rsv = rsAt ? rsAt(d) : null;
     cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
     tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '') +
-      (rsv != null ? '<br>RS선 ' + (rsv / rs[0][1] * 100).toFixed(1) + ' <span style="opacity:.7">(시작=100)</span>' : '');
+      (rsv != null ? '<br>RS선 ' + rsv.toFixed(0) + ' <span style="opacity:.7">/100</span>' : '');
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
