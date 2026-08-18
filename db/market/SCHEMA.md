@@ -2,6 +2,8 @@
 
 수정주가·목표주가 컨센서스 시계열. **월별 Parquet 파일**(YYYY-MM.parquet)로 저장됩니다.
 
+> **일일 갱신은 한 줄로**: `python3 tools/ingest_daily.py <원본.xlsx>` — 기준일을 자동 인식해 ETF·수정주가·컨센서스·RS 등급을 순서대로 갱신합니다. 아래는 개별 단계 설명.
+
 - 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus` — `ETF raw` 시트는 `tools/etf/build_data.py` 담당)
 - 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 원본에 담긴 날짜만 교체하고 나머지는 유지(병합)하므로, 짧은 기간(예: 최근 2일)만 담긴 일일 원본을 올려도 과거 데이터가 지워지지 않음. 내용이 같은 달은 건너뜀
 - 이후 `python3 tools/market/build_rs.py`를 실행해 RS 등급(`db/market/rs/`)을 갱신
