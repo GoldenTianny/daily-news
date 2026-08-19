@@ -420,9 +420,10 @@ async function loadPrices(date, etfMap) {
     }
   }
   const ds = Array.from(dateSet).sort();
-  if (ds.length < 6 || pm.size === 0) return null;   // 가격 데이터 없음/부족
+  if (ds.length < 2 || pm.size === 0) return null;   // 가격 데이터 없음/부족
   const d0 = ds[ds.length - 1];
-  const d5 = ds[ds.length - 6];
+  const d1 = ds[ds.length - 2];
+  const d5 = ds.length >= 6 ? ds[ds.length - 6] : null;
   const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
 
   const rank = (dPast) => {
@@ -435,7 +436,8 @@ async function loadPrices(date, etfMap) {
     arr.sort((a, b) => b[1] - a[1]);
     return arr.slice(0, 10);
   };
-  return { d0: d0, d5: d5, d20: d20, top5: rank(d5), top20: rank(d20) };
+  return { d0: d0, d1: d1, d5: d5, d20: d20,
+           top1: rank(d1), top5: rank(d5), top20: rank(d20) };
 }
 
 // ===== 목표주가 모멘텀 (db/market/consensus 월별 컨센서스) =====
@@ -773,6 +775,7 @@ function renderIntro() {
     }
     return h + '</div>';
   };
+  html += retWidget('오늘 수익률 TOP 10', '&#9889;', RET && RET.top1, RET && RET.d1);
   html += retWidget('5영업일 수익률 TOP 10', '&#128640;', RET && RET.top5, RET && RET.d5);
   html += retWidget('20영업일 수익률 TOP 10', '&#128200;', RET && RET.top20, RET && RET.d20);
 
@@ -888,7 +891,7 @@ async function loadDateData(date) {
     const reqDate = date;
     loadPrices(date, ETFS).then(ret => {
       if (currentDate !== reqDate) return;   // 로드 중 날짜가 바뀐 경우 무시
-      RET = ret || { d0: null, d5: null, d20: null, top5: [], top20: [] };
+      RET = ret || { d0: null, d1: null, d5: null, d20: null, top1: [], top5: [], top20: [] };
       if (introArea.style.display !== 'none') renderIntro();
     });
     loadConsensus(date).then(t => {
