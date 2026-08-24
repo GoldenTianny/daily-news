@@ -385,8 +385,8 @@ function deltaFor(code, stock, curW, off) {
   return curW - (c.w.get(code + '|' + stock) || 0);
 }
 
-// 레버리지 ETF(인버스2X 포함)는 수익률·편입 비중 랭킹에서 제외
-const LEV = /레버리지|인버스\s*2X|곱버스/i;
+// 레버리지·인버스 ETF는 수익률·편입 비중 랭킹에서 제외
+const LEV = /레버리지|인버스|곱버스/i;
 
 // ===== ETF 수익률 (db/market/price 월별 수정주가) =====
 // 기준일 포함 최근 3개월 파일을 읽어 5·20영업일 수익률 랭킹을 계산
@@ -770,7 +770,7 @@ function renderIntro() {
     } else if (!top || !top.length) {
       h += '<div class="sub">가격 데이터가 없습니다</div>';
     } else {
-      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준 · 레버리지 제외</div>';
+      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준 · 레버리지·인버스 제외</div>';
       top.forEach((t, i) => { h += retRow(i, t[0], t[1]); });
     }
     return h + '</div>';
@@ -780,7 +780,7 @@ function renderIntro() {
   html += retWidget('20영업일 수익률 TOP 10', '&#128200;', RET && RET.top20, RET && RET.d20);
 
   html += '<div class="widget"><h3>&#127942; ETF 편입 비중합 TOP 10</h3>' +
-    '<div class="sub">' + currentDate + ' 기준 · ETF에 담긴 비중(%)의 합 · 레버리지 제외</div>';
+    '<div class="sub">' + currentDate + ' 기준 · ETF에 담긴 비중(%)의 합 · 레버리지·인버스 제외</div>';
   const maxW = topW.length ? topW[0][1] : 0;
   topW.forEach((t, i) => {
     html += row(i, t[0], t[2] + '개 ETF', maxW ? Math.max(4, t[1] / maxW * 56) : 0, '',
@@ -789,7 +789,7 @@ function renderIntro() {
   html += '</div>';
 
   html += '<div class="widget"><h3>&#128293; 편입 비중 증가 TOP 10</h3>' +
-    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지 제외' : '비교할 과거 데이터가 없습니다') + '</div>';
+    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지·인버스 제외' : '비교할 과거 데이터가 없습니다') + '</div>';
   const maxD = topD.length ? topD[0][1] : 0;
   topD.forEach((t, i) => {
     html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
@@ -812,7 +812,7 @@ function renderIntro() {
       h += '<div class="sub">데이터가 없습니다</div>';
     } else {
       h += '<div class="sub">구성종목 목표주가의 20영업일(' + TPM.d20 + '&rarr;' + TPM.d0 +
-        ') 변화율 &times; 비중 가중합 · 커버리지 20% 이상 · 레버리지 제외</div>';
+        ') 변화율 &times; 비중 가중합 · 커버리지 20% 이상 · 레버리지·인버스 제외</div>';
       list.forEach((t, i) => { h += tpmRow(i, t); });
     }
     return h + '</div>';
