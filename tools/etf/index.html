@@ -563,7 +563,7 @@ function showStockChart(name) {
   });
 }
 
-// 오닐식 RS 등급(1~99) 시계열 — db/market/rs (빌드 단계에서 전 종목 순위로 산정)
+// 오닐식 RS 등급(1~99) 시계열 — db/market/rs (일반 종목 모집단 대비 백분위, ETF도 같은 분포로 등급)
 async function loadRsSeries(name, code) {
   const key = 'R:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
@@ -673,7 +673,7 @@ function renderStockChart(name, s) {
       : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
     (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
       (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
-      '<span style="color:#bbb">/99 (우측축 · 전 종목 순위)</span>' : '');
+      '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
