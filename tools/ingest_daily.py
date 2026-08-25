@@ -6,6 +6,7 @@
 - 기준일은 'ETF raw' 시트의 Date 셀(CPD [YYYYMMDD] / CPD-1TD [YYYYMMDD])에서 자동 인식
   (인식 실패 시 두 번째 인자로 YYYY-MM-DD 직접 지정)
 - 실행 순서: build_data(ETF 보유내역) -> build_market(수정주가·컨센서스) -> build_rs(RS 등급)
+  -> build_high52(52주 신고가 돌파 분석, 스터디)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 """
 import sys, os, re
@@ -15,7 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
-import build_data, build_market, build_rs
+sys.path.insert(0, os.path.join(HERE, 'study'))
+import build_data, build_market, build_rs, build_high52
 
 
 def detect_date(xlsx_path):
@@ -42,12 +44,14 @@ def main():
         sys.exit('오류: 기준일을 인식하지 못했습니다. 두 번째 인자로 YYYY-MM-DD를 지정해주세요.')
 
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/3] ETF 보유내역')
+    print('[1/4] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/3] 수정주가 · 컨센서스')
+    print('[2/4] 수정주가 · 컨센서스')
     build_market.build(xlsx)
-    print('[3/3] RS 등급')
+    print('[3/4] RS 등급')
     build_rs.build()
+    print('[4/4] 52주 신고가 돌파 분석')
+    build_high52.build()
     print('== 완료')
 
 
