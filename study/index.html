@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스터디 | 가좌버핏</title>
+<meta name="description" content="주식 투자에 도움이 되는 각종 지표 스터디. 52주 신고가 돌파 분석 등 데이터 기반 시장 연구.">
+<link rel="canonical" href="https://gjbuffet.kr/study/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="스터디 | 가좌버핏">
+<meta property="og:description" content="데이터로 공부하는 주식 지표 — 52주 신고가 돌파 분석 등">
+<meta property="og:url" content="https://gjbuffet.kr/study/">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: #f0f2f5; color: #333; min-height: 100vh;
+}
+
+/* 상단 메뉴바 */
+.topnav {
+    display: flex; align-items: center; gap: 6px;
+    background: #12274d; padding: 0 8px;
+    position: sticky; top: 0; z-index: 500;
+}
+.topnav a {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #dbe6fb; text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 14px; white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+
+.header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 32px 20px 28px; text-align: center;
+}
+.header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 14px; opacity: 0.85; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.section-title {
+    font-size: 13px; font-weight: 700; color: #888;
+    letter-spacing: 0.06em; margin: 8px 0 12px 4px;
+}
+
+/* 큰 메뉴 버튼 */
+.menu-card {
+    display: block; text-decoration: none; color: inherit;
+    background: white; border-radius: 16px; padding: 24px 22px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 1px solid #e6e9f0;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-bottom: 14px;
+}
+.menu-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(26,35,126,0.15); }
+.menu-card .top { display: flex; align-items: center; gap: 14px; }
+.menu-card .icon {
+    width: 52px; height: 52px; border-radius: 14px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; background: linear-gradient(135deg, #e8eefc, #dbe6fb);
+}
+.menu-card h2 { font-size: 19px; font-weight: 700; color: #1a237e; }
+.menu-card .desc { font-size: 13.5px; color: #667; margin-top: 3px; line-height: 1.5; }
+.menu-card .go {
+    margin-top: 14px; display: inline-block;
+    font-size: 13px; font-weight: 700; color: #3f51b5;
+}
+
+/* 준비중 자리 (하단 메뉴 추가 예정) */
+.menu-card.soon {
+    background: transparent; box-shadow: none;
+    border: 2px dashed #c9cfdd; text-align: center;
+    color: #99a; padding: 26px 20px; cursor: default;
+}
+.menu-card.soon:hover { transform: none; box-shadow: none; }
+.menu-card.soon .big { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.menu-card.soon .sub { font-size: 12.5px; }
+
+.foot-note { font-size: 12px; color: #99a; text-align: center; margin-top: 22px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+    body { background: #101418; color: #d5d9e0; }
+    .topnav { background: #0d1a33; }
+    .menu-card { background: #1a2029; border-color: #2a3242; }
+    .menu-card h2 { color: #9fb4f5; }
+    .menu-card .desc { color: #9aa3b2; }
+    .menu-card .icon { background: linear-gradient(135deg, #22304d, #1c2740); }
+    .menu-card.soon { background: transparent; border-color: #3a4356; color: #778; }
+    .section-title { color: #778; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="/console/">🎙️ 받아쓰기</a>
+    <a href="/study/">📚 스터디</a>
+    <a href="/tools/etf/">📊 ETF 검색</a>
+</nav>
+
+<div class="header">
+    <h1>📚 스터디</h1>
+    <p>데이터로 공부하는 주식 지표</p>
+</div>
+
+<div class="container">
+    <div class="section-title">지표 분석</div>
+
+    <a class="menu-card" href="high52/">
+        <div class="top">
+            <div class="icon">🚀</div>
+            <div>
+                <h2>52주 신고가 돌파 분석</h2>
+                <div class="desc">최근 1년간 52주 신고가 돌파 사례를 모아, 돌파 후 며칠째가 단기고점이었는지 분석 — 익절 타이밍 최적화</div>
+            </div>
+        </div>
+        <span class="go">분석 보기 →</span>
+    </a>
+
+    <div class="menu-card soon">
+        <div class="big">＋ 새 지표 스터디 준비중</div>
+        <div class="sub">다음 주식지표 분석 메뉴가 이 자리에 추가될 예정입니다</div>
+    </div>
+
+    <div class="foot-note">
+        수정주가 DB(2024.08~) 기반 자체 분석 · 투자 판단의 참고 자료이며 수익을 보장하지 않습니다
+    </div>
+</div>
+
+</body>
+</html>
