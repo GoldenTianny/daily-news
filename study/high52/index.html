@@ -126,6 +126,22 @@ body {
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
 
+/* 트레일링 스탑 시뮬레이션 */
+.sim-h3 { font-size: 14px; color: var(--navy); margin: 18px 0 4px; }
+.out-bar {
+    display: flex; height: 26px; border-radius: 8px; overflow: hidden;
+    margin: 10px 0 8px;
+}
+.out-bar div { min-width: 2px; }
+.out-rows { display: grid; gap: 5px; margin-bottom: 4px; }
+.out-row {
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 12.5px; color: var(--sub); flex-wrap: wrap;
+}
+.out-row i { width: 10px; height: 10px; border-radius: 3px; flex: none; align-self: center; }
+.out-row b { color: var(--txt); }
+.out-row .ex { margin-left: auto; font-weight: 700; white-space: nowrap; }
+
 /* 사례 테이블 */
 .tbl-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .tbl-controls input {
@@ -241,6 +257,17 @@ td .cd { font-size: 11px; color: var(--faint); }
         </div>
 
         <div class="card">
+            <h2>🪜 트레일링 스탑 시뮬레이션<span class="seg-badge seg-badge-label"></span></h2>
+            <div class="sub">돌파일 종가 매수 후 조건부 매도 규칙 적용(종가 기준): <b>-8% 손절</b> → <b>+10% 도달 시 본전스탑</b> → <b>+20% 도달 시 매도선 +10%</b> → <b>+30% 도달 시 +20%</b> … (10%p 래칫). 60거래일 내 미청산이면 60일째 종가 청산.</div>
+            <div class="stat-grid" id="simStats"></div>
+            <div id="simOutcomes"></div>
+            <h3 class="sim-h3">생존 사례의 고점은 어디서 형성됐나</h3>
+            <div class="sub">손절(-8%)·본전스탑으로 청산된 사례를 제외한 나머지(래칫 청산 + 60일 보유)의 구간 내 최대 상승폭 분포.</div>
+            <svg id="simPeakChart" class="chart-svg" viewBox="0 0 860 260" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="sub" id="simPeakNote" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
             <h2>월별 돌파 발생 건수</h2>
             <div class="sub" id="monthSub">신선한 돌파(직전 20거래일 내 돌파 없음) 사건 수. 진한 막대는 그중 'RS 80+ & 컨센↑' 조건 충족 건수.</div>
             <svg id="monthChart" class="chart-svg" viewBox="0 0 860 220" preserveAspectRatio="xMidYMid meet"></svg>
@@ -352,6 +379,7 @@ function renderSegment() {
     renderStats();
     renderHist();
     renderCurve();
+    renderSim();
 }
 
 /* ---------- 요약 카드 ---------- */
@@ -386,6 +414,11 @@ function renderInsights() {
         `${lastD}거래일 보유 시 전체는 평균 ${fmtPct(dA.mean)}·중앙값 ${fmtPct(dA.median)}로 절반 이상이 손실이지만, <b>내 전략은 평균 ${fmtPct(dS.mean)}·중앙값 ${fmtPct(dS.median)}</b>로 우상향합니다. RS 80+만 걸러도(${fmtN(R.summary.events_total)}건) 전체보다 낫습니다. → <b>아무 돌파나 사면 절반은 물리고, RS·컨센서스 필터가 성패를 가릅니다.</b>`,
         `내 전략의 20거래일 시점 플러스 확률은 ${Math.round((cvS[20]||dS).win*100)}%로 전체(${Math.round((cvA[20]||dA).win*100)}%)보다 높지만 여전히 절반 수준입니다. → 필터가 좋아도 <b>고점 대비 -10% 이탈 시 기계적 손절</b>은 유지해야 꼬리 손실을 막습니다.`,
     ];
+    const simS = S.sim;
+    if (simS) {
+        const svS = simS.survivors;
+        li.push(`트레일링 스탑 규칙(-8% 손절 → +10%마다 매도선 10%p 래칫) 적용 시, 내 전략에서 손절·본전스탑을 통과한 <b>생존 사례의 고점 중앙값은 ${fmtPct(svS.peak_median)}</b>(상위 25%는 ${fmtPct(svS.peak_p75)}+, 도달일 중앙값 ${svS.peak_day_median.toFixed(0)}일)입니다. → 살아남은 종목은 <b>+20~30%에서 미리 팔 이유가 없다</b>는 뜻입니다. 자세한 분포는 아래 시뮬레이션 카드 참고.`);
+    }
     $('insightList').innerHTML = li.map(t => `<li>${t}</li>`).join('');
 }
 
@@ -492,6 +525,68 @@ function renderCurve() {
         `평균 최고 ${bm.day}일 ${fmtPct(bm.mean)}`));
 }
 
+/* ---------- 트레일링 스탑 시뮬레이션 ---------- */
+const OUT_META = {
+    stop8: ['-8% 손절', '#e5533d'],
+    even:  ['본전스탑 (+10% 도달 후 회귀)', '#e5a13d'],
+    trail: ['래칫 익절 (+10% 이상 매도선)', '#2e9e63'],
+    hold:  ['60일 보유 청산 (매도선 미접촉)', '#3f51b5'],
+};
+
+function renderSim() {
+    const sim = D.segments[curSeg].sim;
+    if (!sim) return;
+    const sv = sim.survivors;
+
+    $('simStats').innerHTML = [
+        [`${Math.round(sv.share * 100)}<small>%</small>`, `생존 비율<br>(손절·본전스탑 제외 ${fmtN(sv.n)}건)`],
+        [sv.peak_median != null ? fmtPct(sv.peak_median) : '—', '생존자 고점<br>중앙값 (p75 ' + (sv.peak_p75 != null ? fmtPct(sv.peak_p75) : '—') + ')'],
+        [sv.peak_day_median != null ? sv.peak_day_median.toFixed(0) + '<small>일</small>' : '—', '생존자 고점<br>도달일 중앙값'],
+        [fmtPct(sim.mean_exit), `전략 전체 평균 청산<br>(판정 ${fmtN(sim.n)}건 · 승률 ${Math.round(sim.win * 100)}%)`],
+    ].map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+
+    const bar = Object.keys(OUT_META).map(k => {
+        const o = sim.outcomes[k];
+        return o.n ? `<div style="flex:${o.n};background:${OUT_META[k][1]}"></div>` : '';
+    }).join('');
+    const rows = Object.keys(OUT_META).map(k => {
+        const o = sim.outcomes[k];
+        if (!o.n) return '';
+        return `<div class="out-row"><i style="background:${OUT_META[k][1]}"></i>
+            <b>${OUT_META[k][0]}</b> ${fmtN(o.n)}건 (${Math.round(o.share * 100)}%) · 평균 ${o.avg_day}일째 청산
+            <span class="ex" style="color:${o.avg_exit >= 0 ? 'var(--up)' : 'var(--down)'}">${fmtPct(o.avg_exit)}</span></div>`;
+    }).join('');
+    $('simOutcomes').innerHTML = `<div class="out-bar">${bar}</div><div class="out-rows">${rows}</div>`;
+
+    // 생존자 고점 분포 히스토그램
+    const svg = $('simPeakChart'); svg.innerHTML = '';
+    const hist = sv.peak_hist;
+    const W = 860, H = 260, m = {t: 26, r: 14, b: 34, l: 46};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const maxC = Math.max(...hist.map(h => h.count), 1);
+    const bw = iw / hist.length;
+    for (let i = 0; i <= 4; i++) {
+        const y = m.t + ih - ih * i / 4;
+        svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y, y2: y, stroke: css('--grid'), 'stroke-width': 1}));
+        svg.appendChild(svgEl('text', {x: m.l - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: css('--faint')}, Math.round(maxC * i / 4)));
+    }
+    hist.forEach((h, i) => {
+        const bh = ih * h.count / maxC;
+        svg.appendChild(svgEl('rect', {
+            x: m.l + i * bw + bw * 0.16, y: m.t + ih - bh, width: bw * 0.68,
+            height: Math.max(bh, 1), rx: 5, fill: '#2e9e63', opacity: 0.85,
+        }));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: m.t + ih - bh - 6, 'text-anchor': 'middle', 'font-size': 11.5, 'font-weight': 700, fill: css('--sub')},
+            h.count + (sv.n ? ` (${Math.round(h.count / sv.n * 100)}%)` : '')));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: H - 12, 'text-anchor': 'middle', 'font-size': 11.5, fill: css('--sub')}, h.label));
+    });
+
+    const over30 = hist.filter(h => h.lo >= 0.3).reduce((a, h) => a + h.count, 0);
+    $('simPeakNote').innerHTML = sv.n
+        ? `생존 ${fmtN(sv.n)}건 중 <b>${Math.round(over30 / sv.n * 100)}%가 +30% 이상</b>까지 올라갔고, 고점 중앙값은 <b>${fmtPct(sv.peak_median)}</b>(도달일 중앙값 ${sv.peak_day_median.toFixed(0)}일)입니다. 래칫 익절 사례의 평균 청산 수익률은 ${sim.outcomes.trail.avg_exit != null ? fmtPct(sim.outcomes.trail.avg_exit) : '—'}입니다.`
+        : '생존 사례가 없습니다.';
+}
+
 /* ---------- 월별 건수 (전체 + 전략) ---------- */
 function renderMonthly() {
     const svg = $('monthChart'); svg.innerHTML = '';
@@ -591,6 +686,7 @@ function renderMethod() {
         <b>RS 등급</b>: 돌파일의 오닐식 상대강도 등급(1~99, db/market/rs · ${D.rs_start}부터). 최근 4개 분기 수익률 40/20/20/20 가중 백분위<br>
         <b>컨센서스 추세(컨센Δ20)</b>: 돌파일 목표주가 평균 ÷ ${p.cons_days}거래일 전 목표주가 평균 - 1 (db/market/consensus · ${D.cons_start}부터, 커버리지 약 670종목). 양쪽 값이 있어야 계산되며 없으면 '—'<br>
         <b>세그먼트</b>: 전체 / RS ${p.rs_min}+ / 컨센↑(Δ20 &gt; 0) / RS ${p.rs_min}+ &amp; 컨센↑('내 전략') — 상단 탭으로 전환<br>
+        <b>트레일링 스탑 시뮬레이션</b>: 돌파일 종가 매수, 모든 판정은 종가 기준. 매도선은 -${Math.round(p.sim_stop * 100)}%에서 시작해 최대 상승폭이 +${Math.round(p.sim_step * 100)}%×k에 도달할 때마다 +${Math.round(p.sim_step * 100)}%×(k-1)로 상향(+10% 도달 → 본전, +20% → +10%, +30% → +20% …). 종가가 매도선 이하면 그 종가에 청산. ${p.fwd}거래일 내 미청산이면 마지막 종가 청산(hold), 데이터 부족이면 판정 제외<br>
         <b>갱신</b>: ${D.generated} 생성 — 시장 데이터 업로드 시 <code>tools/study/build_high52.py</code>로 재계산`;
 }
 </script>
