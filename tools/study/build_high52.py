@@ -28,6 +28,15 @@
 - cons_up: 컨센서스 20거래일 대비 상향(+)
 - strat  : RS >= 80 이고 컨센서스 상향 — '내 전략'
 
+트레일링 스탑 시뮬레이션 (종가 기준, 돌파일 종가 매수)
+- 초기 손절: 매수가 대비 -8% 이하 종가 -> 매도
+- +10% 도달 후: 매도선을 본전(0%)으로 올림 (이븐스탑)
+- +20% 도달 후: 매도선 +10%, +30% 도달 후: +20% ... (10%p 래칫)
+- 종가가 매도선 이하로 내려온 날 그 종가에 청산. 60거래일 내 미청산이면
+  60일째 종가 청산(hold). 데이터가 끝나 판정 불가면 ongoing(집계 제외).
+- 손절(-8%)·이븐스탑 청산을 제외한 '생존' 사례의 고점(최대 상승폭)이
+  어느 구간에서 형성되는지 분포를 구한다.
+
 실행: python3 tools/study/build_high52.py   (build_market.py 갱신 후)
 출력: study/high52/data.json
 """
@@ -48,6 +57,8 @@ PULLBACK = 0.10    # 단기고점 확정 기준 되돌림(고점 종가 대비 -
 MIN_PRICE = 500    # 동전주 제외
 RS_MIN = 80        # '내 전략' RS 하한
 CONS_DAYS = 20     # 컨센서스 비교 시점(거래일)
+SIM_STOP = 0.08    # 초기 손절폭(-8%)
+SIM_STEP = 0.10    # 래칫 간격: +10%마다 매도선을 10%p 아래로 따라 올림
 
 
 def load_concat(pattern, columns=None):
@@ -82,6 +93,76 @@ def pct(x, q):
     k = (len(s) - 1) * q
     f, c = int(k), min(int(k) + 1, len(s) - 1)
     return s[f] + (s[c] - s[f]) * (k - f)
+
+
+def sim_one(rets):
+    """일별 수익률 배열 -> 래칫 트레일링 스탑 청산 결과.
+
+    반환: (outcome, exit_ret, exit_day, peak, peak_day)
+    outcome: stop8 / even / trail / hold / ongoing
+    """
+    peak, peak_day = 0.0, 0
+    for d, r in enumerate(rets, start=1):
+        if r > peak:
+            peak, peak_day = r, d
+        # 현재 매도선: +10% 미도달이면 -8%, 이후 최고 도달 구간보다 10%p 아래
+        if peak < SIM_STEP - 1e-9:
+            stop = -SIM_STOP
+        else:
+            stop = SIM_STEP * (int((peak + 1e-9) / SIM_STEP) - 1)
+        if r <= stop + 1e-9:
+            outcome = 'stop8' if stop < -1e-9 else ('even' if stop < 1e-9 else 'trail')
+            return outcome, r, d, peak, peak_day
+    if len(rets) >= FWD:
+        return 'hold', rets[-1], len(rets), peak, peak_day
+    return 'ongoing', None, None, peak, peak_day
+
+
+def simulate(events):
+    """세그먼트 사건 목록 -> 트레일링 스탑 시뮬레이션 집계"""
+    runs = [sim_one(e['rets']) for e in events]
+    done = [r for r in runs if r[0] != 'ongoing']
+    if not done:
+        return None
+    exits = [r[1] for r in done]
+
+    outcomes = {}
+    for key in ('stop8', 'even', 'trail', 'hold'):
+        sub = [r for r in done if r[0] == key]
+        outcomes[key] = {
+            'n': len(sub),
+            'share': round(len(sub) / len(done), 4),
+            'avg_exit': round(sum(r[1] for r in sub) / len(sub), 4) if sub else None,
+            'avg_day': round(sum(r[2] for r in sub) / len(sub), 1) if sub else None,
+        }
+
+    # 생존자 = 손절(-8%)·이븐스탑 청산 제외 (trail + hold)
+    surv = [r for r in done if r[0] in ('trail', 'hold')]
+    peaks = [r[3] for r in surv]
+    peak_days = [r[4] for r in surv]
+    buckets = [(0.0, 0.10, '10% 미만'), (0.10, 0.20, '10~20%'), (0.20, 0.30, '20~30%'),
+               (0.30, 0.50, '30~50%'), (0.50, 1.00, '50~100%'), (1.00, 99.0, '100% 이상')]
+    peak_hist = [{'label': lb, 'lo': lo, 'hi': hi,
+                  'count': sum(1 for p in peaks if lo - 1e-9 <= p < hi - 1e-9)}
+                 for lo, hi, lb in buckets]
+
+    return {
+        'n': len(done),
+        'ongoing': len(runs) - len(done),
+        'mean_exit': round(sum(exits) / len(exits), 4),
+        'median_exit': round(pct(exits, 0.5), 4),
+        'win': round(sum(1 for x in exits if x > 1e-9) / len(exits), 4),
+        'outcomes': outcomes,
+        'survivors': {
+            'n': len(surv),
+            'share': round(len(surv) / len(done), 4),
+            'mean_exit': round(sum(r[1] for r in surv) / len(surv), 4) if surv else None,
+            'peak_median': round(pct(peaks, 0.5), 4) if peaks else None,
+            'peak_p75': round(pct(peaks, 0.75), 4) if peaks else None,
+            'peak_day_median': pct(peak_days, 0.5) if peak_days else None,
+            'peak_hist': peak_hist,
+        },
+    }
 
 
 def aggregate(events):
@@ -120,6 +201,7 @@ def aggregate(events):
            for d in [0, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 50, 60]] if peak_days else []
 
     return {
+        'sim': simulate(events),
         'summary': {
             'events_total': len(events),
             'events_settled': len(settled),
@@ -241,7 +323,8 @@ def build():
         'cons_start': cons_df['date'].min().strftime('%Y-%m-%d'),
         'params': {'lookback': LOOKBACK, 'cooldown': COOLDOWN, 'fwd': FWD,
                    'pullback': PULLBACK, 'min_price': MIN_PRICE,
-                   'rs_min': RS_MIN, 'cons_days': CONS_DAYS},
+                   'rs_min': RS_MIN, 'cons_days': CONS_DAYS,
+                   'sim_stop': SIM_STOP, 'sim_step': SIM_STEP},
         'segments': segments,
         'monthly': [{'month': m, **v} for m, v in sorted(monthly.items())],
         # 사례 테이블용(용량 절약을 위해 rets 제외)
