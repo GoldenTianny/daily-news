@@ -258,13 +258,31 @@ td .cd { font-size: 11px; color: var(--faint); }
 
         <div class="card">
             <h2>🪜 트레일링 스탑 시뮬레이션<span class="seg-badge seg-badge-label"></span></h2>
-            <div class="sub">돌파일 종가 매수 후 조건부 매도 규칙 적용(종가 기준): <b>-8% 손절</b> → <b>+10% 도달 시 본전스탑</b> → <b>+20% 도달 시 매도선 +10%</b> → <b>+30% 도달 시 +20%</b> … (10%p 래칫). 60거래일 내 미청산이면 60일째 종가 청산.</div>
+            <div class="sub">돌파일 종가 매수 후 조건부 매도 규칙 적용(종가 기준): <b>-8% 손절</b> → <b>+10% 도달 시 본전스탑</b> → <b>+20% 도달 시 매도선 +10%</b> → <b>+30% 도달 시 +20%</b> … (10%p 래칫). 시간 제한 없이 매도선에 걸릴 때까지 보유하며, 아직 안 걸린 사례는 '보유 중'.</div>
             <div class="stat-grid" id="simStats"></div>
             <div id="simOutcomes"></div>
             <h3 class="sim-h3">생존 사례의 고점은 어디서 형성됐나</h3>
             <div class="sub">손절(-8%)·본전스탑으로 청산된 사례를 제외한 나머지(래칫 청산 + 60일 보유)의 구간 내 최대 상승폭 분포.</div>
             <svg id="simPeakChart" class="chart-svg" viewBox="0 0 860 260" preserveAspectRatio="xMidYMid meet"></svg>
             <div class="sub" id="simPeakNote" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+            <h2>💰 포트폴리오 백테스트 — 내 전략</h2>
+            <div class="sub" id="ptSub"></div>
+            <div class="stat-grid" id="ptStats"></div>
+            <svg id="ptChart" class="chart-svg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet"></svg>
+            <h3 class="sim-h3">현재 보유 종목</h3>
+            <div class="out-rows" id="ptOpen"></div>
+            <h3 class="sim-h3">매매 일지 (청산 <span id="ptTradeN"></span>건)</h3>
+            <div class="sub" id="ptTradeSub"></div>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr><th class="l">매수일</th><th class="l">종목</th><th class="l">매도일</th><th>수익률</th><th class="l">사유</th></tr></thead>
+                    <tbody id="ptTbody"></tbody>
+                </table>
+            </div>
+            <button class="more-btn" id="ptMoreBtn" type="button">더 보기</button>
         </div>
 
         <div class="card">
@@ -353,6 +371,7 @@ function render() {
     renderTabs();
     renderInsights();
     renderSegment();
+    renderPortfolio();
     renderMonthly();
     renderTable();
     renderMethod();
@@ -530,7 +549,7 @@ const OUT_META = {
     stop8: ['-8% 손절', '#e5533d'],
     even:  ['본전스탑 (+10% 도달 후 회귀)', '#e5a13d'],
     trail: ['래칫 익절 (+10% 이상 매도선)', '#2e9e63'],
-    hold:  ['60일 보유 청산 (매도선 미접촉)', '#3f51b5'],
+    open:  ['보유 중 (아직 매도선 미접촉)', '#3f51b5'],
 };
 
 function renderSim() {
@@ -542,7 +561,7 @@ function renderSim() {
         [`${Math.round(sv.share * 100)}<small>%</small>`, `생존 비율<br>(손절·본전스탑 제외 ${fmtN(sv.n)}건)`],
         [sv.peak_median != null ? fmtPct(sv.peak_median) : '—', '생존자 고점<br>중앙값 (p75 ' + (sv.peak_p75 != null ? fmtPct(sv.peak_p75) : '—') + ')'],
         [sv.peak_day_median != null ? sv.peak_day_median.toFixed(0) + '<small>일</small>' : '—', '생존자 고점<br>도달일 중앙값'],
-        [fmtPct(sim.mean_exit), `전략 전체 평균 청산<br>(판정 ${fmtN(sim.n)}건 · 승률 ${Math.round(sim.win * 100)}%)`],
+        [fmtPct(sim.mean_exit), `평균 청산 수익률<br>(청산 ${fmtN(sim.closed)}건 · 승률 ${Math.round(sim.win * 100)}%)`],
     ].map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
 
     const bar = Object.keys(OUT_META).map(k => {
@@ -552,8 +571,9 @@ function renderSim() {
     const rows = Object.keys(OUT_META).map(k => {
         const o = sim.outcomes[k];
         if (!o.n) return '';
+        const when = k === 'open' ? `평균 ${o.avg_day}일 경과 · 평가` : `평균 ${o.avg_day}일째 청산`;
         return `<div class="out-row"><i style="background:${OUT_META[k][1]}"></i>
-            <b>${OUT_META[k][0]}</b> ${fmtN(o.n)}건 (${Math.round(o.share * 100)}%) · 평균 ${o.avg_day}일째 청산
+            <b>${OUT_META[k][0]}</b> ${fmtN(o.n)}건 (${Math.round(o.share * 100)}%) · ${when}
             <span class="ex" style="color:${o.avg_exit >= 0 ? 'var(--up)' : 'var(--down)'}">${fmtPct(o.avg_exit)}</span></div>`;
     }).join('');
     $('simOutcomes').innerHTML = `<div class="out-bar">${bar}</div><div class="out-rows">${rows}</div>`;
@@ -586,6 +606,83 @@ function renderSim() {
         ? `생존 ${fmtN(sv.n)}건 중 <b>${Math.round(over30 / sv.n * 100)}%가 +30% 이상</b>까지 올라갔고, 고점 중앙값은 <b>${fmtPct(sv.peak_median)}</b>(도달일 중앙값 ${sv.peak_day_median.toFixed(0)}일)입니다. 래칫 익절 사례의 평균 청산 수익률은 ${sim.outcomes.trail.avg_exit != null ? fmtPct(sim.outcomes.trail.avg_exit) : '—'}입니다.`
         : '생존 사례가 없습니다.';
 }
+
+/* ---------- 포트폴리오 백테스트 ---------- */
+const REASON_LBL = {
+    stop8: ['-8% 손절', 'nopullback'], even: ['본전스탑', 'ongoing'],
+    trail: ['래칫 익절', 'confirmed'], replaced: ['교체 매도', 'ongoing'],
+};
+let ptShown = 30;
+
+function renderPortfolio() {
+    const p = D.portfolio;
+    if (!p) return;
+    $('ptSub').innerHTML = `${p.start.replaceAll('-', '.')} 에 <b>${fmtN(p.initial)}원</b>으로 시작 — '내 전략'(RS 80+ & 컨센↑) 돌파 종목을 돌파일 종가에 <b>포트 평가액의 10%씩</b> 매수. 슬롯 10개가 꽉 찬 상태에서 새 후보가 나오면 <b>평가수익률이 가장 낮은 종목을 팔고 교체</b>. 매도는 위 트레일링 스탑 규칙과 동일(수수료·세금 미반영).`;
+
+    $('ptStats').innerHTML = [
+        [`${fmtN(p.final)}<small>원</small>`, `최종 평가액<br>(${p.end.replaceAll('-', '.')})`],
+        [fmtPct(p.ret), '1년 수익률'],
+        [fmtPct(p.mdd), '최대 낙폭 (MDD)'],
+        [`${fmtN(p.n_trades)}<small>회</small>`, `청산 매매<br>승률 ${Math.round(p.win * 100)}% · 평균익 ${fmtPct(p.avg_win)} / 평균손 ${fmtPct(p.avg_loss)}`],
+    ].map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+
+    // 평가액 곡선
+    const svg = $('ptChart'); svg.innerHTML = '';
+    const W = 860, H = 300, m = {t: 20, r: 16, b: 32, l: 66};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const cv = p.curve;
+    let lo = Math.min(...cv.map(c => c.v), p.initial), hi = Math.max(...cv.map(c => c.v), p.initial);
+    const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+    const x = i => m.l + iw * i / (cv.length - 1);
+    const y = v => m.t + ih - ih * (v - lo) / (hi - lo);
+    for (let i = 0; i <= 4; i++) {
+        const v = lo + (hi - lo) * i / 4;
+        svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: css('--grid'), 'stroke-width': 1}));
+        svg.appendChild(svgEl('text', {x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: css('--faint')}, Math.round(v / 10000) + '만'));
+    }
+    svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y(p.initial), y2: y(p.initial), stroke: css('--sub'), 'stroke-width': 1.2, 'stroke-dasharray': '3 4'}));
+    let lastMon = '';
+    cv.forEach((c, i) => {
+        const mon = c.d.slice(0, 7);
+        if (mon !== lastMon && i > 0 && c.d.slice(8) <= '07') {
+            lastMon = mon;
+            svg.appendChild(svgEl('text', {x: x(i), y: H - 10, 'text-anchor': 'middle', 'font-size': 10.5, fill: css('--faint')}, mon.slice(2).replace('-', '.')));
+        }
+    });
+    const path = cv.map((c, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(c.v).toFixed(1)).join(' ');
+    svg.appendChild(svgEl('path', {d: path + ` L ${(m.l + iw).toFixed(1)} ${(m.t + ih).toFixed(1)} L ${m.l} ${(m.t + ih).toFixed(1)} Z`, fill: p.ret >= 0 ? 'rgba(229,83,61,0.08)' : 'rgba(63,81,181,0.08)'}));
+    svg.appendChild(svgEl('path', {d: path, fill: 'none', stroke: p.ret >= 0 ? '#e5533d' : '#3f51b5', 'stroke-width': 2.5, 'stroke-linejoin': 'round'}));
+    const last = cv[cv.length - 1];
+    svg.appendChild(svgEl('circle', {cx: x(cv.length - 1), cy: y(last.v), r: 4, fill: p.ret >= 0 ? '#e5533d' : '#3f51b5'}));
+
+    // 보유 종목
+    $('ptOpen').innerHTML = p.open.length ? p.open.map(o =>
+        `<div class="out-row"><b>${esc(o.name)}</b> <span class="cd">${esc(o.code.replace(/^A/, ''))}</span> · ${o.in.slice(2).replaceAll('-', '.')} 매수
+         <span class="ex ${o.ret >= 0.0005 ? 'pos' : 'neg'}">${fmtPct(o.ret)}</span></div>`).join('')
+        : '<div class="out-row">보유 종목 없음</div>';
+
+    // 매매 일지
+    $('ptTradeN').textContent = fmtN(p.n_trades);
+    const reasons = {};
+    p.trades.forEach(t => { reasons[t.reason] = (reasons[t.reason] || 0) + 1; });
+    $('ptTradeSub').textContent = '사유별: ' + Object.entries(REASON_LBL)
+        .filter(([k]) => reasons[k]).map(([k, [lb]]) => `${lb} ${fmtN(reasons[k])}건`).join(' · ')
+        + ' — 교체 매도는 포트가 꽉 찬 상태에서 새 후보에 자리를 내준 청산입니다.';
+    const view = p.trades.slice(0, ptShown);
+    $('ptTbody').innerHTML = view.map(t => {
+        const [lb, cls] = REASON_LBL[t.reason] || [t.reason, 'ongoing'];
+        return `<tr>
+            <td class="l">${t.in.slice(2).replaceAll('-', '.')}</td>
+            <td class="l"><span class="nm">${esc(t.name)}</span> <span class="cd">${esc(t.code.replace(/^A/, ''))}</span></td>
+            <td class="l">${t.out.slice(2).replaceAll('-', '.')}</td>
+            <td><span class="${t.ret >= 0.0005 ? 'pos' : 'neg'}">${fmtPct(t.ret)}</span></td>
+            <td class="l"><span class="badge ${cls}">${lb}</span></td>
+        </tr>`;
+    }).join('');
+    $('ptMoreBtn').style.display = p.trades.length > ptShown ? '' : 'none';
+    $('ptMoreBtn').textContent = `더 보기 (${fmtN(Math.min(ptShown, p.trades.length))}/${fmtN(p.trades.length)})`;
+}
+$('ptMoreBtn').onclick = () => { ptShown += 100; renderPortfolio(); };
 
 /* ---------- 월별 건수 (전체 + 전략) ---------- */
 function renderMonthly() {
@@ -686,7 +783,8 @@ function renderMethod() {
         <b>RS 등급</b>: 돌파일의 오닐식 상대강도 등급(1~99, db/market/rs · ${D.rs_start}부터). 최근 4개 분기 수익률 40/20/20/20 가중 백분위<br>
         <b>컨센서스 추세(컨센Δ20)</b>: 돌파일 목표주가 평균 ÷ ${p.cons_days}거래일 전 목표주가 평균 - 1 (db/market/consensus · ${D.cons_start}부터, 커버리지 약 670종목). 양쪽 값이 있어야 계산되며 없으면 '—'<br>
         <b>세그먼트</b>: 전체 / RS ${p.rs_min}+ / 컨센↑(Δ20 &gt; 0) / RS ${p.rs_min}+ &amp; 컨센↑('내 전략') — 상단 탭으로 전환<br>
-        <b>트레일링 스탑 시뮬레이션</b>: 돌파일 종가 매수, 모든 판정은 종가 기준. 매도선은 -${Math.round(p.sim_stop * 100)}%에서 시작해 최대 상승폭이 +${Math.round(p.sim_step * 100)}%×k에 도달할 때마다 +${Math.round(p.sim_step * 100)}%×(k-1)로 상향(+10% 도달 → 본전, +20% → +10%, +30% → +20% …). 종가가 매도선 이하면 그 종가에 청산. ${p.fwd}거래일 내 미청산이면 마지막 종가 청산(hold), 데이터 부족이면 판정 제외<br>
+        <b>트레일링 스탑 시뮬레이션</b>: 돌파일 종가 매수, 모든 판정은 종가 기준. 매도선은 -${Math.round(p.sim_stop * 100)}%에서 시작해 최대 상승폭이 +${Math.round(p.sim_step * 100)}%×k에 도달할 때마다 +${Math.round(p.sim_step * 100)}%×(k-1)로 상향(+10% 도달 → 본전, +20% → +10%, +30% → +20% …). 종가가 매도선 이하면 그 종가에 청산. 시간 제한 없이 매도선에 걸릴 때까지 보유, 데이터 끝까지 안 걸리면 '보유 중'<br>
+        <b>포트폴리오 백테스트</b>: 1년 전 ${fmtN(p.init_cash)}원 시작, '내 전략' 돌파 종목을 돌파일 종가에 포트 평가액의 ${Math.round(100 / p.max_pos)}%씩 매수(현금 한도 내, 같은 종목 중복 없음, 같은 날 여러 후보는 RS 높은 순). 슬롯 ${p.max_pos}개가 꽉 차면 평가수익률 최저 종목을 당일 종가에 매도 후 교체(당일 매수분 제외). 매도는 트레일링 스탑 규칙과 동일. 수수료·세금·호가·유동성 미반영, 금액 기준 소수점 수량 허용<br>
         <b>갱신</b>: ${D.generated} 생성 — 시장 데이터 업로드 시 <code>tools/study/build_high52.py</code>로 재계산`;
 }
 </script>

@@ -32,10 +32,18 @@
 - 초기 손절: 매수가 대비 -8% 이하 종가 -> 매도
 - +10% 도달 후: 매도선을 본전(0%)으로 올림 (이븐스탑)
 - +20% 도달 후: 매도선 +10%, +30% 도달 후: +20% ... (10%p 래칫)
-- 종가가 매도선 이하로 내려온 날 그 종가에 청산. 60거래일 내 미청산이면
-  60일째 종가 청산(hold). 데이터가 끝나 판정 불가면 ongoing(집계 제외).
-- 손절(-8%)·이븐스탑 청산을 제외한 '생존' 사례의 고점(최대 상승폭)이
-  어느 구간에서 형성되는지 분포를 구한다.
+- 종가가 매도선 이하로 내려온 날 그 종가에 청산. 시간 제한 없이 매도선에
+  걸릴 때까지 보유하며, 데이터 끝까지 미청산이면 open(보유 중).
+- 손절(-8%)·이븐스탑 청산을 제외한 '생존' 사례(래칫 익절 + 보유 중)의
+  고점(최대 상승폭)이 어느 구간에서 형성되는지 분포를 구한다.
+
+포트폴리오 백테스트 (study/high52/data.json 의 portfolio)
+- 1년 전 100만원 시작, '내 전략'(RS 80+ & 컨센↑) 돌파 종목을 돌파일
+  종가에 매수. 매수 금액은 당일 포트 평가액의 10% (현금 한도 내).
+- 슬롯 10개. 꽉 찬 상태에서 새 후보가 나오면 평가수익률이 가장 낮은
+  보유 종목을 당일 종가에 매도하고 교체(당일 매수분은 교체 대상 제외).
+- 매도는 위 트레일링 스탑 규칙과 동일. 같은 종목 중복 보유 없음.
+- 수수료·세금·호가·부분체결 미반영, 수량은 소수점 허용(금액 기준).
 
 실행: python3 tools/study/build_high52.py   (build_market.py 갱신 후)
 출력: study/high52/data.json
@@ -56,6 +64,8 @@ FWD = 60           # 돌파 후 추적 거래일 수
 PULLBACK = 0.10    # 단기고점 확정 기준 되돌림(고점 종가 대비 -10%)
 MIN_PRICE = 500    # 동전주 제외
 RS_MIN = 80        # '내 전략' RS 하한
+INIT_CASH = 1_000_000   # 백테스트 시작 자금
+MAX_POS = 10            # 포트 슬롯 수 (종목당 10%)
 CONS_DAYS = 20     # 컨센서스 비교 시점(거래일)
 SIM_STOP = 0.08    # 초기 손절폭(-8%)
 SIM_STEP = 0.10    # 래칫 간격: +10%마다 매도선을 10%p 아래로 따라 올림
@@ -95,39 +105,45 @@ def pct(x, q):
     return s[f] + (s[c] - s[f]) * (k - f)
 
 
+def ladder_stop(peak):
+    """구간 내 최고 수익률 -> 현재 매도선. +10% 미도달이면 -8%,
+    이후 최고 도달 10% 구간보다 10%p 아래(+10%->본전, +20%->+10% ...)"""
+    if peak < SIM_STEP - 1e-9:
+        return -SIM_STOP
+    return SIM_STEP * (int((peak + 1e-9) / SIM_STEP) - 1)
+
+
 def sim_one(rets):
-    """일별 수익률 배열 -> 래칫 트레일링 스탑 청산 결과.
+    """일별 수익률 배열(데이터 끝까지) -> 래칫 트레일링 스탑 청산 결과.
 
     반환: (outcome, exit_ret, exit_day, peak, peak_day)
-    outcome: stop8 / even / trail / hold / ongoing
+    outcome: stop8 / even / trail / open(미청산·보유 중)
     """
     peak, peak_day = 0.0, 0
     for d, r in enumerate(rets, start=1):
         if r > peak:
             peak, peak_day = r, d
-        # 현재 매도선: +10% 미도달이면 -8%, 이후 최고 도달 구간보다 10%p 아래
-        if peak < SIM_STEP - 1e-9:
-            stop = -SIM_STOP
-        else:
-            stop = SIM_STEP * (int((peak + 1e-9) / SIM_STEP) - 1)
+        stop = ladder_stop(peak)
         if r <= stop + 1e-9:
             outcome = 'stop8' if stop < -1e-9 else ('even' if stop < 1e-9 else 'trail')
             return outcome, r, d, peak, peak_day
-    if len(rets) >= FWD:
-        return 'hold', rets[-1], len(rets), peak, peak_day
-    return 'ongoing', None, None, peak, peak_day
+    last = rets[-1] if rets else 0.0
+    return 'open', last, len(rets), peak, peak_day
 
 
 def simulate(events):
-    """세그먼트 사건 목록 -> 트레일링 스탑 시뮬레이션 집계"""
-    runs = [sim_one(e['rets']) for e in events]
-    done = [r for r in runs if r[0] != 'ongoing']
-    if not done:
+    """세그먼트 사건 목록 -> 트레일링 스탑 시뮬레이션 집계 (시간 제한 없음)"""
+    runs = [sim_one(e['fwd_all']) for e in events]
+    if not runs:
         return None
-    exits = [r[1] for r in done]
+    done = runs
+    closed = [r for r in done if r[0] != 'open']
+    exits = [r[1] for r in closed]
+    if not exits:
+        return None
 
     outcomes = {}
-    for key in ('stop8', 'even', 'trail', 'hold'):
+    for key in ('stop8', 'even', 'trail', 'open'):
         sub = [r for r in done if r[0] == key]
         outcomes[key] = {
             'n': len(sub),
@@ -136,8 +152,8 @@ def simulate(events):
             'avg_day': round(sum(r[2] for r in sub) / len(sub), 1) if sub else None,
         }
 
-    # 생존자 = 손절(-8%)·이븐스탑 청산 제외 (trail + hold)
-    surv = [r for r in done if r[0] in ('trail', 'hold')]
+    # 생존자 = 손절(-8%)·이븐스탑 청산 제외 (래칫 익절 + 보유 중)
+    surv = [r for r in done if r[0] in ('trail', 'open')]
     peaks = [r[3] for r in surv]
     peak_days = [r[4] for r in surv]
     buckets = [(0.0, 0.10, '10% 미만'), (0.10, 0.20, '10~20%'), (0.20, 0.30, '20~30%'),
@@ -148,7 +164,7 @@ def simulate(events):
 
     return {
         'n': len(done),
-        'ongoing': len(runs) - len(done),
+        'closed': len(closed),
         'mean_exit': round(sum(exits) / len(exits), 4),
         'median_exit': round(pct(exits, 0.5), 4),
         'win': round(sum(1 for x in exits if x > 1e-9) / len(exits), 4),
@@ -162,6 +178,85 @@ def simulate(events):
             'peak_day_median': pct(peak_days, 0.5) if peak_days else None,
             'peak_hist': peak_hist,
         },
+    }
+
+
+def backtest(events, px, cal, start_date):
+    """'내 전략' 사건으로 포트폴리오 백테스트.
+
+    1년 전 INIT_CASH 시작, 돌파일 종가에 포트 평가액의 10% 매수(현금 한도 내).
+    슬롯 MAX_POS개, 꽉 차면 평가수익률 최저 종목을 당일 종가에 매도 후 교체
+    (당일 매수분은 교체 대상에서 제외). 매도는 래칫 트레일링 스탑과 동일.
+    """
+    by_date = {}
+    for e in sorted(events, key=lambda x: -(x['rs'] or 0)):
+        by_date.setdefault(e['date'], []).append(e)
+
+    cash, positions, trades, curve = float(INIT_CASH), {}, [], []
+    for d in [c for c in cal if c >= start_date]:
+        ds = d.strftime('%Y-%m-%d')
+        # 1) 보유 종목 평가 갱신 + 트레일링 스탑 청산
+        for code in list(positions):
+            p = positions[code]
+            c = px[code].get(d)
+            if c is None:                      # 거래 없음(정지 등): 직전가 유지
+                continue
+            p['last'] = c
+            ret = c / p['buy_px'] - 1
+            p['peak'] = max(p['peak'], ret)
+            stop = ladder_stop(p['peak'])
+            if ret <= stop + 1e-9:
+                cash += p['qty'] * c
+                reason = 'stop8' if stop < -1e-9 else ('even' if stop < 1e-9 else 'trail')
+                trades.append({'name': p['name'], 'code': code, 'in': p['in'],
+                               'out': ds, 'ret': round(ret, 4), 'reason': reason})
+                del positions[code]
+        # 2) 신규 후보 매수 (RS 높은 순)
+        for e in by_date.get(ds, []):
+            if e['code'] in positions:
+                continue
+            value = cash + sum(p['qty'] * p['last'] for p in positions.values())
+            if len(positions) >= MAX_POS:
+                # 교체: 당일 매수분 제외, 평가수익률 최저 종목 매도
+                cands = [(k, p) for k, p in positions.items() if p['in'] != ds]
+                if not cands:
+                    continue
+                wk, wp = min(cands, key=lambda kv: kv[1]['last'] / kv[1]['buy_px'])
+                cash += wp['qty'] * wp['last']
+                trades.append({'name': wp['name'], 'code': wk, 'in': wp['in'], 'out': ds,
+                               'ret': round(wp['last'] / wp['buy_px'] - 1, 4), 'reason': 'replaced'})
+                del positions[wk]
+            amt = min(0.10 * value, cash)
+            if amt < 1000:
+                continue
+            c0 = px[e['code']].get(d, e['close'])
+            positions[e['code']] = {'qty': amt / c0, 'buy_px': c0, 'last': c0,
+                                    'peak': 0.0, 'in': ds, 'name': e['name']}
+            cash -= amt
+        # 3) 일별 평가액
+        value = cash + sum(p['qty'] * p['last'] for p in positions.values())
+        curve.append({'d': ds, 'v': round(value)})
+
+    final = curve[-1]['v'] if curve else INIT_CASH
+    peak_v, mdd = 0, 0.0
+    for c in curve:
+        peak_v = max(peak_v, c['v'])
+        mdd = min(mdd, c['v'] / peak_v - 1)
+    wins = [t['ret'] for t in trades if t['ret'] > 1e-9]
+    losses = [t['ret'] for t in trades if t['ret'] <= 1e-9]
+    return {
+        'initial': INIT_CASH, 'final': final,
+        'ret': round(final / INIT_CASH - 1, 4), 'mdd': round(mdd, 4),
+        'start': curve[0]['d'] if curve else None, 'end': curve[-1]['d'] if curve else None,
+        'n_trades': len(trades),
+        'win': round(len(wins) / len(trades), 4) if trades else None,
+        'avg_win': round(sum(wins) / len(wins), 4) if wins else None,
+        'avg_loss': round(sum(losses) / len(losses), 4) if losses else None,
+        'curve': curve,
+        'trades': sorted(trades, key=lambda t: t['out'], reverse=True),
+        'open': sorted([{'name': p['name'], 'code': k, 'in': p['in'],
+                         'ret': round(p['last'] / p['buy_px'] - 1, 4)}
+                        for k, p in positions.items()], key=lambda x: -x['ret']),
     }
 
 
@@ -225,7 +320,7 @@ def build():
     df = universe_filter(load_concat(PRICE))
     df = df.sort_values(['code', 'date'], kind='mergesort').reset_index(drop=True)
     last_date = df['date'].max()
-    cal = sorted(df['date'].unique())                 # 전체 거래일 캘린더
+    cal = list(pd.DatetimeIndex(df['date'].unique()).sort_values())  # 전체 거래일 캘린더
     cal_idx = {d: i for i, d in enumerate(cal)}
 
     g = df.groupby('code')['close']
@@ -290,7 +385,8 @@ def build():
             'status': status,
             'rs': rs_map.get((row['date'], row['code'])),
             'cons': cons_change(row['date'], row['code']),
-            'rets': [round(c / base - 1, 4) for c in fwd],  # 돌파 후 1..N일 수익률
+            'rets': [round(c / base - 1, 4) for c in fwd],  # 돌파 후 1..FWD일 수익률(곡선용)
+            'fwd_all': [c / base - 1 for c in closes[p0 + 1:]],  # 데이터 끝까지(시뮬레이션용)
         })
 
     # ---- 세그먼트별 집계 ----
@@ -306,6 +402,13 @@ def build():
     for key, label, cond in seg_defs:
         sub = [e for e in events if cond(e)]
         segments[key] = {'label': label, **aggregate(sub)}
+
+    # ---- 포트폴리오 백테스트 ('내 전략') ----
+    strat_events = [e for e in events if seg_defs[3][2](e)]
+    codes = {e['code'] for e in strat_events}
+    px = {code: dict(zip(sub['date'], sub['close']))
+          for code, sub in df[df['code'].isin(codes)].groupby('code')}
+    portfolio = backtest(strat_events, px, cal, one_year_ago)
 
     # 월별 돌파 건수 (전체/전략)
     monthly = {}
@@ -324,8 +427,10 @@ def build():
         'params': {'lookback': LOOKBACK, 'cooldown': COOLDOWN, 'fwd': FWD,
                    'pullback': PULLBACK, 'min_price': MIN_PRICE,
                    'rs_min': RS_MIN, 'cons_days': CONS_DAYS,
-                   'sim_stop': SIM_STOP, 'sim_step': SIM_STEP},
+                   'sim_stop': SIM_STOP, 'sim_step': SIM_STEP,
+                   'init_cash': INIT_CASH, 'max_pos': MAX_POS},
         'segments': segments,
+        'portfolio': portfolio,
         'monthly': [{'month': m, **v} for m, v in sorted(monthly.items())],
         # 사례 테이블용(용량 절약을 위해 rets 제외)
         'events': [{k: e[k] for k in ('date', 'code', 'name', 'close', 'peak_day',
