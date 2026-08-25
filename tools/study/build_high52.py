@@ -3,6 +3,8 @@
 
 목적: 최근 1년간 52주 신고가를 돌파한 사례를 모아, 돌파 후 며칠째가
 단기고점이었는지 분포를 구해 익절 시점 최적화에 참고할 수 있게 한다.
+돌파 당시의 RS 등급·컨센서스(목표주가) 추세를 함께 기록해, 조건별
+(예: RS 80 이상 + 컨센서스 20영업일 대비 상향) 성과를 비교한다.
 
 정의
 - 돌파일: 종가가 직전 252거래일(약 52주) 종가 최고가를 넘어선 날.
@@ -13,9 +15,18 @@
   - confirmed : -10% 되돌림이 나와 고점이 확정된 사례
   - nopullback: 60거래일 동안 -10% 되돌림 없이 상승 지속(고점 = 구간 최고)
   - ongoing   : 데이터가 끝나 아직 판정 불가(최근 돌파)
+- RS: 돌파일의 오닐식 RS 등급(db/market/rs, 1~99). 산출 전 시기는 null.
+- 컨센서스 추세: 돌파일 목표주가 평균 vs 20거래일 전 목표주가 평균의
+  변화율(db/market/consensus). 커버리지가 없으면 null.
 - 모집단: 일반 종목만. ETF(db/etf 코드 + 운용사 브랜드명), ETN(코드 5·7
   대역 및 이름), 스팩, 우선주(코드 끝자리 != 0), 돌파일 종가 500원 미만
   종목은 제외.
+
+세그먼트(집계 비교군)
+- all    : 전체 돌파
+- rs80   : 돌파일 RS >= 80
+- cons_up: 컨센서스 20거래일 대비 상향(+)
+- strat  : RS >= 80 이고 컨센서스 상향 — '내 전략'
 
 실행: python3 tools/study/build_high52.py   (build_market.py 갱신 후)
 출력: study/high52/data.json
@@ -26,6 +37,8 @@ import pandas as pd
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PRICE = os.path.join(REPO, 'db', 'market', 'price', '*.parquet')
 ETF = os.path.join(REPO, 'db', 'etf', '*.parquet')
+RS = os.path.join(REPO, 'db', 'market', 'rs', '*.parquet')
+CONS = os.path.join(REPO, 'db', 'market', 'consensus', '*.parquet')
 OUT = os.path.join(REPO, 'study', 'high52', 'data.json')
 
 LOOKBACK = 252     # 52주(거래일)
@@ -33,10 +46,12 @@ COOLDOWN = 20      # 신선한 돌파 판정: 직전 20거래일 내 돌파 없�
 FWD = 60           # 돌파 후 추적 거래일 수
 PULLBACK = 0.10    # 단기고점 확정 기준 되돌림(고점 종가 대비 -10%)
 MIN_PRICE = 500    # 동전주 제외
+RS_MIN = 80        # '내 전략' RS 하한
+CONS_DAYS = 20     # 컨센서스 비교 시점(거래일)
 
 
-def load_prices():
-    frames = [pd.read_parquet(f) for f in sorted(glob.glob(PRICE))]
+def load_concat(pattern, columns=None):
+    frames = [pd.read_parquet(f, columns=columns) for f in sorted(glob.glob(pattern))]
     df = pd.concat(frames, ignore_index=True)
     df['date'] = pd.to_datetime(df['date'])
     return df
@@ -60,66 +75,17 @@ def universe_filter(df):
     return df
 
 
-def build():
-    df = universe_filter(load_prices())
-    df = df.sort_values(['code', 'date'], kind='mergesort').reset_index(drop=True)
-    last_date = df['date'].max()
+def pct(x, q):
+    s = sorted(x)
+    if not s:
+        return None
+    k = (len(s) - 1) * q
+    f, c = int(k), min(int(k) + 1, len(s) - 1)
+    return s[f] + (s[c] - s[f]) * (k - f)
 
-    g = df.groupby('code')['close']
-    prior_max = g.transform(lambda s: s.shift(1).rolling(LOOKBACK, min_periods=LOOKBACK).max())
-    df['breakout'] = df['close'] > prior_max
-    prev = df.groupby('code')['breakout'].transform(
-        lambda s: s.shift(1).rolling(COOLDOWN, min_periods=1).sum())
-    df['fresh'] = df['breakout'] & (prev.fillna(0) == 0)
 
-    one_year_ago = last_date - pd.DateOffset(years=1)
-    events_idx = df.index[df['fresh'] & (df['date'] >= one_year_ago) & (df['close'] >= MIN_PRICE)]
-
-    # 종목별 (날짜, 종가) 배열 준비
-    series = {}
-    for code, sub in df.groupby('code'):
-        series[code] = (sub['date'].tolist(), sub['close'].tolist(),
-                        {d: i for i, d in enumerate(sub['date'].tolist())})
-
-    events = []
-    for i in events_idx:
-        row = df.loc[i]
-        dates, closes, pos = series[row['code']]
-        p0 = pos[row['date']]
-        base = closes[p0]
-        fwd = closes[p0 + 1: p0 + 1 + FWD]
-
-        peak_i, peak_v, status = 0, base, None
-        for j, c in enumerate(fwd, start=1):
-            if c > peak_v:
-                peak_v, peak_i = c, j
-            elif c <= peak_v * (1 - PULLBACK):
-                status = 'confirmed'
-                break
-        if status is None:
-            status = 'nopullback' if len(fwd) >= FWD else 'ongoing'
-
-        rets = [round(c / base - 1, 4) for c in fwd]
-        events.append({
-            'date': row['date'].strftime('%Y-%m-%d'),
-            'code': row['code'],
-            'name': row['name'],
-            'close': base,
-            'peak_day': peak_i,                       # 0 = 돌파일이 곧 고점
-            'peak_gain': round(peak_v / base - 1, 4),
-            'status': status,
-            'rets': rets,                             # 돌파 후 1..N일 수익률
-        })
-
-    # ---- 집계 ----
-    def pct(x, q):
-        s = sorted(x)
-        if not s:
-            return None
-        k = (len(s) - 1) * q
-        f, c = int(k), min(int(k) + 1, len(s) - 1)
-        return s[f] + (s[c] - s[f]) * (k - f)
-
+def aggregate(events):
+    """사건 목록 -> {summary, curve, hist, cum} (rets 필드 필요)"""
     settled = [e for e in events if e['status'] != 'ongoing']
     peak_days = [e['peak_day'] for e in settled]
     peak_gains = [e['peak_gain'] for e in settled]
@@ -128,7 +94,7 @@ def build():
     curve = []
     for d in range(1, FWD + 1):
         rs = [e['rets'][d - 1] for e in events if len(e['rets']) >= d]
-        if len(rs) < 30:
+        if len(rs) < 20:
             break
         curve.append({
             'day': d, 'n': len(rs),
@@ -138,7 +104,6 @@ def build():
             'p75': round(pct(rs, 0.75), 4),
             'win': round(sum(1 for r in rs if r > 0) / len(rs), 4),
         })
-
     best_mean = max(curve, key=lambda c: c['mean']) if curve else None
     best_median = max(curve, key=lambda c: c['median']) if curve else None
 
@@ -154,17 +119,7 @@ def build():
     cum = [{'day': d, 'p': round(sum(1 for x in peak_days if x <= d) / len(peak_days), 4)}
            for d in [0, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 50, 60]] if peak_days else []
 
-    # 월별 돌파 건수
-    monthly = {}
-    for e in events:
-        monthly[e['date'][:7]] = monthly.get(e['date'][:7], 0) + 1
-
-    out = {
-        'generated': datetime.date.today().isoformat(),
-        'data_start': df['date'].min().strftime('%Y-%m-%d'),
-        'data_end': last_date.strftime('%Y-%m-%d'),
-        'params': {'lookback': LOOKBACK, 'cooldown': COOLDOWN, 'fwd': FWD,
-                   'pullback': PULLBACK, 'min_price': MIN_PRICE},
+    return {
         'summary': {
             'events_total': len(events),
             'events_settled': len(settled),
@@ -180,12 +135,118 @@ def build():
             'best_median_day': best_median and best_median['day'],
             'best_median_ret': best_median and best_median['median'],
         },
-        'curve': curve,
-        'hist': hist,
-        'cum': cum,
-        'monthly': [{'month': m, 'count': c} for m, c in sorted(monthly.items())],
+        'curve': curve, 'hist': hist, 'cum': cum,
+    }
+
+
+def build():
+    df = universe_filter(load_concat(PRICE))
+    df = df.sort_values(['code', 'date'], kind='mergesort').reset_index(drop=True)
+    last_date = df['date'].max()
+    cal = sorted(df['date'].unique())                 # 전체 거래일 캘린더
+    cal_idx = {d: i for i, d in enumerate(cal)}
+
+    g = df.groupby('code')['close']
+    prior_max = g.transform(lambda s: s.shift(1).rolling(LOOKBACK, min_periods=LOOKBACK).max())
+    df['breakout'] = df['close'] > prior_max
+    prev = df.groupby('code')['breakout'].transform(
+        lambda s: s.shift(1).rolling(COOLDOWN, min_periods=1).sum())
+    df['fresh'] = df['breakout'] & (prev.fillna(0) == 0)
+
+    one_year_ago = last_date - pd.DateOffset(years=1)
+    events_idx = df.index[df['fresh'] & (df['date'] >= one_year_ago) & (df['close'] >= MIN_PRICE)]
+
+    # RS 등급 · 컨센서스 조회 테이블
+    rs_df = load_concat(RS, columns=['date', 'code', 'rs'])
+    rs_map = {(d, c): int(v) for d, c, v in zip(rs_df['date'], rs_df['code'], rs_df['rs'])}
+    cons_df = load_concat(CONS, columns=['date', 'code', 'target_price'])
+    cons_map = {(d, c): v for d, c, v in
+                zip(cons_df['date'], cons_df['code'], cons_df['target_price'])}
+
+    def cons_change(date, code):
+        """돌파일 목표주가 vs CONS_DAYS 거래일 전 목표주가 변화율 (없으면 None)"""
+        i = cal_idx.get(date)
+        if i is None or i < CONS_DAYS:
+            return None
+        now = cons_map.get((date, code))
+        ago = cons_map.get((cal[i - CONS_DAYS], code))
+        if now is None or ago is None or not ago:
+            return None
+        return round(now / ago - 1, 4)
+
+    # 종목별 (날짜, 종가) 배열 준비
+    series = {}
+    for code, sub in df.groupby('code'):
+        series[code] = (sub['close'].tolist(),
+                        {d: i for i, d in enumerate(sub['date'].tolist())})
+
+    events = []
+    for i in events_idx:
+        row = df.loc[i]
+        closes, pos = series[row['code']]
+        p0 = pos[row['date']]
+        base = closes[p0]
+        fwd = closes[p0 + 1: p0 + 1 + FWD]
+
+        peak_i, peak_v, status = 0, base, None
+        for j, c in enumerate(fwd, start=1):
+            if c > peak_v:
+                peak_v, peak_i = c, j
+            elif c <= peak_v * (1 - PULLBACK):
+                status = 'confirmed'
+                break
+        if status is None:
+            status = 'nopullback' if len(fwd) >= FWD else 'ongoing'
+
+        events.append({
+            'date': row['date'].strftime('%Y-%m-%d'),
+            'code': row['code'],
+            'name': row['name'],
+            'close': base,
+            'peak_day': peak_i,                       # 0 = 돌파일이 곧 고점
+            'peak_gain': round(peak_v / base - 1, 4),
+            'status': status,
+            'rs': rs_map.get((row['date'], row['code'])),
+            'cons': cons_change(row['date'], row['code']),
+            'rets': [round(c / base - 1, 4) for c in fwd],  # 돌파 후 1..N일 수익률
+        })
+
+    # ---- 세그먼트별 집계 ----
+    segments = {}
+    seg_defs = [
+        ('all', '전체', lambda e: True),
+        ('rs80', f'RS {RS_MIN}+', lambda e: e['rs'] is not None and e['rs'] >= RS_MIN),
+        ('cons_up', '컨센↑', lambda e: e['cons'] is not None and e['cons'] > 0),
+        ('strat', f'RS {RS_MIN}+ & 컨센↑',
+         lambda e: e['rs'] is not None and e['rs'] >= RS_MIN
+         and e['cons'] is not None and e['cons'] > 0),
+    ]
+    for key, label, cond in seg_defs:
+        sub = [e for e in events if cond(e)]
+        segments[key] = {'label': label, **aggregate(sub)}
+
+    # 월별 돌파 건수 (전체/전략)
+    monthly = {}
+    for e in events:
+        m = monthly.setdefault(e['date'][:7], {'count': 0, 'strat': 0})
+        m['count'] += 1
+        if seg_defs[3][2](e):
+            m['strat'] += 1
+
+    out = {
+        'generated': datetime.date.today().isoformat(),
+        'data_start': df['date'].min().strftime('%Y-%m-%d'),
+        'data_end': last_date.strftime('%Y-%m-%d'),
+        'rs_start': rs_df['date'].min().strftime('%Y-%m-%d'),
+        'cons_start': cons_df['date'].min().strftime('%Y-%m-%d'),
+        'params': {'lookback': LOOKBACK, 'cooldown': COOLDOWN, 'fwd': FWD,
+                   'pullback': PULLBACK, 'min_price': MIN_PRICE,
+                   'rs_min': RS_MIN, 'cons_days': CONS_DAYS},
+        'segments': segments,
+        'monthly': [{'month': m, **v} for m, v in sorted(monthly.items())],
         # 사례 테이블용(용량 절약을 위해 rets 제외)
-        'events': [{k: e[k] for k in ('date', 'code', 'name', 'close', 'peak_day', 'peak_gain', 'status')}
+        'events': [{k: e[k] for k in ('date', 'code', 'name', 'close', 'peak_day',
+                                      'peak_gain', 'status', 'rs', 'cons')}
                    for e in sorted(events, key=lambda x: x['date'], reverse=True)],
     }
 
@@ -193,10 +254,14 @@ def build():
     with open(OUT, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
     kb = os.path.getsize(OUT) / 1024
-    print(f"OK: 사건 {len(events)}건(확정 {len(settled)}) → {OUT} ({kb:.0f}KB)")
-    if best_median:
-        print(f"  중앙값 기준 최적 매도: 돌파 후 {best_median['day']}일 ({best_median['median']:+.2%})")
-        print(f"  단기고점 도달일 중앙값: {pct(peak_days, 0.5):.0f}일")
+    print(f"OK: 사건 {len(events)}건 → {OUT} ({kb:.0f}KB)")
+    for key, seg in segments.items():
+        s = seg['summary']
+        pd_med = s['peak_day_median']
+        pg_med = s['peak_gain_median']
+        print(f"  [{seg['label']}] {s['events_total']}건 · 고점 중앙값 "
+              f"{pd_med if pd_med is not None else '-'}일 · 고점수익률 중앙값 "
+              f"{pg_med * 100:+.1f}%" if pg_med is not None else f"  [{seg['label']}] {s['events_total']}건")
 
 
 if __name__ == '__main__':
