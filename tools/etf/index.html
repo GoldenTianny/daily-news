@@ -490,8 +490,19 @@ async function loadConsensus(date) {
     if (cov >= 20) scores.push([code, score, cov]);
   }
   scores.sort((a, b) => b[1] - a[1]);
+  // 개별 종목의 20영업일 목표주가 변화율 (검색 가능한 종목만)
+  const stocks = [];
+  for (const [nm, m2] of tp) {
+    if (!DATA[nm]) continue;
+    const t0 = m2.get(d0), t1 = m2.get(d20);
+    if (t0 > 0 && t1 > 0) stocks.push([nm, t0 / t1 - 1]);
+  }
+  stocks.sort((a, b) => b[1] - a[1]);
+
   return { d0: d0, d20: d20, up: scores.slice(0, 10),
-           down: scores.filter(s => s[1] < 0).slice(-10).reverse() };
+           down: scores.filter(s => s[1] < 0).slice(-10).reverse(),
+           stockUp: stocks.filter(s => s[1] > 0.0005).slice(0, 10),
+           stockDown: stocks.filter(s => s[1] < -0.0005).slice(-10).reverse() };
 }
 
 // ===== 종목 차트: 최근 1년 수정주가 vs 목표주가 =====
@@ -820,6 +831,28 @@ function renderIntro() {
   html += tpmWidget('목표주가 상향 모멘텀 TOP 10', '&#127919;', TPM && TPM.up);
   html += tpmWidget('목표주가 하향 모멘텀 TOP 10', '&#129482;', TPM && TPM.down);
 
+  // 개별 종목 목표주가 변화 위젯 (클릭 시 종목 검색)
+  const stkTpWidget = (title, emoji, list) => {
+    let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
+    if (!TPM) {
+      h += '<div class="sub">컨센서스 불러오는 중&hellip;</div>';
+    } else if (!list || !list.length) {
+      h += '<div class="sub">데이터가 없습니다</div>';
+    } else {
+      h += '<div class="sub">20영업일(' + TPM.d20 + '&rarr;' + TPM.d0 + ') 목표주가 컨센서스 변화율</div>';
+      list.forEach((t, i) => {
+        h += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
+          '<span class="wrank">' + (i + 1) + '</span>' +
+          '<span class="wname">' + escHtml(t[0]) + '</span>' +
+          '<span class="wval ' + (t[1] >= 0 ? 'up' : 'down') + '">' + (t[1] >= 0 ? '+' : '') +
+          (t[1] * 100).toFixed(1) + '%</span></div>';
+      });
+    }
+    return h + '</div>';
+  };
+  html += stkTpWidget('종목 목표주가 상향 TOP 10', '&#128640;', TPM && TPM.stockUp);
+  html += stkTpWidget('종목 목표주가 하향 TOP 10', '&#128201;', TPM && TPM.stockDown);
+
   html += '</div>';
 
   introArea.innerHTML = html;
@@ -896,7 +929,7 @@ async function loadDateData(date) {
     });
     loadConsensus(date).then(t => {
       if (currentDate !== reqDate) return;
-      TPM = t || { d0: null, d20: null, up: [], down: [] };
+      TPM = t || { d0: null, d20: null, up: [], down: [], stockUp: [], stockDown: [] };
       if (introArea.style.display !== 'none') renderIntro();
     });
   } catch (err) {
