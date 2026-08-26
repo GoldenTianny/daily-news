@@ -318,6 +318,7 @@ let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
+let RSM = null;        // RS 등급 급등 {top:[[name,delta,rs0]], d0, d20} (db/market/rs 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let stockSortDir = -1; // -1 내림차순, 1 오름차순 (같은 컬럼 재클릭 시 토글)
@@ -722,6 +723,36 @@ function renderStockChart(name, s) {
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
 }
 
+// ===== RS 등급 급등 (db/market/rs) =====
+// 20영업일 전 대비 RS 등급 상승폭 랭킹 (검색 가능한 일반 종목만)
+async function loadRsMovers(date) {
+  const dateSet = new Set();
+  const byDate = new Map();   // dateStr -> Map(name -> rs)
+  await Promise.all(monthsList(date, 3).map(async mo => {
+    for (const r of await readMonth('r', mo)) {
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date) continue;
+      dateSet.add(d);
+      let m = byDate.get(d);
+      if (!m) byDate.set(d, m = new Map());
+      m.set(r.name, r.rs);
+    }
+  }));
+  const ds = Array.from(dateSet).sort();
+  if (ds.length < 21) return null;
+  const d0 = ds[ds.length - 1], d20 = ds[ds.length - 21];
+  const m0 = byDate.get(d0), m20 = byDate.get(d20);
+  const arr = [];
+  for (const [nm, r0] of m0) {
+    if (!DATA[nm]) continue;             // ETF·미보유 종목 제외
+    const r1 = m20.get(nm);
+    if (r1 == null || r0 <= r1) continue;
+    arr.push([nm, r0 - r1, r0]);
+  }
+  arr.sort((a, b) => (b[1] - a[1]) || (b[2] - a[2]));
+  return { d0: d0, d20: d20, top: arr.slice(0, 10) };
+}
+
 // ===== 초기화면 위젯 =====
 // 현금·채권·선물 등 비주식 항목은 랭킹에서 제외
 const NONEQ = /현금|예금|달러|엔화|유로|위안|스왑|선물|국고|통안|콜론|CD금리|KOFR|SOFR|전단채|채권|사채|만기|T-?Bill/i;
@@ -853,6 +884,23 @@ function renderIntro() {
   html += stkTpWidget('종목 목표주가 상향 TOP 10', '&#128640;', TPM && TPM.stockUp);
   html += stkTpWidget('종목 목표주가 하향 TOP 10', '&#128201;', TPM && TPM.stockDown);
 
+  // RS 등급 급등 위젯 (클릭 시 종목 검색)
+  html += '<div class="widget"><h3>&#128246; RS 등급 급등 TOP 10</h3>';
+  if (!RSM) {
+    html += '<div class="sub">RS 등급 불러오는 중&hellip;</div>';
+  } else if (!RSM.top || !RSM.top.length) {
+    html += '<div class="sub">데이터가 없습니다</div>';
+  } else {
+    html += '<div class="sub">20영업일(' + RSM.d20 + '&rarr;' + RSM.d0 + ') RS 등급 상승폭 · 일반 종목 대비 백분위</div>';
+    RSM.top.forEach((t, i) => {
+      html += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
+        '<span class="wrank">' + (i + 1) + '</span>' +
+        '<span class="wname">' + escHtml(t[0]) + '<span class="wsub">' + (t[2] - t[1]) + ' &rarr; ' + t[2] + '</span></span>' +
+        '<span class="wval up">+' + t[1] + '</span></div>';
+    });
+  }
+  html += '</div>';
+
   html += '</div>';
 
   introArea.innerHTML = html;
@@ -930,6 +978,12 @@ async function loadDateData(date) {
     loadConsensus(date).then(t => {
       if (currentDate !== reqDate) return;
       TPM = t || { d0: null, d20: null, up: [], down: [], stockUp: [], stockDown: [] };
+      if (introArea.style.display !== 'none') renderIntro();
+    });
+    RSM = null;
+    loadRsMovers(date).then(t => {
+      if (currentDate !== reqDate) return;
+      RSM = t || { d0: null, d20: null, top: [] };
       if (introArea.style.display !== 'none') renderIntro();
     });
   } catch (err) {
