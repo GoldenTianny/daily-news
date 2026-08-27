@@ -9,7 +9,7 @@
   -> build_high52(52주 신고가 돌파 분석, 스터디)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 """
-import sys, os, re
+import sys, os, re, datetime, numbers
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -21,8 +21,26 @@ import build_data, build_market, build_rs, build_high52
 
 
 def detect_date(xlsx_path):
-    """'ETF raw'(또는 Sheet1) 시트의 Date 행에서 기준일(YYYY-MM-DD)을 읽는다."""
+    """기준일(종가 기준일, YYYY-MM-DD) 인식.
+
+    1순위: '수정주가' 시트에서 실제 가격이 채워진 마지막 날짜.
+      CPD 태그는 장 시작 전에 받으면 다음 거래일을 가리켜 하루 밀리므로
+      (예: 8/28 07시 다운로드 → CPD [20260828], 실제 데이터는 8/27 종가),
+      값이 존재하는 마지막 날짜를 종가 기준일로 본다.
+    2순위: 'ETF raw' 시트의 Date 셀 CPD 태그 (수정주가 시트가 없을 때).
+    """
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+
+    if '수정주가' in wb.sheetnames:
+        last = None
+        for row in wb['수정주가'].iter_rows(values_only=True):
+            d = row[0] if row else None
+            if isinstance(d, datetime.datetime):
+                if any(isinstance(v, numbers.Number) for v in row[1:]):
+                    last = d.date()
+        if last:
+            return last.isoformat()
+
     ws = wb['ETF raw'] if 'ETF raw' in wb.sheetnames else wb[wb.sheetnames[0]]
     for i, row in enumerate(ws.iter_rows(values_only=True)):
         if i > 8:
