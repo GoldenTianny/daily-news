@@ -190,6 +190,10 @@
   .earn-tbl tr.est:hover td { background: #f5f7fb; }
   .earn-tbl tr.on td { background: #e8eaf6; }
   .earn-tbl td.chev { color: #9fa8da; font-size: 11px; padding-left: 8px; }
+  .earn-tbl tr.qrow { border-bottom: none; }
+  .earn-tbl tr.qrow td { background: #f8f9fd; font-size: 12px; padding: 2px 0; }
+  .earn-tbl tr.qrow td.yr { color: #aab; font-weight: 500; padding-left: 14px; }
+  .earn-tbl tr.qrow td.chev { font-size: 10px; color: #c0c6de; }
 
   /* 종목 차트 (수정주가 vs 목표주가) */
   .chart-card {
@@ -820,21 +824,21 @@ const growthCell = (cur, prev) => {   // [표시문자열, 색상클래스]
 };
 
 async function toggleEarnQ(cell, code, fy) {
-  const box = document.getElementById('earnCons');
-  if (!box) return;
-  const key = 'Q|' + code + '|' + fy;
-  earnArea.querySelectorAll('.earn-tbl tr.on').forEach(el => el.classList.remove('on'));
-  if (earnConsKey === key && box.style.display !== 'none') {
-    box.style.display = 'none';
-    earnConsKey = null;
-    return;
+  // 이미 펼쳐져 있으면 접기 (해당 연도 행 바로 아래의 분기 행 제거)
+  let removed = false;
+  let nxt = cell.nextElementSibling;
+  while (nxt && nxt.classList.contains('qrow')) {
+    const t = nxt;
+    nxt = nxt.nextElementSibling;
+    t.remove();
+    removed = true;
   }
-  earnConsKey = key;
+  cell.classList.remove('on');
+  if (removed) return;
+
   cell.classList.add('on');
-  box.style.display = '';
-  box.innerHTML = '<div class="chart-loading">분기 실적을 불러오는 중&hellip;</div>';
   const m = await loadQuarterly();
-  if (earnConsKey !== key) return;
+  if (!cell.isConnected || !cell.classList.contains('on')) return;   // 그 사이 화면 전환/재클릭
   const e = m && m.get(code);
   let rows = '';
   if (e) {
@@ -842,16 +846,14 @@ async function toggleEarnQ(cell, code, fy) {
       const cur = e.get(fy * 10 + q);
       if (cur == null) continue;
       const [gv, cls] = growthCell(cur, e.get((fy - 1) * 10 + q));
-      rows += '<tr><td class="yr">' + fy + '.' + q + 'Q</td>' +
+      rows += '<tr class="qrow"><td class="yr">' + q + 'Q</td>' +
         '<td class="op">' + Math.round(cur / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
-        '<td class="gv ' + cls + '">' + gv + '</td><td class="chev"></td></tr>';
+        '<td class="gv ' + cls + '">' + gv + '</td>' +
+        '<td class="chev">' + (q === 1 ? 'YoY' : '') + '</td></tr>';
     }
   }
-  box.innerHTML = rows
-    ? '<div style="margin-top:10px;padding:8px 12px;background:#f8f9fd;border-radius:10px">' +
-      '<div class="chart-sub" style="margin:0 0 4px">' + fy + ' 분기별 영업이익 · 증가율은 전년 동기(YoY) 대비</div>' +
-      '<table class="earn-tbl">' + rows + '</table></div>'
-    : '<div class="chart-loading">' + fy + ' 분기 실적 데이터가 없습니다</div>';
+  if (!rows) rows = '<tr class="qrow"><td class="yr" colspan="4" style="color:#aaa">분기 실적 데이터가 없습니다</td></tr>';
+  cell.insertAdjacentHTML('afterend', rows);
 }
 
 // 컨센서스 추이 미니 차트 (E 연도 클릭 시 토글)
