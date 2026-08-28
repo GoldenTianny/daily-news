@@ -342,7 +342,85 @@ const breadcrumb = document.getElementById('breadcrumb');
 const chartArea = document.getElementById('chartArea');
 const backBtnArea = document.getElementById('backBtnArea');
 const tagsArea = document.getElementById('tagsArea');
-let viewHistory = [];
+let restoring = false;   // 주소(쿼리스트링)로부터 화면 복원 중이면 pushState 억제
+
+// ===== URL / 브라우저 히스토리 동기화 =====
+// 화면 상태를 쿼리스트링에 반영 — 브라우저 뒤로가기·새로고침·링크 공유 지원
+function urlForState() {
+  const p = new URLSearchParams();
+  const latest = DATES[DATES.length - 1];
+  if (currentDate && (currentView || currentDate !== latest)) p.set('date', currentDate);
+  if (currentView) {
+    if (currentView.type === 'stock') p.set('stock', currentView.name);
+    else if (currentView.type === 'etf') {
+      p.set('etf', currentView.code);
+      if (currentView.fromStock) p.set('from', currentView.fromStock);
+    } else if (currentView.type === 'multi') p.set('stocks', currentView.names.join(','));
+  }
+  const q = p.toString();
+  return location.pathname + (q ? '?' + q : '');
+}
+
+function updateBackBtn() {
+  const depth = (history.state && history.state.depth) || 0;
+  backBtnArea.style.display = (depth > 0 && currentView) ? '' : 'none';
+}
+
+// 렌더 함수 말미에서 호출: 화면이 바뀌었으면 pushState, 같은 화면 재렌더면 replaceState
+function syncUrl() {
+  if (restoring) return;
+  const url = urlForState();
+  const depth = (history.state && history.state.depth) || 0;
+  if (location.pathname + location.search === url) {
+    history.replaceState({ depth: depth }, '', url);
+  } else {
+    history.pushState({ depth: depth + 1 }, '', url);
+  }
+  updateBackBtn();
+}
+
+// 현재 주소의 쿼리스트링대로 화면 복원 (pushState 없이) — 초기 진입·popstate 공용
+async function applyStateFromUrl() {
+  if (!DATES.length) return;
+  const p = new URLSearchParams(location.search);
+  restoring = true;
+  try {
+    const date = p.get('date');
+    const target = (date && DATES.includes(date)) ? date : DATES[DATES.length - 1];
+    if (target !== currentDate) {
+      dateSelect.value = target;
+      await loadDateData(target);
+    }
+    const etf = p.get('etf');
+    const stock = p.get('stock');
+    const multi = (p.get('stocks') || '').split(',').filter(n => DATA[n]);
+    const single = (stock && DATA[stock]) ? stock : (multi.length === 1 ? multi[0] : null);
+    if (etf && HOLDINGS[etf]) {
+      const from = p.get('from');
+      const hasFrom = from && DATA[from];
+      currentView = hasFrom ? { type: 'stock', name: from } : null;  // fromStock 유도용
+      selectedStocks = hasFrom ? [from] : [];
+      renderTags();
+      showEtfHoldings(etf, ETFS_CUR[etf] || etf);
+    } else if (multi.length >= 2) {
+      selectedStocks = multi;
+      renderTags();
+      showMultiStockResults();
+    } else if (single) {
+      currentView = null;
+      selectedStocks = [single];
+      renderTags();
+      showStockResults(single);
+    } else {
+      clearAllStocks();
+    }
+  } finally {
+    restoring = false;
+  }
+  updateBackBtn();
+}
+
+window.addEventListener('popstate', function() { applyStateFromUrl(); });
 
 // ===== INIT =====
 async function init() {
@@ -356,9 +434,10 @@ async function init() {
     ).join('');
     dateSelect.disabled = false;
 
-    // Auto-select latest date
-    dateSelect.value = dates[dates.length - 1];
-    await loadDateData(dates[dates.length - 1]);
+    // 주소에 날짜가 지정돼 있으면 해당 날짜, 아니면 최신 날짜로 진입
+    await applyStateFromUrl();
+    history.replaceState({ depth: 0 }, '', urlForState());
+    updateBackBtn();
   } catch (err) {
     introArea.innerHTML = '<div class="intro"><div class="emoji">&#9888;&#65039;</div>' +
       '<p>데이터를 불러올 수 없습니다.<br>data/ 폴더에 dates.json 파일이 있는지 확인해주세요.</p></div>';
@@ -909,7 +988,6 @@ function renderIntro() {
 async function loadDateData(date) {
   currentDate = date;
   currentView = null;
-  viewHistory = [];
   selectedStocks = [];
   backBtnArea.style.display = 'none';
   tagsArea.style.display = 'none';
@@ -993,7 +1071,7 @@ async function loadDateData(date) {
 }
 
 dateSelect.addEventListener('change', function() {
-  loadDateData(this.value);
+  loadDateData(this.value).then(() => syncUrl());
 });
 
 // ===== UTILS =====
@@ -1028,11 +1106,7 @@ function showStockResults(name) {
     return;
   }
 
-  if (!currentView || currentView.type !== 'stock' || currentView.name !== name) {
-    if (currentView) viewHistory.push({...currentView});
-  }
   currentView = { type: 'stock', name: name };
-  backBtnArea.style.display = viewHistory.length > 0 ? '' : 'none';
 
   // 비중 + N영업일 전 대비 변화(%p) 계산
   const rows = entries.map(e => ({
@@ -1105,15 +1179,14 @@ function showStockResults(name) {
   introArea.style.display = 'none';
   resultArea.style.display = '';
   showStockChart(name);
+  syncUrl();
 }
 
 function setStockSort(k) {
   if (stockSort === k) stockSortDir = -stockSortDir;   // 같은 컬럼 재클릭 -> 방향 전환
   else { stockSort = k; stockSortDir = -1; }
   if (currentView && currentView.type === 'stock') {
-    const nm = currentView.name;
-    currentView = null;  // 히스토리 중복 방지 (같은 화면 재렌더)
-    showStockResults(nm);
+    showStockResults(currentView.name);  // 같은 화면 재렌더 — 주소 동일이라 히스토리 추가 없음
   }
 }
 
@@ -1126,9 +1199,7 @@ function showEtfHoldings(etfCode, etfName) {
   }
 
   const fromStock = currentView && currentView.type === 'stock' ? currentView.name : null;
-  if (currentView) viewHistory.push({...currentView});
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
-  backBtnArea.style.display = '';
   showEtfChart(etfCode, etfName);
 
   items.sort((a, b) => (b[1] || 0) - (a[1] || 0));
@@ -1171,6 +1242,7 @@ function showEtfHoldings(etfCode, etfName) {
   document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+  syncUrl();
 }
 
 function searchComponent(name) {
@@ -1194,6 +1266,7 @@ function removeStock(name) {
   selectedStocks = selectedStocks.filter(s => s !== name);
   renderTags();
   if (selectedStocks.length === 0) {
+    currentView = null;
     hideStockChart();
     renderIntro();
     introArea.style.display = '';
@@ -1201,6 +1274,7 @@ function removeStock(name) {
     statsArea.style.display = 'none';
     breadcrumb.style.display = 'none';
     backBtnArea.style.display = 'none';
+    syncUrl();
   } else {
     triggerSearch();
   }
@@ -1208,6 +1282,7 @@ function removeStock(name) {
 
 function clearAllStocks() {
   selectedStocks = [];
+  currentView = null;
   renderTags();
   hideStockChart();
   renderIntro();
@@ -1216,6 +1291,7 @@ function clearAllStocks() {
   statsArea.style.display = 'none';
   breadcrumb.style.display = 'none';
   backBtnArea.style.display = 'none';
+  syncUrl();
 }
 
 function renderTags() {
@@ -1234,9 +1310,7 @@ function renderTags() {
 }
 
 function triggerSearch() {
-  viewHistory = [];
   currentView = null;
-  backBtnArea.style.display = 'none';
   if (selectedStocks.length === 1) {
     showStockResults(selectedStocks[0]);
   } else if (selectedStocks.length >= 2) {
@@ -1352,27 +1426,12 @@ function showMultiStockResults() {
   document.getElementById('sortInfo').textContent = '합산 비중(%) 기준 내림차순 정렬';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+  syncUrl();
 }
 
 function goBack() {
-  if (viewHistory.length === 0) return;
-  const prev = viewHistory.pop();
-  currentView = null; // prevent double-push
-  if (prev.type === 'stock') {
-    selectedStocks = [prev.name];
-    searchInput.value = '';
-    renderTags();
-    showStockResults(prev.name);
-  } else if (prev.type === 'etf') {
-    showEtfHoldings(prev.code, prev.name);
-  } else if (prev.type === 'multi') {
-    selectedStocks = [...prev.names];
-    searchInput.value = '';
-    renderTags();
-    showMultiStockResults();
-  }
-  backBtnArea.style.display = viewHistory.length > 0 ? '' : 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 브라우저 히스토리가 단일 소스 — popstate 핸들러(applyStateFromUrl)가 이전 화면을 복원
+  history.back();
 }
 
 // ===== AUTOCOMPLETE =====
