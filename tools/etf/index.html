@@ -774,7 +774,7 @@ function showEarnings(name) {
       else { gv = '적지'; cls = 'flat'; }
       const opEok = Math.round(cur[0] / 1e5);   // 천원 -> 억원
       const click = est
-        ? 'toggleEarnCons(this,\'' + safeAttr(e.code) + '\',\'' + safeAttr(name) + '\',' + fy + ')'
+        ? 'clickEstYear(this,\'' + safeAttr(e.code) + '\',\'' + safeAttr(name) + '\',' + fy + ')'
         : 'toggleEarnQ(this,\'' + safeAttr(e.code) + '\',' + fy + ')';
       cells += '<tr class="est" onclick="' + click + '">' +
         '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
@@ -839,36 +839,73 @@ async function toggleEarnQ(cell, code, fy) {
   cell.classList.add('on');
   const m = await loadQuarterly();
   if (!cell.isConnected || !cell.classList.contains('on')) return;   // 그 사이 화면 전환/재클릭
-  const e = m && m.get(code);
-  let rows = '';
-  if (e) {
-    for (let q = 1; q <= 4; q++) {
-      const cur = e.get(fy * 10 + q);
-      if (cur == null) continue;
-      const [gv, cls] = growthCell(cur, e.get((fy - 1) * 10 + q));
-      rows += '<tr class="qrow"><td class="yr">' + q + 'Q</td>' +
-        '<td class="op">' + Math.round(cur / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
-        '<td class="gv ' + cls + '">' + gv + '</td>' +
-        '<td class="chev">' + (q === 1 ? 'YoY' : '') + '</td></tr>';
-    }
-  }
+  let rows = qRowsHtml(m && m.get(code), fy);
   if (!rows) rows = '<tr class="qrow"><td class="yr" colspan="4" style="color:#aaa">분기 실적 데이터가 없습니다</td></tr>';
   cell.insertAdjacentHTML('afterend', rows);
 }
 
-// 컨센서스 추이 미니 차트 (E 연도 클릭 시 토글)
+function qRowsHtml(e, fy) {
+  let rows = '';
+  if (!e) return rows;
+  for (let q = 1; q <= 4; q++) {
+    const cur = e.get(fy * 10 + q);
+    if (cur == null) continue;
+    const [gv, cls] = growthCell(cur, e.get((fy - 1) * 10 + q));
+    rows += '<tr class="qrow"><td class="yr">' + q + 'Q</td>' +
+      '<td class="op">' + Math.round(cur / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
+      '<td class="gv ' + cls + '">' + gv + '</td>' +
+      '<td class="chev">' + (q === 1 ? 'YoY' : '') + '</td></tr>';
+  }
+  return rows;
+}
+
+// E 연도 클릭: 확정된 분기 실적(있으면)과 컨센서스 추이 차트를 동시에 토글
+async function clickEstYear(cell, code, name, fy) {
+  const box = document.getElementById('earnCons');
+  const key = code + '|' + fy;
+  // 펼쳐져 있던 분기 행 제거
+  let removed = false;
+  let nxt = cell.nextElementSibling;
+  while (nxt && nxt.classList.contains('qrow')) {
+    const t = nxt;
+    nxt = nxt.nextElementSibling;
+    t.remove();
+    removed = true;
+  }
+  if (cell.classList.contains('on') && (removed || earnConsKey === key)) {   // 닫기: 둘 다
+    cell.classList.remove('on');
+    if (earnConsKey === key && box) { box.style.display = 'none'; earnConsKey = null; }
+    return;
+  }
+  toggleEarnCons(cell, code, name, fy);            // 차트 열기 (+ 'on' 표시)
+  const m = await loadQuarterly();
+  if (!cell.isConnected || !cell.classList.contains('on')) return;
+  const rows = qRowsHtml(m && m.get(code), fy);    // 확정 분기가 있으면 행 바로 아래에
+  if (rows) cell.insertAdjacentHTML('afterend', rows);
+}
+
+// 컨센서스 추이 미니 차트 (E 연도용 — clickEstYear에서 분기 행과 함께 토글)
 let earnConsKey = null;
+let earnConsRow = null;
 async function toggleEarnCons(cell, code, name, fy) {
   const box = document.getElementById('earnCons');
   if (!box) return;
   const key = code + '|' + fy;
-  earnArea.querySelectorAll('.earn-tbl tr.on').forEach(el => el.classList.remove('on'));
+  if (earnConsRow && earnConsRow !== cell && earnConsRow.isConnected) {
+    // 다른 E 연도로 전환: 이전 행의 하이라이트·분기 행 정리
+    earnConsRow.classList.remove('on');
+    let nxt = earnConsRow.nextElementSibling;
+    while (nxt && nxt.classList.contains('qrow')) { const t = nxt; nxt = nxt.nextElementSibling; t.remove(); }
+  }
   if (earnConsKey === key && box.style.display !== 'none') {   // 같은 셀 재클릭 -> 닫기
+    cell.classList.remove('on');
     box.style.display = 'none';
     earnConsKey = null;
+    earnConsRow = null;
     return;
   }
   earnConsKey = key;
+  earnConsRow = cell;
   cell.classList.add('on');
   box.style.display = '';
   box.innerHTML = '<div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div>';
