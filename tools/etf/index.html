@@ -178,8 +178,10 @@
   .earn-tbl tr { border-bottom: 1px solid #f0f2f7; }
   .earn-tbl tr:last-child { border-bottom: none; }
   .earn-tbl td { padding: 4px 0; font-size: 13px; }
-  .earn-tbl td.yr { color: #888; font-weight: 600; font-size: 12px; padding-right: 18px; white-space: nowrap; }
+  .earn-tbl td.yr { color: #888; font-weight: 600; font-size: 12px; padding-right: 16px; white-space: nowrap; }
   .earn-tbl td.yr .e-badge { color: #3f51b5; }
+  .earn-tbl td.op { text-align: right; color: #555; font-variant-numeric: tabular-nums; min-width: 86px; white-space: nowrap; }
+  .earn-tbl td.op .unit { color: #aaa; font-size: 11px; }
   .earn-tbl td.gv { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 64px; }
   .earn-tbl td.gv.up { color: #c62828; }
   .earn-tbl td.gv.down { color: #2a5ca8; }
@@ -766,16 +768,18 @@ function showEarnings(name) {
       else if (prev[0] <= 0 && cur[0] > 0) { gv = '흑전'; cls = 'up'; }
       else if (prev[0] > 0 && cur[0] <= 0) { gv = '적전'; cls = 'down'; }
       else { gv = '적지'; cls = 'flat'; }
+      const opEok = Math.round(cur[0] / 1e5);   // 천원 -> 억원
       cells += '<tr' + (est ? ' class="est" onclick="toggleEarnCons(this,\'' + safeAttr(e.code) +
-        '\',\'' + safeAttr(name) + '\',' + fy + ')"' : '') + ' title="영업이익 ' + fmtOp(cur[0]) + '">' +
+        '\',\'' + safeAttr(name) + '\',' + fy + ')"' : '') + '>' +
         '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
+        '<td class="op">' + opEok.toLocaleString() + '<span class="unit">억</span></td>' +
         '<td class="gv ' + cls + '">' + gv + '</td>' +
         '<td class="chev">' + (est ? '&#9656; 추이' : '') + '</td></tr>';
     }
     if (!cells) return;
     earnArea.innerHTML = '<div class="chart-card">' +
       '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
-      '<div class="chart-sub">전년 대비(YoY) · E = 컨센서스, 클릭하면 최근 1년 추정치 추이</div>' +
+      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스, 클릭하면 최근 1년 추정치 추이</div>' +
       '<table class="earn-tbl">' + cells + '</table>' +
       '<div id="earnCons" style="display:none"></div></div>';
     earnArea.style.display = '';
