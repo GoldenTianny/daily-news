@@ -769,12 +769,14 @@ function showEarnings(name) {
       else if (prev[0] > 0 && cur[0] <= 0) { gv = '적전'; cls = 'down'; }
       else { gv = '적지'; cls = 'flat'; }
       const opEok = Math.round(cur[0] / 1e5);   // 천원 -> 억원
-      cells += '<tr' + (est ? ' class="est" onclick="toggleEarnCons(this,\'' + safeAttr(e.code) +
-        '\',\'' + safeAttr(name) + '\',' + fy + ')"' : '') + '>' +
+      const click = est
+        ? 'toggleEarnCons(this,\'' + safeAttr(e.code) + '\',\'' + safeAttr(name) + '\',' + fy + ')'
+        : 'toggleEarnQ(this,\'' + safeAttr(e.code) + '\',' + fy + ')';
+      cells += '<tr class="est" onclick="' + click + '">' +
         '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
         '<td class="op">' + opEok.toLocaleString() + '<span class="unit">억</span></td>' +
         '<td class="gv ' + cls + '">' + gv + '</td>' +
-        '<td class="chev">' + (est ? '&#9656; 추이' : '') + '</td></tr>';
+        '<td class="chev">' + (est ? '&#9656; 추이' : '&#9656; 분기') + '</td></tr>';
     }
     if (!cells) return;
     earnArea.innerHTML = '<div class="chart-card">' +
@@ -784,6 +786,72 @@ function showEarnings(name) {
       '<div id="earnCons" style="display:none"></div></div>';
     earnArea.style.display = '';
   });
+}
+
+// 분기별 영업이익 (확정 연도 클릭 시 토글)
+let EARN_Q = null;   // Map(code -> Map(fy*10+q -> op))
+function loadQuarterly() {
+  if (EARN_Q) return EARN_Q;
+  EARN_Q = (async () => {
+    const resp = await fetch('/db/market/earnings/quarterly.parquet');
+    if (!resp.ok) return null;
+    const rows = await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
+    const m = new Map();
+    for (const r of rows) {
+      let e = m.get(r.code);
+      if (!e) m.set(r.code, e = new Map());
+      e.set(Number(r.fy) * 10 + Number(r.q), r.op);
+    }
+    return m;
+  })().catch(() => null);
+  return EARN_Q;
+}
+
+const growthCell = (cur, prev) => {   // [표시문자열, 색상클래스]
+  if (prev == null) return ['-', 'flat'];
+  if (prev > 0 && cur > 0) {
+    const g = (cur / prev - 1) * 100;
+    return [(g >= 0 ? '+' : '') + (Math.abs(g) >= 100 ? g.toFixed(0) : g.toFixed(1)) + '%',
+            g > 0.05 ? 'up' : g < -0.05 ? 'down' : 'flat'];
+  }
+  if (prev <= 0 && cur > 0) return ['흑전', 'up'];
+  if (prev > 0 && cur <= 0) return ['적전', 'down'];
+  return ['적지', 'flat'];
+};
+
+async function toggleEarnQ(cell, code, fy) {
+  const box = document.getElementById('earnCons');
+  if (!box) return;
+  const key = 'Q|' + code + '|' + fy;
+  earnArea.querySelectorAll('.earn-tbl tr.on').forEach(el => el.classList.remove('on'));
+  if (earnConsKey === key && box.style.display !== 'none') {
+    box.style.display = 'none';
+    earnConsKey = null;
+    return;
+  }
+  earnConsKey = key;
+  cell.classList.add('on');
+  box.style.display = '';
+  box.innerHTML = '<div class="chart-loading">분기 실적을 불러오는 중&hellip;</div>';
+  const m = await loadQuarterly();
+  if (earnConsKey !== key) return;
+  const e = m && m.get(code);
+  let rows = '';
+  if (e) {
+    for (let q = 1; q <= 4; q++) {
+      const cur = e.get(fy * 10 + q);
+      if (cur == null) continue;
+      const [gv, cls] = growthCell(cur, e.get((fy - 1) * 10 + q));
+      rows += '<tr><td class="yr">' + fy + '.' + q + 'Q</td>' +
+        '<td class="op">' + Math.round(cur / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
+        '<td class="gv ' + cls + '">' + gv + '</td><td class="chev"></td></tr>';
+    }
+  }
+  box.innerHTML = rows
+    ? '<div style="margin-top:10px;padding:8px 12px;background:#f8f9fd;border-radius:10px">' +
+      '<div class="chart-sub" style="margin:0 0 4px">' + fy + ' 분기별 영업이익 · 증가율은 전년 동기(YoY) 대비</div>' +
+      '<table class="earn-tbl">' + rows + '</table></div>'
+    : '<div class="chart-loading">' + fy + ' 분기 실적 데이터가 없습니다</div>';
 }
 
 // 컨센서스 추이 미니 차트 (E 연도 클릭 시 토글)

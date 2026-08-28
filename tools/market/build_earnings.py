@@ -34,12 +34,14 @@ def canonical_names():
 
 
 def parse_fixed(ws, names):
-    """확정 연간 영업이익 -> [(code, name, fy, op)]"""
+    """확정 영업이익 -> (연간 [(code, name, fy, op)], 분기 [(code, name, fy, q, op)])"""
     rows = list(ws.iter_rows(values_only=True))
     periods = rows[9]
     fy_cols = [(i, int(str(p)[:4])) for i, p in enumerate(periods)
                if re.fullmatch(r'\d{4}AS', str(p or ''))]
-    out = []
+    q_cols = [(i, int(str(p)[:4]), int(str(p)[4:6]) // 3) for i, p in enumerate(periods)
+              if re.fullmatch(r'\d{6}', str(p or ''))]        # YYYYMM(3/6/9/12) -> 분기
+    annual, quarterly = [], []
     for r in rows[13:]:
         code = str(r[0] or '').strip()
         if not code.startswith('A'):
@@ -48,8 +50,12 @@ def parse_fixed(ws, names):
         for i, fy in fy_cols:
             v = r[i] if i < len(r) else None
             if isinstance(v, numbers.Number):
-                out.append((code, nm, fy, float(v)))
-    return out
+                annual.append((code, nm, fy, float(v)))
+        for i, fy, q in q_cols:
+            v = r[i] if i < len(r) else None
+            if isinstance(v, numbers.Number):
+                quarterly.append((code, nm, fy, q, float(v)))
+    return annual, quarterly
 
 
 def parse_margin(ws, names):
@@ -115,11 +121,11 @@ def build(xlsx_path):
     names = canonical_names()
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
 
-    actual = []
+    actual, quarterly = [], []
     if 'fixed' in wb.sheetnames:
-        actual = parse_fixed(wb['fixed'], names)
-        print(f"OK  확정 실적: {len(actual):,}행 "
-              f"(연도 {min(a[2] for a in actual)}~{max(a[2] for a in actual)})")
+        actual, quarterly = parse_fixed(wb['fixed'], names)
+        print(f"OK  확정 실적: 연간 {len(actual):,}행 "
+              f"({min(a[2] for a in actual)}~{max(a[2] for a in actual)}) · 분기 {len(quarterly):,}행")
 
     cons_rows = []
     latest = {}   # (code, fy) -> (name, date, op)
@@ -152,6 +158,16 @@ def build(xlsx_path):
         TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
     print(f"OK  annual.parquet: {len(df):,}행, 기업 {df['code'].nunique():,}개 "
           f"({os.path.getsize(dst) // 1024} KB)")
+
+    if quarterly:
+        qdf = pd.DataFrame(quarterly, columns=['code', 'name', 'fy', 'q', 'op'])
+        qdf = qdf.sort_values(['code', 'fy', 'q']).reset_index(drop=True)
+        qdst = os.path.join(OUT, 'quarterly.parquet')
+        duckdb.connect().execute(f"""
+            COPY (SELECT code, name, CAST(fy AS SMALLINT) AS fy, CAST(q AS TINYINT) AS q,
+                         CAST(op AS DOUBLE) AS op FROM qdf)
+            TO '{qdst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
+        print(f"OK  quarterly.parquet: {len(qdf):,}행 ({os.path.getsize(qdst) // 1024} KB)")
 
     if cons_rows:
         cdf = pd.DataFrame(cons_rows, columns=['date', 'code', 'name', 'fy', 'op'])
