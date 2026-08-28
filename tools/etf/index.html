@@ -173,24 +173,21 @@
   .widget .wval.down { color: #2a5ca8; }
   @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
 
-  /* 연도별 영업이익 증가율 카드 */
-  .earn-row {
-    display: flex; flex-wrap: nowrap; gap: 8px; padding: 4px 0 6px;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
-  }
-  .earn-cell {
-    text-align: center; padding: 7px 12px; border-radius: 10px;
-    background: #f5f7fb; min-width: 64px; flex: none;
-  }
-  .earn-cell.est { border: 1px dashed #9fa8da; cursor: pointer; }
-  .earn-cell.est:hover { background: #e8eaf6; }
-  .earn-cell.on { background: #e8eaf6; border-style: solid; border-color: #3f51b5; }
-  .earn-cell .yr { font-size: 11px; color: #888; font-weight: 600; }
-  .earn-cell .yr .e-badge { color: #3f51b5; }
-  .earn-cell .gv { font-size: 14px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .earn-cell .gv.up { color: #c62828; }
-  .earn-cell .gv.down { color: #2a5ca8; }
-  .earn-cell .gv.flat { color: #888; }
+  /* 연도별 영업이익 증가율 표 (세로) */
+  .earn-tbl { border-collapse: collapse; margin-top: 2px; }
+  .earn-tbl tr { border-bottom: 1px solid #f0f2f7; }
+  .earn-tbl tr:last-child { border-bottom: none; }
+  .earn-tbl td { padding: 4px 0; font-size: 13px; }
+  .earn-tbl td.yr { color: #888; font-weight: 600; font-size: 12px; padding-right: 18px; white-space: nowrap; }
+  .earn-tbl td.yr .e-badge { color: #3f51b5; }
+  .earn-tbl td.gv { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 64px; }
+  .earn-tbl td.gv.up { color: #c62828; }
+  .earn-tbl td.gv.down { color: #2a5ca8; }
+  .earn-tbl td.gv.flat { color: #888; }
+  .earn-tbl tr.est { cursor: pointer; }
+  .earn-tbl tr.est:hover td { background: #f5f7fb; }
+  .earn-tbl tr.on td { background: #e8eaf6; }
+  .earn-tbl td.chev { color: #9fa8da; font-size: 11px; padding-left: 8px; }
 
   /* 종목 차트 (수정주가 vs 목표주가) */
   .chart-card {
@@ -769,16 +766,17 @@ function showEarnings(name) {
       else if (prev[0] <= 0 && cur[0] > 0) { gv = '흑전'; cls = 'up'; }
       else if (prev[0] > 0 && cur[0] <= 0) { gv = '적전'; cls = 'down'; }
       else { gv = '적지'; cls = 'flat'; }
-      cells += '<div class="earn-cell' + (est ? ' est' : '') + '" title="영업이익 ' + fmtOp(cur[0]) + '"' +
-        (est ? ' onclick="toggleEarnCons(this,\'' + safeAttr(e.code) + '\',\'' + safeAttr(name) + '\',' + fy + ')"' : '') + '>' +
-        '<div class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</div>' +
-        '<div class="gv ' + cls + '">' + gv + '</div></div>';
+      cells += '<tr' + (est ? ' class="est" onclick="toggleEarnCons(this,\'' + safeAttr(e.code) +
+        '\',\'' + safeAttr(name) + '\',' + fy + ')"' : '') + ' title="영업이익 ' + fmtOp(cur[0]) + '">' +
+        '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
+        '<td class="gv ' + cls + '">' + gv + '</td>' +
+        '<td class="chev">' + (est ? '&#9656; 추이' : '') + '</td></tr>';
     }
     if (!cells) return;
     earnArea.innerHTML = '<div class="chart-card">' +
       '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
       '<div class="chart-sub">전년 대비(YoY) · E = 컨센서스, 클릭하면 최근 1년 추정치 추이</div>' +
-      '<div class="earn-row">' + cells + '</div>' +
+      '<table class="earn-tbl">' + cells + '</table>' +
       '<div id="earnCons" style="display:none"></div></div>';
     earnArea.style.display = '';
   });
@@ -790,7 +788,7 @@ async function toggleEarnCons(cell, code, name, fy) {
   const box = document.getElementById('earnCons');
   if (!box) return;
   const key = code + '|' + fy;
-  earnArea.querySelectorAll('.earn-cell.on').forEach(el => el.classList.remove('on'));
+  earnArea.querySelectorAll('.earn-tbl tr.on').forEach(el => el.classList.remove('on'));
   if (earnConsKey === key && box.style.display !== 'none') {   // 같은 셀 재클릭 -> 닫기
     box.style.display = 'none';
     earnConsKey = null;
