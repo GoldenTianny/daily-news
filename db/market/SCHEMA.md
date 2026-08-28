@@ -53,6 +53,28 @@
 - 범위: 2025-09 ~ (가격 DB 시작일 + 1년), 월당 약 7만 행·250KB
 - 갱신: `python3 tools/market/build_rs.py` — 미계산 날짜만 추가하므로 일일 실행은 수 초
 
+## db/market/earnings/ — 연간 영업이익 실적·컨센서스
+
+원본 `concensus_for_db*.xlsx` (시트: `fixed` 확정 실적, `YYYY annual margin` 컨센서스 추이).
+`python3 tools/market/build_earnings.py <원본.xlsx>` 로 갱신 (ingest_daily.py가 시트 구성으로 자동 인식).
+
+**annual.parquet** — 회계연도별 영업이익 (단위: 천원)
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `code` / `name` | VARCHAR | 종목코드 / 종목명(가격 DB 명칭으로 정규화) |
+| `fy` | SMALLINT | 회계연도 |
+| `op` | DOUBLE | 영업이익(천원) |
+| `src` | VARCHAR | 'A' 확정 실적 / 'E' 최신 컨센서스 |
+
+- 확정(A)은 2019~, 4분기 실적 확정 시 해당 연도가 자동 추가됨 (fixed 시트의 AS 컬럼 기준)
+- 컨센서스(E)는 확정이 없는 연도만 수록 (현재 2026·2027)
+
+**consensus/YYYY-MM.parquet** — 연간 컨센서스의 일별 추이 (date, code, name, fy, op).
+날짜 단위 병합이라 짧은 기간 원본을 올려도 과거가 유지됨. Base Date가 날짜가 아닌 컬럼('CPD-1TD')은 제외.
+
+- 소비처: ETF 검색기 종목 화면의 "연도별 영업이익 증가율" 카드 (E 연도 클릭 시 추이 차트)
+
 ## 쿼리 예시 (DuckDB)
 
 ```python

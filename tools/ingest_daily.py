@@ -57,6 +57,16 @@ def main():
     if len(sys.argv) < 2:
         sys.exit('사용법: python3 tools/ingest_daily.py <ETF_price_concensus_YYYYMMDD.xlsx> [YYYY-MM-DD]')
     xlsx = sys.argv[1]
+
+    # 실적·컨센서스 파일(concensus_for_db*.xlsx)이면 earnings 적재만 수행
+    sheets = openpyxl.load_workbook(xlsx, read_only=True).sheetnames
+    if any('annual margin' in s for s in sheets):
+        import build_earnings
+        print(f'== 영업이익 실적·컨센서스 파일 · {os.path.basename(xlsx)}')
+        build_earnings.build(xlsx)
+        print('== 완료')
+        return
+
     date_key = sys.argv[2] if len(sys.argv) > 2 else detect_date(xlsx)
     if not date_key:
         sys.exit('오류: 기준일을 인식하지 못했습니다. 두 번째 인자로 YYYY-MM-DD를 지정해주세요.')
