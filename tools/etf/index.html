@@ -174,10 +174,13 @@
   @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
 
   /* 연도별 영업이익 증가율 카드 */
-  .earn-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 2px; }
+  .earn-row {
+    display: flex; flex-wrap: nowrap; gap: 8px; padding: 4px 0 6px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
   .earn-cell {
     text-align: center; padding: 7px 12px; border-radius: 10px;
-    background: #f5f7fb; min-width: 64px;
+    background: #f5f7fb; min-width: 64px; flex: none;
   }
   .earn-cell.est { border: 1px dashed #9fa8da; cursor: pointer; }
   .earn-cell.est:hover { background: #e8eaf6; }
@@ -814,8 +817,8 @@ async function toggleEarnCons(cell, code, name, fy) {
     return;
   }
 
-  const W = Math.max(300, earnArea.clientWidth - 40), H = 150;
-  const L = 66, R = 12, T = 26, B = 20;
+  const W = Math.max(300, earnArea.clientWidth - 40), H = 170;
+  const L = 66, R = 12, T = 26, B = 30;
   const x0 = Date.parse(series[0][0]), x1 = Date.parse(series[series.length - 1][0]);
   let vmin = Infinity, vmax = -Infinity;
   for (const [, v] of series) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
@@ -831,6 +834,13 @@ async function toggleEarnCons(cell, code, name, fy) {
   }
   g += '<text x="' + L + '" y="14" font-size="11" font-weight="600" fill="#666">' + fy +
     'E 영업이익 컨센서스 추이 (최근 1년)</text>';
+  // X축 날짜 라벨 (격월 YY.MM)
+  for (const mo of monthsList(currentDate, 13).filter((m, i) => i % 2 === 1)) {
+    const t = Date.parse(mo + '-01');
+    if (t < x0 || t > x1) continue;
+    g += '<text x="' + X(mo + '-01').toFixed(1) + '" y="' + (H - 8) +
+      '" text-anchor="middle" font-size="10" fill="#999">' + mo.slice(2).replace('-', '.') + '</text>';
+  }
   const path = series.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('');
   const first = series[0][1], last = series[series.length - 1][1];
   const chg = first > 0 ? ' &middot; 1년간 ' + ((last / first - 1) * 100).toFixed(1) + '%' : '';
