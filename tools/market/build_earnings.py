@@ -175,6 +175,64 @@ def build(xlsx_path):
         print(f"OK  consensus/: {len(cdf):,}행 | 월 파일 {n_new}개 갱신, {n_same}개 동일")
 
 
+def build_daily(xlsx_path, date_key):
+    """신형 일일 파일('수정주가, 목표주가' 시트)의 영업이익 컨센서스(E121500.M, YYYYAS)를
+    annual.parquet E행 갱신 + consensus/ 월별 추이 1일 추가로 반영"""
+    wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+    sheet = '수정주가, 목표주가'
+    if sheet not in wb.sheetnames:
+        return
+    rows = list(wb[sheet].iter_rows(values_only=True))
+    fy_cols = []
+    for i, acc in enumerate(rows[8]):
+        m = re.fullmatch(r'(\d{4})AS', str(rows[9][i] or ''))
+        if str(acc or '') == 'E121500.M' and m:
+            fy_cols.append((i, int(m.group(1))))
+    if not fy_cols:
+        return
+    names = canonical_names()
+    recs = []
+    for r in rows[13:]:
+        code = str(r[0] or '').strip()
+        if not code.startswith('A'):
+            continue
+        nm = names.get(code) or re.sub(r'^\(주\)|^㈜', '', str(r[1] or '').strip())
+        for i, fy in fy_cols:
+            v = r[i] if i < len(r) else None
+            if isinstance(v, numbers.Number):
+                recs.append((date_key, code, nm, fy, float(v)))
+    if not recs:
+        return
+
+    # 컨센서스 추이에 1일 추가
+    cdf = pd.DataFrame(recs, columns=['date', 'code', 'name', 'fy', 'op'])
+    n_new, n_same = write_monthly(cdf)
+    print(f"OK  {date_key} 영업이익 컨센서스: {len(cdf):,}행 (연도 "
+          f"{sorted({f for _, f in fy_cols})}) | 월 파일 {n_new}개 갱신, {n_same}개 동일")
+
+    # annual.parquet의 E행을 최신값으로 교체 (확정 A가 있는 연도는 건너뜀)
+    dst = os.path.join(OUT, 'annual.parquet')
+    ann = pd.read_parquet(dst)
+    confirmed = set(zip(ann[ann['src'] == 'A']['code'], ann[ann['src'] == 'A']['fy'].astype(int)))
+    newmap = {(c, fy): (nm, v) for _, c, nm, fy, v in recs if (c, fy) not in confirmed}
+    keep = ann[[not ((c, int(fy)) in newmap and s == 'E')
+                for c, fy, s in zip(ann['code'], ann['fy'], ann['src'])]]
+    add = pd.DataFrame([(c, nm, fy, v, 'E') for (c, fy), (nm, v) in newmap.items()],
+                       columns=['code', 'name', 'fy', 'op', 'src'])
+    df = pd.concat([keep, add]).sort_values(['code', 'fy']).reset_index(drop=True)
+    df['fy'] = df['fy'].astype('int64')
+    prev = ann.copy()
+    prev['fy'] = prev['fy'].astype('int64')
+    if prev.sort_values(['code', 'fy']).reset_index(drop=True).equals(df):
+        print("OK  annual.parquet: 변경 없음")
+    else:
+        duckdb.connect().execute(f"""
+            COPY (SELECT code, name, CAST(fy AS SMALLINT) AS fy,
+                         CAST(op AS DOUBLE) AS op, src FROM df)
+            TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
+        print(f"OK  annual.parquet 갱신: {len(df):,}행 (E {len(add):,}건 최신화)")
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit('사용법: python3 tools/market/build_earnings.py <concensus_for_db*.xlsx>')
