@@ -954,8 +954,39 @@ async function toggleEarnCons(cell, code, name, fy) {
   const first = series[0][1], last = series[series.length - 1][1];
   const chg = first > 0 ? ' &middot; 1년간 ' + ((last / first - 1) * 100).toFixed(1) + '%' : '';
   g += '<path d="' + path + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
-  box.innerHTML = '<div style="margin-top:10px"><svg viewBox="0 0 ' + W + ' ' + H + '" style="display:block;width:100%">' + g + '</svg>' +
-    '<div class="chart-sub" style="margin:4px 0 0">현재 ' + fmtOp(last) + chg + '</div></div>';
+  box.innerHTML = '<div class="chart-wrap" style="margin-top:10px"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
+    '<line id="ecCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    '<circle id="ecDot" r="3" fill="#3f51b5" style="display:none"/>' +
+    '</svg><div class="chart-tip" id="ecTip"></div></div>' +
+    '<div class="chart-sub" style="margin:4px 0 0">현재 ' + fmtOp(last) + chg + '</div>';
+
+  // 호버 툴팁: 가장 가까운 날짜의 컨센서스 값 + 직전 변경일 대비 변화
+  const svg = box.querySelector('svg');
+  const tip = document.getElementById('ecTip');
+  const cross = document.getElementById('ecCross');
+  const dot = document.getElementById('ecDot');
+  svg.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const mx = (ev.clientX - r.left) / r.width * W;
+    if (mx < L || mx > W - R) { tip.style.display = 'none'; cross.style.display = 'none'; dot.style.display = 'none'; return; }
+    let bi = 0;
+    for (let i = 1; i < series.length; i++)
+      if (Math.abs(X(series[i][0]) - mx) < Math.abs(X(series[bi][0]) - mx)) bi = i;
+    const [d, v] = series[bi];
+    const pv = bi > 0 ? series[bi - 1][1] : null;
+    const dchg = (pv && pv > 0 && Math.abs(v / pv - 1) > 0.0005)
+      ? ' <span style="opacity:.75">(' + ((v / pv - 1) * 100 >= 0 ? '+' : '') + ((v / pv - 1) * 100).toFixed(1) + '%)</span>' : '';
+    cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
+    dot.setAttribute('cx', X(d)); dot.setAttribute('cy', Y(v)); dot.style.display = '';
+    tip.innerHTML = d + '<br>영업이익 ' + fmtOp(v) + dchg;
+    tip.style.display = 'block';
+    const px = X(d) / W * r.width;
+    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
+    tip.style.top = '6px';
+  });
+  svg.addEventListener('mouseleave', () => {
+    tip.style.display = 'none'; cross.style.display = 'none'; dot.style.display = 'none';
+  });
 }
 
 function renderStockChart(name, s) {
