@@ -982,7 +982,8 @@ async function toggleEarnCons(cell, code, name, fy) {
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
-    tip.style.top = '6px';
+    tip.style.top = 'auto';
+    tip.style.bottom = (B / H * r.height + 6) + 'px';   // X축 라벨 바로 위 (하단 고정)
   });
   svg.addEventListener('mouseleave', () => {
     tip.style.display = 'none'; cross.style.display = 'none'; dot.style.display = 'none';
@@ -1096,7 +1097,8 @@ function renderStockChart(name, s) {
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
-    tip.style.top = '8px';
+    tip.style.top = 'auto';
+    tip.style.bottom = (B / H * r.height + 6) + 'px';   // X축 라벨 바로 위 (하단 고정)
   });
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
 }
