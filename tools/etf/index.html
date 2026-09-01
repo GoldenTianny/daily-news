@@ -343,7 +343,7 @@ let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 �
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
 let RSM = null;        // RS 등급 급등 {top:[[name,delta,rs0]], d0, d20} (db/market/rs 기반)
-let OPM = null;        // 이익 컨센서스 상향 ETF {fy, d0, d5, d10, top5:[[code,chg,cov]], top10:[...]} (db/market/earnings/consensus 기반)
+let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d5, d10, top5:[[code,chg,cov]], top10:[...]}] (db/market/earnings/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let stockSortDir = -1; // -1 내림차순, 1 오름차순 (같은 컬럼 재클릭 시 토글)
@@ -993,60 +993,65 @@ async function toggleEarnCons(cell, code, name, fy) {
 
 // ===== 이익 컨센서스 상향 ETF 랭킹 (첫 화면 위젯) =====
 // 각 ETF의 Σ(영업이익 컨센서스 × 보유비중)이 5·10영업일 전 대비 얼마나 변했는지.
-// 첫 미확정 연도(현재 2026E) 기준, 두 날짜 모두 값이 있는 종목만 짝지어 비교.
+// 컨센서스가 있는 연도(현재 2026E·2027E)별로 각각 계산, 두 날짜 모두 값이 있는 종목만 짝지어 비교.
 async function loadOpMomentum(date) {
   const rows = [];
   for (const mo of monthsList(date, 2)) rows.push(...await readMonth('e', mo));
-  let minFy = Infinity;
-  for (const r of rows) { const fy = Number(r.fy); if (fy < minFy) minFy = fy; }
-  if (!isFinite(minFy)) return null;
-  const dset = new Set();
-  const byStock = new Map();   // 종목명 -> Map(date -> op)
+  const byFy = new Map();   // fy -> Map(종목명 -> Map(date -> op))
   for (const r of rows) {
-    if (Number(r.fy) !== minFy) continue;
     const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
     if (d > date) continue;
-    dset.add(d);
-    let m = byStock.get(r.name);
-    if (!m) byStock.set(r.name, m = new Map());
+    const fy = Number(r.fy);
+    let stocks = byFy.get(fy);
+    if (!stocks) byFy.set(fy, stocks = new Map());
+    let m = stocks.get(r.name);
+    if (!m) stocks.set(r.name, m = new Map());
     m.set(d, r.op);
   }
-  const ds = Array.from(dset).sort();
-  if (ds.length < 6) return null;
-  const d0 = ds[ds.length - 1];
-  const d5 = ds[ds.length - 6];
-  const d10 = ds.length >= 11 ? ds[ds.length - 11] : null;
 
-  const agg = new Map();   // etfCode -> {cov, s0_5, s5, s0_10, s10}
-  for (const [name, m] of byStock) {
-    const v0 = m.get(d0);
-    if (v0 == null) continue;
-    const entries = DATA[name];
-    if (!entries) continue;
-    const v5 = m.get(d5), v10 = d10 ? m.get(d10) : null;
-    for (const e of entries) {
-      const w = e[2];
-      if (w == null) continue;
-      let a = agg.get(e[0]);
-      if (!a) agg.set(e[0], a = { cov: 0, s0_5: 0, s5: 0, s0_10: 0, s10: 0 });
-      a.cov += w;
-      if (v5 != null) { a.s0_5 += v0 * w; a.s5 += v5 * w; }
-      if (v10 != null) { a.s0_10 += v0 * w; a.s10 += v10 * w; }
+  const result = [];
+  for (const fy of Array.from(byFy.keys()).sort((a, b) => a - b)) {
+    const stocks = byFy.get(fy);
+    const dset = new Set();
+    for (const m of stocks.values()) for (const d of m.keys()) dset.add(d);
+    const ds = Array.from(dset).sort();
+    if (ds.length < 6) continue;
+    const d0 = ds[ds.length - 1];
+    const d5 = ds[ds.length - 6];
+    const d10 = ds.length >= 11 ? ds[ds.length - 11] : null;
+
+    const agg = new Map();   // etfCode -> {cov, s0_5, s5, s0_10, s10}
+    for (const [name, m] of stocks) {
+      const v0 = m.get(d0);
+      if (v0 == null) continue;
+      const entries = DATA[name];
+      if (!entries) continue;
+      const v5 = m.get(d5), v10 = d10 ? m.get(d10) : null;
+      for (const e of entries) {
+        const w = e[2];
+        if (w == null) continue;
+        let a = agg.get(e[0]);
+        if (!a) agg.set(e[0], a = { cov: 0, s0_5: 0, s5: 0, s0_10: 0, s10: 0 });
+        a.cov += w;
+        if (v5 != null) { a.s0_5 += v0 * w; a.s5 += v5 * w; }
+        if (v10 != null) { a.s0_10 += v0 * w; a.s10 += v10 * w; }
+      }
     }
+    const rank = (k0, kn) => {
+      const out = [];
+      for (const [code, a] of agg) {
+        if (a.cov < 20 || a[kn] <= 0) continue;       // 커버리지 20% 미만·비교합 0 이하 제외
+        if (LEV.test(ETFS_CUR[code] || '')) continue;
+        const chg = a[k0] / a[kn] - 1;
+        if (chg > 0.0005) out.push([code, chg, a.cov]);
+      }
+      out.sort((x, y) => y[1] - x[1]);
+      return out.slice(0, 10);
+    };
+    result.push({ fy: fy, d0: d0, d5: d5, d10: d10,
+                  top5: rank('s0_5', 's5'), top10: d10 ? rank('s0_10', 's10') : [] });
   }
-  const rank = (k0, kn) => {
-    const out = [];
-    for (const [code, a] of agg) {
-      if (a.cov < 20 || a[kn] <= 0) continue;         // 커버리지 20% 미만·비교합 0 이하 제외
-      if (LEV.test(ETFS_CUR[code] || '')) continue;
-      const chg = a[k0] / a[kn] - 1;
-      if (chg > 0.0005) out.push([code, chg, a.cov]);
-    }
-    out.sort((x, y) => y[1] - x[1]);
-    return out.slice(0, 10);
-  };
-  return { fy: minFy, d0: d0, d5: d5, d10: d10,
-           top5: rank('s0_5', 's5'), top10: d10 ? rank('s0_10', 's10') : [] };
+  return result.length ? result : null;
 }
 
 // ===== ETF 구성종목 컨센서스 영업이익 총합 추이 =====
@@ -1458,22 +1463,28 @@ function renderIntro() {
   html += tpmWidget('목표주가 상향 모멘텀 TOP 10', '&#127919;', TPM && TPM.up);
   html += tpmWidget('목표주가 하향 모멘텀 TOP 10', '&#129482;', TPM && TPM.down);
 
-  // 이익 컨센서스 상향 ETF 위젯 (구성종목 영업이익 전망 × 비중 가중합의 변화율)
-  const opmWidget = (title, emoji, list, dPast) => {
+  // 이익 컨센서스 상향 ETF 위젯 — 연도(2026E·2027E) × 기간(5·10영업일)별
+  const opmWidget = (m, title, emoji, list, dPast) => {
     let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
     if (!OPM) {
       h += '<div class="sub">컨센서스 불러오는 중&hellip;</div>';
     } else if (!list || !list.length) {
       h += '<div class="sub">데이터가 없습니다</div>';
     } else {
-      h += '<div class="sub">구성종목 ' + OPM.fy + 'E 영업이익 컨센서스 &times; 비중 가중합의 변화율 (' +
-        dPast + ' &rarr; ' + OPM.d0 + ') &middot; 커버리지 20% 이상 &middot; 레버리지·인버스 제외</div>';
+      h += '<div class="sub">구성종목 ' + m.fy + 'E 영업이익 컨센서스 &times; 비중 가중합의 변화율 (' +
+        dPast + ' &rarr; ' + m.d0 + ') &middot; 커버리지 20% 이상 &middot; 레버리지·인버스 제외</div>';
       list.forEach((t, i) => { h += tpmRow(i, t); });
     }
     return h + '</div>';
   };
-  html += opmWidget('이익 컨센서스 상향 TOP 10 (5영업일)', '&#128185;', OPM && OPM.top5, OPM && OPM.d5);
-  html += opmWidget('이익 컨센서스 상향 TOP 10 (10영업일)', '&#128176;', OPM && OPM.top10, OPM && OPM.d10);
+  if (!OPM) {
+    html += opmWidget(null, '이익 컨센서스 상향 TOP 10', '&#128185;', null, null);
+  } else {
+    for (const m of OPM) {
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (5영업일)', '&#128185;', m.top5, m.d5);
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (10영업일)', '&#128176;', m.top10, m.d10);
+    }
+  }
 
   // 개별 종목 목표주가 변화 위젯 (클릭 시 종목 검색)
   const stkTpWidget = (title, emoji, list) => {
@@ -1595,7 +1606,7 @@ async function loadDateData(date) {
     OPM = null;
     loadOpMomentum(date).then(t => {
       if (currentDate !== reqDate) return;
-      OPM = t || { fy: null, d0: null, d5: null, d10: null, top5: [], top10: [] };
+      OPM = t || [];
       if (introArea.style.display !== 'none') renderIntro();
     });
     RSM = null;
