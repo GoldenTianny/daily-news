@@ -343,7 +343,7 @@ let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 �
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
 let RSM = null;        // RS 등급 급등 {top:[[name,delta,rs0]], d0, d20} (db/market/rs 기반)
-let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d5, d10, top5:[[code,chg,cov]], top10:[...]}] (db/market/earnings/consensus 기반)
+let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d10, d20, top10:[[code,chg,cov]], top20:[...]}] (db/market/earnings/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let stockSortDir = -1; // -1 내림차순, 1 오름차순 (같은 컬럼 재클릭 시 토글)
@@ -992,11 +992,11 @@ async function toggleEarnCons(cell, code, name, fy) {
 
 
 // ===== 이익 컨센서스 상향 ETF 랭킹 (첫 화면 위젯) =====
-// 각 ETF의 Σ(영업이익 컨센서스 × 보유비중)이 5·10영업일 전 대비 얼마나 변했는지.
+// 각 ETF의 Σ(영업이익 컨센서스 × 보유비중)이 10·20영업일 전 대비 얼마나 변했는지.
 // 컨센서스가 있는 연도(현재 2026E·2027E)별로 각각 계산, 두 날짜 모두 값이 있는 종목만 짝지어 비교.
 async function loadOpMomentum(date) {
   const rows = [];
-  for (const mo of monthsList(date, 2)) rows.push(...await readMonth('e', mo));
+  for (const mo of monthsList(date, 3)) rows.push(...await readMonth('e', mo));
   const byFy = new Map();   // fy -> Map(종목명 -> Map(date -> op))
   for (const r of rows) {
     const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -1015,26 +1015,26 @@ async function loadOpMomentum(date) {
     const dset = new Set();
     for (const m of stocks.values()) for (const d of m.keys()) dset.add(d);
     const ds = Array.from(dset).sort();
-    if (ds.length < 6) continue;
+    if (ds.length < 11) continue;
     const d0 = ds[ds.length - 1];
-    const d5 = ds[ds.length - 6];
-    const d10 = ds.length >= 11 ? ds[ds.length - 11] : null;
+    const d10 = ds[ds.length - 11];
+    const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
 
-    const agg = new Map();   // etfCode -> {cov, s0_5, s5, s0_10, s10}
+    const agg = new Map();   // etfCode -> {cov, s0_10, s10, s0_20, s20}
     for (const [name, m] of stocks) {
       const v0 = m.get(d0);
       if (v0 == null) continue;
       const entries = DATA[name];
       if (!entries) continue;
-      const v5 = m.get(d5), v10 = d10 ? m.get(d10) : null;
+      const v10 = m.get(d10), v20 = d20 ? m.get(d20) : null;
       for (const e of entries) {
         const w = e[2];
         if (w == null) continue;
         let a = agg.get(e[0]);
-        if (!a) agg.set(e[0], a = { cov: 0, s0_5: 0, s5: 0, s0_10: 0, s10: 0 });
+        if (!a) agg.set(e[0], a = { cov: 0, s0_10: 0, s10: 0, s0_20: 0, s20: 0 });
         a.cov += w;
-        if (v5 != null) { a.s0_5 += v0 * w; a.s5 += v5 * w; }
         if (v10 != null) { a.s0_10 += v0 * w; a.s10 += v10 * w; }
+        if (v20 != null) { a.s0_20 += v0 * w; a.s20 += v20 * w; }
       }
     }
     const rank = (k0, kn) => {
@@ -1048,8 +1048,8 @@ async function loadOpMomentum(date) {
       out.sort((x, y) => y[1] - x[1]);
       return out.slice(0, 10);
     };
-    result.push({ fy: fy, d0: d0, d5: d5, d10: d10,
-                  top5: rank('s0_5', 's5'), top10: d10 ? rank('s0_10', 's10') : [] });
+    result.push({ fy: fy, d0: d0, d10: d10, d20: d20,
+                  top10: rank('s0_10', 's10'), top20: d20 ? rank('s0_20', 's20') : [] });
   }
   return result.length ? result : null;
 }
@@ -1481,8 +1481,8 @@ function renderIntro() {
     html += opmWidget(null, '이익 컨센서스 상향 TOP 10', '&#128185;', null, null);
   } else {
     for (const m of OPM) {
-      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (5영업일)', '&#128185;', m.top5, m.d5);
-      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (10영업일)', '&#128176;', m.top10, m.d10);
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (10영업일)', '&#128185;', m.top10, m.d10);
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (20영업일)', '&#128176;', m.top20, m.d20);
     }
   }
 
