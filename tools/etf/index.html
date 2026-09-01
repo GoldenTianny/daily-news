@@ -1021,8 +1021,11 @@ async function loadOpMomentum(date) {
     const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
 
     // ETF 상세의 '구성종목 영업이익 컨센서스 총합' 차트와 동일한 값(현재 구성·비중 고정,
-    // 날짜별 컨센서스 총합)의 변화율 — 위젯 수치가 차트에서 보이는 움직임과 일치하도록
-    const agg = new Map();   // etfCode -> {cov, s0, s10, s20}
+    // 날짜별 컨센서스 총합)의 변화율 — 위젯 수치가 차트에서 보이는 움직임과 일치하도록.
+    // 단, 비교 기간 중 컨센서스가 생기거나 사라진 종목(비중 합 1%p 초과)이 있는 ETF는
+    // 총합 변화가 상향이 아닌 커버리지 변동을 반영하므로 랭킹에서 제외
+    // (예: 대형 적자 컨센서스 소멸 시 총합이 급등해 보이는 착시)
+    const agg = new Map();   // etfCode -> {cov, s0, s10, s20, mm10, mm20}
     for (const [name, m] of stocks) {
       const entries = DATA[name];
       if (!entries) continue;
@@ -1032,16 +1035,18 @@ async function loadOpMomentum(date) {
         const w = e[2];
         if (w == null || w <= 0) continue;
         let a = agg.get(e[0]);
-        if (!a) agg.set(e[0], a = { cov: 0, s0: 0, s10: 0, s20: 0 });
+        if (!a) agg.set(e[0], a = { cov: 0, s0: 0, s10: 0, s20: 0, mm10: 0, mm20: 0 });
         if (v0 != null) { a.s0 += v0 * w; a.cov += w; }
         if (v10 != null) a.s10 += v10 * w;
         if (v20 != null) a.s20 += v20 * w;
+        if ((v0 != null) !== (v10 != null)) a.mm10 += w;
+        if (d20 && (v0 != null) !== (v20 != null)) a.mm20 += w;
       }
     }
-    const rank = kn => {
+    const rank = (kn, mm) => {
       const out = [];
       for (const [code, a] of agg) {
-        if (a.cov < 20 || a[kn] <= 0) continue;       // 커버리지 20% 미만·비교합 0 이하 제외
+        if (a.cov < 20 || a[kn] <= 0 || a[mm] > 1) continue;   // 커버리지 20% 미만·변동 1%p 초과 제외
         if (LEV.test(ETFS_CUR[code] || '')) continue;
         const chg = a.s0 / a[kn] - 1;
         if (chg > 0.0005) out.push([code, chg, a.cov]);
@@ -1050,7 +1055,7 @@ async function loadOpMomentum(date) {
       return out.slice(0, 10);
     };
     result.push({ fy: fy, d0: d0, d10: d10, d20: d20,
-                  top10: rank('s10'), top20: d20 ? rank('s20') : [] });
+                  top10: rank('s10', 'mm10'), top20: d20 ? rank('s20', 'mm20') : [] });
   }
   return result.length ? result : null;
 }
@@ -1473,7 +1478,7 @@ function renderIntro() {
       h += '<div class="sub">데이터가 없습니다</div>';
     } else {
       h += '<div class="sub">구성종목 ' + m.fy + 'E 영업이익 컨센서스 총합(ETF 컨센서스 차트 값)의 변화율 (' +
-        dPast + ' &rarr; ' + m.d0 + ') &middot; 커버리지 20% 이상 &middot; 레버리지·인버스 제외</div>';
+        dPast + ' &rarr; ' + m.d0 + ') &middot; 커버리지 20% 이상 &middot; 기간 중 커버리지 변동·레버리지·인버스 제외</div>';
       list.forEach((t, i) => { h += tpmRow(i, t); });
     }
     return h + '</div>';
