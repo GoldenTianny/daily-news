@@ -991,27 +991,29 @@ async function toggleEarnCons(cell, code, name, fy) {
 
 
 // ===== ETF 구성종목 컨센서스 영업이익 총합 추이 =====
-// 기준일 구성종목(이름 매칭)의 연간 영업이익 컨센서스를 날짜별로 단순 합산 — 구성은 기준일로 고정
+// 기준일 구성종목(이름 매칭)의 연간 영업이익 컨센서스를 날짜별로 보유비중 가중 합산 — 구성은 기준일로 고정
 const ETF_CONS_CACHE = new Map();   // 'code|기준일' -> {fys:[fy], byFy:Map(fy -> [[date,합계,종목수]])}
 
 async function loadEtfConsTotal(code) {
   const key = code + '|' + currentDate;
   if (ETF_CONS_CACHE.has(key)) return ETF_CONS_CACHE.get(key);
-  const names = new Set((HOLDINGS[code] || []).map(e => e[0]));
+  const wByName = new Map();   // 종목명 -> 비중(0~1). 비중 없는 항목은 제외
+  for (const [nm, w] of (HOLDINGS[code] || [])) if (w != null) wByName.set(nm, w / 100);
   // 컨센서스 추이 DB 시작(2024-12)부터 기준일까지의 월 파일
   const [y, m] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
   const nMonths = Math.max(1, (y - 2024) * 12 + m - 11);
   const byFy = new Map();
   await Promise.all(monthsList(currentDate, nMonths).map(async mo => {
     for (const r of await readMonth('e', mo)) {
-      if (!names.has(r.name)) continue;
+      const w = wByName.get(r.name);
+      if (w == null) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
       if (d > currentDate) continue;
       const fy = Number(r.fy);
       let m2 = byFy.get(fy);
       if (!m2) byFy.set(fy, m2 = new Map());
       const acc = m2.get(d) || [0, 0];
-      acc[0] += r.op; acc[1]++;
+      acc[0] += r.op * w; acc[1]++;
       m2.set(d, acc);
     }
   }));
@@ -1106,7 +1108,7 @@ function renderEtfConsChart(code, name, res) {
     '<line id="ecsCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
     dots + '</svg><div class="chart-tip" id="ecsTip"></div></div>' +
     '<div class="chart-sub">기준일 구성 ' + (HOLDINGS[code] || []).length + '개 중 컨센서스 커버 ' + cover +
-    '개 종목의 연간 영업이익 전망 단순 합산' + growth + ' &middot; 구성은 기준일 고정, 과거 커버리지 변동 포함</div></div>';
+    '개 종목의 연간 영업이익 전망 &times; 보유비중(%) 가중 합산' + growth + ' &middot; 구성은 기준일 고정, 과거 커버리지 변동 포함</div></div>';
   earnArea.style.display = '';
 
   // 호버 툴팁: 가장 가까운 날짜의 연도별 총합 + 커버 종목 수
