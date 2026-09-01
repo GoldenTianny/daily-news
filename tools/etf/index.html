@@ -1021,15 +1021,21 @@ async function loadOpMomentum(date) {
     const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
 
     // ETF 상세의 '구성종목 영업이익 컨센서스 총합' 차트와 동일한 값(현재 구성·비중 고정,
-    // 날짜별 컨센서스 총합)의 변화율 — 위젯 수치가 차트에서 보이는 움직임과 일치하도록.
-    // 단, 비교 기간 중 컨센서스가 생기거나 사라진 종목(비중 합 1%p 초과)이 있는 ETF는
-    // 총합 변화가 상향이 아닌 커버리지 변동을 반영하므로 랭킹에서 제외
-    // (예: 대형 적자 컨센서스 소멸 시 총합이 급등해 보이는 착시)
+    // 날짜별 컨센서스 총합, 중단된 컨센서스는 마지막 값 이월)의 변화율.
+    // 비교 기간 중 컨센서스가 새로 생긴 종목(비중 합 1%p 초과)이 있는 ETF는
+    // 총합 변화가 상향이 아닌 커버리지 추가를 반영하므로 랭킹에서 제외
     const agg = new Map();   // etfCode -> {cov, s0, s10, s20, mm10, mm20}
     for (const [name, m] of stocks) {
       const entries = DATA[name];
       if (!entries) continue;
-      const v0 = m.get(d0), v10 = m.get(d10), v20 = d20 ? m.get(d20) : null;
+      // 해당일 이전 가장 최근 컨센서스 (forward-fill — 차트와 동일)
+      const sd = Array.from(m.keys()).sort();
+      const atOrBefore = d => {
+        let v = null;
+        for (let i = 0; i < sd.length && sd[i] <= d; i++) v = m.get(sd[i]);
+        return v;
+      };
+      const v0 = atOrBefore(d0), v10 = atOrBefore(d10), v20 = d20 ? atOrBefore(d20) : null;
       if (v0 == null && v10 == null && v20 == null) continue;
       for (const e of entries) {
         const w = e[2];
@@ -1072,7 +1078,7 @@ async function loadEtfConsTotal(code) {
   // 컨센서스 추이 DB 시작(2024-12)부터 기준일까지의 월 파일
   const [y, m] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
   const nMonths = Math.max(1, (y - 2024) * 12 + m - 11);
-  const byFy = new Map();
+  const byFy = new Map();   // fy -> Map(종목명 -> Map(date -> op))
   await Promise.all(monthsList(currentDate, nMonths).map(async mo => {
     for (const r of await readMonth('e', mo)) {
       const w = wByName.get(r.name);
@@ -1080,16 +1086,30 @@ async function loadEtfConsTotal(code) {
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
       if (d > currentDate) continue;
       const fy = Number(r.fy);
-      let m2 = byFy.get(fy);
-      if (!m2) byFy.set(fy, m2 = new Map());
-      const acc = m2.get(d) || [0, 0];
-      acc[0] += r.op * w; acc[1]++;
-      m2.set(d, acc);
+      let st = byFy.get(fy);
+      if (!st) byFy.set(fy, st = new Map());
+      let sm = st.get(r.name);
+      if (!sm) st.set(r.name, sm = new Map());
+      sm.set(d, r.op);
     }
   }));
+  // 종목별로 마지막 컨센서스를 이월(forward-fill)해 날짜별 총합 계산
+  // (컨센서스 제공이 중단된 종목이 합계에서 빠지며 총합이 튀는 것을 방지)
   const out = new Map();
-  for (const [fy, m2] of byFy) {
-    const arr = Array.from(m2, ([d, a]) => [d, a[0], a[1]]).sort((a, b) => a[0] < b[0] ? -1 : 1);
+  for (const [fy, st] of byFy) {
+    const dset = new Set();
+    for (const sm of st.values()) for (const d of sm.keys()) dset.add(d);
+    const ds = Array.from(dset).sort();
+    const arr = ds.map(d => [d, 0, 0]);
+    for (const [nm, sm] of st) {
+      const w = wByName.get(nm);
+      let last = null;
+      for (let i = 0; i < ds.length; i++) {
+        const v = sm.get(ds[i]);
+        if (v != null) last = v;
+        if (last != null) { arr[i][1] += last * w; arr[i][2]++; }
+      }
+    }
     if (arr.length >= 2) out.set(fy, arr);
   }
   const res = { fys: Array.from(out.keys()).sort((a, b) => a - b), byFy: out };
@@ -1478,7 +1498,7 @@ function renderIntro() {
       h += '<div class="sub">데이터가 없습니다</div>';
     } else {
       h += '<div class="sub">구성종목 ' + m.fy + 'E 영업이익 컨센서스 총합(ETF 컨센서스 차트 값)의 변화율 (' +
-        dPast + ' &rarr; ' + m.d0 + ') &middot; 커버리지 20% 이상 &middot; 기간 중 커버리지 변동·레버리지·인버스 제외</div>';
+        dPast + ' &rarr; ' + m.d0 + ') &middot; 중단된 컨센서스는 마지막 값 이월 &middot; 커버리지 20% 이상 &middot; 레버리지·인버스 제외</div>';
       list.forEach((t, i) => { h += tpmRow(i, t); });
     }
     return h + '</div>';
