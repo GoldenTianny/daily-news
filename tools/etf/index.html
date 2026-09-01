@@ -1461,7 +1461,6 @@ function renderIntro() {
     return h + '</div>';
   };
   html += tpmWidget('목표주가 상향 모멘텀 TOP 10', '&#127919;', TPM && TPM.up);
-  html += tpmWidget('목표주가 하향 모멘텀 TOP 10', '&#129482;', TPM && TPM.down);
 
   // 이익 컨센서스 상향 ETF 위젯 — 연도(2026E·2027E) × 기간(5·10영업일)별
   const opmWidget = (m, title, emoji, list, dPast) => {
@@ -1506,7 +1505,6 @@ function renderIntro() {
     return h + '</div>';
   };
   html += stkTpWidget('종목 목표주가 상향 TOP 10', '&#128640;', TPM && TPM.stockUp);
-  html += stkTpWidget('종목 목표주가 하향 TOP 10', '&#128201;', TPM && TPM.stockDown);
 
   // RS 등급 급등 위젯 (클릭 시 종목 검색)
   html += '<div class="widget"><h3>&#128246; RS 등급 급등 TOP 10</h3>';
