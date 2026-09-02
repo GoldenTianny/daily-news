@@ -773,22 +773,63 @@ function showEarnings(name) {
       else if (prev[0] > 0 && cur[0] <= 0) { gv = '적전'; cls = 'down'; }
       else { gv = '적지'; cls = 'flat'; }
       const opEok = Math.round(cur[0] / 1e5);   // 천원 -> 억원
-      const click = est
-        ? 'clickEstYear(this,\'' + safeAttr(e.code) + '\',\'' + safeAttr(name) + '\',' + fy + ')'
-        : 'toggleEarnQ(this,\'' + safeAttr(e.code) + '\',' + fy + ')';
-      cells += '<tr class="est" onclick="' + click + '">' +
+      cells += '<tr class="est" onclick="toggleEarnQ(this,\'' + safeAttr(e.code) + '\',' + fy + ')">' +
         '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
         '<td class="op">' + opEok.toLocaleString() + '<span class="unit">억</span></td>' +
         '<td class="gv ' + cls + '">' + gv + '</td>' +
-        '<td class="chev">' + (est ? '&#9656; 추이' : '&#9656; 분기') + '</td></tr>';
+        '<td class="chev">&#9656; 분기</td></tr>';
     }
     if (!cells) return;
     earnArea.innerHTML = '<div class="chart-card">' +
       '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
-      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스, 클릭하면 최근 1년 추정치 추이</div>' +
+      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스 · 연도를 클릭하면 분기 실적</div>' +
       '<table class="earn-tbl">' + cells + '</table>' +
-      '<div id="earnCons" style="display:none"></div></div>';
+      '<div id="earnCons" style="margin-top:14px"><div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div></div></div>';
     earnArea.style.display = '';
+    showStockEarnCons(e.code, name, tok);
+  });
+}
+
+// ===== 종목 컨센서스 영업이익 추이 (실적 표 아래 고정 — ETF 카드와 같은 형식) =====
+const STOCK_CONS_CACHE = new Map();   // 'code|기준일' -> {fys, byFy}
+
+async function loadStockConsSeries(code) {
+  const key = code + '|' + currentDate;
+  if (STOCK_CONS_CACHE.has(key)) return STOCK_CONS_CACHE.get(key);
+  const [y, m] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
+  const nMonths = Math.max(1, (y - 2024) * 12 + m - 11);   // 컨센서스 추이 DB 시작(2024-12)부터
+  const byFy = new Map();
+  await Promise.all(monthsList(currentDate, nMonths).map(async mo => {
+    for (const r of await readMonth('e', mo)) {
+      if (r.code !== code) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > currentDate) continue;
+      const fy = Number(r.fy);
+      let arr = byFy.get(fy);
+      if (!arr) byFy.set(fy, arr = []);
+      arr.push([d, r.op, 1]);
+    }
+  }));
+  const out = new Map();
+  for (const [fy, arr] of byFy) {
+    arr.sort((a, b) => a[0] < b[0] ? -1 : 1);
+    if (arr.length >= 2) out.set(fy, arr);
+  }
+  const res = { fys: Array.from(out.keys()).sort((a, b) => a - b), byFy: out };
+  STOCK_CONS_CACHE.set(key, res);
+  return res;
+}
+
+function showStockEarnCons(code, name, tok) {
+  loadStockConsSeries(code).then(res => {
+    if (tok !== chartToken) return;
+    if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
+    const box = document.getElementById('earnCons');
+    if (!box) return;
+    if (!res.fys.length) { box.innerHTML = ''; box.style.display = 'none'; return; }
+    box.innerHTML = '<div id="earnConsChart"></div>' +
+      '<div class="chart-sub" style="margin-top:4px">연간 영업이익 컨센서스 추이 · 첫 관측일부터 기준일까지 · E 연도별 최신 전망은 범례</div>';
+    buildConsChart(document.getElementById('earnConsChart'), res, { pfx: 'scs', showCount: false });
   });
 }
 
@@ -858,138 +899,6 @@ function qRowsHtml(e, fy) {
   }
   return rows;
 }
-
-// E 연도 클릭: 확정된 분기 실적(있으면)과 컨센서스 추이 차트를 동시에 토글
-async function clickEstYear(cell, code, name, fy) {
-  const box = document.getElementById('earnCons');
-  const key = code + '|' + fy;
-  // 펼쳐져 있던 분기 행 제거
-  let removed = false;
-  let nxt = cell.nextElementSibling;
-  while (nxt && nxt.classList.contains('qrow')) {
-    const t = nxt;
-    nxt = nxt.nextElementSibling;
-    t.remove();
-    removed = true;
-  }
-  if (cell.classList.contains('on') && (removed || earnConsKey === key)) {   // 닫기: 둘 다
-    cell.classList.remove('on');
-    if (earnConsKey === key && box) { box.style.display = 'none'; earnConsKey = null; }
-    return;
-  }
-  toggleEarnCons(cell, code, name, fy);            // 차트 열기 (+ 'on' 표시)
-  const m = await loadQuarterly();
-  if (!cell.isConnected || !cell.classList.contains('on')) return;
-  const rows = qRowsHtml(m && m.get(code), fy);    // 확정 분기가 있으면 행 바로 아래에
-  if (rows) cell.insertAdjacentHTML('afterend', rows);
-}
-
-// 컨센서스 추이 미니 차트 (E 연도용 — clickEstYear에서 분기 행과 함께 토글)
-let earnConsKey = null;
-let earnConsRow = null;
-async function toggleEarnCons(cell, code, name, fy) {
-  const box = document.getElementById('earnCons');
-  if (!box) return;
-  const key = code + '|' + fy;
-  if (earnConsRow && earnConsRow !== cell && earnConsRow.isConnected) {
-    // 다른 E 연도로 전환: 이전 행의 하이라이트·분기 행 정리
-    earnConsRow.classList.remove('on');
-    let nxt = earnConsRow.nextElementSibling;
-    while (nxt && nxt.classList.contains('qrow')) { const t = nxt; nxt = nxt.nextElementSibling; t.remove(); }
-  }
-  if (earnConsKey === key && box.style.display !== 'none') {   // 같은 셀 재클릭 -> 닫기
-    cell.classList.remove('on');
-    box.style.display = 'none';
-    earnConsKey = null;
-    earnConsRow = null;
-    return;
-  }
-  earnConsKey = key;
-  earnConsRow = cell;
-  cell.classList.add('on');
-  box.style.display = '';
-  box.innerHTML = '<div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div>';
-
-  const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
-  const series = [];
-  await Promise.all(monthsList(currentDate, 13).map(async mo => {
-    for (const r of await readMonth('e', mo)) {
-      if (r.code !== code || Number(r.fy) !== fy) continue;
-      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
-      if (d >= from && d <= currentDate) series.push([d, r.op]);
-    }
-  }));
-  if (earnConsKey !== key) return;
-  series.sort((a, b) => a[0] < b[0] ? -1 : 1);
-  if (series.length < 2) {
-    box.innerHTML = '<div class="chart-loading">최근 1년 컨센서스 추이 데이터가 없습니다</div>';
-    return;
-  }
-
-  const W = Math.max(300, earnArea.clientWidth - 40), H = 170;
-  const L = 66, R = 12, T = 26, B = 30;
-  const x0 = Date.parse(series[0][0]), x1 = Date.parse(series[series.length - 1][0]);
-  let vmin = Infinity, vmax = -Infinity;
-  for (const [, v] of series) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
-  const pad = (vmax - vmin) * 0.12 || Math.abs(vmax) * 0.05 || 1;
-  vmin -= pad; vmax += pad;
-  const X = d => L + (Date.parse(d) - x0) / Math.max(x1 - x0, 1) * (W - L - R);
-  const Y = v => T + (vmax - v) / (vmax - vmin) * (H - T - B);
-  let g = '';
-  for (let i = 0; i <= 2; i++) {
-    const v = vmin + (vmax - vmin) * i / 2, y = Y(v).toFixed(1);
-    g += '<line x1="' + L + '" y1="' + y + '" x2="' + (W - R) + '" y2="' + y + '" stroke="#eee"/>' +
-      '<text x="' + (L - 8) + '" y="' + y + '" text-anchor="end" dominant-baseline="middle" font-size="10" fill="#999">' + fmtOp(v) + '</text>';
-  }
-  g += '<text x="' + L + '" y="14" font-size="11" font-weight="600" fill="#666">' + fy +
-    'E 영업이익 컨센서스 추이 (최근 1년)</text>';
-  // X축 날짜 라벨 (격월 YY.MM)
-  for (const mo of monthsList(currentDate, 13).filter((m, i) => i % 2 === 1)) {
-    const t = Date.parse(mo + '-01');
-    if (t < x0 || t > x1) continue;
-    g += '<text x="' + X(mo + '-01').toFixed(1) + '" y="' + (H - 8) +
-      '" text-anchor="middle" font-size="10" fill="#999">' + mo.slice(2).replace('-', '.') + '</text>';
-  }
-  const path = series.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('');
-  const first = series[0][1], last = series[series.length - 1][1];
-  const chg = first > 0 ? ' &middot; 1년간 ' + ((last / first - 1) * 100).toFixed(1) + '%' : '';
-  g += '<path d="' + path + '" fill="none" stroke="#3f51b5" stroke-width="1.8"/>';
-  box.innerHTML = '<div class="chart-wrap" style="margin-top:10px"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
-    '<line id="ecCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
-    '<circle id="ecDot" r="3" fill="#3f51b5" style="display:none"/>' +
-    '</svg><div class="chart-tip" id="ecTip"></div></div>' +
-    '<div class="chart-sub" style="margin:4px 0 0">현재 ' + fmtOp(last) + chg + '</div>';
-
-  // 호버 툴팁: 가장 가까운 날짜의 컨센서스 값 + 직전 변경일 대비 변화
-  const svg = box.querySelector('svg');
-  const tip = document.getElementById('ecTip');
-  const cross = document.getElementById('ecCross');
-  const dot = document.getElementById('ecDot');
-  svg.addEventListener('mousemove', ev => {
-    const r = svg.getBoundingClientRect();
-    const mx = (ev.clientX - r.left) / r.width * W;
-    if (mx < L || mx > W - R) { tip.style.display = 'none'; cross.style.display = 'none'; dot.style.display = 'none'; return; }
-    let bi = 0;
-    for (let i = 1; i < series.length; i++)
-      if (Math.abs(X(series[i][0]) - mx) < Math.abs(X(series[bi][0]) - mx)) bi = i;
-    const [d, v] = series[bi];
-    const pv = bi > 0 ? series[bi - 1][1] : null;
-    const dchg = (pv && pv > 0 && Math.abs(v / pv - 1) > 0.0005)
-      ? ' <span style="opacity:.75">(' + ((v / pv - 1) * 100 >= 0 ? '+' : '') + ((v / pv - 1) * 100).toFixed(1) + '%)</span>' : '';
-    cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
-    dot.setAttribute('cx', X(d)); dot.setAttribute('cy', Y(v)); dot.style.display = '';
-    tip.innerHTML = d + '<br>영업이익 ' + fmtOp(v) + dchg;
-    tip.style.display = 'block';
-    const px = X(d) / W * r.width;
-    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
-    tip.style.top = 'auto';
-    tip.style.bottom = (B / H * r.height + 6) + 'px';   // X축 라벨 바로 위 (하단 고정)
-  });
-  svg.addEventListener('mouseleave', () => {
-    tip.style.display = 'none'; cross.style.display = 'none'; dot.style.display = 'none';
-  });
-}
-
 
 // ===== 이익 컨센서스 상향 ETF 랭킹 (첫 화면 위젯) =====
 // 각 ETF의 Σ(영업이익 컨센서스 × 보유비중)이 10·20영업일 전 대비 얼마나 변했는지.
@@ -1137,9 +1046,10 @@ function showEtfEarnCons(code, name) {
 
 const CONS_COLORS = ['#3f51b5', '#00897b', '#e65100'];
 
-function renderEtfConsChart(code, name, res) {
-  const fys = res.fys;
-  const W = Math.max(320, earnArea.clientWidth - 40), H = 210;
+// 연도별 컨센서스 라인 차트 (공용): box 안에 SVG + 호버 툴팁을 그림. res = {fys, byFy: Map(fy -> [[date, value, count]])}
+function buildConsChart(box, res, opts) {
+  const fys = res.fys, pfx = opts.pfx || 'cs';
+  const W = Math.max(320, box.clientWidth || (earnArea.clientWidth - 40)), H = 210;
   const L = 66, R = 14, T = 30, B = 30;
   // 전체 기간·값 범위 (모든 연도 라인 공통 축)
   let x0 = Infinity, x1 = -Infinity, vmin = Infinity, vmax = -Infinity;
@@ -1169,7 +1079,7 @@ function renderEtfConsChart(code, name, res) {
     g += '<text x="' + X(mo + '-01').toFixed(1) + '" y="' + (H - 8) +
       '" text-anchor="middle" font-size="10" fill="#999">' + mo.slice(2).replace('-', '.') + '</text>';
   });
-  // 연도별 라인 + 범례
+  // 연도별 라인 + 범례(최신값)
   let lg = '', dots = '';
   fys.forEach((fy, i) => {
     const s = res.byFy.get(fy), c = CONS_COLORS[i % CONS_COLORS.length];
@@ -1178,10 +1088,53 @@ function renderEtfConsChart(code, name, res) {
     const last = s[s.length - 1];
     lg += '<tspan fill="' + c + '" font-weight="700">&#9644; ' + fy + 'E</tspan>' +
       '<tspan fill="#666"> ' + fmtOp(last[1]) + '  </tspan>';
-    dots += '<circle id="ecsDot' + i + '" r="3" fill="' + c + '" style="display:none"/>';
+    dots += '<circle id="' + pfx + 'Dot' + i + '" r="3" fill="' + c + '" style="display:none"/>';
   });
   g += '<text x="' + L + '" y="15" font-size="11.5">' + lg + '</text>';
 
+  box.innerHTML = '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
+    '<line id="' + pfx + 'Cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    dots + '</svg><div class="chart-tip" id="' + pfx + 'Tip"></div></div>';
+
+  // 호버 툴팁: 가장 가까운 날짜의 연도별 값 (+ 커버 종목 수)
+  const svg = box.querySelector('svg');
+  const tip = document.getElementById(pfx + 'Tip');
+  const cross = document.getElementById(pfx + 'Cross');
+  const dotEl = i => document.getElementById(pfx + 'Dot' + i);
+  const allDates = Array.from(new Set([].concat(...fys.map(fy => res.byFy.get(fy).map(p => p[0]))))).sort();
+  const byDate = fys.map(fy => new Map(res.byFy.get(fy).map(p => [p[0], p])));
+  const hideAll = () => {
+    tip.style.display = 'none'; cross.style.display = 'none';
+    fys.forEach((f, i) => { const d = dotEl(i); if (d) d.style.display = 'none'; });
+  };
+  svg.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const mx = (ev.clientX - r.left) / r.width * W;
+    if (mx < L || mx > W - R) { hideAll(); return; }
+    let bd = allDates[0];
+    for (const d of allDates) if (Math.abs(X(d) - mx) < Math.abs(X(bd) - mx)) bd = d;
+    cross.setAttribute('x1', X(bd)); cross.setAttribute('x2', X(bd)); cross.style.display = '';
+    let html = bd;
+    fys.forEach((fy, i) => {
+      const p = byDate[i].get(bd);
+      const dot = dotEl(i);
+      if (!p) { dot.style.display = 'none'; return; }
+      dot.setAttribute('cx', X(bd)); dot.setAttribute('cy', Y(p[1])); dot.style.display = '';
+      html += '<br><span style="color:' + CONS_COLORS[i % CONS_COLORS.length] + ';font-weight:700">' + fy + 'E</span> ' +
+        fmtOp(p[1]) + (opts.showCount ? ' <span style="opacity:.7">(' + p[2] + '종목)</span>' : '');
+    });
+    tip.innerHTML = html;
+    tip.style.display = 'block';
+    const px = X(bd) / W * r.width;
+    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
+    tip.style.top = 'auto';
+    tip.style.bottom = (B / H * r.height + 6) + 'px';
+  });
+  svg.addEventListener('mouseleave', hideAll);
+}
+
+function renderEtfConsChart(code, name, res) {
+  const fys = res.fys;
   // 부가 정보: 커버리지 + 최신 시점 연도 간 증가율
   const lastArrs = fys.map(fy => res.byFy.get(fy)[res.byFy.get(fy).length - 1]);
   const cover = Math.max(...lastArrs.map(a => a[2]));
@@ -1191,50 +1144,13 @@ function renderEtfConsChart(code, name, res) {
     const [gv, cls] = growthCell(b, a);
     growth = ' &middot; ' + fys[fys.length - 1] + 'E/' + fys[0] + 'E <span class="' + cls + '">' + gv + '</span>';
   }
-
   earnArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 구성종목 영업이익 컨센서스 총합</div>' +
-    '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
-    '<line id="ecsCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
-    dots + '</svg><div class="chart-tip" id="ecsTip"></div></div>' +
+    '<div id="etfConsChart"></div>' +
     '<div class="chart-sub">기준일 구성 ' + (HOLDINGS[code] || []).length + '개 중 컨센서스 커버 ' + cover +
     '개 종목의 연간 영업이익 전망 &times; 보유비중(%) 가중 합산' + growth + ' &middot; 구성은 기준일 고정, 과거 커버리지 변동 포함</div></div>';
   earnArea.style.display = '';
-
-  // 호버 툴팁: 가장 가까운 날짜의 연도별 총합 + 커버 종목 수
-  const svg = earnArea.querySelector('svg');
-  const tip = document.getElementById('ecsTip');
-  const cross = document.getElementById('ecsCross');
-  const allDates = Array.from(new Set([].concat(...fys.map(fy => res.byFy.get(fy).map(p => p[0]))))).sort();
-  const byDate = fys.map(fy => new Map(res.byFy.get(fy).map(p => [p[0], p])));
-  svg.addEventListener('mousemove', ev => {
-    const r = svg.getBoundingClientRect();
-    const mx = (ev.clientX - r.left) / r.width * W;
-    if (mx < L || mx > W - R) { tip.style.display = 'none'; cross.style.display = 'none';
-      fys.forEach((f, i) => document.getElementById('ecsDot' + i).style.display = 'none'); return; }
-    let bd = allDates[0];
-    for (const d of allDates) if (Math.abs(X(d) - mx) < Math.abs(X(bd) - mx)) bd = d;
-    cross.setAttribute('x1', X(bd)); cross.setAttribute('x2', X(bd)); cross.style.display = '';
-    let html = bd;
-    fys.forEach((fy, i) => {
-      const p = byDate[i].get(bd);
-      const dot = document.getElementById('ecsDot' + i);
-      if (!p) { dot.style.display = 'none'; return; }
-      dot.setAttribute('cx', X(bd)); dot.setAttribute('cy', Y(p[1])); dot.style.display = '';
-      html += '<br><span style="color:' + CONS_COLORS[i % CONS_COLORS.length] + ';font-weight:700">' + fy + 'E</span> ' +
-        fmtOp(p[1]) + ' <span style="opacity:.7">(' + p[2] + '종목)</span>';
-    });
-    tip.innerHTML = html;
-    tip.style.display = 'block';
-    const px = X(bd) / W * r.width;
-    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
-    tip.style.top = 'auto';
-    tip.style.bottom = (B / H * r.height + 6) + 'px';
-  });
-  svg.addEventListener('mouseleave', () => {
-    tip.style.display = 'none'; cross.style.display = 'none';
-    fys.forEach((f, i) => { const d = document.getElementById('ecsDot' + i); if (d) d.style.display = 'none'; });
-  });
+  buildConsChart(document.getElementById('etfConsChart'), res, { pfx: 'ecs', showCount: true });
 }
 
 function renderStockChart(name, s) {
