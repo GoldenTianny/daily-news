@@ -342,7 +342,7 @@ let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
-let RSM = null;        // RS 등급 급등 {top:[[name,delta,rs0]], d0, d20} (db/market/rs 기반)
+let RSM = null;        // ETF RS 등급 급등 {top:[[code,delta,rs0]], d0, d20} (db/market/rs 기반)
 let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d10, d20, top10:[[code,chg,cov]], top20:[...]}] (db/market/earnings/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
@@ -1353,16 +1353,18 @@ function renderStockChart(name, s) {
 // ===== RS 등급 급등 (db/market/rs) =====
 // 20영업일 전 대비 RS 등급 상승폭 랭킹 (검색 가능한 일반 종목만)
 async function loadRsMovers(date) {
+  // ETF의 RS 등급(일반 종목 분포 대비 백분위)이 20영업일 전보다 얼마나 올랐는지 — 기준일 상장 ETF만, 레버리지·인버스 제외
   const dateSet = new Set();
-  const byDate = new Map();   // dateStr -> Map(name -> rs)
+  const byDate = new Map();   // dateStr -> Map(code -> rs)
   await Promise.all(monthsList(date, 3).map(async mo => {
     for (const r of await readMonth('r', mo)) {
+      if (!ETFS_CUR[r.code]) continue;   // ETF만
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
       if (d > date) continue;
       dateSet.add(d);
       let m = byDate.get(d);
       if (!m) byDate.set(d, m = new Map());
-      m.set(r.name, r.rs);
+      m.set(r.code, r.rs);
     }
   }));
   const ds = Array.from(dateSet).sort();
@@ -1370,11 +1372,11 @@ async function loadRsMovers(date) {
   const d0 = ds[ds.length - 1], d20 = ds[ds.length - 21];
   const m0 = byDate.get(d0), m20 = byDate.get(d20);
   const arr = [];
-  for (const [nm, r0] of m0) {
-    if (!DATA[nm]) continue;             // ETF·미보유 종목 제외
-    const r1 = m20.get(nm);
+  for (const [code, r0] of m0) {
+    if (LEV.test(ETFS_CUR[code] || '')) continue;
+    const r1 = m20.get(code);
     if (r1 == null || r0 <= r1) continue;
-    arr.push([nm, r0 - r1, r0]);
+    arr.push([code, r0 - r1, r0]);
   }
   arr.sort((a, b) => (b[1] - a[1]) || (b[2] - a[2]));
   return { d0: d0, d20: d20, top: arr.slice(0, 10) };
@@ -1534,17 +1536,18 @@ function renderIntro() {
   html += stkTpWidget('종목 목표주가 상향 TOP 10', '&#128640;', TPM && TPM.stockUp);
 
   // RS 등급 급등 위젯 (클릭 시 종목 검색)
-  html += '<div class="widget"><h3>&#128246; RS 등급 급등 TOP 10</h3>';
+  html += '<div class="widget"><h3>&#128246; ETF RS 등급 급등 TOP 10</h3>';
   if (!RSM) {
     html += '<div class="sub">RS 등급 불러오는 중&hellip;</div>';
   } else if (!RSM.top || !RSM.top.length) {
     html += '<div class="sub">데이터가 없습니다</div>';
   } else {
-    html += '<div class="sub">20영업일(' + RSM.d20 + '&rarr;' + RSM.d0 + ') RS 등급 상승폭 · 일반 종목 대비 백분위</div>';
+    html += '<div class="sub">20영업일(' + RSM.d20 + '&rarr;' + RSM.d0 + ') RS 등급 상승폭 · 일반 종목 대비 백분위 · 레버리지·인버스 제외</div>';
     RSM.top.forEach((t, i) => {
-      html += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
+      const name = ETFS_CUR[t[0]] || t[0];
+      html += '<div class="wrow" onclick="showEtfHoldings(\'' + safeAttr(t[0]) + '\',\'' + safeAttr(name) + '\')">' +
         '<span class="wrank">' + (i + 1) + '</span>' +
-        '<span class="wname">' + escHtml(t[0]) + '<span class="wsub">' + (t[2] - t[1]) + ' &rarr; ' + t[2] + '</span></span>' +
+        '<span class="wname">' + escHtml(name) + '<span class="wsub">' + (t[2] - t[1]) + ' &rarr; ' + t[2] + '</span></span>' +
         '<span class="wval up">+' + t[1] + '</span></div>';
     });
   }
