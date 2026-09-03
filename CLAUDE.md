@@ -13,10 +13,12 @@
 | `analysis/`, `companies/`, `book/` | 심층분석 · 기업분석 · 책리뷰. 파일명 `YYYY-MM-DD_슬러그.html` |
 | `article/` | 좋은글 1,258편. `articles.json`(원본) → `p/<id>.html`(SEO 페이지) + `s/NN.html`(공유 stub) |
 | `db/etf/YYYY-MM-DD.parquet` | 일자별 ETF 보유내역 |
-| `db/market/{price,consensus,rs}/YYYY-MM.parquet` | 수정주가 · 컨센서스 · RS 등급 (월별) |
+| `db/market/{price,consensus,rs}/YYYY-MM.parquet` | 수정주가 · 목표주가 컨센서스 · RS 등급 (월별) |
+| `db/market/earnings/` | 영업이익. `annual.parquet`(연간 확정 A + 최신 컨센서스 E), `quarterly.parquet`, `consensus/YYYY-MM.parquet`(2026E·2027E 일별 추이). **단위 천원** |
 | `tools/` | 생성 스크립트 (아래) |
 | `assets/og/` | OG 썸네일 PNG. `assets/fonts/`는 Pretendard |
-| `stats/`, `console/`, `tools/etf/` | 통계 · 받아쓰기 콘솔 · ETF 검색기 (각각 독립 페이지) |
+| `stats/`, `console/`, `tools/etf/` | 통계 · 받아쓰기 콘솔 · ETF 검색기 (각각 독립 페이지). 검색기 설명서는 `tools/etf/guide.html` |
+| `study/high52/` | 52주 신고가 돌파 스터디 (`data.json`은 생성물) |
 
 각 섹션 디렉터리에는 목록용 `index.html`이 따로 있다. **새 글을 추가하면
 `index.html`(메인)과 해당 섹션의 `index.html` 두 곳을 모두 고쳐야 한다.**
@@ -42,8 +44,10 @@ CONFIG의 `TIPS`(6개)·`README_TEXTS`(7개)는 당일 데이터·뉴스 맥락�
 python3 tools/ingest_daily.py ~/Downloads/ETF_price_concensus_YYYYMMDD.xlsx
 ```
 
-`build_data`(ETF 보유내역) → `build_market`(수정주가·컨센서스) → `build_rs`(RS 등급) 순으로
-한 번에 돈다. 기준일은 'ETF raw' 시트에서 자동 인식하고, 실패하면 두 번째 인자로 `YYYY-MM-DD`를 준다.
+`build_data`(ETF 보유내역) → `build_market`(수정주가·목표주가) → `build_earnings.build_daily`(영업이익 컨센서스 일별)
+→ `build_rs`(RS 등급) → `build_high52`(52주 신고가 스터디) 순으로 한 번에 돈다.
+기준일은 'ETF raw' 시트에서 자동 인식하고, 실패하면 두 번째 인자로 `YYYY-MM-DD`를 준다.
+`concensus_for_db*.xlsx`(확정 실적 + 연도별 컨센서스 이력)를 넘기면 earnings 적재만 수행한다.
 개별 스크립트를 따로 부를 일은 거의 없다.
 
 ## 나머지 스크립트 (필요할 때만)
@@ -55,6 +59,7 @@ python3 tools/ingest_daily.py ~/Downloads/ETF_price_concensus_YYYYMMDD.xlsx
 | `make_og.py --all` | OG 썸네일 전체 재생성 |
 | `make_etf_og.py` | ETF 검색기 OG(`assets/og/etf.png`)만 재생성 |
 | `build_rs.py --all` | RS 등급 전체 재계산 (평소엔 새 날짜 1개만 증분 계산됨) |
+| `market/build_earnings.py` | `concensus_for_db*.xlsx` → `db/market/earnings/` 전체 재구축 (일일 갱신은 `ingest_daily`가 처리) |
 
 ## 알아둘 것
 
@@ -64,4 +69,6 @@ python3 tools/ingest_daily.py ~/Downloads/ETF_price_concensus_YYYYMMDD.xlsx
 - **PWA**: 루트 `sw.js`는 네트워크 우선 + 캐시 폴백. 캐시 이름 `gjbuffet-v1`을 바꾸면 사용자 캐시가 전부 무효화된다.
 - **`.gitignore`**: `article/*.txt`, `assets/quotes.json`, `assets/성공명언1001.md`는 각각 `articles.json`·HTML에 인라인 임베드되어 커밋하지 않는다.
 - **`article/p/`, `article/s/`, `sitemap.xml`은 생성물**이다. 직접 고치지 말고 스크립트를 다시 돌린다.
-- **커밋 메시지**: 한국어 한 줄 요약. 예) `8/20 일일브리프 발행 + 시장 대시보드 8/19 종가 반영`
+- **ETF 검색기의 '이익 컨센서스 상향' 규약**: 10·20영업일 전 대비, 해당일 이전 최신값 forward-fill, 두 시점 모두 값이 있는 종목만 비교. 분석 스크립트도 이 규약을 따르면 화면과 숫자가 맞는다.
+- **스키마 문서**: `db/etf/SCHEMA.md`에 ETF DB 스키마·쿼리 예시가 있다.
+- **커밋 메시지**: 한국어 한 줄 요약. 예) `9/3 원본 반영: ETF·가격·컨센서스·RS·신고가`, `9/3 일일브리프 발행 + 시장 대시보드 9/2 종가 반영`
