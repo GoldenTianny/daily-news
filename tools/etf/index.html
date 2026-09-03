@@ -739,9 +739,10 @@ async function loadEarnings() {
   return EARN;
 }
 
-const fmtOp = v => {   // 천원 -> 조/억
+const fmtOp = v => {   // 천원 -> 조/억 (조 단위는 소수 둘째 자리까지 — 1.9조/2.1조 식 반올림 착시 방지)
   const abs = Math.abs(v);
-  if (abs >= 1e9) return (v / 1e9).toFixed(1) + '조원';
+  if (abs >= 1e11) return (v / 1e9).toFixed(1) + '조원';
+  if (abs >= 1e9) return (v / 1e9).toFixed(2) + '조원';
   if (abs >= 1e5) return Math.round(v / 1e5).toLocaleString() + '억원';
   return Math.round(v / 10).toLocaleString() + '만원';
 };
@@ -1120,8 +1121,15 @@ function buildConsChart(box, res, opts) {
       const dot = dotEl(i);
       if (!p) { dot.style.display = 'none'; return; }
       dot.setAttribute('cx', X(bd)); dot.setAttribute('cy', Y(p[1])); dot.style.display = '';
+      // 해당 날짜 값 → 최신값까지의 변화율 (차트에서 N영업일 변화를 바로 읽을 수 있게)
+      const s = res.byFy.get(fy), last = s[s.length - 1];
+      let toNow = '';
+      if (last[0] !== bd && p[1] > 0 && last[1] > 0) {
+        const c = (last[1] / p[1] - 1) * 100;
+        toNow = ' <span style="color:' + (c >= 0 ? '#c62828' : '#1565c0') + '">&rarr; 오늘 ' + (c >= 0 ? '+' : '') + c.toFixed(1) + '%</span>';
+      }
       html += '<br><span style="color:' + CONS_COLORS[i % CONS_COLORS.length] + ';font-weight:700">' + fy + 'E</span> ' +
-        fmtOp(p[1]) + (opts.showCount ? ' <span style="opacity:.7">(' + p[2] + '종목)</span>' : '');
+        fmtOp(p[1]) + (opts.showCount ? ' <span style="opacity:.7">(' + p[2] + '종목)</span>' : '') + toNow;
     });
     tip.innerHTML = html;
     tip.style.display = 'block';
@@ -1148,7 +1156,7 @@ function renderEtfConsChart(code, name, res) {
     '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 구성종목 영업이익 컨센서스 총합</div>' +
     '<div id="etfConsChart"></div>' +
     '<div class="chart-sub">기준일 구성 ' + (HOLDINGS[code] || []).length + '개 중 컨센서스 커버 ' + cover +
-    '개 종목의 연간 영업이익 전망 &times; 보유비중(%) 가중 합산' + growth + ' &middot; 구성은 기준일 고정, 과거 커버리지 변동 포함</div></div>';
+    '개 종목의 연간 영업이익 전망 &times; 보유비중(%) 가중 합산' + growth + ' &middot; 구성은 기준일 고정, 중단된 컨센서스는 마지막 값 이월</div></div>';
   earnArea.style.display = '';
   buildConsChart(document.getElementById('etfConsChart'), res, { pfx: 'ecs', showCount: true });
 }
