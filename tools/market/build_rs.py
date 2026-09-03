@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """수정주가 DB -> 오닐식 RS 등급 DB (db/market/rs/)
 
-- 각 거래일마다 최근 4개 분기 수익률을 40/20/20/20 가중해 점수를 내고,
-  같은 날 전체 대비 백분위로 1~99 등급 산정 (ETF와 일반 종목은 별도 모집단)
+- 각 거래일마다 최근 4개 분기 수익률을 40/20/20/20 가중해 점수를 내고
+  백분위로 1~99 등급 산정. 순위 모집단은 **일반 종목만** — ETF는 종목
+  조합의 복제라 모집단에서 제외하되, 자신의 점수가 일반 종목 분포에서
+  어느 백분위인지로 등급을 부여 (예: ETF 등급 90 = 일반 종목 상위 10% 성과)
 - 252거래일(약 1년) 이력이 확보된 날짜만 계산하며, 이미 계산된 날짜는 건너뜀
   (일일 갱신 시 새 날짜 1개만 추가 계산됨)
 - 실행: python3 tools/market/build_rs.py        (build_market.py 실행 후)
@@ -66,12 +68,22 @@ def build(force=False):
           SELECT target_date AS date, code, name, {score_expr} AS score,
                  code IN (SELECT code FROM etfs) AS is_etf
           FROM w WHERE c0 > 0 AND c1 > 0 AND c2 > 0 AND c3 > 0 AND c4 > 0
+        ),
+        -- 순위 모집단은 일반 종목만: 누적 카운트가 종목만 세므로 ETF 행이
+        -- 끼어 있어도 종목끼리의 순위는 그대로이고, ETF는 "자기보다 점수가
+        -- 높은 종목 수"로 같은 분포 위에서 백분위를 받는다
+        r AS (
+          SELECT date, code, name, is_etf,
+                 count(*) FILTER (WHERE NOT is_etf) OVER (PARTITION BY date) AS n_stk,
+                 count(*) FILTER (WHERE NOT is_etf) OVER (
+                   PARTITION BY date ORDER BY score DESC
+                   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_stk
+          FROM s
         )
         SELECT date, code, name,
-               CAST(round((1 - (row_number() OVER (PARTITION BY date, is_etf ORDER BY score DESC) - 1)
-                    / GREATEST(count(*) OVER (PARTITION BY date, is_etf) - 1, 1)::DOUBLE) * 98) + 1
-                    AS UTINYINT) AS rs
-        FROM s ORDER BY date, code
+               CAST(round((1 - (LEAST(CASE WHEN is_etf THEN cum_stk + 1 ELSE cum_stk END, n_stk) - 1)
+                    / GREATEST(n_stk - 1, 1)::DOUBLE) * 98) + 1 AS UTINYINT) AS rs
+        FROM r ORDER BY date, code
     """).df()
     df['date'] = pd.to_datetime(df['date']).dt.date
 

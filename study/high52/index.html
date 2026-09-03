@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>52주 신고가 돌파 분석 | 가좌버핏 스터디</title>
+<meta name="description" content="최근 1년간 52주 신고가 돌파 사례 분석 — 돌파 후 며칠째가 단기고점인지, RS 등급·컨센서스 조건별로 익절 타이밍은 언제가 최적인지 데이터로 확인.">
+<link rel="canonical" href="https://gjbuffet.kr/study/high52/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="52주 신고가 돌파 분석 | 가좌버핏 스터디">
+<meta property="og:description" content="돌파 후 단기고점은 언제 오는가 — RS·컨센서스 조건별 익절 타이밍 분석">
+<meta property="og:url" content="https://gjbuffet.kr/study/high52/">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #f0f2f5; --card: #ffffff; --line: #e6e9f0; --txt: #333;
+    --sub: #667; --faint: #99a; --navy: #1a237e; --accent: #3f51b5;
+    --up: #d32f2f; --down: #1565c0; --grid: #e3e6ee;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: var(--bg); color: var(--txt); min-height: 100vh;
+}
+.topnav {
+    display: flex; align-items: center; gap: 6px;
+    background: #12274d; padding: 0 8px;
+    position: sticky; top: 0; z-index: 500;
+    overflow-x: auto;
+}
+.topnav a {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #dbe6fb; text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 14px; white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+
+.header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 30px 20px 26px; text-align: center;
+}
+.header .crumb { font-size: 12.5px; opacity: 0.75; margin-bottom: 6px; }
+.header .crumb a { color: #cdd8f8; text-decoration: none; }
+.header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13.5px; opacity: 0.85; }
+
+.container { max-width: 860px; margin: 0 auto; padding: 22px 14px 60px; }
+
+.loading-box { text-align: center; padding: 60px 0; color: var(--faint); font-size: 14px; }
+
+/* 세그먼트 탭 */
+.seg-tabs {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 6px;
+}
+.seg-tabs button {
+    flex: 1; min-width: 90px; padding: 9px 8px; font-size: 13px; font-weight: 700;
+    color: var(--sub); background: transparent; border: none;
+    border-radius: 8px; cursor: pointer; white-space: nowrap;
+    font-family: inherit;
+}
+.seg-tabs button .n { display: block; font-size: 10.5px; font-weight: 600; color: var(--faint); margin-top: 2px; }
+.seg-tabs button.on { background: var(--accent); color: #fff; }
+.seg-tabs button.on .n { color: rgba(255,255,255,0.8); }
+.seg-note { font-size: 12px; color: var(--faint); margin: -6px 2px 14px; line-height: 1.5; }
+
+/* 요약 카드 */
+.stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-bottom: 16px;
+}
+@media (max-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 12px; text-align: center;
+}
+.stat .v { font-size: 22px; font-weight: 800; color: var(--navy); }
+.stat .v small { font-size: 13px; font-weight: 700; }
+.stat .k { font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
+
+/* 결론 박스 */
+.insight {
+    background: linear-gradient(135deg, #fff8ec, #fff3dd);
+    border: 1px solid #f0dcb0; border-radius: 14px;
+    padding: 18px 18px 14px; margin-bottom: 24px;
+}
+.insight h2 { font-size: 15.5px; color: #8a5a00; margin-bottom: 10px; }
+.insight ul { list-style: none; }
+.insight li {
+    font-size: 13.5px; color: #5c4a1e; line-height: 1.65;
+    padding-left: 20px; position: relative; margin-bottom: 6px;
+}
+.insight li::before { content: "▸"; position: absolute; left: 4px; color: #d09a2a; }
+.insight b { color: #a34700; }
+
+/* 차트 카드 */
+.card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 16px; margin-bottom: 18px;
+}
+.card h2 { font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+.card h2 .seg-badge {
+    font-size: 11.5px; font-weight: 700; color: var(--accent);
+    background: rgba(63,81,181,0.1); border-radius: 8px; padding: 2px 8px;
+    vertical-align: 2px; margin-left: 6px;
+}
+.card .sub { font-size: 12.5px; color: var(--faint); margin-bottom: 12px; line-height: 1.5; }
+.chart-svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--sub); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+
+/* 트레일링 스탑 시뮬레이션 */
+.sim-h3 { font-size: 14px; color: var(--navy); margin: 18px 0 4px; }
+.out-bar {
+    display: flex; height: 26px; border-radius: 8px; overflow: hidden;
+    margin: 10px 0 8px;
+}
+.out-bar div { min-width: 2px; }
+.out-rows { display: grid; gap: 5px; margin-bottom: 4px; }
+.out-row {
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 12.5px; color: var(--sub); flex-wrap: wrap;
+}
+.out-row i { width: 10px; height: 10px; border-radius: 3px; flex: none; align-self: center; }
+.out-row b { color: var(--txt); }
+.out-row .ex { margin-left: auto; font-weight: 700; white-space: nowrap; }
+
+/* 사례 테이블 */
+.tbl-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.tbl-controls input {
+    flex: 1; min-width: 150px; padding: 9px 12px; font-size: 14px;
+    border: 1.5px solid var(--line); border-radius: 9px; outline: none;
+    background: var(--card); color: var(--txt);
+}
+.tbl-controls input:focus { border-color: var(--accent); }
+.tbl-controls select {
+    padding: 9px 10px; font-size: 13px; border: 1.5px solid var(--line);
+    border-radius: 9px; background: var(--card); color: var(--txt); cursor: pointer;
+}
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+    text-align: right; padding: 8px 7px; color: var(--sub); font-size: 12px;
+    border-bottom: 2px solid var(--line); white-space: nowrap; cursor: pointer;
+    user-select: none;
+}
+th.l, td.l { text-align: left; }
+th .arr { font-size: 10px; color: var(--accent); }
+td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+td .nm { font-weight: 600; }
+td .cd { font-size: 11px; color: var(--faint); }
+.pos { color: var(--up); font-weight: 600; }
+.neg { color: var(--down); }
+.dim { color: var(--faint); }
+.rs-hi { font-weight: 700; color: var(--up); }
+.badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+}
+.badge.confirmed { background: #e8f0fe; color: #2a56c6; }
+.badge.nopullback { background: #fdecea; color: #c62828; }
+.badge.ongoing { background: #eee; color: #888; }
+.more-btn {
+    display: block; width: 100%; margin-top: 12px; padding: 11px;
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    background: transparent; border: 1.5px dashed var(--accent);
+    border-radius: 10px; cursor: pointer;
+}
+.more-btn:hover { background: rgba(63,81,181,0.06); }
+
+/* 방법론 */
+.method { font-size: 12.5px; color: var(--sub); line-height: 1.7; }
+.method b { color: var(--txt); }
+.foot-note { font-size: 12px; color: var(--faint); text-align: center; margin-top: 20px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #101418; --card: #1a2029; --line: #2a3242; --txt: #d5d9e0;
+        --sub: #9aa3b2; --faint: #778; --navy: #9fb4f5; --accent: #7f95e8;
+        --up: #ef6a5a; --down: #64a0e8; --grid: #2a3242;
+    }
+    .topnav { background: #0d1a33; }
+    .insight { background: linear-gradient(135deg, #2a2416, #241f10); border-color: #4a3d1c; }
+    .insight h2 { color: #e8b45a; }
+    .insight li { color: #cdbd94; }
+    .insight li::before { color: #b98c2e; }
+    .insight b { color: #f0a050; }
+    .badge.confirmed { background: #1e2c4d; color: #8fb0f5; }
+    .badge.nopullback { background: #402020; color: #ef8a7a; }
+    .badge.ongoing { background: #2a3038; color: #99a; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="/console/">🎙️ 받아쓰기</a>
+    <a href="/study/">📚 스터디</a>
+    <a href="/tools/etf/">📊 ETF 검색</a>
+</nav>
+
+<div class="header">
+    <div class="crumb"><a href="/study/">📚 스터디</a> › 52주 신고가 돌파</div>
+    <h1>🚀 52주 신고가 돌파 분석</h1>
+    <p id="headSub">돌파 후 단기고점은 언제 오는가 — 최근 1년 사례</p>
+</div>
+
+<div class="container">
+    <div class="loading-box" id="loading">📈 분석 데이터를 불러오는 중...</div>
+    <div id="app" style="display:none">
+
+        <div class="seg-tabs" id="segTabs"></div>
+        <div class="seg-note" id="segNote"></div>
+
+        <div class="stat-grid" id="statGrid"></div>
+
+        <div class="insight">
+            <h2>💡 익절 타이밍 가이드 (데이터 요약)</h2>
+            <ul id="insightList"></ul>
+        </div>
+
+        <div class="card">
+            <h2>단기고점 도달 시점 분포<span class="seg-badge seg-badge-label"></span></h2>
+            <div class="sub">돌파일 이후 며칠째(거래일)에 단기고점이 나왔는가 — 고점이 확정된 사례 기준. 막대는 사례 수, 선은 누적 비율.</div>
+            <svg id="histChart" class="chart-svg" viewBox="0 0 860 300" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <div class="card">
+            <h2>돌파일 매수 후 보유기간별 수익률<span class="seg-badge seg-badge-label"></span></h2>
+            <div class="sub">돌파일 종가에 매수해 N거래일 뒤 종가에 팔았다면? 평균·중앙값 수익률과 플러스 확률. 회색 점선은 전체(비교 기준) 평균.</div>
+            <svg id="curveChart" class="chart-svg" viewBox="0 0 860 320" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="legend">
+                <span><i style="background:#e5533d"></i> 평균 수익률</span>
+                <span><i style="background:#3f51b5"></i> 중앙값 수익률</span>
+                <span><i style="background:#b0b6c4"></i> 전체 평균(비교)</span>
+                <span><i style="background:#999;height:2px"></i> 플러스 확률(우측축)</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🪜 트레일링 스탑 시뮬레이션<span class="seg-badge seg-badge-label"></span></h2>
+            <div class="sub">돌파일 종가 매수 후 조건부 매도 규칙 적용(종가 기준): <b>-8% 손절</b> → <b>+10% 도달 시 본전스탑</b> → <b>+20% 도달 시 매도선 +10%</b> → <b>+30% 도달 시 +20%</b> … (10%p 래칫). 60거래일 내 미청산이면 60일째 종가 청산.</div>
+            <div class="stat-grid" id="simStats"></div>
+            <div id="simOutcomes"></div>
+            <h3 class="sim-h3">생존 사례의 고점은 어디서 형성됐나</h3>
+            <div class="sub">손절(-8%)·본전스탑으로 청산된 사례를 제외한 나머지(래칫 청산 + 60일 보유)의 구간 내 최대 상승폭 분포.</div>
+            <svg id="simPeakChart" class="chart-svg" viewBox="0 0 860 260" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="sub" id="simPeakNote" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+            <h2>월별 돌파 발생 건수</h2>
+            <div class="sub" id="monthSub">신선한 돌파(직전 20거래일 내 돌파 없음) 사건 수. 진한 막대는 그중 'RS 80+ & 컨센↑' 조건 충족 건수.</div>
+            <svg id="monthChart" class="chart-svg" viewBox="0 0 860 220" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <div class="card">
+            <h2>돌파 사례 전체</h2>
+            <div class="sub" id="tblSub"></div>
+            <div class="tbl-controls">
+                <input type="search" id="q" placeholder="🔍 종목명·코드 검색">
+                <select id="segFilter">
+                    <option value="">조건: 전체</option>
+                    <option value="rs80">RS 80 이상</option>
+                    <option value="cons_up">컨센서스 상향</option>
+                    <option value="strat">RS 80+ & 컨센↑</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="">전체 상태</option>
+                    <option value="confirmed">고점 확정</option>
+                    <option value="nopullback">상승 지속</option>
+                    <option value="ongoing">판정 대기</option>
+                </select>
+            </div>
+            <div class="tbl-wrap">
+                <table>
+                    <thead><tr id="theadRow"></tr></thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+            <button class="more-btn" id="moreBtn" type="button">더 보기</button>
+        </div>
+
+        <div class="card">
+            <h2>📐 분석 방법</h2>
+            <div class="method" id="methodBox"></div>
+        </div>
+
+        <div class="foot-note">
+            수정주가 기준(액면분할·배당 반영) · 거래비용·호가 미반영 · 과거 통계이며 미래 수익을 보장하지 않습니다
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const fmtPct = (v, d=1) => (v >= 0 ? '+' : '') + (v * 100).toFixed(d) + '%';
+const fmtN = v => v.toLocaleString('ko-KR');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const STATUS = {
+    confirmed:  ['고점 확정', 'confirmed'],
+    nopullback: ['상승 지속', 'nopullback'],
+    ongoing:    ['판정 대기', 'ongoing'],
+};
+const SEG_ORDER = ['all', 'rs80', 'cons_up', 'strat'];
+const SEG_COND = {
+    rs80:    e => e.rs != null && e.rs >= 80,
+    cons_up: e => e.cons != null && e.cons > 0,
+    strat:   e => e.rs != null && e.rs >= 80 && e.cons != null && e.cons > 0,
+};
+const SEG_NOTES = {
+    all: '최근 1년의 모든 신선한 돌파 사례입니다.',
+    rs80: '돌파일의 오닐식 RS 등급이 80 이상(시장 상위 20% 주가 강도)인 사례만 집계합니다.',
+    cons_up: '돌파일의 애널리스트 목표주가 평균이 20거래일 전보다 높아진(상향) 사례만 집계합니다. 커버리지가 있는 종목에 한합니다.',
+    strat: "'내 전략' — RS 80 이상이면서 컨센서스가 20거래일 대비 상향된 사례만 집계합니다.",
+};
+
+let D = null, curSeg = 'all';
+
+fetch('data.json').then(r => {
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+}).then(d => { D = d; render(); }).catch(e => {
+    $('loading').textContent = '⚠️ 데이터를 불러오지 못했습니다: ' + e.message;
+});
+
+function render() {
+    $('loading').style.display = 'none';
+    $('app').style.display = '';
+    const s = D.segments.all.summary;
+    $('headSub').textContent = `${D.data_end.replaceAll('-', '.')} 기준 · 최근 1년 돌파 ${fmtN(s.events_total)}건 (${fmtN(s.stocks)}개 종목)`;
+    renderTabs();
+    renderInsights();
+    renderSegment();
+    renderMonthly();
+    renderTable();
+    renderMethod();
+}
+
+/* ---------- 세그먼트 탭 ---------- */
+function renderTabs() {
+    $('segTabs').innerHTML = SEG_ORDER.map(k => {
+        const seg = D.segments[k];
+        return `<button type="button" data-k="${k}" class="${k === curSeg ? 'on' : ''}">${esc(seg.label)}<span class="n">${fmtN(seg.summary.events_total)}건</span></button>`;
+    }).join('');
+    document.querySelectorAll('#segTabs button').forEach(b => b.onclick = () => {
+        curSeg = b.dataset.k;
+        renderTabs();
+        renderSegment();
+    });
+    $('segNote').textContent = SEG_NOTES[curSeg] || '';
+}
+
+function renderSegment() {
+    $('segNote').textContent = SEG_NOTES[curSeg] || '';
+    const label = D.segments[curSeg].label;
+    document.querySelectorAll('.seg-badge-label').forEach(el => el.textContent = label);
+    renderStats();
+    renderHist();
+    renderCurve();
+    renderSim();
+}
+
+/* ---------- 요약 카드 ---------- */
+function renderStats() {
+    const seg = D.segments[curSeg], s = seg.summary;
+    const cum = Object.fromEntries(seg.cum.map(c => [c.day, c.p]));
+    const items = [
+        [fmtN(s.events_total) + '<small>건</small>', `돌파 사례 (${esc(seg.label)})`],
+        [s.peak_day_median != null ? s.peak_day_median.toFixed(0) + '<small>일</small>' : '—', '단기고점 도달일<br>중앙값(거래일)'],
+        [cum[5] != null ? Math.round(cum[5] * 100) + '<small>%</small>' : '—', '5거래일 안에<br>고점이 나온 비율'],
+        [s.peak_gain_median != null ? fmtPct(s.peak_gain_median) : '—', '단기고점 수익률<br>중앙값'],
+    ];
+    $('statGrid').innerHTML = items.map(([v, k]) =>
+        `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+}
+
+/* ---------- 인사이트 (전체 vs 내 전략 비교, 고정) ---------- */
+function renderInsights() {
+    const A = D.segments.all, S = D.segments.strat, R = D.segments.rs80;
+    const a = A.summary, st = S.summary;
+    const cumA = Object.fromEntries(A.cum.map(c => [c.day, c.p]));
+    const cumS = Object.fromEntries(S.cum.map(c => [c.day, c.p]));
+    const cvA = Object.fromEntries(A.curve.map(c => [c.day, c]));
+    const cvS = Object.fromEntries(S.curve.map(c => [c.day, c]));
+    const lastD = A.curve[A.curve.length - 1].day;
+    const dS = cvS[lastD] || S.curve[S.curve.length - 1];
+    const dA = cvA[lastD] || A.curve[A.curve.length - 1];
+
+    const li = [
+        `전체 돌파의 단기고점은 <b>5거래일 안에 ${Math.round((cumA[5]||0)*100)}%</b>, 20거래일 안에 ${Math.round((cumA[20]||0)*100)}%가 나왔습니다(중앙값 ${a.peak_day_median.toFixed(0)}일). 반면 <b>내 전략(RS 80+ & 컨센↑)</b> 사례는 고점이 더 늦게 옵니다 — 5일 내 ${Math.round((cumS[5]||0)*100)}%, 중앙값 ${st.peak_day_median.toFixed(0)}일, 상위 25%는 ${st.peak_day_p75.toFixed(0)}일 이후. → <b>조건이 좋을수록 며칠 더 들고 갈 근거</b>가 됩니다.`,
+        `단기고점 수익률 중앙값은 전체 ${fmtPct(a.peak_gain_median)}, 내 전략 ${fmtPct(st.peak_gain_median)}(상위 25%는 ${fmtPct(st.peak_gain_p75)} 이상). → 1차 익절은 <b>돌파가 대비 ${fmtPct(st.peak_gain_median, 0)} 안팎</b>, 추세가 살아 있으면(고점 대비 -10% 미발생) 일부는 홀딩이 데이터상 유리했습니다.`,
+        `${lastD}거래일 보유 시 전체는 평균 ${fmtPct(dA.mean)}·중앙값 ${fmtPct(dA.median)}로 절반 이상이 손실이지만, <b>내 전략은 평균 ${fmtPct(dS.mean)}·중앙값 ${fmtPct(dS.median)}</b>로 우상향합니다. RS 80+만 걸러도(${fmtN(R.summary.events_total)}건) 전체보다 낫습니다. → <b>아무 돌파나 사면 절반은 물리고, RS·컨센서스 필터가 성패를 가릅니다.</b>`,
+        `내 전략의 20거래일 시점 플러스 확률은 ${Math.round((cvS[20]||dS).win*100)}%로 전체(${Math.round((cvA[20]||dA).win*100)}%)보다 높지만 여전히 절반 수준입니다. → 필터가 좋아도 <b>고점 대비 -10% 이탈 시 기계적 손절</b>은 유지해야 꼬리 손실을 막습니다.`,
+    ];
+    const simS = S.sim;
+    if (simS) {
+        const svS = simS.survivors;
+        li.push(`트레일링 스탑 규칙(-8% 손절 → +10%마다 매도선 10%p 래칫) 적용 시, 내 전략에서 손절·본전스탑을 통과한 <b>생존 사례의 고점 중앙값은 ${fmtPct(svS.peak_median)}</b>(상위 25%는 ${fmtPct(svS.peak_p75)}+, 도달일 중앙값 ${svS.peak_day_median.toFixed(0)}일)입니다. → 살아남은 종목은 <b>+20~30%에서 미리 팔 이유가 없다</b>는 뜻입니다. 자세한 분포는 아래 시뮬레이션 카드 참고.`);
+    }
+    $('insightList').innerHTML = li.map(t => `<li>${t}</li>`).join('');
+}
+
+/* ---------- SVG 유틸 ---------- */
+function svgEl(tag, attrs, text) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (text != null) el.textContent = text;
+    return el;
+}
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- 히스토그램 + 누적 ---------- */
+function renderHist() {
+    const svg = $('histChart'); svg.innerHTML = '';
+    const seg = D.segments[curSeg];
+    const W = 860, H = 300, m = {t: 24, r: 52, b: 34, l: 46};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const hist = seg.hist;
+    const settled = seg.summary.events_settled;
+    if (!settled) return;
+    const maxC = Math.max(...hist.map(h => h.count), 1);
+    const bw = iw / hist.length;
+
+    for (let i = 0; i <= 4; i++) {
+        const y = m.t + ih - ih * i / 4;
+        svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y, y2: y, stroke: css('--grid'), 'stroke-width': 1}));
+        svg.appendChild(svgEl('text', {x: m.l - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: css('--faint')}, Math.round(maxC * i / 4)));
+    }
+
+    hist.forEach((h, i) => {
+        const bh = ih * h.count / maxC;
+        const x = m.l + i * bw + bw * 0.14;
+        svg.appendChild(svgEl('rect', {
+            x, y: m.t + ih - bh, width: bw * 0.72, height: Math.max(bh, 1),
+            rx: 5, fill: i === 0 ? '#e5533d' : '#3f51b5', opacity: i === 0 ? 0.9 : 0.82,
+        }));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: m.t + ih - bh - 6, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: css('--sub')}, h.count));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: H - 12, 'text-anchor': 'middle', 'font-size': 11, fill: css('--sub')}, h.label));
+    });
+
+    let cumN = 0, pts = [];
+    hist.forEach((h, i) => {
+        cumN += h.count;
+        pts.push([m.l + i * bw + bw / 2, m.t + ih - ih * (cumN / settled), cumN / settled]);
+    });
+    svg.appendChild(svgEl('path', {
+        d: pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' '),
+        fill: 'none', stroke: '#e5a13d', 'stroke-width': 2.5, 'stroke-linejoin': 'round',
+    }));
+    pts.forEach((p, i) => {
+        svg.appendChild(svgEl('circle', {cx: p[0], cy: p[1], r: 3, fill: '#e5a13d'}));
+        if (i % 2 === 0 || i === pts.length - 1)
+            svg.appendChild(svgEl('text', {x: p[0] + 4, y: p[1] - 7, 'font-size': 10.5, fill: '#c07f18', 'font-weight': 700}, Math.round(p[2] * 100) + '%'));
+    });
+    svg.appendChild(svgEl('text', {x: W - 6, y: m.t - 8, 'text-anchor': 'end', 'font-size': 11, fill: '#c07f18'}, '─ 누적 비율'));
+}
+
+/* ---------- 보유기간별 수익률 곡선 ---------- */
+function renderCurve() {
+    const svg = $('curveChart'); svg.innerHTML = '';
+    const W = 860, H = 320, m = {t: 20, r: 56, b: 34, l: 52};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const cv = D.segments[curSeg].curve;
+    const base = D.segments.all.curve;   // 비교 기준선
+    if (!cv.length) return;
+    const vals = cv.flatMap(c => [c.mean, c.median]).concat(base.map(c => c.mean));
+    let lo = Math.min(...vals, 0), hi = Math.max(...vals, 0);
+    const pad = (hi - lo) * 0.15 || 0.01; lo -= pad; hi += pad;
+    const maxDay = Math.max(cv[cv.length - 1].day, 2);
+
+    const x = d => m.l + iw * (d - 1) / (maxDay - 1);
+    const y = v => m.t + ih - ih * (v - lo) / (hi - lo);
+    const yw = w => m.t + ih - ih * w;
+
+    for (let i = 0; i <= 4; i++) {
+        const v = lo + (hi - lo) * i / 4;
+        svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: css('--grid'), 'stroke-width': 1}));
+        svg.appendChild(svgEl('text', {x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: css('--faint')}, fmtPct(v, 1)));
+    }
+    svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y(0), y2: y(0), stroke: css('--sub'), 'stroke-width': 1.2, 'stroke-dasharray': '2 3'}));
+    for (const w of [0.3, 0.4, 0.5, 0.6]) {
+        svg.appendChild(svgEl('text', {x: m.l + iw + 8, y: yw(w) + 4, 'font-size': 11, fill: css('--faint')}, Math.round(w * 100) + '%'));
+    }
+    for (const d of [1, 10, 20, 30, 40, 50, 60]) {
+        if (d > maxDay) break;
+        svg.appendChild(svgEl('text', {x: x(d), y: H - 10, 'text-anchor': 'middle', 'font-size': 11, fill: css('--sub')}, d + '일'));
+    }
+
+    const line = (data, key, color, width, dash, useWin) => {
+        const dstr = data.map((c, i) => (i ? 'L' : 'M') + x(c.day).toFixed(1) + ' ' + (useWin ? yw(c[key]) : y(c[key])).toFixed(1)).join(' ');
+        const attrs = {d: dstr, fill: 'none', stroke: color, 'stroke-width': width, 'stroke-linejoin': 'round'};
+        if (dash) attrs['stroke-dasharray'] = dash;
+        svg.appendChild(svgEl('path', attrs));
+    };
+    if (curSeg !== 'all') line(base.filter(c => c.day <= maxDay), 'mean', '#b0b6c4', 1.8, '6 4');
+    line(cv, 'win', '#999', 1.5, '2 4', true);
+    line(cv, 'median', '#3f51b5', 2.5);
+    line(cv, 'mean', '#e5533d', 2.5);
+
+    const bm = cv.reduce((a, c) => c.mean > a.mean ? c : a, cv[0]);
+    svg.appendChild(svgEl('circle', {cx: x(bm.day), cy: y(bm.mean), r: 4.5, fill: '#e5533d'}));
+    svg.appendChild(svgEl('text', {x: Math.min(x(bm.day), m.l + iw - 90), y: y(bm.mean) - 10, 'text-anchor': 'middle', 'font-size': 11.5, 'font-weight': 700, fill: '#e5533d'},
+        `평균 최고 ${bm.day}일 ${fmtPct(bm.mean)}`));
+}
+
+/* ---------- 트레일링 스탑 시뮬레이션 ---------- */
+const OUT_META = {
+    stop8: ['-8% 손절', '#e5533d'],
+    even:  ['본전스탑 (+10% 도달 후 회귀)', '#e5a13d'],
+    trail: ['래칫 익절 (+10% 이상 매도선)', '#2e9e63'],
+    hold:  ['60일 보유 청산 (매도선 미접촉)', '#3f51b5'],
+};
+
+function renderSim() {
+    const sim = D.segments[curSeg].sim;
+    if (!sim) return;
+    const sv = sim.survivors;
+
+    $('simStats').innerHTML = [
+        [`${Math.round(sv.share * 100)}<small>%</small>`, `생존 비율<br>(손절·본전스탑 제외 ${fmtN(sv.n)}건)`],
+        [sv.peak_median != null ? fmtPct(sv.peak_median) : '—', '생존자 고점<br>중앙값 (p75 ' + (sv.peak_p75 != null ? fmtPct(sv.peak_p75) : '—') + ')'],
+        [sv.peak_day_median != null ? sv.peak_day_median.toFixed(0) + '<small>일</small>' : '—', '생존자 고점<br>도달일 중앙값'],
+        [fmtPct(sim.mean_exit), `전략 전체 평균 청산<br>(판정 ${fmtN(sim.n)}건 · 승률 ${Math.round(sim.win * 100)}%)`],
+    ].map(([v, k]) => `<div class="stat"><div class="v">${v}</div><div class="k">${k}</div></div>`).join('');
+
+    const bar = Object.keys(OUT_META).map(k => {
+        const o = sim.outcomes[k];
+        return o.n ? `<div style="flex:${o.n};background:${OUT_META[k][1]}"></div>` : '';
+    }).join('');
+    const rows = Object.keys(OUT_META).map(k => {
+        const o = sim.outcomes[k];
+        if (!o.n) return '';
+        return `<div class="out-row"><i style="background:${OUT_META[k][1]}"></i>
+            <b>${OUT_META[k][0]}</b> ${fmtN(o.n)}건 (${Math.round(o.share * 100)}%) · 평균 ${o.avg_day}일째 청산
+            <span class="ex" style="color:${o.avg_exit >= 0 ? 'var(--up)' : 'var(--down)'}">${fmtPct(o.avg_exit)}</span></div>`;
+    }).join('');
+    $('simOutcomes').innerHTML = `<div class="out-bar">${bar}</div><div class="out-rows">${rows}</div>`;
+
+    // 생존자 고점 분포 히스토그램
+    const svg = $('simPeakChart'); svg.innerHTML = '';
+    const hist = sv.peak_hist;
+    const W = 860, H = 260, m = {t: 26, r: 14, b: 34, l: 46};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const maxC = Math.max(...hist.map(h => h.count), 1);
+    const bw = iw / hist.length;
+    for (let i = 0; i <= 4; i++) {
+        const y = m.t + ih - ih * i / 4;
+        svg.appendChild(svgEl('line', {x1: m.l, x2: m.l + iw, y1: y, y2: y, stroke: css('--grid'), 'stroke-width': 1}));
+        svg.appendChild(svgEl('text', {x: m.l - 8, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: css('--faint')}, Math.round(maxC * i / 4)));
+    }
+    hist.forEach((h, i) => {
+        const bh = ih * h.count / maxC;
+        svg.appendChild(svgEl('rect', {
+            x: m.l + i * bw + bw * 0.16, y: m.t + ih - bh, width: bw * 0.68,
+            height: Math.max(bh, 1), rx: 5, fill: '#2e9e63', opacity: 0.85,
+        }));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: m.t + ih - bh - 6, 'text-anchor': 'middle', 'font-size': 11.5, 'font-weight': 700, fill: css('--sub')},
+            h.count + (sv.n ? ` (${Math.round(h.count / sv.n * 100)}%)` : '')));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: H - 12, 'text-anchor': 'middle', 'font-size': 11.5, fill: css('--sub')}, h.label));
+    });
+
+    const over30 = hist.filter(h => h.lo >= 0.3).reduce((a, h) => a + h.count, 0);
+    $('simPeakNote').innerHTML = sv.n
+        ? `생존 ${fmtN(sv.n)}건 중 <b>${Math.round(over30 / sv.n * 100)}%가 +30% 이상</b>까지 올라갔고, 고점 중앙값은 <b>${fmtPct(sv.peak_median)}</b>(도달일 중앙값 ${sv.peak_day_median.toFixed(0)}일)입니다. 래칫 익절 사례의 평균 청산 수익률은 ${sim.outcomes.trail.avg_exit != null ? fmtPct(sim.outcomes.trail.avg_exit) : '—'}입니다.`
+        : '생존 사례가 없습니다.';
+}
+
+/* ---------- 월별 건수 (전체 + 전략) ---------- */
+function renderMonthly() {
+    const svg = $('monthChart'); svg.innerHTML = '';
+    const W = 860, H = 220, m = {t: 22, r: 10, b: 32, l: 42};
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const mo = D.monthly;
+    const maxC = Math.max(...mo.map(x => x.count), 1);
+    const bw = iw / mo.length;
+    mo.forEach((o, i) => {
+        const bh = ih * o.count / maxC;
+        const bhS = ih * (o.strat || 0) / maxC;
+        const x0 = m.l + i * bw + bw * 0.15, w0 = bw * 0.7;
+        svg.appendChild(svgEl('rect', {x: x0, y: m.t + ih - bh, width: w0, height: Math.max(bh, 1), rx: 4, fill: '#5c6bc0', opacity: 0.45}));
+        if (o.strat) svg.appendChild(svgEl('rect', {x: x0, y: m.t + ih - bhS, width: w0, height: Math.max(bhS, 1), rx: 4, fill: '#3f51b5'}));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: m.t + ih - bh - 5, 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, fill: css('--sub')}, o.count));
+        svg.appendChild(svgEl('text', {x: m.l + i * bw + bw / 2, y: H - 10, 'text-anchor': 'middle', 'font-size': 10, fill: css('--faint')},
+            o.month.slice(2).replace('-', '.')));
+    });
+}
+
+/* ---------- 사례 테이블 ---------- */
+const COLS = [
+    ['date', '돌파일'],
+    ['name', '종목'],
+    ['close', '돌파가'],
+    ['rs', 'RS'],
+    ['cons', '컨센Δ20'],
+    ['peak_day', '고점까지'],
+    ['peak_gain', '고점수익률'],
+    ['status', '상태'],
+];
+let sortKey = 'date', sortDesc = true, shown = 50;
+
+function renderTable() {
+    $('theadRow').innerHTML = COLS.map(([k, label]) =>
+        `<th class="${k === 'name' || k === 'date' ? 'l' : ''}" data-k="${k}">${label} <span class="arr">${k === sortKey ? (sortDesc ? '▼' : '▲') : ''}</span></th>`).join('');
+    document.querySelectorAll('#theadRow th').forEach(th => th.onclick = () => {
+        const k = th.dataset.k;
+        if (sortKey === k) sortDesc = !sortDesc; else { sortKey = k; sortDesc = true; }
+        shown = 50; renderTable();
+    });
+
+    const q = $('q').value.trim().toLowerCase();
+    const st = $('statusFilter').value;
+    const sf = $('segFilter').value;
+    let rows = D.events.filter(e =>
+        (!st || e.status === st) &&
+        (!sf || SEG_COND[sf](e)) &&
+        (!q || e.name.toLowerCase().includes(q) || e.code.toLowerCase().includes(q)));
+
+    rows.sort((a, b) => {
+        let va = a[sortKey], vb = b[sortKey];
+        if (va == null && vb == null) return 0;
+        if (va == null) return 1;               // null은 항상 뒤로
+        if (vb == null) return -1;
+        if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        return (va < vb ? -1 : va > vb ? 1 : 0) * (sortDesc ? -1 : 1);
+    });
+
+    $('tblSub').textContent = `${fmtN(rows.length)}건 표시 — 열 제목을 누르면 정렬됩니다. RS는 돌파일 기준(1~99), 컨센Δ20은 목표주가 평균의 20거래일 대비 변화율(커버리지 없으면 —).`;
+    const view = rows.slice(0, shown);
+    $('tbody').innerHTML = view.map(e => {
+        const [sl, sc] = STATUS[e.status] || [e.status, ''];
+        const gain = e.status === 'ongoing' && e.peak_day === 0 ? '<span class="dim">—</span>'
+            : `<span class="${e.peak_gain >= 0.0005 ? 'pos' : 'neg'}">${fmtPct(e.peak_gain)}</span>`;
+        const pd = e.status === 'ongoing' && e.peak_day === 0 ? '—' : (e.peak_day === 0 ? '당일' : e.peak_day + '일');
+        const rs = e.rs == null ? '<span class="dim">—</span>' : `<span class="${e.rs >= 80 ? 'rs-hi' : ''}">${e.rs}</span>`;
+        const cons = e.cons == null ? '<span class="dim">—</span>'
+            : `<span class="${e.cons > 0 ? 'pos' : e.cons < 0 ? 'neg' : ''}">${fmtPct(e.cons)}</span>`;
+        return `<tr>
+            <td class="l">${e.date.slice(2).replaceAll('-', '.')}</td>
+            <td class="l"><span class="nm">${esc(e.name)}</span> <span class="cd">${esc(e.code.replace(/^A/, ''))}</span></td>
+            <td>${fmtN(e.close)}원</td>
+            <td>${rs}</td>
+            <td>${cons}</td>
+            <td>${pd}</td>
+            <td>${gain}</td>
+            <td class="l"><span class="badge ${sc}">${sl}</span></td>
+        </tr>`;
+    }).join('');
+    $('moreBtn').style.display = rows.length > shown ? '' : 'none';
+    $('moreBtn').textContent = `더 보기 (${fmtN(Math.min(shown, rows.length))}/${fmtN(rows.length)})`;
+}
+$('q').oninput = () => { shown = 50; renderTable(); };
+$('statusFilter').onchange = () => { shown = 50; renderTable(); };
+$('segFilter').onchange = () => { shown = 50; renderTable(); };
+$('moreBtn').onclick = () => { shown += 100; renderTable(); };
+
+/* ---------- 방법론 ---------- */
+function renderMethod() {
+    const p = D.params;
+    $('methodBox').innerHTML = `
+        <b>데이터</b>: 수정주가 일별 종가 DB (${D.data_start} ~ ${D.data_end}) · 일반 종목만 (ETF·ETN·스팩·우선주·${fmtN(p.min_price)}원 미만 제외)<br>
+        <b>돌파 정의</b>: 종가가 직전 ${p.lookback}거래일(약 52주) 최고 종가를 넘어선 날. 같은 흐름의 중복 집계를 막기 위해 직전 ${p.cooldown}거래일 내 돌파가 없었던 '신선한 돌파'만 사건으로 인정<br>
+        <b>단기고점</b>: 돌파일 이후 종가 기준, 고점 대비 -${Math.round(p.pullback * 100)}% 하락이 처음 나오기 전까지의 최고 종가. 추적 구간은 돌파 후 ${p.fwd}거래일<br>
+        <b>상태</b>: 고점 확정(-${Math.round(p.pullback * 100)}% 되돌림 발생) / 상승 지속(${p.fwd}일간 되돌림 없음) / 판정 대기(최근 돌파로 데이터 부족)<br>
+        <b>RS 등급</b>: 돌파일의 오닐식 상대강도 등급(1~99, db/market/rs · ${D.rs_start}부터). 최근 4개 분기 수익률 40/20/20/20 가중 백분위<br>
+        <b>컨센서스 추세(컨센Δ20)</b>: 돌파일 목표주가 평균 ÷ ${p.cons_days}거래일 전 목표주가 평균 - 1 (db/market/consensus · ${D.cons_start}부터, 커버리지 약 670종목). 양쪽 값이 있어야 계산되며 없으면 '—'<br>
+        <b>세그먼트</b>: 전체 / RS ${p.rs_min}+ / 컨센↑(Δ20 &gt; 0) / RS ${p.rs_min}+ &amp; 컨센↑('내 전략') — 상단 탭으로 전환<br>
+        <b>트레일링 스탑 시뮬레이션</b>: 돌파일 종가 매수, 모든 판정은 종가 기준. 매도선은 -${Math.round(p.sim_stop * 100)}%에서 시작해 최대 상승폭이 +${Math.round(p.sim_step * 100)}%×k에 도달할 때마다 +${Math.round(p.sim_step * 100)}%×(k-1)로 상향(+10% 도달 → 본전, +20% → +10%, +30% → +20% …). 종가가 매도선 이하면 그 종가에 청산. ${p.fwd}거래일 내 미청산이면 마지막 종가 청산(hold), 데이터 부족이면 판정 제외<br>
+        <b>갱신</b>: ${D.generated} 생성 — 시장 데이터 업로드 시 <code>tools/study/build_high52.py</code>로 재계산`;
+}
+</script>
+</body>
+</html>

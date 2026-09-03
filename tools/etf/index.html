@@ -173,6 +173,28 @@
   .widget .wval.down { color: #2a5ca8; }
   @media (max-width: 600px) { .widgets { grid-template-columns: 1fr; padding: 12px 12px 16px; } }
 
+  /* 연도별 영업이익 증가율 표 (세로) */
+  .earn-tbl { border-collapse: collapse; margin-top: 2px; }
+  .earn-tbl tr { border-bottom: 1px solid #f0f2f7; }
+  .earn-tbl tr:last-child { border-bottom: none; }
+  .earn-tbl td { padding: 4px 0; font-size: 13px; }
+  .earn-tbl td.yr { color: #888; font-weight: 600; font-size: 12px; padding-right: 16px; white-space: nowrap; }
+  .earn-tbl td.yr .e-badge { color: #3f51b5; }
+  .earn-tbl td.op { text-align: right; color: #555; font-variant-numeric: tabular-nums; min-width: 86px; white-space: nowrap; }
+  .earn-tbl td.op .unit { color: #aaa; font-size: 11px; }
+  .earn-tbl td.gv { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 64px; }
+  .earn-tbl td.gv.up { color: #c62828; }
+  .earn-tbl td.gv.down { color: #2a5ca8; }
+  .earn-tbl td.gv.flat { color: #888; }
+  .earn-tbl tr.est { cursor: pointer; }
+  .earn-tbl tr.est:hover td { background: #f5f7fb; }
+  .earn-tbl tr.on td { background: #e8eaf6; }
+  .earn-tbl td.chev { color: #9fa8da; font-size: 11px; padding-left: 8px; }
+  .earn-tbl tr.qrow { border-bottom: none; }
+  .earn-tbl tr.qrow td { background: #f8f9fd; font-size: 12px; padding: 2px 0; }
+  .earn-tbl tr.qrow td.yr { color: #aab; font-weight: 500; padding-left: 14px; }
+  .earn-tbl tr.qrow td.chev { font-size: 10px; color: #c0c6de; }
+
   /* 종목 차트 (수정주가 vs 목표주가) */
   .chart-card {
     background: white; border-radius: 12px; padding: 16px 20px 12px;
@@ -256,6 +278,7 @@
 
 <div class="header">
   <a href="/" style="position:absolute;left:16px;top:16px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;">&#8592; 가좌버핏 홈</a>
+  <a href="guide.html" style="position:absolute;right:16px;top:16px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;">&#10067; 사용법</a>
   <h1>ETF 종목 검색기</h1>
   <p>종목명을 입력하면 해당 종목을 보유한 ETF를 비중순으로 보여줍니다</p>
 </div>
@@ -285,6 +308,7 @@
   <div id="breadcrumb" class="breadcrumb" style="display:none"></div>
   <div id="statsArea" style="display:none" class="stats"></div>
   <div id="chartArea" style="display:none"></div>
+  <div id="earnArea" style="display:none"></div>
 
   <div class="result-section" id="resultSection">
     <div id="introArea">
@@ -318,6 +342,8 @@ let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
+let RSM = null;        // ETF RS 등급 급등 {top:[[code,delta,rs0]], d0, d20} (db/market/rs 기반)
+let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d10, d20, top10:[[code,chg,cov]], top20:[...]}] (db/market/earnings/consensus 기반)
 let ETFS_CUR = {};     // 현재 날짜의 etfCode -> etfName
 let stockSort = 'w';   // 종목 검색 정렬: 'w'|'d1'|'d5'|'d10'
 let stockSortDir = -1; // -1 내림차순, 1 오름차순 (같은 컬럼 재클릭 시 토글)
@@ -341,7 +367,85 @@ const breadcrumb = document.getElementById('breadcrumb');
 const chartArea = document.getElementById('chartArea');
 const backBtnArea = document.getElementById('backBtnArea');
 const tagsArea = document.getElementById('tagsArea');
-let viewHistory = [];
+let restoring = false;   // 주소(쿼리스트링)로부터 화면 복원 중이면 pushState 억제
+
+// ===== URL / 브라우저 히스토리 동기화 =====
+// 화면 상태를 쿼리스트링에 반영 — 브라우저 뒤로가기·새로고침·링크 공유 지원
+function urlForState() {
+  const p = new URLSearchParams();
+  const latest = DATES[DATES.length - 1];
+  if (currentDate && (currentView || currentDate !== latest)) p.set('date', currentDate);
+  if (currentView) {
+    if (currentView.type === 'stock') p.set('stock', currentView.name);
+    else if (currentView.type === 'etf') {
+      p.set('etf', currentView.code);
+      if (currentView.fromStock) p.set('from', currentView.fromStock);
+    } else if (currentView.type === 'multi') p.set('stocks', currentView.names.join(','));
+  }
+  const q = p.toString();
+  return location.pathname + (q ? '?' + q : '');
+}
+
+function updateBackBtn() {
+  const depth = (history.state && history.state.depth) || 0;
+  backBtnArea.style.display = (depth > 0 && currentView) ? '' : 'none';
+}
+
+// 렌더 함수 말미에서 호출: 화면이 바뀌었으면 pushState, 같은 화면 재렌더면 replaceState
+function syncUrl() {
+  if (restoring) return;
+  const url = urlForState();
+  const depth = (history.state && history.state.depth) || 0;
+  if (location.pathname + location.search === url) {
+    history.replaceState({ depth: depth }, '', url);
+  } else {
+    history.pushState({ depth: depth + 1 }, '', url);
+  }
+  updateBackBtn();
+}
+
+// 현재 주소의 쿼리스트링대로 화면 복원 (pushState 없이) — 초기 진입·popstate 공용
+async function applyStateFromUrl() {
+  if (!DATES.length) return;
+  const p = new URLSearchParams(location.search);
+  restoring = true;
+  try {
+    const date = p.get('date');
+    const target = (date && DATES.includes(date)) ? date : DATES[DATES.length - 1];
+    if (target !== currentDate) {
+      dateSelect.value = target;
+      await loadDateData(target);
+    }
+    const etf = p.get('etf');
+    const stock = p.get('stock');
+    const multi = (p.get('stocks') || '').split(',').filter(n => DATA[n]);
+    const single = (stock && DATA[stock]) ? stock : (multi.length === 1 ? multi[0] : null);
+    if (etf && HOLDINGS[etf]) {
+      const from = p.get('from');
+      const hasFrom = from && DATA[from];
+      currentView = hasFrom ? { type: 'stock', name: from } : null;  // fromStock 유도용
+      selectedStocks = hasFrom ? [from] : [];
+      renderTags();
+      showEtfHoldings(etf, ETFS_CUR[etf] || etf);
+    } else if (multi.length >= 2) {
+      selectedStocks = multi;
+      renderTags();
+      showMultiStockResults();
+    } else if (single) {
+      currentView = null;
+      selectedStocks = [single];
+      renderTags();
+      showStockResults(single);
+    } else {
+      clearAllStocks();
+    }
+  } finally {
+    restoring = false;
+  }
+  updateBackBtn();
+}
+
+window.addEventListener('popstate', function() { applyStateFromUrl(); });
 
 // ===== INIT =====
 async function init() {
@@ -355,9 +459,10 @@ async function init() {
     ).join('');
     dateSelect.disabled = false;
 
-    // Auto-select latest date
-    dateSelect.value = dates[dates.length - 1];
-    await loadDateData(dates[dates.length - 1]);
+    // 주소에 날짜가 지정돼 있으면 해당 날짜, 아니면 최신 날짜로 진입
+    await applyStateFromUrl();
+    history.replaceState({ depth: 0 }, '', urlForState());
+    updateBackBtn();
   } catch (err) {
     introArea.innerHTML = '<div class="intro"><div class="emoji">&#9888;&#65039;</div>' +
       '<p>데이터를 불러올 수 없습니다.<br>data/ 폴더에 dates.json 파일이 있는지 확인해주세요.</p></div>';
@@ -385,8 +490,8 @@ function deltaFor(code, stock, curW, off) {
   return curW - (c.w.get(code + '|' + stock) || 0);
 }
 
-// 레버리지 ETF(인버스2X 포함)는 수익률·편입 비중 랭킹에서 제외
-const LEV = /레버리지|인버스\s*2X|곱버스/i;
+// 레버리지·인버스 ETF는 수익률·편입 비중 랭킹에서 제외
+const LEV = /레버리지|인버스|곱버스/i;
 
 // ===== ETF 수익률 (db/market/price 월별 수정주가) =====
 // 기준일 포함 최근 3개월 파일을 읽어 5·20영업일 수익률 랭킹을 계산
@@ -490,8 +595,19 @@ async function loadConsensus(date) {
     if (cov >= 20) scores.push([code, score, cov]);
   }
   scores.sort((a, b) => b[1] - a[1]);
+  // 개별 종목의 20영업일 목표주가 변화율 (검색 가능한 종목만)
+  const stocks = [];
+  for (const [nm, m2] of tp) {
+    if (!DATA[nm]) continue;
+    const t0 = m2.get(d0), t1 = m2.get(d20);
+    if (t0 > 0 && t1 > 0) stocks.push([nm, t0 / t1 - 1]);
+  }
+  stocks.sort((a, b) => b[1] - a[1]);
+
   return { d0: d0, d20: d20, up: scores.slice(0, 10),
-           down: scores.filter(s => s[1] < 0).slice(-10).reverse() };
+           down: scores.filter(s => s[1] < 0).slice(-10).reverse(),
+           stockUp: stocks.filter(s => s[1] > 0.0005).slice(0, 10),
+           stockDown: stocks.filter(s => s[1] < -0.0005).slice(-10).reverse() };
 }
 
 // ===== 종목 차트: 최근 1년 수정주가 vs 목표주가 =====
@@ -509,7 +625,7 @@ function monthsList(date, n) {
   return out;
 }
 
-const DB_DIR = { p: 'price', c: 'consensus', r: 'rs' };
+const DB_DIR = { p: 'price', c: 'consensus', r: 'rs', e: 'earnings/consensus' };
 async function readMonth(kind, mo) {
   const key = kind + '|' + mo;
   let buf = FILE_BUFS.get(key);
@@ -561,9 +677,10 @@ function showStockChart(name) {
     if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
     renderStockChart(name, Object.assign({ rs: rs }, s));
   });
+  showEarnings(name);
 }
 
-// 오닐식 RS 등급(1~99) 시계열 — db/market/rs (빌드 단계에서 전 종목 순위로 산정)
+// 오닐식 RS 등급(1~99) 시계열 — db/market/rs (일반 종목 모집단 대비 백분위, ETF도 같은 분포로 등급)
 async function loadRsSeries(name, code) {
   const key = 'R:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
@@ -597,6 +714,451 @@ function hideStockChart() {
   chartToken++;
   chartArea.style.display = 'none';
   chartArea.innerHTML = '';
+  earnArea.style.display = 'none';
+  earnArea.innerHTML = '';
+}
+
+// ===== 연도별 영업이익 증가율 (db/market/earnings) =====
+const earnArea = document.getElementById('earnArea');
+let EARN = null;   // Map(종목명 -> {code, fy: Map(fy -> [op, src])})
+
+async function loadEarnings() {
+  if (EARN) return EARN;
+  EARN = (async () => {
+    const resp = await fetch('/db/market/earnings/annual.parquet');
+    if (!resp.ok) return null;
+    const rows = await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
+    const m = new Map();
+    for (const r of rows) {
+      let e = m.get(r.name);
+      if (!e) m.set(r.name, e = { code: r.code, fy: new Map() });
+      e.fy.set(Number(r.fy), [r.op, r.src]);
+    }
+    return m;
+  })().catch(() => null);
+  return EARN;
+}
+
+const fmtOp = v => {   // 천원 -> 조/억 (조 단위는 소수 둘째 자리까지 — 1.9조/2.1조 식 반올림 착시 방지)
+  const abs = Math.abs(v);
+  if (abs >= 1e11) return (v / 1e9).toFixed(1) + '조원';
+  if (abs >= 1e9) return (v / 1e9).toFixed(2) + '조원';
+  if (abs >= 1e5) return Math.round(v / 1e5).toLocaleString() + '억원';
+  return Math.round(v / 10).toLocaleString() + '만원';
+};
+
+function showEarnings(name) {
+  const tok = chartToken;
+  earnArea.style.display = 'none';
+  earnArea.innerHTML = '';
+  loadEarnings().then(m => {
+    if (tok !== chartToken || !m) return;
+    if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
+    const e = m.get(name);
+    if (!e) return;                                  // 실적 데이터 없는 종목은 카드 생략
+    const fys = Array.from(e.fy.keys()).sort((a, b) => a - b);
+    let cells = '';
+    for (const fy of fys) {
+      if (fy < 2020) continue;                       // 표시 시작 연도 (기준치는 전년도 사용)
+      const cur = e.fy.get(fy), prev = e.fy.get(fy - 1);
+      if (!cur) continue;
+      const est = cur[1] === 'E';
+      let gv, cls;
+      if (!prev) { gv = '-'; cls = 'flat'; }
+      else if (prev[0] > 0 && cur[0] > 0) {
+        const g = (cur[0] / prev[0] - 1) * 100;
+        gv = (g >= 0 ? '+' : '') + (Math.abs(g) >= 100 ? g.toFixed(0) : g.toFixed(1)) + '%';
+        cls = g > 0.05 ? 'up' : g < -0.05 ? 'down' : 'flat';
+      }
+      else if (prev[0] <= 0 && cur[0] > 0) { gv = '흑전'; cls = 'up'; }
+      else if (prev[0] > 0 && cur[0] <= 0) { gv = '적전'; cls = 'down'; }
+      else { gv = '적지'; cls = 'flat'; }
+      const opEok = Math.round(cur[0] / 1e5);   // 천원 -> 억원
+      cells += '<tr class="est" onclick="toggleEarnQ(this,\'' + safeAttr(e.code) + '\',' + fy + ')">' +
+        '<td class="yr">' + fy + (est ? '<span class="e-badge">E</span>' : '') + '</td>' +
+        '<td class="op">' + opEok.toLocaleString() + '<span class="unit">억</span></td>' +
+        '<td class="gv ' + cls + '">' + gv + '</td>' +
+        '<td class="chev">&#9656; 분기</td></tr>';
+    }
+    if (!cells) return;
+    earnArea.innerHTML = '<div class="chart-card">' +
+      '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
+      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스 · 연도를 클릭하면 분기 실적</div>' +
+      '<table class="earn-tbl">' + cells + '</table>' +
+      '<div id="earnCons" style="margin-top:14px"><div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div></div></div>';
+    earnArea.style.display = '';
+    showStockEarnCons(e.code, name, tok);
+  });
+}
+
+// ===== 종목 컨센서스 영업이익 추이 (실적 표 아래 고정 — ETF 카드와 같은 형식) =====
+const STOCK_CONS_CACHE = new Map();   // 'code|기준일' -> {fys, byFy}
+
+async function loadStockConsSeries(code) {
+  const key = code + '|' + currentDate;
+  if (STOCK_CONS_CACHE.has(key)) return STOCK_CONS_CACHE.get(key);
+  const [y, m] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
+  const nMonths = Math.max(1, (y - 2024) * 12 + m - 11);   // 컨센서스 추이 DB 시작(2024-12)부터
+  const byFy = new Map();
+  await Promise.all(monthsList(currentDate, nMonths).map(async mo => {
+    for (const r of await readMonth('e', mo)) {
+      if (r.code !== code) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > currentDate) continue;
+      const fy = Number(r.fy);
+      let arr = byFy.get(fy);
+      if (!arr) byFy.set(fy, arr = []);
+      arr.push([d, r.op, 1]);
+    }
+  }));
+  const out = new Map();
+  for (const [fy, arr] of byFy) {
+    arr.sort((a, b) => a[0] < b[0] ? -1 : 1);
+    if (arr.length >= 2) out.set(fy, arr);
+  }
+  const res = { fys: Array.from(out.keys()).sort((a, b) => a - b), byFy: out };
+  STOCK_CONS_CACHE.set(key, res);
+  return res;
+}
+
+function showStockEarnCons(code, name, tok) {
+  loadStockConsSeries(code).then(res => {
+    if (tok !== chartToken) return;
+    if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
+    const box = document.getElementById('earnCons');
+    if (!box) return;
+    if (!res.fys.length) { box.innerHTML = ''; box.style.display = 'none'; return; }
+    box.innerHTML = '<div id="earnConsChart"></div>' +
+      '<div class="chart-sub" style="margin-top:4px">연간 영업이익 컨센서스 추이 · 첫 관측일부터 기준일까지 · E 연도별 최신 전망은 범례</div>';
+    buildConsChart(document.getElementById('earnConsChart'), res, { pfx: 'scs', showCount: false });
+  });
+}
+
+// 분기별 영업이익 (확정 연도 클릭 시 토글)
+let EARN_Q = null;   // Map(code -> Map(fy*10+q -> op))
+function loadQuarterly() {
+  if (EARN_Q) return EARN_Q;
+  EARN_Q = (async () => {
+    const resp = await fetch('/db/market/earnings/quarterly.parquet');
+    if (!resp.ok) return null;
+    const rows = await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
+    const m = new Map();
+    for (const r of rows) {
+      let e = m.get(r.code);
+      if (!e) m.set(r.code, e = new Map());
+      e.set(Number(r.fy) * 10 + Number(r.q), r.op);
+    }
+    return m;
+  })().catch(() => null);
+  return EARN_Q;
+}
+
+const growthCell = (cur, prev) => {   // [표시문자열, 색상클래스]
+  if (prev == null) return ['-', 'flat'];
+  if (prev > 0 && cur > 0) {
+    const g = (cur / prev - 1) * 100;
+    return [(g >= 0 ? '+' : '') + (Math.abs(g) >= 100 ? g.toFixed(0) : g.toFixed(1)) + '%',
+            g > 0.05 ? 'up' : g < -0.05 ? 'down' : 'flat'];
+  }
+  if (prev <= 0 && cur > 0) return ['흑전', 'up'];
+  if (prev > 0 && cur <= 0) return ['적전', 'down'];
+  return ['적지', 'flat'];
+};
+
+async function toggleEarnQ(cell, code, fy) {
+  // 이미 펼쳐져 있으면 접기 (해당 연도 행 바로 아래의 분기 행 제거)
+  let removed = false;
+  let nxt = cell.nextElementSibling;
+  while (nxt && nxt.classList.contains('qrow')) {
+    const t = nxt;
+    nxt = nxt.nextElementSibling;
+    t.remove();
+    removed = true;
+  }
+  cell.classList.remove('on');
+  if (removed) return;
+
+  cell.classList.add('on');
+  const m = await loadQuarterly();
+  if (!cell.isConnected || !cell.classList.contains('on')) return;   // 그 사이 화면 전환/재클릭
+  let rows = qRowsHtml(m && m.get(code), fy);
+  if (!rows) rows = '<tr class="qrow"><td class="yr" colspan="4" style="color:#aaa">분기 실적 데이터가 없습니다</td></tr>';
+  cell.insertAdjacentHTML('afterend', rows);
+}
+
+function qRowsHtml(e, fy) {
+  let rows = '';
+  if (!e) return rows;
+  for (let q = 1; q <= 4; q++) {
+    const cur = e.get(fy * 10 + q);
+    if (cur == null) continue;
+    const [gv, cls] = growthCell(cur, e.get((fy - 1) * 10 + q));
+    rows += '<tr class="qrow"><td class="yr">' + q + 'Q</td>' +
+      '<td class="op">' + Math.round(cur / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
+      '<td class="gv ' + cls + '">' + gv + '</td>' +
+      '<td class="chev">' + (q === 1 ? 'YoY' : '') + '</td></tr>';
+  }
+  return rows;
+}
+
+// ===== 이익 컨센서스 상향 ETF 랭킹 (첫 화면 위젯) =====
+// 각 ETF의 Σ(영업이익 컨센서스 × 보유비중)이 10·20영업일 전 대비 얼마나 변했는지.
+// 컨센서스가 있는 연도(현재 2026E·2027E)별로 각각 계산, 두 날짜 모두 값이 있는 종목만 짝지어 비교.
+async function loadOpMomentum(date) {
+  const rows = [];
+  for (const mo of monthsList(date, 3)) rows.push(...await readMonth('e', mo));
+  const byFy = new Map();   // fy -> Map(종목명 -> Map(date -> op))
+  for (const r of rows) {
+    const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+    if (d > date) continue;
+    const fy = Number(r.fy);
+    let stocks = byFy.get(fy);
+    if (!stocks) byFy.set(fy, stocks = new Map());
+    let m = stocks.get(r.name);
+    if (!m) stocks.set(r.name, m = new Map());
+    m.set(d, r.op);
+  }
+
+  const result = [];
+  for (const fy of Array.from(byFy.keys()).sort((a, b) => a - b)) {
+    const stocks = byFy.get(fy);
+    const dset = new Set();
+    for (const m of stocks.values()) for (const d of m.keys()) dset.add(d);
+    const ds = Array.from(dset).sort();
+    if (ds.length < 11) continue;
+    const d0 = ds[ds.length - 1];
+    const d10 = ds[ds.length - 11];
+    const d20 = ds.length >= 21 ? ds[ds.length - 21] : null;
+
+    // ETF 상세의 '구성종목 영업이익 컨센서스 총합' 차트와 동일한 값(현재 구성·비중 고정,
+    // 날짜별 컨센서스 총합, 중단된 컨센서스는 마지막 값 이월)의 변화율.
+    // 비교 기간 중 컨센서스가 새로 생긴 종목(비중 합 1%p 초과)이 있는 ETF는
+    // 총합 변화가 상향이 아닌 커버리지 추가를 반영하므로 랭킹에서 제외
+    const agg = new Map();   // etfCode -> {cov, s0, s10, s20, mm10, mm20}
+    for (const [name, m] of stocks) {
+      const entries = DATA[name];
+      if (!entries) continue;
+      // 해당일 이전 가장 최근 컨센서스 (forward-fill — 차트와 동일)
+      const sd = Array.from(m.keys()).sort();
+      const atOrBefore = d => {
+        let v = null;
+        for (let i = 0; i < sd.length && sd[i] <= d; i++) v = m.get(sd[i]);
+        return v;
+      };
+      const v0 = atOrBefore(d0), v10 = atOrBefore(d10), v20 = d20 ? atOrBefore(d20) : null;
+      if (v0 == null && v10 == null && v20 == null) continue;
+      for (const e of entries) {
+        const w = e[2];
+        if (w == null || w <= 0) continue;
+        let a = agg.get(e[0]);
+        if (!a) agg.set(e[0], a = { cov: 0, s0: 0, s10: 0, s20: 0, mm10: 0, mm20: 0 });
+        if (v0 != null) { a.s0 += v0 * w; a.cov += w; }
+        if (v10 != null) a.s10 += v10 * w;
+        if (v20 != null) a.s20 += v20 * w;
+        if ((v0 != null) !== (v10 != null)) a.mm10 += w;
+        if (d20 && (v0 != null) !== (v20 != null)) a.mm20 += w;
+      }
+    }
+    const rank = (kn, mm) => {
+      const out = [];
+      for (const [code, a] of agg) {
+        if (a.cov < 20 || a[kn] <= 0 || a[mm] > 1) continue;   // 커버리지 20% 미만·변동 1%p 초과 제외
+        if (LEV.test(ETFS_CUR[code] || '')) continue;
+        const chg = a.s0 / a[kn] - 1;
+        if (chg > 0.0005) out.push([code, chg, a.cov]);
+      }
+      out.sort((x, y) => y[1] - x[1]);
+      return out.slice(0, 10);
+    };
+    result.push({ fy: fy, d0: d0, d10: d10, d20: d20,
+                  top10: rank('s10', 'mm10'), top20: d20 ? rank('s20', 'mm20') : [] });
+  }
+  return result.length ? result : null;
+}
+
+// ===== ETF 구성종목 컨센서스 영업이익 총합 추이 =====
+// 기준일 구성종목(이름 매칭)의 연간 영업이익 컨센서스를 날짜별로 보유비중 가중 합산 — 구성은 기준일로 고정
+const ETF_CONS_CACHE = new Map();   // 'code|기준일' -> {fys:[fy], byFy:Map(fy -> [[date,합계,종목수]])}
+
+async function loadEtfConsTotal(code) {
+  const key = code + '|' + currentDate;
+  if (ETF_CONS_CACHE.has(key)) return ETF_CONS_CACHE.get(key);
+  const wByName = new Map();   // 종목명 -> 비중(0~1). 비중 없는 항목은 제외
+  for (const [nm, w] of (HOLDINGS[code] || [])) if (w != null) wByName.set(nm, w / 100);
+  // 컨센서스 추이 DB 시작(2024-12)부터 기준일까지의 월 파일
+  const [y, m] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
+  const nMonths = Math.max(1, (y - 2024) * 12 + m - 11);
+  const byFy = new Map();   // fy -> Map(종목명 -> Map(date -> op))
+  await Promise.all(monthsList(currentDate, nMonths).map(async mo => {
+    for (const r of await readMonth('e', mo)) {
+      const w = wByName.get(r.name);
+      if (w == null) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > currentDate) continue;
+      const fy = Number(r.fy);
+      let st = byFy.get(fy);
+      if (!st) byFy.set(fy, st = new Map());
+      let sm = st.get(r.name);
+      if (!sm) st.set(r.name, sm = new Map());
+      sm.set(d, r.op);
+    }
+  }));
+  // 종목별로 마지막 컨센서스를 이월(forward-fill)해 날짜별 총합 계산
+  // (컨센서스 제공이 중단된 종목이 합계에서 빠지며 총합이 튀는 것을 방지)
+  const out = new Map();
+  for (const [fy, st] of byFy) {
+    const dset = new Set();
+    for (const sm of st.values()) for (const d of sm.keys()) dset.add(d);
+    const ds = Array.from(dset).sort();
+    const arr = ds.map(d => [d, 0, 0]);
+    for (const [nm, sm] of st) {
+      const w = wByName.get(nm);
+      let last = null;
+      for (let i = 0; i < ds.length; i++) {
+        const v = sm.get(ds[i]);
+        if (v != null) last = v;
+        if (last != null) { arr[i][1] += last * w; arr[i][2]++; }
+      }
+    }
+    if (arr.length >= 2) out.set(fy, arr);
+  }
+  const res = { fys: Array.from(out.keys()).sort((a, b) => a - b), byFy: out };
+  ETF_CONS_CACHE.set(key, res);
+  return res;
+}
+
+function showEtfEarnCons(code, name) {
+  const tok = chartToken;
+  earnArea.style.display = '';
+  earnArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128202; ' + escHtml(name) +
+    ' &middot; 구성종목 영업이익 컨센서스 총합</div>' +
+    '<div class="chart-loading">구성종목 컨센서스를 불러오는 중&hellip;</div></div>';
+  loadEtfConsTotal(code).then(res => {
+    if (tok !== chartToken) return;
+    if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
+    if (!res.fys.length) {   // 컨센서스 커버 종목이 없는 ETF(채권·통화형 등)는 카드 생략
+      earnArea.style.display = 'none';
+      earnArea.innerHTML = '';
+      return;
+    }
+    renderEtfConsChart(code, name, res);
+  });
+}
+
+const CONS_COLORS = ['#3f51b5', '#00897b', '#e65100'];
+
+// 연도별 컨센서스 라인 차트 (공용): box 안에 SVG + 호버 툴팁을 그림. res = {fys, byFy: Map(fy -> [[date, value, count]])}
+function buildConsChart(box, res, opts) {
+  const fys = res.fys, pfx = opts.pfx || 'cs';
+  const W = Math.max(320, box.clientWidth || (earnArea.clientWidth - 40)), H = 210;
+  const L = 66, R = 14, T = 30, B = 30;
+  // 전체 기간·값 범위 (모든 연도 라인 공통 축)
+  let x0 = Infinity, x1 = -Infinity, vmin = Infinity, vmax = -Infinity;
+  for (const fy of fys) for (const [d, v] of res.byFy.get(fy)) {
+    const t = Date.parse(d);
+    if (t < x0) x0 = t; if (t > x1) x1 = t;
+    if (v < vmin) vmin = v; if (v > vmax) vmax = v;
+  }
+  const pad = (vmax - vmin) * 0.1 || Math.abs(vmax) * 0.05 || 1;
+  vmin -= pad; vmax += pad;
+  const X = d => L + (Date.parse(d) - x0) / Math.max(x1 - x0, 1) * (W - L - R);
+  const Y = v => T + (vmax - v) / (vmax - vmin) * (H - T - B);
+
+  let g = '';
+  for (let i = 0; i <= 3; i++) {
+    const v = vmin + (vmax - vmin) * i / 3, yy = Y(v).toFixed(1);
+    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" stroke="#eee"/>' +
+      '<text x="' + (L - 8) + '" y="' + yy + '" text-anchor="end" dominant-baseline="middle" font-size="10" fill="#999">' + fmtOp(v) + '</text>';
+  }
+  // X축: 분기 간격 월 라벨 (YY.MM)
+  const [ey, em] = [parseInt(currentDate.slice(0, 4)), parseInt(currentDate.slice(5, 7))];
+  const nMonths = Math.max(1, (ey - 2024) * 12 + em - 11);
+  monthsList(currentDate, nMonths).forEach((mo, i) => {
+    if (i % 3 !== 1) return;
+    const t = Date.parse(mo + '-01');
+    if (t < x0 || t > x1) return;
+    g += '<text x="' + X(mo + '-01').toFixed(1) + '" y="' + (H - 8) +
+      '" text-anchor="middle" font-size="10" fill="#999">' + mo.slice(2).replace('-', '.') + '</text>';
+  });
+  // 연도별 라인 + 범례(최신값)
+  let lg = '', dots = '';
+  fys.forEach((fy, i) => {
+    const s = res.byFy.get(fy), c = CONS_COLORS[i % CONS_COLORS.length];
+    g += '<path d="' + s.map((p, j) => (j ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('') +
+      '" fill="none" stroke="' + c + '" stroke-width="1.8"/>';
+    const last = s[s.length - 1];
+    lg += '<tspan fill="' + c + '" font-weight="700">&#9644; ' + fy + 'E</tspan>' +
+      '<tspan fill="#666"> ' + fmtOp(last[1]) + '  </tspan>';
+    dots += '<circle id="' + pfx + 'Dot' + i + '" r="3" fill="' + c + '" style="display:none"/>';
+  });
+  g += '<text x="' + L + '" y="15" font-size="11.5">' + lg + '</text>';
+
+  box.innerHTML = '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
+    '<line id="' + pfx + 'Cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    dots + '</svg><div class="chart-tip" id="' + pfx + 'Tip"></div></div>';
+
+  // 호버 툴팁: 가장 가까운 날짜의 연도별 값 (+ 커버 종목 수)
+  const svg = box.querySelector('svg');
+  const tip = document.getElementById(pfx + 'Tip');
+  const cross = document.getElementById(pfx + 'Cross');
+  const dotEl = i => document.getElementById(pfx + 'Dot' + i);
+  const allDates = Array.from(new Set([].concat(...fys.map(fy => res.byFy.get(fy).map(p => p[0]))))).sort();
+  const byDate = fys.map(fy => new Map(res.byFy.get(fy).map(p => [p[0], p])));
+  const hideAll = () => {
+    tip.style.display = 'none'; cross.style.display = 'none';
+    fys.forEach((f, i) => { const d = dotEl(i); if (d) d.style.display = 'none'; });
+  };
+  svg.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect();
+    const mx = (ev.clientX - r.left) / r.width * W;
+    if (mx < L || mx > W - R) { hideAll(); return; }
+    let bd = allDates[0];
+    for (const d of allDates) if (Math.abs(X(d) - mx) < Math.abs(X(bd) - mx)) bd = d;
+    cross.setAttribute('x1', X(bd)); cross.setAttribute('x2', X(bd)); cross.style.display = '';
+    let html = bd;
+    fys.forEach((fy, i) => {
+      const p = byDate[i].get(bd);
+      const dot = dotEl(i);
+      if (!p) { dot.style.display = 'none'; return; }
+      dot.setAttribute('cx', X(bd)); dot.setAttribute('cy', Y(p[1])); dot.style.display = '';
+      // 해당 날짜 값 → 최신값까지의 변화율 (차트에서 N영업일 변화를 바로 읽을 수 있게)
+      const s = res.byFy.get(fy), last = s[s.length - 1];
+      let toNow = '';
+      if (last[0] !== bd && p[1] > 0 && last[1] > 0) {
+        const c = (last[1] / p[1] - 1) * 100;
+        toNow = ' <span style="color:' + (c >= 0 ? '#c62828' : '#1565c0') + '">&rarr; 오늘 ' + (c >= 0 ? '+' : '') + c.toFixed(1) + '%</span>';
+      }
+      html += '<br><span style="color:' + CONS_COLORS[i % CONS_COLORS.length] + ';font-weight:700">' + fy + 'E</span> ' +
+        fmtOp(p[1]) + (opts.showCount ? ' <span style="opacity:.7">(' + p[2] + '종목)</span>' : '') + toNow;
+    });
+    tip.innerHTML = html;
+    tip.style.display = 'block';
+    const px = X(bd) / W * r.width;
+    tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
+    tip.style.top = 'auto';
+    tip.style.bottom = (B / H * r.height + 6) + 'px';
+  });
+  svg.addEventListener('mouseleave', hideAll);
+}
+
+function renderEtfConsChart(code, name, res) {
+  const fys = res.fys;
+  // 부가 정보: 커버리지 + 최신 시점 연도 간 증가율
+  const lastArrs = fys.map(fy => res.byFy.get(fy)[res.byFy.get(fy).length - 1]);
+  const cover = Math.max(...lastArrs.map(a => a[2]));
+  let growth = '';
+  if (fys.length >= 2) {
+    const [a, b] = [lastArrs[0][1], lastArrs[lastArrs.length - 1][1]];
+    const [gv, cls] = growthCell(b, a);
+    growth = ' &middot; ' + fys[fys.length - 1] + 'E/' + fys[0] + 'E <span class="' + cls + '">' + gv + '</span>';
+  }
+  earnArea.innerHTML = '<div class="chart-card">' +
+    '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 구성종목 영업이익 컨센서스 총합</div>' +
+    '<div id="etfConsChart"></div>' +
+    '<div class="chart-sub">기준일 구성 ' + (HOLDINGS[code] || []).length + '개 중 컨센서스 커버 ' + cover +
+    '개 종목의 연간 영업이익 전망 &times; 보유비중(%) 가중 합산' + growth + ' &middot; 구성은 기준일 고정, 중단된 컨센서스는 마지막 값 이월</div></div>';
+  earnArea.style.display = '';
+  buildConsChart(document.getElementById('etfConsChart'), res, { pfx: 'ecs', showCount: true });
 }
 
 function renderStockChart(name, s) {
@@ -673,7 +1235,7 @@ function renderStockChart(name, s) {
       : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
     (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
       (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
-      '<span style="color:#bbb">/99 (우측축 · 전 종목 순위)</span>' : '');
+      '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
@@ -706,9 +1268,42 @@ function renderStockChart(name, s) {
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
-    tip.style.top = '8px';
+    tip.style.top = 'auto';
+    tip.style.bottom = (B / H * r.height + 6) + 'px';   // X축 라벨 바로 위 (하단 고정)
   });
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+}
+
+// ===== RS 등급 급등 (db/market/rs) =====
+// 20영업일 전 대비 RS 등급 상승폭 랭킹 (검색 가능한 일반 종목만)
+async function loadRsMovers(date) {
+  // ETF의 RS 등급(일반 종목 분포 대비 백분위)이 20영업일 전보다 얼마나 올랐는지 — 기준일 상장 ETF만, 레버리지·인버스 제외
+  const dateSet = new Set();
+  const byDate = new Map();   // dateStr -> Map(code -> rs)
+  await Promise.all(monthsList(date, 3).map(async mo => {
+    for (const r of await readMonth('r', mo)) {
+      if (!ETFS_CUR[r.code]) continue;   // ETF만
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date) continue;
+      dateSet.add(d);
+      let m = byDate.get(d);
+      if (!m) byDate.set(d, m = new Map());
+      m.set(r.code, r.rs);
+    }
+  }));
+  const ds = Array.from(dateSet).sort();
+  if (ds.length < 21) return null;
+  const d0 = ds[ds.length - 1], d20 = ds[ds.length - 21];
+  const m0 = byDate.get(d0), m20 = byDate.get(d20);
+  const arr = [];
+  for (const [code, r0] of m0) {
+    if (LEV.test(ETFS_CUR[code] || '')) continue;
+    const r1 = m20.get(code);
+    if (r1 == null || r0 <= r1) continue;
+    arr.push([code, r0 - r1, r0]);
+  }
+  arr.sort((a, b) => (b[1] - a[1]) || (b[2] - a[2]));
+  return { d0: d0, d20: d20, top: arr.slice(0, 10) };
 }
 
 // ===== 초기화면 위젯 =====
@@ -770,7 +1365,7 @@ function renderIntro() {
     } else if (!top || !top.length) {
       h += '<div class="sub">가격 데이터가 없습니다</div>';
     } else {
-      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준 · 레버리지 제외</div>';
+      h += '<div class="sub">' + dPast + ' &rarr; ' + RET.d0 + ' 수정주가 기준 · 레버리지·인버스 제외</div>';
       top.forEach((t, i) => { h += retRow(i, t[0], t[1]); });
     }
     return h + '</div>';
@@ -780,7 +1375,7 @@ function renderIntro() {
   html += retWidget('20영업일 수익률 TOP 10', '&#128200;', RET && RET.top20, RET && RET.d20);
 
   html += '<div class="widget"><h3>&#127942; ETF 편입 비중합 TOP 10</h3>' +
-    '<div class="sub">' + currentDate + ' 기준 · ETF에 담긴 비중(%)의 합 · 레버리지 제외</div>';
+    '<div class="sub">' + currentDate + ' 기준 · ETF에 담긴 비중(%)의 합 · 레버리지·인버스 제외</div>';
   const maxW = topW.length ? topW[0][1] : 0;
   topW.forEach((t, i) => {
     html += row(i, t[0], t[2] + '개 ETF', maxW ? Math.max(4, t[1] / maxW * 56) : 0, '',
@@ -789,7 +1384,7 @@ function renderIntro() {
   html += '</div>';
 
   html += '<div class="widget"><h3>&#128293; 편입 비중 증가 TOP 10</h3>' +
-    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지 제외' : '비교할 과거 데이터가 없습니다') + '</div>';
+    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지·인버스 제외' : '비교할 과거 데이터가 없습니다') + '</div>';
   const maxD = topD.length ? topD[0][1] : 0;
   topD.forEach((t, i) => {
     html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
@@ -812,13 +1407,75 @@ function renderIntro() {
       h += '<div class="sub">데이터가 없습니다</div>';
     } else {
       h += '<div class="sub">구성종목 목표주가의 20영업일(' + TPM.d20 + '&rarr;' + TPM.d0 +
-        ') 변화율 &times; 비중 가중합 · 커버리지 20% 이상 · 레버리지 제외</div>';
+        ') 변화율 &times; 비중 가중합 · 커버리지 20% 이상 · 레버리지·인버스 제외</div>';
       list.forEach((t, i) => { h += tpmRow(i, t); });
     }
     return h + '</div>';
   };
   html += tpmWidget('목표주가 상향 모멘텀 TOP 10', '&#127919;', TPM && TPM.up);
-  html += tpmWidget('목표주가 하향 모멘텀 TOP 10', '&#129482;', TPM && TPM.down);
+
+  // 이익 컨센서스 상향 ETF 위젯 — 연도(2026E·2027E) × 기간(10·20영업일)별
+  // ETF 상세의 '구성종목 영업이익 컨센서스 총합' 차트 값과 동일 산식
+  const opmWidget = (m, title, emoji, list, dPast) => {
+    let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
+    if (!OPM) {
+      h += '<div class="sub">컨센서스 불러오는 중&hellip;</div>';
+    } else if (!list || !list.length) {
+      h += '<div class="sub">데이터가 없습니다</div>';
+    } else {
+      h += '<div class="sub">구성종목 ' + m.fy + 'E 영업이익 컨센서스 총합(ETF 컨센서스 차트 값)의 변화율 (' +
+        dPast + ' &rarr; ' + m.d0 + ') &middot; 중단된 컨센서스는 마지막 값 이월 &middot; 커버리지 20% 이상 &middot; 레버리지·인버스 제외</div>';
+      list.forEach((t, i) => { h += tpmRow(i, t); });
+    }
+    return h + '</div>';
+  };
+  if (!OPM) {
+    html += opmWidget(null, '이익 컨센서스 상향 TOP 10', '&#128185;', null, null);
+  } else {
+    for (const m of OPM) {
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (10영업일)', '&#128185;', m.top10, m.d10);
+      html += opmWidget(m, m.fy + 'E 이익 컨센서스 상향 TOP 10 (20영업일)', '&#128176;', m.top20, m.d20);
+    }
+  }
+
+  // 개별 종목 목표주가 변화 위젯 (클릭 시 종목 검색)
+  const stkTpWidget = (title, emoji, list) => {
+    let h = '<div class="widget"><h3>' + emoji + ' ' + title + '</h3>';
+    if (!TPM) {
+      h += '<div class="sub">컨센서스 불러오는 중&hellip;</div>';
+    } else if (!list || !list.length) {
+      h += '<div class="sub">데이터가 없습니다</div>';
+    } else {
+      h += '<div class="sub">20영업일(' + TPM.d20 + '&rarr;' + TPM.d0 + ') 목표주가 컨센서스 변화율</div>';
+      list.forEach((t, i) => {
+        h += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
+          '<span class="wrank">' + (i + 1) + '</span>' +
+          '<span class="wname">' + escHtml(t[0]) + '</span>' +
+          '<span class="wval ' + (t[1] >= 0 ? 'up' : 'down') + '">' + (t[1] >= 0 ? '+' : '') +
+          (t[1] * 100).toFixed(1) + '%</span></div>';
+      });
+    }
+    return h + '</div>';
+  };
+  html += stkTpWidget('종목 목표주가 상향 TOP 10', '&#128640;', TPM && TPM.stockUp);
+
+  // RS 등급 급등 위젯 (클릭 시 종목 검색)
+  html += '<div class="widget"><h3>&#128246; ETF RS 등급 급등 TOP 10</h3>';
+  if (!RSM) {
+    html += '<div class="sub">RS 등급 불러오는 중&hellip;</div>';
+  } else if (!RSM.top || !RSM.top.length) {
+    html += '<div class="sub">데이터가 없습니다</div>';
+  } else {
+    html += '<div class="sub">20영업일(' + RSM.d20 + '&rarr;' + RSM.d0 + ') RS 등급 상승폭 · 일반 종목 대비 백분위 · 레버리지·인버스 제외</div>';
+    RSM.top.forEach((t, i) => {
+      const name = ETFS_CUR[t[0]] || t[0];
+      html += '<div class="wrow" onclick="showEtfHoldings(\'' + safeAttr(t[0]) + '\',\'' + safeAttr(name) + '\')">' +
+        '<span class="wrank">' + (i + 1) + '</span>' +
+        '<span class="wname">' + escHtml(name) + '<span class="wsub">' + (t[2] - t[1]) + ' &rarr; ' + t[2] + '</span></span>' +
+        '<span class="wval up">+' + t[1] + '</span></div>';
+    });
+  }
+  html += '</div>';
 
   html += '</div>';
 
@@ -828,7 +1485,6 @@ function renderIntro() {
 async function loadDateData(date) {
   currentDate = date;
   currentView = null;
-  viewHistory = [];
   selectedStocks = [];
   backBtnArea.style.display = 'none';
   tagsArea.style.display = 'none';
@@ -896,7 +1552,19 @@ async function loadDateData(date) {
     });
     loadConsensus(date).then(t => {
       if (currentDate !== reqDate) return;
-      TPM = t || { d0: null, d20: null, up: [], down: [] };
+      TPM = t || { d0: null, d20: null, up: [], down: [], stockUp: [], stockDown: [] };
+      if (introArea.style.display !== 'none') renderIntro();
+    });
+    OPM = null;
+    loadOpMomentum(date).then(t => {
+      if (currentDate !== reqDate) return;
+      OPM = t || [];
+      if (introArea.style.display !== 'none') renderIntro();
+    });
+    RSM = null;
+    loadRsMovers(date).then(t => {
+      if (currentDate !== reqDate) return;
+      RSM = t || { d0: null, d20: null, top: [] };
       if (introArea.style.display !== 'none') renderIntro();
     });
   } catch (err) {
@@ -906,7 +1574,7 @@ async function loadDateData(date) {
 }
 
 dateSelect.addEventListener('change', function() {
-  loadDateData(this.value);
+  loadDateData(this.value).then(() => syncUrl());
 });
 
 // ===== UTILS =====
@@ -941,11 +1609,7 @@ function showStockResults(name) {
     return;
   }
 
-  if (!currentView || currentView.type !== 'stock' || currentView.name !== name) {
-    if (currentView) viewHistory.push({...currentView});
-  }
   currentView = { type: 'stock', name: name };
-  backBtnArea.style.display = viewHistory.length > 0 ? '' : 'none';
 
   // 비중 + N영업일 전 대비 변화(%p) 계산
   const rows = entries.map(e => ({
@@ -1018,15 +1682,14 @@ function showStockResults(name) {
   introArea.style.display = 'none';
   resultArea.style.display = '';
   showStockChart(name);
+  syncUrl();
 }
 
 function setStockSort(k) {
   if (stockSort === k) stockSortDir = -stockSortDir;   // 같은 컬럼 재클릭 -> 방향 전환
   else { stockSort = k; stockSortDir = -1; }
   if (currentView && currentView.type === 'stock') {
-    const nm = currentView.name;
-    currentView = null;  // 히스토리 중복 방지 (같은 화면 재렌더)
-    showStockResults(nm);
+    showStockResults(currentView.name);  // 같은 화면 재렌더 — 주소 동일이라 히스토리 추가 없음
   }
 }
 
@@ -1039,10 +1702,9 @@ function showEtfHoldings(etfCode, etfName) {
   }
 
   const fromStock = currentView && currentView.type === 'stock' ? currentView.name : null;
-  if (currentView) viewHistory.push({...currentView});
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
-  backBtnArea.style.display = '';
   showEtfChart(etfCode, etfName);
+  showEtfEarnCons(etfCode, etfName);
 
   items.sort((a, b) => (b[1] || 0) - (a[1] || 0));
   const maxWeight = items.reduce((m, e) => Math.max(m, e[1] || 0), 0);
@@ -1084,6 +1746,7 @@ function showEtfHoldings(etfCode, etfName) {
   document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+  syncUrl();
 }
 
 function searchComponent(name) {
@@ -1107,6 +1770,7 @@ function removeStock(name) {
   selectedStocks = selectedStocks.filter(s => s !== name);
   renderTags();
   if (selectedStocks.length === 0) {
+    currentView = null;
     hideStockChart();
     renderIntro();
     introArea.style.display = '';
@@ -1114,6 +1778,7 @@ function removeStock(name) {
     statsArea.style.display = 'none';
     breadcrumb.style.display = 'none';
     backBtnArea.style.display = 'none';
+    syncUrl();
   } else {
     triggerSearch();
   }
@@ -1121,6 +1786,7 @@ function removeStock(name) {
 
 function clearAllStocks() {
   selectedStocks = [];
+  currentView = null;
   renderTags();
   hideStockChart();
   renderIntro();
@@ -1129,6 +1795,7 @@ function clearAllStocks() {
   statsArea.style.display = 'none';
   breadcrumb.style.display = 'none';
   backBtnArea.style.display = 'none';
+  syncUrl();
 }
 
 function renderTags() {
@@ -1147,9 +1814,7 @@ function renderTags() {
 }
 
 function triggerSearch() {
-  viewHistory = [];
   currentView = null;
-  backBtnArea.style.display = 'none';
   if (selectedStocks.length === 1) {
     showStockResults(selectedStocks[0]);
   } else if (selectedStocks.length >= 2) {
@@ -1265,27 +1930,12 @@ function showMultiStockResults() {
   document.getElementById('sortInfo').textContent = '합산 비중(%) 기준 내림차순 정렬';
   introArea.style.display = 'none';
   resultArea.style.display = '';
+  syncUrl();
 }
 
 function goBack() {
-  if (viewHistory.length === 0) return;
-  const prev = viewHistory.pop();
-  currentView = null; // prevent double-push
-  if (prev.type === 'stock') {
-    selectedStocks = [prev.name];
-    searchInput.value = '';
-    renderTags();
-    showStockResults(prev.name);
-  } else if (prev.type === 'etf') {
-    showEtfHoldings(prev.code, prev.name);
-  } else if (prev.type === 'multi') {
-    selectedStocks = [...prev.names];
-    searchInput.value = '';
-    renderTags();
-    showMultiStockResults();
-  }
-  backBtnArea.style.display = viewHistory.length > 0 ? '' : 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 브라우저 히스토리가 단일 소스 — popstate 핸들러(applyStateFromUrl)가 이전 화면을 복원
+  history.back();
 }
 
 // ===== AUTOCOMPLETE =====
