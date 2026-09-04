@@ -5,8 +5,9 @@
 
 - 기준일은 'ETF raw' 시트의 Date 셀(CPD [YYYYMMDD] / CPD-1TD [YYYYMMDD])에서 자동 인식
   (인식 실패 시 두 번째 인자로 YYYY-MM-DD 직접 지정)
-- 실행 순서: build_data(ETF 보유내역) -> build_market(수정주가·컨센서스) -> build_rs(RS 등급)
-  -> build_high52(52주 신고가 돌파 분석, 스터디)
+- 실행 순서: build_data(ETF 보유내역) -> build_market(수정주가·컨센서스)
+  -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급)
+  -> build_high52(52주 신고가 돌파 분석, 스터디) -> build_minervini(미너비니 트렌드 템플릿)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 """
 import sys, os, re, datetime, numbers
@@ -17,7 +18,7 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
-import build_data, build_market, build_rs, build_high52, build_earnings
+import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini
 
 
 def detect_date(xlsx_path):
@@ -72,19 +73,21 @@ def main():
 
     snap = build_market.SNAP_SHEET in sheets   # 신형 일일 스냅샷 형식
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/5] ETF 보유내역')
+    print('[1/6] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/5] 수정주가 · 목표주가')
+    print('[2/6] 수정주가 · 목표주가')
     build_market.build(xlsx, date_key)
-    print('[3/5] 영업이익 컨센서스')
+    print('[3/6] 영업이익 컨센서스')
     if snap:
         build_earnings.build_daily(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[4/5] RS 등급')
+    print('[4/6] RS 등급')
     build_rs.build()
-    print('[5/5] 52주 신고가 돌파 분석')
+    print('[5/6] 52주 신고가 돌파 분석')
     build_high52.build()
+    print('[6/6] 미너비니 트렌드 템플릿')
+    build_minervini.build()
     print('== 완료')
 
 

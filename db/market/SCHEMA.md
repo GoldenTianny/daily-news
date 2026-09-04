@@ -2,7 +2,7 @@
 
 수정주가·목표주가 컨센서스 시계열. **월별 Parquet 파일**(YYYY-MM.parquet)로 저장됩니다.
 
-> **일일 갱신은 한 줄로**: `python3 tools/ingest_daily.py <원본.xlsx>` — 기준일을 자동 인식해 ETF·수정주가·컨센서스·RS 등급을 순서대로 갱신합니다. 아래는 개별 단계 설명.
+> **일일 갱신은 한 줄로**: `python3 tools/ingest_daily.py <원본.xlsx>` — 기준일을 자동 인식해 ETF·수정주가·컨센서스·영업이익 컨센서스·RS 등급·신고가 분석·미너비니 템플릿을 순서대로 갱신합니다. 아래는 개별 단계 설명.
 
 - 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus` — `ETF raw` 시트는 `tools/etf/build_data.py` 담당)
 - 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 원본에 담긴 날짜만 교체하고 나머지는 유지(병합)하므로, 짧은 기간(예: 최근 2일)만 담긴 일일 원본을 올려도 과거 데이터가 지워지지 않음. 내용이 같은 달은 건너뜀
@@ -74,6 +74,28 @@
 날짜 단위 병합이라 짧은 기간 원본을 올려도 과거가 유지됨. Base Date가 날짜가 아닌 컬럼('CPD-1TD')은 제외.
 
 - 소비처: ETF 검색기 종목 화면의 "연도별 영업이익 증가율" 카드 (E 연도 클릭 시 추이 차트)
+
+## db/market/minervini/ — 미너비니 트렌드 템플릿 판정
+
+마크 미너비니의 '트렌드 템플릿' 8개 조건을 매 거래일 종목별로 판정. `tools/market/build_minervini.py`가 수정주가·RS DB에서 계산합니다 (ingest_daily 6단계).
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` / `code` / `name` | | 기준일 / 종목코드 / 종목명 |
+| `close` | DOUBLE | 종가(원) |
+| `rs` | UTINYINT | 그날의 RS 등급 (없으면 NULL → 조건 8 미충족) |
+| `ma50` / `ma150` / `ma200` | DOUBLE | 종가 이동평균 (거래일 창) |
+| `hi52` / `lo52` | DOUBLE | 252거래일 종가 최고 / 최저 |
+| `flags` | UTINYINT | 비트 i-1 = 조건 i 충족 (예: 255 = 8개 모두) |
+| `pass_n` | UTINYINT | 충족 조건 수 (0~8) |
+| `passed` | BOOLEAN | 8개 모두 충족 |
+| `streak` | USMALLINT | 연속 충족 거래일 수 (미충족이면 0) |
+| `n_univ` | USMALLINT | 그날 판정한 모집단 종목 수 |
+
+- 조건: ① 종가 > 150·200일선 ② 150일선 > 200일선 ③ 200일선이 21거래일 전보다 상승 ④ 50일선 > 150·200일선 ⑤ 종가 > 50일선 ⑥ 52주 저점 대비 +30% 이상 ⑦ 52주 고점 대비 −25% 이내 ⑧ RS 70 이상
+- 모집단: 일반 종목만 (`tools/study/build_high52.universe_filter` — ETF·ETN·스팩·우선주·동전주 제외), 260거래일 이상 이력 필요
+- **저장은 6개 이상 충족 종목만** (충족 + 근접). streak는 전 종목으로 계산한 뒤 걸러 저장. 월당 약 7천 행·150KB
+- 소비처: `tools/etf/minervini.html` (최신 월 파일의 마지막 날짜)
 
 ## 쿼리 예시 (DuckDB)
 
