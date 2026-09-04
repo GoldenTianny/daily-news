@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미너비니 트렌드 템플릿 | 가좌버핏</title>
+<meta name="description" content="마크 미너비니의 트렌드 템플릿 8개 조건을 모두 충족한 국내 종목을 매일 선별합니다. 이동평균 정렬, 52주 고저, RS 등급 기준.">
+<link rel="canonical" href="https://gjbuffet.kr/tools/etf/minervini.html">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="미너비니 트렌드 템플릿 | 가좌버핏">
+<meta property="og:description" content="8개 추세 조건을 모두 충족한 종목을 매일 선별. 이동평균 정렬 · 52주 고저 · RS 등급.">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/etf.png">
+<meta property="og:url" content="https://gjbuffet.kr/tools/etf/minervini.html">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: #f0f2f5; color: #333; min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 32px 20px 28px; text-align: center; position: relative;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 14px; opacity: 0.8; }
+  .header .nav-link {
+    position: absolute; top: 16px; color: rgba(255,255,255,0.85);
+    text-decoration: none; font-size: 13px;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 20px 22px 18px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h2 { font-size: 17px; color: #1a237e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card h2 .cnt { font-size: 13px; color: #666; font-weight: 500; }
+  .card p, .card li { font-size: 14px; line-height: 1.75; color: #444; }
+  .card ol { padding-left: 20px; margin: 6px 0; }
+  .card li::marker { color: #7986cb; }
+
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
+  .stat { flex: 1 1 120px; background: #f5f6fa; border-radius: 10px; padding: 12px 14px; }
+  .stat .k { font-size: 12px; color: #777; }
+  .stat .v { font-size: 22px; font-weight: 700; color: #1a237e; margin-top: 2px; }
+  .stat .v small { font-size: 12px; color: #888; font-weight: 500; }
+
+  details { margin-top: 6px; }
+  summary { cursor: pointer; font-size: 13.5px; color: #3f51b5; font-weight: 600; }
+  details p { margin-top: 6px; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0 12px; }
+  .chip {
+    display: inline-block; padding: 6px 12px; background: #e8eaf6; color: #3f51b5;
+    border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 0; user-select: none;
+  }
+  .chip.on { background: #3f51b5; color: white; }
+  .toolbar input {
+    flex: 1 1 140px; min-width: 120px; padding: 7px 10px; border: 1px solid #cfd8dc;
+    border-radius: 8px; font-size: 13.5px; font-family: inherit;
+  }
+  .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  th, td { padding: 8px 8px; font-size: 13.5px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th { color: #555; background: #fafafa; text-align: right; font-weight: 600; font-size: 12.5px; }
+  th:nth-child(1), th:nth-child(2), td:nth-child(1), td:nth-child(2) { text-align: left; }
+  td { text-align: right; }
+  tr.row { cursor: pointer; }
+  tr.row:hover td { background: #f5f6ff; }
+  .nm { font-weight: 600; color: #1a237e; }
+  .sub { font-size: 11.5px; color: #999; font-weight: 400; margin-left: 4px; }
+  .badge {
+    display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700;
+    background: #ffebee; color: #c62828; margin-left: 5px; vertical-align: 1px;
+  }
+  .rs { font-weight: 700; }
+  .rs.hi { color: #2e7d32; }
+  .up { color: #c62828; }
+  .down { color: #1565c0; }
+  .muted { color: #999; }
+  .fail { font-size: 12px; color: #c62828; white-space: normal; }
+  .loading { text-align: center; padding: 30px; color: #888; font-size: 14px; }
+  .etf { font-size: 12px; color: #666; }
+  .note {
+    margin-top: 12px; padding: 10px 14px; background: #fff8e1;
+    border-left: 3px solid #ffca28; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #795548;
+  }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 19px; }
+    .container { padding: 14px 8px 40px; }
+    .card { padding: 16px 12px 14px; }
+    th, td { padding: 7px 6px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="nav-link" style="left:16px" href="/tools/etf/">&#8592; ETF 검색기</a>
+  <a class="nav-link" style="right:16px" href="guide.html">&#10067; 사용법</a>
+  <h1>&#128200; 미너비니 트렌드 템플릿</h1>
+  <p id="headSub">8개 추세 조건을 모두 충족한 종목 · 매일 갱신</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>&#127919; 기준일 <span id="dateLbl" class="cnt"></span></h2>
+    <div class="stats">
+      <div class="stat"><div class="k">템플릿 충족</div><div class="v" id="stPass">–</div></div>
+      <div class="stat"><div class="k">근접 (7/8 충족)</div><div class="v" id="stNear">–</div></div>
+      <div class="stat"><div class="k">신규 진입 (오늘 첫 충족)</div><div class="v" id="stNew">–</div></div>
+    </div>
+    <details>
+      <summary>트렌드 템플릿 8개 조건 보기</summary>
+      <ol>
+        <li>종가가 150일선과 200일선 위에 있다</li>
+        <li>150일선이 200일선 위에 있다</li>
+        <li>200일선이 최소 1개월(21거래일) 전보다 상승 중이다</li>
+        <li>50일선이 150일선과 200일선 위에 있다</li>
+        <li>종가가 50일선 위에 있다</li>
+        <li>종가가 52주 저점 대비 30% 이상 높다</li>
+        <li>종가가 52주 고점 대비 25% 이내에 있다</li>
+        <li>RS 등급이 70 이상이다 (일반 종목 대비 백분위, 80 이상이면 더 좋음)</li>
+      </ol>
+      <p class="muted" style="font-size:12.5px">이동평균·52주 고저는 모두 종가 기준(거래일 창). 모집단은 일반 종목(ETF·ETN·스팩·우선주 제외). 종목명을 누르면 ETF 검색기에서 차트와 보유 ETF를 볼 수 있습니다.</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>&#9989; 템플릿 충족 종목 <span class="cnt" id="passCnt"></span></h2>
+    <div class="toolbar">
+      <button class="chip on" data-sort="rs">RS 높은순</button>
+      <button class="chip" data-sort="hi">고점 근접순</button>
+      <button class="chip" data-sort="streak">오래 충족순</button>
+      <button class="chip" data-sort="new">신규 진입순</button>
+      <input type="text" id="q" placeholder="종목명 필터" autocomplete="off">
+    </div>
+    <div class="twrap"><table>
+      <thead><tr><th>#</th><th>종목</th><th>종가</th><th>RS</th><th>52주 고점比</th><th>52주 저점比</th><th>연속 충족</th><th>보유 ETF</th></tr></thead>
+      <tbody id="passBody"><tr><td colspan="8" class="loading">불러오는 중&hellip;</td></tr></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>&#128064; 근접 종목 (7/8 충족) <span class="cnt" id="nearCnt"></span></h2>
+    <p class="muted" style="font-size:13px;margin-bottom:8px">조건 하나만 남은 종목. 어떤 조건이 부족한지 함께 표시합니다.</p>
+    <div class="twrap"><table>
+      <thead><tr><th>#</th><th>종목</th><th>종가</th><th>RS</th><th>52주 고점比</th><th>부족한 조건</th></tr></thead>
+      <tbody id="nearBody"><tr><td colspan="6" class="loading">불러오는 중&hellip;</td></tr></tbody>
+    </table></div>
+    <div class="note">템플릿은 추세가 살아 있는 종목을 거르는 1차 필터일 뿐, 매수 신호가 아닙니다. 미너비니는 여기서 걸러진 종목 중 베이스(VCP)를 만든 종목만 골라 진입합니다.</div>
+  </div>
+
+</div>
+
+<script src="hyparquet.min.js"></script>
+<script>
+const COND = ['150·200일선 아래', '150일선 < 200일선', '200일선 하락', '50일선 < 150·200일선',
+              '50일선 아래', '52주 저점 +30% 미달', '52주 고점 −25% 초과 이탈', 'RS 70 미만'];
+const fmtN = v => Math.round(v).toLocaleString();
+const pct = (v, dec) => (v >= 0 ? '+' : '') + (v * 100).toFixed(dec == null ? 1 : dec) + '%';
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const dstr = d => d instanceof Date ? d.toISOString().slice(0, 10) : String(d).slice(0, 10);
+const link = nm => '/tools/etf/?stock=' + encodeURIComponent(nm);
+
+let ROWS = [], ETFMAP = null, sortKey = 'rs', query = '';
+
+async function readParquet(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ' ' + r.status);
+  return hyparquet.parquetReadObjects({ file: await r.arrayBuffer() });
+}
+function prevMonth(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const mm = m === 1 ? 12 : m - 1, yy = m === 1 ? y - 1 : y;
+  return yy + '-' + String(mm).padStart(2, '0');
+}
+
+async function load() {
+  // 최신 월 파일(없으면 전월)에서 마지막 날짜 행만 사용
+  let ym = new Date().toISOString().slice(0, 7), rows = null;
+  for (let i = 0; i < 3 && !rows; i++) {
+    try { rows = await readParquet('/db/market/minervini/' + ym + '.parquet'); }
+    catch (e) { ym = prevMonth(ym); }
+  }
+  if (!rows || !rows.length) throw new Error('데이터 없음');
+  rows.forEach(r => { r.date = dstr(r.date); });
+  const latest = rows.map(r => r.date).sort().at(-1);
+  ROWS = rows.filter(r => r.date === latest);
+  const passed = ROWS.filter(r => r.passed);
+  const near = ROWS.filter(r => Number(r.pass_n) === 7);
+  const fresh = passed.filter(r => Number(r.streak) === 1);
+  const nUniv = ROWS.length ? Number(ROWS[0].n_univ) : 0;
+
+  document.getElementById('dateLbl').textContent = latest;
+  document.getElementById('headSub').textContent = latest + ' 기준 · 8개 추세 조건을 모두 충족한 종목 ' + passed.length + '개';
+  document.getElementById('stPass').innerHTML = passed.length + ' <small>/ ' + nUniv.toLocaleString() + '종목 (' +
+    (nUniv ? (passed.length / nUniv * 100).toFixed(1) : 0) + '%)</small>';
+  document.getElementById('stNear').textContent = near.length;
+  document.getElementById('stNew').textContent = fresh.length;
+  document.getElementById('passCnt').textContent = passed.length + '개';
+  document.getElementById('nearCnt').textContent = near.length + '개';
+  document.title = '미너비니 트렌드 템플릿 ' + latest + ' (' + passed.length + '종목) | 가좌버핏';
+  render();
+
+  // 보유 ETF 교차 정보 (기준일 ETF 보유내역) — 비동기로 채움
+  try {
+    const dj = await (await fetch('data/dates.json')).json();
+    const dates = Array.isArray(dj) ? dj : dj.dates;
+    const ed = dates.filter(d => d <= latest).at(-1) || dates.at(-1);
+    const eh = await readParquet('/db/etf/' + ed + '.parquet');
+    const m = new Map();
+    for (const r of eh) {
+      if (r.weight == null || r.weight <= 0) continue;
+      const a = m.get(r.stock_name) || { n: 0, top: null, w: 0 };
+      a.n++;
+      if (r.weight > a.w) { a.w = r.weight; a.top = r.etf_name; }
+      m.set(r.stock_name, a);
+    }
+    ETFMAP = m;
+    render();
+  } catch (e) { /* ETF 정보는 부가 정보 — 실패해도 표는 유지 */ }
+}
+
+function sorted(list) {
+  const arr = list.slice();
+  const cmp = {
+    rs: (a, b) => (b.rs || 0) - (a.rs || 0) || b.close / b.hi52 - a.close / a.hi52,
+    hi: (a, b) => b.close / b.hi52 - a.close / a.hi52 || (b.rs || 0) - (a.rs || 0),
+    streak: (a, b) => b.streak - a.streak || (b.rs || 0) - (a.rs || 0),
+    new: (a, b) => a.streak - b.streak || (b.rs || 0) - (a.rs || 0),
+  }[sortKey];
+  return arr.sort(cmp);
+}
+
+function etfCell(nm) {
+  if (!ETFMAP) return '<span class="muted">…</span>';
+  const a = ETFMAP.get(nm);
+  if (!a) return '<span class="muted">–</span>';
+  return '<span class="etf">' + a.n + '개 <span class="muted">· ' + esc(a.top) + ' ' + a.w.toFixed(1) + '%</span></span>';
+}
+
+function render() {
+  const q = query.trim().toLowerCase();
+  const passed = sorted(ROWS.filter(r => r.passed && (!q || r.name.toLowerCase().includes(q))));
+  const near = sorted(ROWS.filter(r => Number(r.pass_n) === 7 && (!q || r.name.toLowerCase().includes(q))));
+  let h = '';
+  passed.forEach((r, i) => {
+    const vh = r.close / r.hi52 - 1, vl = r.close / r.lo52 - 1;
+    h += '<tr class="row" onclick="location.href=\'' + link(r.name) + '\'">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(r.name) + '</span>' + (Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') + '</td>' +
+      '<td>' + fmtN(r.close) + '</td>' +
+      '<td><span class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</span></td>' +
+      '<td class="' + (vh >= -0.05 ? 'up' : '') + '">' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '</td>' +
+      '<td>' + pct(vl, 0) + '</td>' +
+      '<td>' + r.streak + '일</td>' +
+      '<td>' + etfCell(r.name) + '</td></tr>';
+  });
+  document.getElementById('passBody').innerHTML = h || '<tr><td colspan="8" class="loading">해당 종목이 없습니다</td></tr>';
+
+  let n = '';
+  near.forEach((r, i) => {
+    const vh = r.close / r.hi52 - 1;
+    const fails = COND.filter((c, k) => !(Number(r.flags) & (1 << k)));
+    n += '<tr class="row" onclick="location.href=\'' + link(r.name) + '\'">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(r.name) + '</span></td>' +
+      '<td>' + fmtN(r.close) + '</td>' +
+      '<td><span class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</span></td>' +
+      '<td>' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '</td>' +
+      '<td class="fail">' + fails.map(esc).join(', ') + '</td></tr>';
+  });
+  document.getElementById('nearBody').innerHTML = n || '<tr><td colspan="6" class="loading">해당 종목이 없습니다</td></tr>';
+}
+
+document.querySelectorAll('.chip[data-sort]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip[data-sort]').forEach(x => x.classList.toggle('on', x === b));
+  sortKey = b.dataset.sort; render();
+}));
+document.getElementById('q').addEventListener('input', e => { query = e.target.value; render(); });
+
+load().catch(e => {
+  document.getElementById('passBody').innerHTML = '<tr><td colspan="8" class="loading">데이터를 불러오지 못했습니다 (' + esc(e.message) + ')</td></tr>';
+  document.getElementById('nearBody').innerHTML = '';
+});
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+</script>
+</body>
+</html>
