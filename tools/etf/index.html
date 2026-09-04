@@ -420,7 +420,8 @@ async function applyStateFromUrl() {
     const etf = p.get('etf');
     const stock = p.get('stock');
     const multi = (p.get('stocks') || '').split(',').filter(n => DATA[n]);
-    const single = (stock && DATA[stock]) ? stock : (multi.length === 1 ? multi[0] : null);
+    // stock 파라미터는 ETF 미편입 종목이어도 종목 화면(차트·실적)을 연다
+    const single = stock ? stock : (multi.length === 1 ? multi[0] : null);
     if (etf && HOLDINGS[etf]) {
       const from = p.get('from');
       const hasFrom = from && DATA[from];
@@ -1599,16 +1600,9 @@ function safeAttr(s) {
 
 // ===== STOCK SEARCH VIEW =====
 function showStockResults(name) {
-  const entries = DATA[name];
-  if (!entries) {
-    hideStockChart();
-    introArea.innerHTML = '<div class="intro"><p>검색 결과가 없습니다.</p></div>';
-    introArea.style.display = '';
-    resultArea.style.display = 'none';
-    statsArea.style.display = 'none';
-    breadcrumb.style.display = 'none';
-    return;
-  }
+  // ETF에 편입되지 않은 종목(미너비니 템플릿 등 외부 링크 유입)도 차트·실적은 보여준다
+  const noEtf = !DATA[name];
+  const entries = DATA[name] || [];
 
   currentView = { type: 'stock', name: name };
 
@@ -1661,10 +1655,13 @@ function showStockResults(name) {
     (d >= 0 ? '+' : '') + d.toFixed(2) + '</td>';
 
   // 합계 행 (정렬과 무관하게 항상 맨 위)
-  let html = '<tr class="sum-row"><td class="rank">&Sigma;</td>' +
-    '<td>합계 <span class="code-sub">' + rows.length + '개 ETF</span></td>' +
-    '<td class="weight">' + sum.w.toFixed(2) + '%</td>' +
-    dcell(sum.d1) + dcell(sum.d5) + dcell(sum.d10) + '</tr>';
+  let html = noEtf
+    ? '<tr><td colspan="6" style="text-align:center;color:#888;padding:18px 10px">' +
+      '기준일(' + escHtml(currentDate) + ') 보유내역에 이 종목을 담은 ETF가 없습니다 · 차트·실적만 표시</td></tr>'
+    : '<tr class="sum-row"><td class="rank">&Sigma;</td>' +
+      '<td>합계 <span class="code-sub">' + rows.length + '개 ETF</span></td>' +
+      '<td class="weight">' + sum.w.toFixed(2) + '%</td>' +
+      dcell(sum.d1) + dcell(sum.d5) + dcell(sum.d10) + '</tr>';
   rows.forEach((r, i) => {
     const barWidth = maxWeight > 0 && r.w ? (r.w / maxWeight * 60) : 0;
     html += '<tr class="clickable" onclick="showEtfHoldings(\'' + safeAttr(r.code) + '\',\'' + safeAttr(r.name) + '\')">' +
