@@ -13,13 +13,13 @@ daily_YYYYMMDD.xlsx(FnGuide)와 브리프 초안 HTML을 받아, 초안의 낡�
 import re, datetime, openpyxl
 
 # ---------- CONFIG (매일 갱신) ----------
-XLSX = "/root/.claude/uploads/405f6ada-29ad-5785-ac2d-569e3af54ca7/25e484c8-daily_20260904.xlsx"
-DRAFT = "/root/.claude/uploads/405f6ada-29ad-5785-ac2d-569e3af54ca7/f57757af-20260904.html"
-PUB = "archive/2026-09-03.html"      # 구조 추출용 직전 발행본
-OUT = "archive/2026-09-04.html"      # 출력
-BASE = "2026-09-03"                  # 종가 기준일 (Keys 시트 최근일자)
-PUB_DATE = "2026.09.04"              # 발행일 (업데이트 표기)
-GRAD = "904"                          # 차트 gradient id suffix (발행일)
+XLSX = "/root/.claude/uploads/405f6ada-29ad-5785-ac2d-569e3af54ca7/4c9d5276-daily_20260907.xlsx"
+DRAFT = "/root/.claude/uploads/405f6ada-29ad-5785-ac2d-569e3af54ca7/5a5cfa2a-20260907.html"
+PUB = "archive/2026-09-04.html"      # 구조 추출용 직전 발행본
+OUT = "archive/2026-09-07.html"      # 출력
+BASE = "2026-09-04"                  # 종가 기준일 (Keys 시트 최근일자)
+PUB_DATE = "2026.09.07"              # 발행일 (업데이트 표기)
+GRAD = "907"                          # 차트 gradient id suffix (발행일)
 
 UP, DOWN = '#c0392b', '#2a5ca8'
 BASE_D = datetime.date.fromisoformat(BASE)
@@ -126,12 +126,12 @@ for nm, k in zip(NAMES[5], ['외국인', '개인', '기관']):
 
 # ---------- 팁 6개 (매일 재작성) ----------
 TIPS = [
- '💡 <strong>코스피 6,579 — 전일 +0.26%</strong>로 급락 뒤 소폭 반등에 그쳤습니다(1주 -4.82%). <strong>코스닥은 790(-1.71%)으로 800선을 내줬습니다</strong>. 반면 <strong>미국은 다우 +1.20%·나스닥 +1.40%·S&P500 +1.06%</strong>로 강하게 반등해 온도차가 이어졌습니다. 외국인은 -0.53조 닷새째 순매도입니다.',
- '💡 <strong>원/달러 1,360.3원(-0.67%) — 1,360원 초반</strong>까지 내려왔습니다(3개월 -11.38%). 반도체 수출 호조로 외환보유액이 51개월 만에 최대를 기록한 영향입니다. <strong>엔화는 155.83엔(-1.93%)</strong>으로 日銀 매파 돌변에 급반등했습니다.',
- '💡 <strong>두바이유 102.40달러(+7.80%) — 100달러를 돌파</strong>했습니다(1개월 +25.18%). WTI 91.01달러(+6.12%), 브렌트유 95.63달러(+5.68%)도 급등세입니다. 반면 <strong>금은 4,366.30달러(-1.46%) 나흘째 하락</strong>(1주 -5.04%), 은 64.72달러(-2.26%)입니다.',
- '💡 <strong>국고채 3년 3.888%(-4.2bp) — 급등 뒤 반락</strong>했지만 1주 +13.3bp로 여전히 높은 수준입니다. 회사채 4.567%(-3.3bp), <strong>미국 10년물 4.774%(-2.0bp)</strong>, 영국 10년물 5.190%(-4.3bp)로 글로벌 금리가 일제히 숨 고르기에 들어갔습니다.',
- '💡 <strong>고객예탁금 102.27조(+4.10조) — 100조선을 회복</strong>했습니다(9/1 집계). 급락장에 대기자금이 크게 유입된 모습입니다. <strong>신용잔고 33.01조(+177억)</strong>는 보합, 수익증권은 -8.37조 감소입니다.',
- '💡 <strong>외국인 -0.53조 — 닷새째 순매도</strong>(1주 누적 -4.68조, 1개월 -12.01조). <strong>개인 -0.66조, 기관 -0.40조</strong>로 3주체 모두 매도 우위였습니다.',
+ '💡 <strong>코스피 6,687 — 전일 +1.64% 반등</strong>, <strong>코스닥도 814(+2.95%)로 800선을 되찾았습니다</strong>. <strong>외국인이 +0.74조로 엿새 만에 매수 전환</strong>했고 기관 +1.83조가 가세한 반면, 개인은 -4.14조 대규모 차익실현이었습니다. 미국은 다우 -0.51%·나스닥 -0.29%로 하락해 이번엔 온도차가 반대로 나타났습니다.',
+ '💡 <strong>원/달러 1,349.5원(-0.79%) — 1,340원대 진입</strong>, 원화 강세가 계속 가팔라집니다(3개월 -12.03%). 반도체 수출 호조가 원화 체급을 올리는 흐름입니다. <strong>엔화는 156.25엔</strong>으로 보합입니다.',
+ '💡 <strong>두바이유 101.91달러(-0.48%) — 100달러 위를 유지</strong>했습니다(1개월 +22.93%). WTI 91.48달러(+0.52%), 브렌트유 95.52달러(+0.92%)로 고유가가 굳어지는 모습입니다. <strong>금은 4,429.80달러(+1.45%)로 닷새 만에 반등</strong>, 은도 66.97달러(+3.64%) 급등했습니다.',
+ '💡 <strong>미국 10년물 4.784%(+2.2bp)</strong> — 1개월 +15.7bp로 상승 압력이 여전합니다. 트럼프 대통령의 연준 압박 발언도 변수입니다. <strong>국고채 3년 3.884%(-0.4bp)</strong>, 회사채 4.567%(보합)로 국내 금리는 숨 고르기입니다.',
+ '💡 <strong>고객예탁금 102.27조, 신용잔고 33.01조</strong> 수준입니다. 이번 자료의 자금 항목은 직전 집계치가 그대로 유지돼(미갱신) 증감보다 수준으로 보시는 편이 안전합니다.',
+ '💡 <strong>외국인 +0.74조 — 엿새 만에 순매수 전환</strong>(1주 누적 -2.53조). <strong>기관 +1.83조</strong>도 매수였고, <strong>개인은 -4.14조</strong> 대규모 차익실현에 나섰습니다.',
 ]
 
 snap_html = ['<div class="market-snapshot">',
@@ -216,19 +216,19 @@ pt2 = lambda v: c2(v)+'pt'; pt0 = lambda v: c0(v)+'pt'
 # ---------- 차트 해설 7개 (매일 재작성) ----------
 CHARTS = [
  chart('kospi', '🇰🇷 KOSPI', pt2, pt0, pt0, pt0,
-   '📖 KOSPI가 9월 3일 6,579pt로 전일 +0.26%, 급락 뒤 소폭 반등에 그쳤습니다(1주 -4.82%). 외국인이 -0.53조 원으로 닷새째 순매도를 이어가며 수급이 무겁습니다. 차트 기간(13개월) 누적은 {KOSPI_CHG}입니다.'),
+   '📖 KOSPI가 9월 4일 6,687pt로 전일 +1.64% 반등했습니다(1주 -1.50%). 외국인이 +0.74조 원으로 엿새 만에 매수 전환했고 기관도 +1.83조 원 가세했습니다. 차트 기간(13개월) 누적은 {KOSPI_CHG}입니다.'),
  chart('sp500', '🇺🇸 S&P500', pt2, pt0, pt0, pt0,
-   '📖 미국 S&P500은 9월 3일 7,748pt로 전일 +1.06% 강하게 반등했습니다. 나스닥 +1.40%, 다우 +1.20%로 한국 증시와 온도차가 이어졌습니다.'),
+   '📖 미국 S&P500은 9월 4일 7,719pt로 전일 -0.38% 하락했습니다. 다우 -0.51%, 나스닥 -0.29%로 한국 반등과 방향이 엇갈렸습니다.'),
  chart('nikkei', '🇯🇵 NIKKEI 225', pt0, pt0, pt0, pt0,
-   '📖 일본 닛케이는 64,214pt로 전일 -0.17% 보합이었습니다(1주 -2.90%).'),
+   '📖 일본 닛케이는 65,021pt로 전일 +1.26% 반등했습니다(1주 -2.09%).'),
  chart('us10y', '🇺🇸 미국 국채 10년 금리', lambda v: f"{v:.3f}%", lambda v: f"{v:.2f}%", lambda v: f"{v:.2f}%", lambda v: f"{v:.2f}%",
-   '📖 미국 10년물 금리는 4.774%(-2.0bp)로 숨 고르기입니다. 한국 국고채 3년도 3.888%(-4.2bp)로 급등 뒤 반락했지만 1주 +13.3bp로 여전히 높은 수준입니다.'),
+   '📖 미국 10년물 금리는 4.784%(+2.2bp)로 1개월 +15.7bp의 상승 압력이 여전합니다. 한국 국고채 3년은 3.884%(-0.4bp)로 숨 고르기입니다.'),
  chart('usdkrw', '💱 원/달러 환율', lambda v: c0(v)+'원', lambda v: c0(v)+'원', lambda v: c0(v)+'원', lambda v: c0(v)+'원',
-   '📖 원/달러 환율은 1,360.3원(-0.67%)으로 1,360원 초반까지 내려왔습니다. 3개월 기준 -11.38%의 가파른 원화 강세입니다.'),
+   '📖 원/달러 환율은 1,349.5원(-0.79%)으로 1,340원대에 진입했습니다. 3개월 기준 -12.03%의 가파른 원화 강세입니다.'),
  chart('wti', '🛢️ WTI 원유', lambda v: f"${v:,.2f}", lambda v: f"${v:,.0f}", lambda v: f"{v:,.2f}$", lambda v: f"${v:,.2f}",
-   '📖 WTI 원유는 배럴당 $91.01로 +6.12% 급등했습니다. 두바이유가 $102.40(+7.80%)으로 100달러를 돌파했고, 브렌트유는 $95.63(+5.68%)입니다.'),
+   '📖 WTI 원유는 배럴당 $91.48로 +0.52% 올랐습니다. 두바이유 $101.91(-0.48%)은 100달러 위를 유지했고, 브렌트유는 $95.52(+0.92%)입니다.'),
  chart('gold', '🥇 금 (스팟)', lambda v: f"${v:,.2f}", lambda v: f"${v:,.0f}", lambda v: f"{v:,.0f}$", lambda v: f"${v:,.0f}",
-   '📖 금은 온스당 $4,366.30으로 -1.46% 내려 나흘째 하락입니다(1주 -5.04%). 은은 $64.72(-2.26%)입니다.'),
+   '📖 금은 온스당 $4,429.80으로 +1.45% 올라 닷새 만에 반등했습니다(1개월 +8.17%). 은은 $66.97(+3.64%) 급등입니다.'),
 ]
 
 CHART_SEC = ('<!-- 정교한 차트 섹션 -->\n<div class="detail-charts-v2">\n'
@@ -242,18 +242,27 @@ CHART_SEC = ('<!-- 정교한 차트 섹션 -->\n<div class="detail-charts-v2">\n
 
 # ---------- 초안에 이식 ----------
 draft = open(DRAFT, encoding='utf-8').read()
-i0 = draft.index('<div class="market-snapshot">')
-i1 = draft.index('<div class="detail-charts-v2">')
-depth, j = 0, i1
-while True:
-    op, cl = draft.find('<div', j+1), draft.find('</div>', j+1)
-    if op != -1 and op < cl:
-        depth += 1; j = op
-    else:
-        if depth == 0:
-            i_end = cl + 6; break
-        depth -= 1; j = cl
-open(OUT, 'w', encoding='utf-8').write(draft[:i0] + SNAP + '\n\n\n\n' + CHART_SEC + draft[i_end:])
+if '<div class="market-snapshot">' in draft:
+    # 초안에 낡은 시장 섹션이 있으면 그 자리를 통째로 교체
+    i0 = draft.index('<div class="market-snapshot">')
+    i1 = draft.index('<div class="detail-charts-v2">')
+    depth, j = 0, i1
+    while True:
+        op, cl = draft.find('<div', j+1), draft.find('</div>', j+1)
+        if op != -1 and op < cl:
+            depth += 1; j = op
+        else:
+            if depth == 0:
+                i_end = cl + 6; break
+            depth -= 1; j = cl
+    out_html = draft[:i0] + SNAP + '\n\n\n\n' + CHART_SEC + draft[i_end:]
+else:
+    # 초안에 시장 섹션이 통째로 없으면(2026-09-07 초안부터) 기사 1 앞에 삽입
+    ia = draft.index('<!-- 기사 1 -->')
+    out_html = (draft[:ia] + '<!-- 시장 한 컷 위젯 -->\n' + SNAP + '\n\n\n\n' + CHART_SEC
+                + '\n\n\n\n\n' + draft[ia:])
+    print("[이식] 초안에 시장 섹션 없음 → 기사 1 앞에 삽입")
+open(OUT, 'w', encoding='utf-8').write(out_html)
 
 for k, s in SERIES.items():
     print(k, f"{len(s)}pts", s[0][0].strftime('%y%m'), '→', s[-1][0].strftime('%y%m%d'),
