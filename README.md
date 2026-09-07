@@ -67,7 +67,10 @@ daily-news/
 ETF 검색기의 컨센서스 구간은 로그인한 회원에게만 보입니다. 아래 순서대로 한 번만 설정하면 됩니다.
 코드는 이미 들어 있고, 마지막에 값 두 개만 채우면 켜집니다.
 
-### 1) Supabase 프로젝트 만들기
+### 1) Supabase 프로젝트 — 이미 있음 (건너뜀)
+좋아요 집계에 쓰는 `gjbuffet-news` 프로젝트를 그대로 씁니다. `assets/auth-config.js` 에 주소·키가 이미 들어 있습니다.
+
+### (참고) 새 프로젝트를 만들 때
 1. https://supabase.com 가입 → **New project**
 2. 이름 `gjbuffet`, Region은 **Northeast Asia (Seoul)**, 데이터베이스 비밀번호는 아무 곳에 적어두기
 3. 만들어지면 **Project Settings → API** 화면을 열어둔다 (여기 값이 4단계에 필요)
@@ -76,7 +79,7 @@ ETF 검색기의 컨센서스 구간은 로그인한 회원에게만 보입니�
 1. https://console.cloud.google.com → 새 프로젝트(이름 `gjbuffet`)
 2. **API 및 서비스 → OAuth 동의 화면**: 외부(External), 앱 이름 `가좌버핏`, 지원 이메일 입력, 승인된 도메인에 `gjbuffet.kr` 과 `supabase.co` 추가 → 저장
 3. **사용자 인증 정보 → 사용자 인증 정보 만들기 → OAuth 클라이언트 ID**: 유형 **웹 애플리케이션**
-   - 승인된 리디렉션 URI에 Supabase가 알려주는 주소를 넣는다: `https://<프로젝트ID>.supabase.co/auth/v1/callback`
+   - 승인된 리디렉션 URI: `https://ujpelcnigrryjprztzhf.supabase.co/auth/v1/callback`
      (Supabase → Authentication → Providers → Google 화면에 "Callback URL"로 표시됨)
 4. 발급된 **클라이언트 ID / 클라이언트 보안 비밀**을 복사
 5. Supabase → **Authentication → Providers → Google** 켜고 두 값을 붙여넣기 → Save
@@ -86,8 +89,8 @@ Supabase → **Authentication → URL Configuration**
 - Site URL: `https://gjbuffet.kr`
 - Redirect URLs: `https://gjbuffet.kr/**`
 
-### 4) 사이트에 값 넣기
-`assets/auth-config.js` 를 열어 두 값을 채우고 저장(커밋)한다.
+### 4) 사이트에 값 넣기 — 이미 채워져 있음
+`assets/auth-config.js` 에 값이 들어 있습니다. 프로젝트를 바꿀 때만 고치면 됩니다.
 ```js
 window.GJ_AUTH = {
   url: 'https://xxxxxxxxxxxx.supabase.co',   // Project Settings → API → Project URL
