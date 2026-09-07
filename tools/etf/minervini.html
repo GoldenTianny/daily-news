@@ -56,6 +56,16 @@
   .stat .k { font-size: 12px; color: #777; }
   .stat .v { font-size: 22px; font-weight: 700; color: #1a237e; margin-top: 2px; }
   .stat .v small { font-size: 12px; color: #888; font-weight: 500; }
+  /* 기준일 이동 */
+  .datenav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 2px 0 12px; }
+  .datenav select { padding: 7px 10px; border: 1.5px solid #c5cae9; border-radius: 8px; font: inherit; font-size: 14px;
+    font-weight: 600; color: #1a237e; background: #fff; max-width: 100%; }
+  .dbtn { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid #c5cae9; background: #e8eaf6; color: #3f51b5;
+    font-size: 12px; cursor: pointer; font-family: inherit; }
+  .dbtn:hover:not(:disabled) { background: #3f51b5; color: #fff; }
+  .dbtn:disabled { opacity: .35; cursor: default; }
+  .datenav .hint { font-size: 12px; color: #999; }
+  .datenav .hint.past { color: #e65100; font-weight: 600; }
 
   details { margin-top: 6px; }
   summary { cursor: pointer; font-size: 13.5px; color: #3f51b5; font-weight: 600; }
@@ -119,10 +129,16 @@
 
   <div class="card">
     <h2>&#127919; 기준일 <span id="dateLbl" class="cnt"></span></h2>
+    <div class="datenav">
+      <button class="dbtn" id="prevDay" title="이전 거래일 (←)" aria-label="이전 거래일">&#9664;</button>
+      <select id="dateSel" aria-label="기준일 선택"><option>불러오는 중&hellip;</option></select>
+      <button class="dbtn" id="nextDay" title="다음 거래일 (→)" aria-label="다음 거래일">&#9654;</button>
+      <span class="hint" id="dateHint"></span>
+    </div>
     <div class="stats">
       <div class="stat"><div class="k">템플릿 충족</div><div class="v" id="stPass">–</div></div>
       <div class="stat"><div class="k">근접 (7/8 충족)</div><div class="v" id="stNear">–</div></div>
-      <div class="stat"><div class="k">신규 진입 (오늘 첫 충족)</div><div class="v" id="stNew">–</div></div>
+      <div class="stat"><div class="k">신규 진입 (당일 첫 충족)</div><div class="v" id="stNew">–</div></div>
     </div>
     <details>
       <summary>트렌드 템플릿 8개 조건 보기</summary>
@@ -179,6 +195,12 @@ const link = nm => '/tools/etf/?stock=' + encodeURIComponent(nm);
 
 let ROWS = [], ETFMAP = null, sortKey = 'rs', query = '';
 
+// ===== 기준일: 월 파일(db/market/minervini/YYYY-MM.parquet)에 거래일별 행이 모두 들어 있음 =====
+const MONTHS = new Map();   // 'YYYY-MM' -> 행 배열 (파일 없으면 null)
+let DATES = [];             // 지금까지 읽은 거래일 (오름차순)
+let curDate = null, earliestYm = null, exhausted = false, busy = false, etfTok = 0;
+const ETF_CACHE = new Map();
+
 async function readParquet(url) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(url + ' ' + r.status);
@@ -190,51 +212,175 @@ function prevMonth(ym) {
   return yy + '-' + String(mm).padStart(2, '0');
 }
 
-async function load() {
-  // 최신 월 파일(없으면 전월)에서 마지막 날짜 행만 사용
-  let ym = new Date().toISOString().slice(0, 7), rows = null;
-  for (let i = 0; i < 3 && !rows; i++) {
-    try { rows = await readParquet('/db/market/minervini/' + ym + '.parquet'); }
-    catch (e) { ym = prevMonth(ym); }
+async function loadMonth(ym) {
+  if (MONTHS.has(ym)) return MONTHS.get(ym);
+  let rows = null;
+  try {
+    rows = await readParquet('/db/market/minervini/' + ym + '.parquet');
+    rows.forEach(r => { r.date = dstr(r.date); });
+  } catch (e) { rows = null; }
+  MONTHS.set(ym, rows);
+  if (rows && rows.length) {
+    const set = new Set(DATES);
+    rows.forEach(r => set.add(r.date));
+    DATES = Array.from(set).sort();
   }
-  if (!rows || !rows.length) throw new Error('데이터 없음');
-  rows.forEach(r => { r.date = dstr(r.date); });
-  const latest = rows.map(r => r.date).sort().at(-1);
-  ROWS = rows.filter(r => r.date === latest);
+  return rows;
+}
+
+// 읽은 것 중 가장 오래된 달의 전월을 읽는다. 두 달 연속 파일이 없으면 더 이상 과거 없음.
+async function loadOlderMonth() {
+  if (exhausted) return false;
+  let ym = earliestYm, miss = 0;
+  while (miss < 2) {
+    ym = prevMonth(ym);
+    const rows = await loadMonth(ym);
+    earliestYm = ym;
+    if (rows && rows.length) return true;
+    miss++;
+  }
+  exhausted = true;
+  return false;
+}
+
+// 요청 날짜가 읽은 범위보다 이전이면 그 달까지 거슬러 읽고, 가장 가까운(같거나 이전) 거래일을 돌려준다
+async function resolveDate(want) {
+  if (!want || !/^\d{4}-\d{2}-\d{2}$/.test(want)) return DATES.at(-1);
+  while (!exhausted && want < DATES[0] && earliestYm > want.slice(0, 7)) await loadOlderMonth();
+  if (DATES.includes(want)) return want;
+  return DATES.filter(d => d <= want).at(-1) || DATES[0];
+}
+
+function setBusy(on) {
+  busy = on;
+  document.getElementById('prevDay').disabled = on;
+  document.getElementById('nextDay').disabled = on;
+  document.getElementById('dateSel').disabled = on;
+  if (on) document.getElementById('dateHint').textContent = '불러오는 중…';
+}
+
+function renderDateNav() {
+  const sel = document.getElementById('dateSel');
+  const last = DATES.at(-1), idx = DATES.indexOf(curDate);
+  let h = '';
+  for (let i = DATES.length - 1; i >= 0; i--) {
+    h += '<option value="' + DATES[i] + '"' + (DATES[i] === curDate ? ' selected' : '') + '>' +
+      DATES[i] + (DATES[i] === last ? ' (최신)' : '') + '</option>';
+  }
+  if (!exhausted) h += '<option value="__more">이전 달 더 보기…</option>';
+  sel.innerHTML = h;
+  sel.disabled = false;
+  document.getElementById('prevDay').disabled = exhausted && idx === 0;
+  document.getElementById('nextDay').disabled = idx === DATES.length - 1;
+  const hint = document.getElementById('dateHint');
+  if (curDate === last) { hint.className = 'hint'; hint.textContent = '최신 거래일 · ◀ 로 과거 이동'; }
+  else { hint.className = 'hint past'; hint.textContent = '과거 기준일 (' + (DATES.length - 1 - idx) + '거래일 전)'; }
+}
+
+async function showDate(d, replace) {
+  curDate = d;
+  const rows = MONTHS.get(d.slice(0, 7)) || [];
+  ROWS = rows.filter(r => r.date === d);
   const passed = ROWS.filter(r => r.passed);
   const near = ROWS.filter(r => Number(r.pass_n) === 7);
   const fresh = passed.filter(r => Number(r.streak) === 1);
   const nUniv = ROWS.length ? Number(ROWS[0].n_univ) : 0;
+  const isLatest = d === DATES.at(-1);
 
-  document.getElementById('dateLbl').textContent = latest;
-  document.getElementById('headSub').textContent = latest + ' 기준 · 8개 추세 조건을 모두 충족한 종목 ' + passed.length + '개';
+  document.getElementById('dateLbl').textContent = d;
+  document.getElementById('headSub').textContent = d + ' 기준' + (isLatest ? '' : ' (과거)') +
+    ' · 8개 추세 조건을 모두 충족한 종목 ' + passed.length + '개';
   document.getElementById('stPass').innerHTML = passed.length + ' <small>/ ' + nUniv.toLocaleString() + '종목 (' +
     (nUniv ? (passed.length / nUniv * 100).toFixed(1) : 0) + '%)</small>';
   document.getElementById('stNear').textContent = near.length;
   document.getElementById('stNew').textContent = fresh.length;
   document.getElementById('passCnt').textContent = passed.length + '개';
   document.getElementById('nearCnt').textContent = near.length + '개';
-  document.title = '미너비니 트렌드 템플릿 ' + latest + ' (' + passed.length + '종목) | 가좌버핏';
+  document.title = '미너비니 트렌드 템플릿 ' + d + ' (' + passed.length + '종목) | 가좌버핏';
+  renderDateNav();
+  ETFMAP = ETF_CACHE.get(d) || null;
   render();
 
-  // 보유 ETF 교차 정보 (기준일 ETF 보유내역) — 비동기로 채움
-  try {
-    const dj = await (await fetch('data/dates.json')).json();
-    const dates = Array.isArray(dj) ? dj : dj.dates;
-    const ed = dates.filter(d => d <= latest).at(-1) || dates.at(-1);
-    const eh = await readParquet('/db/etf/' + ed + '.parquet');
-    const m = new Map();
-    for (const r of eh) {
-      if (r.weight == null || r.weight <= 0) continue;
-      const a = m.get(r.stock_name) || { n: 0, top: null, w: 0 };
-      a.n++;
-      if (r.weight > a.w) { a.w = r.weight; a.top = r.etf_name; }
-      m.set(r.stock_name, a);
-    }
-    ETFMAP = m;
-    render();
-  } catch (e) { /* ETF 정보는 부가 정보 — 실패해도 표는 유지 */ }
+  // 주소에 기준일 반영 (최신이면 생략) — 뒤로가기로 이전 기준일로 돌아갈 수 있게
+  const url = location.pathname + (isLatest ? '' : '?date=' + d);
+  if (location.pathname + location.search !== url) {
+    if (replace) history.replaceState({ date: d }, '', url); else history.pushState({ date: d }, '', url);
+  }
+
+  // 보유 ETF 교차 정보 (기준일 이하 가장 가까운 ETF 보유내역) — 비동기로 채움
+  if (!ETFMAP) {
+    const tok = ++etfTok;
+    try {
+      const dj = await (await fetch('data/dates.json')).json();
+      const dates = Array.isArray(dj) ? dj : dj.dates;
+      const ed = dates.filter(x => x <= d).at(-1) || dates[0];
+      const eh = await readParquet('/db/etf/' + ed + '.parquet');
+      const m = new Map();
+      for (const r of eh) {
+        if (r.weight == null || r.weight <= 0) continue;
+        const a = m.get(r.stock_name) || { n: 0, top: null, w: 0 };
+        a.n++;
+        if (r.weight > a.w) { a.w = r.weight; a.top = r.etf_name; }
+        m.set(r.stock_name, a);
+      }
+      ETF_CACHE.set(d, m);
+      if (tok === etfTok && curDate === d) { ETFMAP = m; render(); }
+    } catch (e) { /* ETF 정보는 부가 정보 — 실패해도 표는 유지 */ }
+  }
 }
+
+async function goTo(d, replace) {
+  if (busy) return;
+  setBusy(true);
+  try { await showDate(await resolveDate(d), replace); }
+  finally { setBusy(false); renderDateNav(); }
+}
+
+async function step(delta) {
+  if (busy) return;
+  setBusy(true);
+  try {
+    let idx = DATES.indexOf(curDate);
+    if (delta < 0 && idx === 0) { await loadOlderMonth(); idx = DATES.indexOf(curDate); }
+    const nd = DATES[idx + delta];
+    if (nd) await showDate(nd, false);
+  } finally { setBusy(false); renderDateNav(); }
+}
+
+async function load() {
+  // 최신 월 파일(없으면 전월)을 찾고, 목록이 넉넉하도록 전월까지 읽어둔다
+  let ym = new Date().toISOString().slice(0, 7), found = null;
+  for (let i = 0; i < 3 && !found; i++) {
+    const rows = await loadMonth(ym);
+    if (rows && rows.length) found = ym; else ym = prevMonth(ym);
+  }
+  if (!found) throw new Error('데이터 없음');
+  earliestYm = found;
+  await loadOlderMonth();
+  await goTo(new URLSearchParams(location.search).get('date'), true);
+}
+
+document.getElementById('prevDay').addEventListener('click', () => step(-1));
+document.getElementById('nextDay').addEventListener('click', () => step(1));
+document.getElementById('dateSel').addEventListener('change', async e => {
+  const v = e.target.value;
+  if (v === '__more') {
+    if (busy) return;
+    setBusy(true);
+    try { await loadOlderMonth(); } finally { setBusy(false); renderDateNav(); }
+    e.target.value = curDate;
+    return;
+  }
+  goTo(v, false);
+});
+window.addEventListener('popstate', () => {
+  if (DATES.length) goTo(new URLSearchParams(location.search).get('date'), true);
+});
+document.addEventListener('keydown', e => {
+  if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowLeft') step(-1);
+  else if (e.key === 'ArrowRight') step(1);
+});
 
 function sorted(list) {
   const arr = list.slice();
