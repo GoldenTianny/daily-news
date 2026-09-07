@@ -93,8 +93,20 @@
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' }
     });
 
-    var errDesc = new URLSearchParams(location.search).get('error_description');
-    if (errDesc) console.warn('[Auth] 로그인 실패:', errDesc);
+    // 구글에서 돌아왔는데 실패한 경우: Supabase 가 주소(쿼리 또는 #해시)에 error_description 을 실어 보냄 → 화면에 그대로 보여줌
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var h = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+      var desc = q.get('error_description') || h.get('error_description');
+      var code = q.get('error_code') || h.get('error_code') || q.get('error') || h.get('error');
+      if (!desc && !code) return;
+      var msg = decodeURIComponent(String(desc || code).replace(/\+/g, ' '));
+      console.warn('[Auth] 로그인 실패:', code, msg);
+      setTimeout(function () {
+        alert('로그인에 실패했습니다.\n\n서버 메시지: ' + msg + (code ? '\n코드: ' + code : '') +
+          '\n\n이 문구를 그대로 운영자에게 알려주세요.');
+      }, 300);
+    })();
 
     Auth.ready = client.auth.getSession().then(function (r) {
       var prev = Auth.user ? Auth.user.id : null;
