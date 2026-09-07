@@ -492,7 +492,7 @@ async function init() {
     dateSelect.disabled = false;
 
     // 로그인 상태를 먼저 확인(최대 1.5초)한 뒤 화면을 그려야 회원 전용 구간이 깜빡이지 않음
-    if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, 1500))]);
+    if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, /[?&]code=/.test(location.search) ? 6000 : 1500))]);
 
     // 주소에 날짜가 지정돼 있으면 해당 날짜, 아니면 최신 날짜로 진입
     await applyStateFromUrl();
@@ -678,7 +678,23 @@ async function readMonth(kind, mo) {
 // ===== 회원 전용 구간 =====
 // 1단계: 로그인 여부로만 가림 (데이터 자체는 아직 공개 파일). 2단계에서 컨센서스를 회원 확인 서버로 옮기면 진짜로 잠김.
 // 로그인 설정(assets/auth-config.js)이 비어 있는 동안은 가리지 않음 — 설정을 채우는 순간부터 회원 전용으로 전환
-const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
+const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;   // 종목상세 로그인 벽
+// 컨센서스 구간 공개 여부 — 1단계: 회원이면 전부 공개. 2단계(유료화) 때 '유료회원 여부'로 바꾸면 아래 가림 코드가 그대로 켜짐
+const canSeeCons = () => true;
+// 종목상세 로그인 벽 HTML (맛보기 통계는 위 statsArea 에 이미 그려진 뒤 호출)
+function loginWallHtml(name, etfCount) {
+  const bars = [30, 44, 40, 55, 50, 63, 60, 72, 68, 80, 76, 88, 84, 95].map(h => '<i style="height:' + h + '%"></i>').join('');
+  return '<div class="chart-card"><div class="chart-title">&#128274; ' + escHtml(name) + ' 종목 상세는 회원에게만 보입니다</div>' +
+    '<div class="chart-sub">무료 회원 · 구글 계정으로 10초면 끝납니다</div>' +
+    '<div class="lock-wrap" style="min-height:230px"><div class="lock-blur">' + bars + '</div>' +
+    '<div class="lock-panel" style="min-height:230px">' +
+    '<div class="lock-ttl">로그인하면 바로 보입니다</div>' +
+    '<div class="lock-sub">' + (etfCount ? '이 종목을 담은 ETF <b>' + etfCount.toLocaleString() + '개</b>의 비중과 최근 변화<br>' : '') +
+    '최근 1년 수정주가 &middot; 목표주가 컨센서스 &middot; RS 등급 차트<br>연도별 영업이익 증가율과 컨센서스 추이</div>' +
+    '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button>' +
+    '<div class="lock-sub" style="font-size:11px;margin-top:2px">비밀번호를 받지 않습니다 &middot; <a href="/privacy/" target="_blank" rel="noopener" style="color:#8fa3c4">개인정보 안내</a></div>' +
+    '</div></div></div>';
+}
 function lockedHtml(title, sub, opts) {
   opts = opts || {};
   const bars = [38, 52, 46, 61, 58, 70, 66, 78, 74, 85, 81, 92].map(h => '<i style="height:' + h + '%"></i>').join('');
@@ -692,7 +708,7 @@ function lockedHtml(title, sub, opts) {
 
 // name으로 매칭(일반 종목: 컨센서스 포함) 또는 code로 매칭(ETF: 수정주가만)
 async function loadStockSeries(name, code) {
-  const member = isMember();
+  const member = canSeeCons();
   const key = (code ? 'C:' + code : 'N:' + name) + '|' + currentDate + '|' + (member ? 'm' : 'g');
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
@@ -808,7 +824,7 @@ function showEarnings(name) {
     const e = m.get(name);
     if (!e) return;                                  // 실적 데이터 없는 종목은 카드 생략
     const fys = Array.from(e.fy.keys()).sort((a, b) => a - b);
-    const member = isMember();
+    const member = canSeeCons();
     let cells = '';
     for (const fy of fys) {
       if (fy < 2020) continue;                       // 표시 시작 연도 (기준치는 전년도 사용)
@@ -1089,7 +1105,7 @@ async function loadEtfConsTotal(code) {
 
 function showEtfEarnCons(code, name) {
   const tok = chartToken;
-  if (!isMember()) {
+  if (!canSeeCons()) {
     // 비회원: 컨센서스 커버 종목이 하나라도 있는 ETF만 가림 카드 표시 (채권·통화형 등은 원래대로 카드 생략)
     earnArea.style.display = 'none';
     earnArea.innerHTML = '';
@@ -1719,6 +1735,16 @@ function showStockResults(name) {
     '<div class="stat-card"><div class="label">보유 ETF 수</div><div class="value">' + rows.length.toLocaleString() + '</div></div>' +
     '<div class="stat-card"><div class="label">최대 비중</div><div class="value">' + (maxWeight ? maxWeight.toFixed(2) + '%' : '-') + '</div></div>';
   statsArea.style.display = 'flex';
+
+  if (!isMember()) {                      // 비회원: 여기서 멈추고 로그인 벽
+    hideStockChart();
+    introArea.style.display = 'none';
+    resultArea.style.display = 'none';
+    chartArea.innerHTML = loginWallHtml(name, rows.length);
+    chartArea.style.display = '';
+    syncUrl();
+    return;
+  }
 
   const sortTh = (k, label, tip) => '<th class="th-sort' + (stockSort === k ? ' on' : '') +
     '" style="text-align:right" title="' + tip + ' (재클릭 시 방향 전환)" onclick="setStockSort(\'' + k + '\')">' +
