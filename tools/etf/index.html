@@ -203,6 +203,23 @@
   .chart-title { font-weight: 600; font-size: 15px; }
   .chart-sub { font-size: 12px; color: #999; margin: 2px 0 8px; }
   .chart-loading { color: #999; font-size: 13px; padding: 28px 0; text-align: center; }
+  /* 회원 전용 구간 가림 */
+  .lock-wrap { position: relative; min-height: 150px; border-radius: 10px; overflow: hidden; margin: 6px 0 4px; }
+  .lock-blur { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 6px; padding: 18px 16px 10px;
+    filter: blur(4px); opacity: .55; pointer-events: none; }
+  .lock-blur i { display: block; flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #7f9fd1, #c9d6e8); }
+  .lock-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; min-height: 150px; padding: 18px 12px; text-align: center; background: rgba(255,255,255,.55); }
+  .lock-panel .lock-ttl { font-size: 14px; font-weight: 700; color: #1a3a6c; }
+  .lock-panel .lock-sub { font-size: 12px; color: #6b7280; line-height: 1.5; }
+  .lock-panel .lock-btn { margin-top: 4px; padding: 9px 20px; border: none; border-radius: 999px; cursor: pointer;
+    font: inherit; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #1a3a6c, #2a5ca8); }
+  .lock-panel .lock-btn:active { transform: scale(.98); }
+  .lock-inline { color: #8fa3c4; cursor: pointer; text-decoration: none; }
+  .lock-inline:hover { color: #1a3a6c; text-decoration: underline; }
+  .earn-tbl tr.locked td { color: #9aa5b8; cursor: pointer; }
+  .earn-tbl tr.locked td.lockcell { font-size: 12px; text-align: left; padding-left: 8px; }
+  .earn-tbl tr.locked:hover td { color: #1a3a6c; }
   .chart-wrap { position: relative; }
   .chart-wrap svg { display: block; width: 100%; }
   .chart-tip {
@@ -292,6 +309,7 @@
       <option>불러오는 중...</option>
     </select>
     <span class="date-info" id="dateInfo"></span>
+    <span id="authBox"></span>
   </div>
 
   <!-- Search -->
@@ -333,6 +351,9 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/auth-config.js"></script>
+<script src="/assets/auth.js"></script>
 <script src="hyparquet.min.js"></script>
 <script>
 // ===== STATE =====
@@ -449,6 +470,15 @@ async function applyStateFromUrl() {
 
 window.addEventListener('popstate', function() { applyStateFromUrl(); });
 
+// 로그인 칩 + 로그인/로그아웃 시 현재 화면 다시 그리기 (회원 전용 구간 열고 닫기)
+if (window.Auth) {
+  Auth.mount(document.getElementById('authBox'));
+  Auth.onChange(function () {
+    SERIES_CACHE.clear();
+    if (DATES.length && currentView) applyStateFromUrl();
+  });
+}
+
 // ===== INIT =====
 async function init() {
   try {
@@ -460,6 +490,9 @@ async function init() {
       '<option value="' + d + '">' + d + '</option>'
     ).join('');
     dateSelect.disabled = false;
+
+    // 로그인 상태를 먼저 확인(최대 1.5초)한 뒤 화면을 그려야 회원 전용 구간이 깜빡이지 않음
+    if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, 1500))]);
 
     // 주소에 날짜가 지정돼 있으면 해당 날짜, 아니면 최신 날짜로 진입
     await applyStateFromUrl();
@@ -642,15 +675,31 @@ async function readMonth(kind, mo) {
   return hyparquet.parquetReadObjects({ file: buf });
 }
 
+// ===== 회원 전용 구간 =====
+// 1단계: 로그인 여부로만 가림 (데이터 자체는 아직 공개 파일). 2단계에서 컨센서스를 회원 확인 서버로 옮기면 진짜로 잠김.
+// 로그인 설정(assets/auth-config.js)이 비어 있는 동안은 가리지 않음 — 설정을 채우는 순간부터 회원 전용으로 전환
+const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
+function lockedHtml(title, sub, opts) {
+  opts = opts || {};
+  const bars = [38, 52, 46, 61, 58, 70, 66, 78, 74, 85, 81, 92].map(h => '<i style="height:' + h + '%"></i>').join('');
+  const inner = '<div class="lock-wrap"><div class="lock-blur">' + bars + '</div>' +
+    '<div class="lock-panel"><div class="lock-ttl">&#128274; ' + (opts.ttl || '회원 전용 구간입니다') + '</div>' +
+    '<div class="lock-sub">' + (sub || '로그인하면 바로 보입니다 · 무료 · 구글 계정 한 번이면 끝') + '</div>' +
+    '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
+  if (opts.bare) return inner;
+  return '<div class="chart-card"><div class="chart-title">' + title + '</div>' + inner + '</div>';
+}
+
 // name으로 매칭(일반 종목: 컨센서스 포함) 또는 code로 매칭(ETF: 수정주가만)
 async function loadStockSeries(name, code) {
-  const key = (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
+  const member = isMember();
+  const key = (code ? 'C:' + code : 'N:' + name) + '|' + currentDate + '|' + (member ? 'm' : 'g');
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
   const price = [], tp = [];
   await Promise.all(monthsList(currentDate, 13).map(async mo => {
     const [prows, crows] = await Promise.all(
-      [readMonth('p', mo), code ? Promise.resolve([]) : readMonth('c', mo)]);
+      [readMonth('p', mo), (code || !member) ? Promise.resolve([]) : readMonth('c', mo)]);
     for (const r of prows) {
       if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -664,7 +713,7 @@ async function loadStockSeries(name, code) {
   }));
   price.sort((a, b) => a[0] < b[0] ? -1 : 1);
   tp.sort((a, b) => a[0] < b[0] ? -1 : 1);
-  const res = { price: price, tp: tp, from: from };
+  const res = { price: price, tp: tp, from: from, locked: !code && !member };
   SERIES_CACHE.set(key, res);
   return res;
 }
@@ -759,12 +808,18 @@ function showEarnings(name) {
     const e = m.get(name);
     if (!e) return;                                  // 실적 데이터 없는 종목은 카드 생략
     const fys = Array.from(e.fy.keys()).sort((a, b) => a - b);
+    const member = isMember();
     let cells = '';
     for (const fy of fys) {
       if (fy < 2020) continue;                       // 표시 시작 연도 (기준치는 전년도 사용)
       const cur = e.fy.get(fy), prev = e.fy.get(fy - 1);
       if (!cur) continue;
       const est = cur[1] === 'E';
+      if (est && !member) {                          // 비회원: 전망치는 가림
+        cells += '<tr class="locked" onclick="Auth.login()"><td class="yr">' + fy + '<span class="e-badge">E</span></td>' +
+          '<td class="lockcell" colspan="3">&#128274; 컨센서스 전망 · 로그인하면 보입니다</td></tr>';
+        continue;
+      }
       let gv, cls;
       if (!prev) { gv = '-'; cls = 'flat'; }
       else if (prev[0] > 0 && cur[0] > 0) {
@@ -787,9 +842,12 @@ function showEarnings(name) {
       '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
       '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스 · 연도를 클릭하면 분기 실적</div>' +
       '<table class="earn-tbl">' + cells + '</table>' +
-      '<div id="earnCons" style="margin-top:14px"><div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div></div></div>';
+      '<div id="earnCons" style="margin-top:14px">' +
+      (member ? '<div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div>'
+              : lockedHtml('', '연간 영업이익 컨센서스 추이 · 로그인하면 바로 보입니다', { bare: true, ttl: '컨센서스 추이는 회원 전용입니다' })) +
+      '</div></div>';
     earnArea.style.display = '';
-    showStockEarnCons(e.code, name, tok);
+    if (member) showStockEarnCons(e.code, name, tok);
   });
 }
 
@@ -1031,6 +1089,26 @@ async function loadEtfConsTotal(code) {
 
 function showEtfEarnCons(code, name) {
   const tok = chartToken;
+  if (!isMember()) {
+    // 비회원: 컨센서스 커버 종목이 하나라도 있는 ETF만 가림 카드 표시 (채권·통화형 등은 원래대로 카드 생략)
+    earnArea.style.display = 'none';
+    earnArea.innerHTML = '';
+    loadEarnings().then(m => {
+      if (tok !== chartToken) return;
+      if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
+      const covered = !!m && (HOLDINGS[code] || []).some(it => {
+        const e = m.get(it[0]);
+        if (!e) return false;
+        for (const v of e.fy.values()) if (v[1] === 'E') return true;
+        return false;
+      });
+      if (!covered) return;
+      earnArea.style.display = '';
+      earnArea.innerHTML = lockedHtml('&#128202; ' + escHtml(name) + ' &middot; 구성종목 영업이익 컨센서스 총합',
+        '구성종목 영업이익 전망을 보유비중으로 가중 합산한 추이 · 로그인하면 바로 보입니다');
+    });
+    return;
+  }
   earnArea.style.display = '';
   earnArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128202; ' + escHtml(name) +
     ' &middot; 구성종목 영업이익 컨센서스 총합</div>' +
@@ -1234,7 +1312,8 @@ function renderStockChart(name, s) {
   const upside = (last && lastTp) ? ' &middot; 괴리율 ' + ((lastTp / last - 1) * 100).toFixed(1) + '%' : '';
   const legend = '<span style="color:#3f51b5">&#9644;</span> 수정주가' +
     (s.tp.length > 1 ? ' &nbsp;<span style="color:#c62828">&#9476;</span> 목표주가 컨센서스'
-      : (s.isEtf ? '' : ' (목표주가 컨센서스 없음)')) +
+      : s.isEtf ? '' : s.locked ? ' &nbsp;<a class="lock-inline" onclick="Auth.login()">&#128274; 목표주가 컨센서스 · 로그인하면 표시</a>'
+      : ' (목표주가 컨센서스 없음)') +
     (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
       (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
       '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '');

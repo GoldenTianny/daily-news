@@ -59,3 +59,46 @@ daily-news/
 
 본 프로젝트는 개인 학습 및 기록 목적으로 작성되었습니다.
 원문 신문 기사의 저작권은 각 언론사에 있습니다.
+
+---
+
+## 👤 회원 로그인 켜기 (Supabase · 구글 로그인)
+
+ETF 검색기의 컨센서스 구간은 로그인한 회원에게만 보입니다. 아래 순서대로 한 번만 설정하면 됩니다.
+코드는 이미 들어 있고, 마지막에 값 두 개만 채우면 켜집니다.
+
+### 1) Supabase 프로젝트 만들기
+1. https://supabase.com 가입 → **New project**
+2. 이름 `gjbuffet`, Region은 **Northeast Asia (Seoul)**, 데이터베이스 비밀번호는 아무 곳에 적어두기
+3. 만들어지면 **Project Settings → API** 화면을 열어둔다 (여기 값이 4단계에 필요)
+
+### 2) 구글 로그인 연결
+1. https://console.cloud.google.com → 새 프로젝트(이름 `gjbuffet`)
+2. **API 및 서비스 → OAuth 동의 화면**: 외부(External), 앱 이름 `가좌버핏`, 지원 이메일 입력, 승인된 도메인에 `gjbuffet.kr` 과 `supabase.co` 추가 → 저장
+3. **사용자 인증 정보 → 사용자 인증 정보 만들기 → OAuth 클라이언트 ID**: 유형 **웹 애플리케이션**
+   - 승인된 리디렉션 URI에 Supabase가 알려주는 주소를 넣는다: `https://<프로젝트ID>.supabase.co/auth/v1/callback`
+     (Supabase → Authentication → Providers → Google 화면에 "Callback URL"로 표시됨)
+4. 발급된 **클라이언트 ID / 클라이언트 보안 비밀**을 복사
+5. Supabase → **Authentication → Providers → Google** 켜고 두 값을 붙여넣기 → Save
+
+### 3) 돌아올 주소 허용
+Supabase → **Authentication → URL Configuration**
+- Site URL: `https://gjbuffet.kr`
+- Redirect URLs: `https://gjbuffet.kr/**`
+
+### 4) 사이트에 값 넣기
+`assets/auth-config.js` 를 열어 두 값을 채우고 저장(커밋)한다.
+```js
+window.GJ_AUTH = {
+  url: 'https://xxxxxxxxxxxx.supabase.co',   // Project Settings → API → Project URL
+  anonKey: 'eyJhbGciOi...'                    // Project Settings → API → anon public
+};
+```
+`anon public` 키는 브라우저에 공개되도록 만들어진 키라 저장소에 넣어도 됩니다.
+**`service_role` 키는 절대 넣지 마세요.**
+
+### 5) 확인
+`gjbuffet.kr/tools/etf/` 기준일 줄 오른쪽에 **로그인** 버튼이 보이면 완료.
+("로그인 준비 중"으로 보이면 4단계 값이 아직 비어 있는 것)
+
+회원 명단은 Supabase → **Authentication → Users** 에서 볼 수 있습니다.
