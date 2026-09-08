@@ -1470,8 +1470,8 @@ async function shareIntro(btn) {
     ].filter(Boolean);
     if (!secs.length) secs.push('수익률·비중 데이터를 아직 불러오지 못했습니다.');
     const url = location.origin + location.pathname + '?date=' + currentDate;
-    const message = '[' + y + '/' + m + '/' + d + '] ETF 시황 한눈에 · 가좌버핏\n\n' + secs.join('\n\n') + '\n\n' + url;
-    const data = { title: '가좌버핏 ETF 시황 ' + y + '/' + m + '/' + d, text: message };
+    const message = '[' + y + '/' + m + '/' + d + '] ETF 시황 한눈에\n\n' + secs.join('\n\n') + '\n\n' + url;
+    const data = { title: 'ETF 시황 ' + y + '/' + m + '/' + d, text: message };
     if (navigator.share) {
       try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
     } else {
