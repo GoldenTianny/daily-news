@@ -89,7 +89,8 @@ end $$;
 -- 2) 종목 조회 기록 ---------------------------------------------------------
 create table if not exists public.stock_views (
   id        bigint generated always as identity primary key,
-  user_id   uuid not null references auth.users(id) on delete cascade,
+  user_id   uuid references auth.users(id) on delete cascade,   -- 비회원이면 null
+  anon_id   text,                                                -- 비회원 브라우저 식별자 (좋아요와 같은 gjb_fp)
   view_type text not null default 'stock' check (view_type in ('stock','etf')),
   name      text not null,
   code      text,
@@ -101,23 +102,40 @@ create index if not exists stock_views_time_idx on public.stock_views (viewed_at
 create index if not exists stock_views_user_idx on public.stock_views (user_id, viewed_at);
 alter table public.stock_views enable row level security;
 
+-- 이미 만들어진 표 업그레이드 (여러 번 실행해도 안전)
+alter table public.stock_views alter column user_id drop not null;
+alter table public.stock_views add column if not exists anon_id text;
+
 drop policy if exists "views_insert_own" on public.stock_views;
 create policy "views_insert_own" on public.stock_views
   for insert to authenticated with check (user_id = auth.uid());
+
+drop policy if exists "views_insert_guest" on public.stock_views;
+create policy "views_insert_guest" on public.stock_views
+  for insert to anon with check (user_id is null and anon_id is not null);
 
 drop policy if exists "views_read_staff" on public.stock_views;
 create policy "views_read_staff" on public.stock_views
   for select to authenticated using (public.is_staff());
 
 -- 통계 1: 날짜 × 종목  (by_view_date = true 면 '조회한 날' 기준, false 면 '보던 기준일' 기준)
-create or replace function public.admin_view_stats(d_from date, d_to date, vtype text default 'stock', by_view_date boolean default false)
-returns table (d date, name text, code text, views bigint, users bigint, last_at timestamptz)
+--   who = 'all' | 'member' | 'guest'
+drop function if exists public.admin_view_stats(date, date, text, boolean);
+create or replace function public.admin_view_stats(d_from date, d_to date, vtype text default 'stock', by_view_date boolean default false, who text default 'all')
+returns table (d date, name text, code text, views bigint, member_views bigint, guest_views bigint, users bigint, guests bigint, last_at timestamptz)
 language sql stable security definer set search_path = public as $$
   select case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end as d,
-         name, max(code), count(*), count(distinct user_id), max(viewed_at)
+         name, max(code),
+         count(*),
+         count(*) filter (where user_id is not null),
+         count(*) filter (where user_id is null),
+         count(distinct user_id),
+         count(distinct anon_id) filter (where user_id is null),
+         max(viewed_at)
   from public.stock_views
   where public.is_staff()
     and view_type = vtype
+    and (who = 'all' or (who = 'member' and user_id is not null) or (who = 'guest' and user_id is null))
     and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
   group by 1, 2
   order by 1 desc, 4 desc
@@ -136,13 +154,30 @@ language sql stable security definer set search_path = public as $$
   order by count(v.id) desc, p.created_at desc
 $$;
 
--- 통계 3: 최근 조회 원본 (마지막 N건)
+-- 통계 3: 최근 조회 원본 (마지막 N건) — 비회원은 email null, anon 은 브라우저 식별자 앞 6자리
+drop function if exists public.admin_recent_views(int);
 create or replace function public.admin_recent_views(n int default 200)
-returns table (viewed_at timestamptz, email text, name text, view_type text, base_date date)
+returns table (viewed_at timestamptz, email text, anon text, name text, view_type text, base_date date)
 language sql stable security definer set search_path = public as $$
-  select v.viewed_at, p.email, v.name, v.view_type, v.base_date
-  from public.stock_views v join public.profiles p on p.id = v.user_id
+  select v.viewed_at, p.email, left(v.anon_id, 6), v.name, v.view_type, v.base_date
+  from public.stock_views v left join public.profiles p on p.id = v.user_id
   where public.is_staff()
   order by v.viewed_at desc
   limit greatest(1, least(n, 1000))
+$$;
+
+-- 통계 4: 기간 요약 (회원/비회원 조회 수와 사람 수)
+create or replace function public.admin_view_summary(d_from date, d_to date, vtype text default 'stock', by_view_date boolean default false)
+returns table (views bigint, member_views bigint, guest_views bigint, users bigint, guests bigint, names bigint)
+language sql stable security definer set search_path = public as $$
+  select count(*),
+         count(*) filter (where user_id is not null),
+         count(*) filter (where user_id is null),
+         count(distinct user_id),
+         count(distinct anon_id) filter (where user_id is null),
+         count(distinct name)
+  from public.stock_views
+  where public.is_staff()
+    and view_type = vtype
+    and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
 $$;
