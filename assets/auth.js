@@ -19,11 +19,16 @@
   var Auth = {
     configured: configured,
     user: null,
+    role: null,          // 'master' | 'admin' | 'sub' | 'member' | null (profiles 테이블에서)
+    roleReady: null,     // 역할 조회 완료 Promise
+    client: null,        // supabase-js 클라이언트 (다른 페이지에서 DB 호출용)
     ready: null,
     onChange: function (fn) { listeners.push(fn); },
     login: login,
     logout: logout,
-    mount: mount
+    mount: mount,
+    isStaff: function () { return ['master', 'admin', 'sub'].indexOf(Auth.role) >= 0; },
+    logView: logView
   };
   window.Auth = Auth;
 
@@ -92,6 +97,7 @@
     client = window.supabase.createClient(cfg.url, cfg.anonKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' }
     });
+    Auth.client = client;
 
     // 구글에서 돌아왔는데 실패한 경우: Supabase 가 주소(쿼리 또는 #해시)에 error_description 을 실어 보냄 → 화면에 그대로 보여줌
     (function () {
@@ -114,6 +120,7 @@
       readyDone = true;
       stripAuthParams();
       renderAll();
+      Auth.roleReady = fetchRole();
       emit(prev);
       return Auth.user;
     }).catch(function (e) {
@@ -129,8 +136,35 @@
       if (!readyDone) return;          // 초기 확인은 위 getSession 에서 한 번만 알림
       stripAuthParams();
       renderAll();
+      if (prev !== (Auth.user ? Auth.user.id : null)) Auth.roleReady = fetchRole();
       emit(prev);
     });
+  }
+
+  /* ---------- 역할(관리자 여부) 조회 ---------- */
+  function fetchRole() {
+    Auth.role = null;
+    if (!client || !Auth.user) { renderAll(); return Promise.resolve(null); }
+    return client.from('profiles').select('role').eq('id', Auth.user.id).maybeSingle()
+      .then(function (r) {
+        Auth.role = (r && r.data && r.data.role) || 'member';
+        renderAll();
+        return Auth.role;
+      })
+      .catch(function () { Auth.role = 'member'; renderAll(); return Auth.role; });
+  }
+
+  /* ---------- 종목 조회 기록 (로그인 회원만, 같은 화면 5분 내 중복은 한 번만) ---------- */
+  var lastView = { key: '', at: 0 };
+  function logView(type, name, code, baseDate) {
+    if (!client || !Auth.user || !name) return;
+    var key = type + '|' + name + '|' + (baseDate || '');
+    var now = Date.now();
+    if (key === lastView.key && now - lastView.at < 5 * 60 * 1000) return;
+    lastView = { key: key, at: now };
+    client.from('stock_views').insert({
+      user_id: Auth.user.id, view_type: type, name: name, code: code || null, base_date: baseDate || null
+    }).then(function (r) { if (r && r.error) console.warn('[Auth] 조회 기록 실패', r.error.message); });
   }
 
   /* ---------- 로그인 / 로그아웃 ---------- */
@@ -202,6 +236,8 @@
         '<span class="gj-user" title="' + esc(u.email) + '">' +
           (u.avatar ? '<img src="' + esc(u.avatar) + '" alt="" referrerpolicy="no-referrer">' : '<span style="width:24px;height:24px;border-radius:50%;background:#c9d6e8;display:inline-block"></span>') +
           '<span class="gj-name">' + esc(u.name) + '</span></span>' +
+        (Auth.isStaff() && location.pathname.indexOf('/admin/') !== 0
+          ? '<a class="gj-out" href="/admin/" style="text-decoration:none">&#9881; 관리자</a>' : '') +
         '<button class="gj-out" type="button">로그아웃</button>';
       el.querySelector('.gj-out').onclick = function () { logout(); };
     } else {

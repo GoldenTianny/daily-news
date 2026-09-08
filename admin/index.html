@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a3a6c">
+<title>관리자 · 가좌버핏</title>
+<link rel="icon" type="image/png" href="/assets/pwa/icon-192.png">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  font-size: 14px; line-height: 1.6; color: #1a1a1a; background: #f0f2f5; min-height: 100vh; }
+.hero { background: linear-gradient(135deg, #1a3a6c 0%, #2a5ca8 100%); color: #fff; padding: 22px 20px 18px; }
+.hero .in { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hero h1 { font-size: 19px; font-weight: 800; }
+.hero .sub { font-size: 12px; opacity: .8; }
+.hero a.home { color: rgba(255,255,255,.85); text-decoration: none; font-size: 12.5px; border: 1px solid rgba(255,255,255,.35); padding: 4px 11px; border-radius: 999px; }
+.hero #authBox { margin-left: auto; }
+.hero .gj-auth .gj-user { background: rgba(255,255,255,.15); color: #fff; }
+.hero .gj-auth .gj-out { color: rgba(255,255,255,.85); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 18px 14px 60px; }
+.card { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 6px 18px rgba(26,58,108,.05); margin-bottom: 14px; }
+.card h2 { font-size: 15px; color: #1a3a6c; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.card h2 .cnt { font-size: 12px; color: #6b7280; font-weight: 500; }
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tab { padding: 8px 16px; border-radius: 999px; border: 1.5px solid #dfe3e8; background: #fff; color: #33415c; font: inherit; font-weight: 700; cursor: pointer; }
+.tab.on { background: #1a3a6c; border-color: #1a3a6c; color: #fff; }
+.panel { display: none; } .panel.on { display: block; }
+.ctl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.ctl label { font-size: 12.5px; color: #6b7280; font-weight: 600; }
+.ctl input[type=date], .ctl input[type=text], .ctl select { padding: 7px 10px; border: 1.5px solid #dfe3e8; border-radius: 8px; font: inherit; font-size: 13.5px; background: #fff; }
+.ctl input[type=text] { min-width: 160px; }
+.chip { padding: 6px 12px; border-radius: 999px; border: none; background: #eef1f6; color: #33415c; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.chip.on { background: #2a5ca8; color: #fff; }
+.btn { padding: 7px 14px; border-radius: 8px; border: none; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, #1a3a6c, #2a5ca8); color: #fff; }
+.btn.sub { background: #eef1f6; color: #33415c; }
+.btn.warn { background: #fdecec; color: #b3261e; }
+.btn:disabled { opacity: .5; cursor: default; }
+.stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.stat { flex: 1 1 130px; background: #f5f7fb; border-radius: 10px; padding: 10px 14px; }
+.stat .k { font-size: 11.5px; color: #7a8598; }
+.stat .v { font-size: 20px; font-weight: 800; color: #1a3a6c; }
+.stat .v small { font-size: 11px; color: #9099a6; font-weight: 500; }
+.twrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 9px; border-bottom: 1px solid #eef1f5; text-align: left; white-space: nowrap; }
+th { font-size: 12px; color: #6b7280; background: #fafbfd; font-weight: 700; position: sticky; top: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr.day td { background: #eef3fb; font-weight: 700; color: #1a3a6c; }
+tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
+.bar { display: inline-block; height: 8px; background: linear-gradient(90deg, #2a5ca8, #8fb3e8); border-radius: 4px; vertical-align: middle; margin-right: 6px; }
+.role { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
+.role.master { background: #fde7c8; color: #8a4b00; }
+.role.admin { background: #e0e9fb; color: #1a3a6c; }
+.role.sub { background: #e6f6ed; color: #0f7a41; }
+.role.member { background: #eef1f6; color: #6b7280; }
+.muted { color: #9099a6; font-size: 12px; }
+.msg { padding: 12px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 12px; display: none; }
+.msg.on { display: block; }
+.msg.err { background: #fdecec; color: #a5281b; border: 1px solid #f6d2ce; }
+.msg.info { background: #eef4fd; color: #1a3a6c; border: 1px solid #d6e3f7; }
+.msg code { background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.gate { text-align: center; padding: 40px 16px; }
+.gate .big { font-size: 40px; margin-bottom: 8px; }
+.gate p { color: #6b7280; margin-bottom: 14px; }
+.act { display: inline-flex; gap: 4px; }
+.act button { padding: 4px 9px; font-size: 11.5px; }
+.empty { text-align: center; color: #9099a6; padding: 26px 0; }
+@media (max-width: 600px) { .card { padding: 14px; } th, td { padding: 7px 6px; font-size: 12.5px; } }
+</style>
+</head>
+<body>
+
+<div class="hero"><div class="in">
+  <a class="home" href="/">← 홈</a>
+  <div><h1>⚙️ 관리자</h1><div class="sub">회원 · 역할 · 종목 조회 통계</div></div>
+  <span id="authBox"></span>
+</div></div>
+
+<div class="wrap">
+  <div class="msg" id="msg"></div>
+
+  <!-- 접근 안내 -->
+  <div class="card" id="gate">
+    <div class="gate"><div class="big">🔒</div><p id="gateText">확인 중…</p><span id="gateBtn"></span></div>
+  </div>
+
+  <!-- 본문 -->
+  <div id="main" style="display:none">
+    <div class="tabs">
+      <button class="tab on" data-tab="stats">📊 조회 통계</button>
+      <button class="tab" data-tab="users">👥 회원별</button>
+      <button class="tab" data-tab="roles">🛡️ 회원·역할 관리</button>
+      <button class="tab" data-tab="recent">🕒 최근 조회</button>
+    </div>
+
+    <!-- 통계 -->
+    <div class="panel on" id="p-stats">
+      <div class="card">
+        <h2>기간 · 기준</h2>
+        <div class="ctl">
+          <label>기간</label>
+          <input type="date" id="dFrom"> <span class="muted">~</span> <input type="date" id="dTo">
+          <button class="chip" data-days="7">7일</button>
+          <button class="chip on" data-days="14">14일</button>
+          <button class="chip" data-days="30">30일</button>
+          <button class="chip" data-days="90">90일</button>
+        </div>
+        <div class="ctl">
+          <label>날짜 기준</label>
+          <select id="byMode">
+            <option value="base">화면 기준일 (회원이 보던 데이터 날짜)</option>
+            <option value="view">조회한 날 (실제 접속 날짜)</option>
+          </select>
+          <label>유형</label>
+          <select id="vtype"><option value="stock">종목 상세</option><option value="etf">ETF 상세</option></select>
+          <label>보기</label>
+          <select id="layout"><option value="daily">날짜별 상세</option><option value="total">종목별 합계</option></select>
+          <input type="text" id="q" placeholder="종목명 필터">
+          <button class="btn sub" id="reload">새로고침</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">총 조회</div><div class="v" id="sViews">–</div></div>
+          <div class="stat"><div class="k">종목 수</div><div class="v" id="sNames">–</div></div>
+          <div class="stat"><div class="k">조회한 회원</div><div class="v" id="sUsers">–</div></div>
+          <div class="stat"><div class="k">날짜 수</div><div class="v" id="sDays">–</div></div>
+        </div>
+        <div class="twrap"><table id="statTbl"><thead></thead><tbody><tr><td class="empty">불러오는 중…</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- 회원별 -->
+    <div class="panel" id="p-users">
+      <div class="card">
+        <h2>회원별 조회 <span class="cnt" id="uRange"></span></h2>
+        <p class="muted" style="margin-bottom:10px">통계 탭의 기간을 따릅니다 (조회한 날 기준).</p>
+        <div class="twrap"><table id="userTbl">
+          <thead><tr><th>#</th><th>회원</th><th>역할</th><th class="num">조회</th><th class="num">종목 수</th><th>마지막 조회</th></tr></thead>
+          <tbody><tr><td colspan="6" class="empty">불러오는 중…</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- 역할 관리 -->
+    <div class="panel" id="p-roles">
+      <div class="card">
+        <h2>회원 · 역할 관리 <span class="cnt" id="rCnt"></span></h2>
+        <div class="ctl">
+          <input type="text" id="rq" placeholder="이메일·이름 검색">
+          <select id="rRole"><option value="">전체 역할</option><option value="master">마스터</option><option value="admin">관리자</option><option value="sub">부관리자</option><option value="member">일반</option></select>
+          <span class="muted" id="rHint"></span>
+        </div>
+        <div class="twrap"><table id="roleTbl">
+          <thead><tr><th>#</th><th>회원</th><th>역할</th><th>가입일</th><th>변경</th></tr></thead>
+          <tbody><tr><td colspan="5" class="empty">불러오는 중…</td></tr></tbody></table></div>
+        <p class="muted" style="margin-top:10px">마스터 → 관리자·부관리자 지정/해제 · 관리자 → 부관리자 지정/해제 · 부관리자 → 열람만. 마스터 계정은 여기서 바꿀 수 없습니다.</p>
+      </div>
+    </div>
+
+    <!-- 최근 조회 -->
+    <div class="panel" id="p-recent">
+      <div class="card">
+        <h2>최근 조회 200건</h2>
+        <div class="twrap"><table id="recentTbl">
+          <thead><tr><th>시각</th><th>회원</th><th>유형</th><th>이름</th><th>기준일</th></tr></thead>
+          <tbody><tr><td colspan="5" class="empty">불러오는 중…</td></tr></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/auth-config.js"></script>
+<script src="/assets/auth.js"></script>
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+var ROLE_KO = { master: '마스터', admin: '관리자', sub: '부관리자', member: '일반' };
+var fmtDT = function (s) { if (!s) return '–'; var d = new Date(s); return d.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }); };
+var fmtD = function (s) { if (!s) return '–'; return new Date(s).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }); };
+var ymd = function (d) { var t = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return t.toISOString().slice(0, 10); };
+
+function msg(kind, html) { var e = $('msg'); if (!kind) { e.className = 'msg'; e.innerHTML = ''; return; } e.className = 'msg on ' + kind; e.innerHTML = html; }
+function gate(text, withLogin) {
+  $('gate').style.display = ''; $('main').style.display = 'none';
+  $('gateText').textContent = text;
+  $('gateBtn').innerHTML = withLogin ? '<button class="btn" onclick="Auth.login()">👤 구글로 로그인</button>' : '';
+}
+
+var sb = null, me = { role: null };
+var STATS = [], USERS = [], PROFILES = [];
+
+/* ---------- 진입 ---------- */
+async function boot() {
+  if (!window.Auth) return gate('로그인 모듈을 불러오지 못했습니다.');
+  Auth.mount($('authBox'));
+  if (!Auth.configured) return gate('로그인 설정이 아직 없습니다.');
+  await Auth.ready;
+  if (!Auth.user) return gate('관리자 페이지는 로그인 후 볼 수 있습니다.', true);
+  sb = Auth.client;
+  await (Auth.roleReady || Promise.resolve());
+  me.role = Auth.role;
+  if (!Auth.isStaff()) {
+    if (Auth.role === null || Auth.role === 'member') {
+      return gate('이 계정(' + Auth.user.email + ')에는 관리자 권한이 없습니다. 권한이 있어야 할 계정이면 Supabase 에 supabase/001_admin.sql 이 실행됐는지 확인하세요.');
+    }
+    return gate('권한이 없습니다.');
+  }
+  $('gate').style.display = 'none'; $('main').style.display = '';
+  setDays(14);
+  await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent()]);
+}
+
+if (window.Auth) Auth.onChange(function () { location.reload(); });
+
+/* ---------- 탭 ---------- */
+document.querySelectorAll('.tab').forEach(function (b) {
+  b.onclick = function () {
+    document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.id === 'p-' + b.dataset.tab); });
+  };
+});
+
+/* ---------- 기간 ---------- */
+function setDays(n) {
+  var to = new Date(), from = new Date(); from.setDate(to.getDate() - (n - 1));
+  $('dFrom').value = ymd(from); $('dTo').value = ymd(to);
+  document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.classList.toggle('on', Number(c.dataset.days) === n); });
+}
+document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.onclick = function () { setDays(Number(c.dataset.days)); refreshAll(); }; });
+['dFrom', 'dTo', 'byMode', 'vtype'].forEach(function (id) { $(id).onchange = function () { document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.classList.remove('on'); }); refreshAll(); }; });
+$('layout').onchange = renderStats;
+$('q').oninput = renderStats;
+$('reload').onclick = refreshAll;
+function refreshAll() { loadStats(); loadUsers(); }
+
+/* ---------- 통계 ---------- */
+async function loadStats() {
+  msg('');
+  var tb = $('statTbl').querySelector('tbody');
+  tb.innerHTML = '<tr><td class="empty">불러오는 중…</td></tr>';
+  var r = await sb.rpc('admin_view_stats', { d_from: $('dFrom').value, d_to: $('dTo').value, vtype: $('vtype').value, by_view_date: $('byMode').value === 'view' });
+  if (r.error) { msg('err', '통계를 불러오지 못했습니다: <code>' + esc(r.error.message) + '</code><br>Supabase 에 <code>supabase/001_admin.sql</code> 을 실행했는지 확인하세요.'); STATS = []; renderStats(); return; }
+  STATS = r.data || [];
+  renderStats();
+}
+
+function renderStats() {
+  var q = $('q').value.trim().toLowerCase();
+  var rows = STATS.filter(function (r) { return !q || (r.name || '').toLowerCase().indexOf(q) >= 0; });
+  var views = 0, names = new Set(), days = new Set();
+  rows.forEach(function (r) { views += Number(r.views); names.add(r.name); days.add(r.d); });
+  $('sViews').textContent = views.toLocaleString();
+  $('sNames').textContent = names.size.toLocaleString();
+  $('sDays').textContent = days.size.toLocaleString();
+  // 조회 회원 수는 회원별 표에서 (중복 없는 값)
+  var thead = $('statTbl').querySelector('thead'), tb = $('statTbl').querySelector('tbody');
+  if (!rows.length) { thead.innerHTML = ''; tb.innerHTML = '<tr><td class="empty">해당 기간에 조회 기록이 없습니다</td></tr>'; return; }
+  var maxV = Math.max.apply(null, rows.map(function (r) { return Number(r.views); }));
+  var h = '';
+  if ($('layout').value === 'total') {
+    var agg = new Map();
+    rows.forEach(function (r) {
+      var a = agg.get(r.name) || { name: r.name, code: r.code, views: 0, days: 0, users: 0, last: null };
+      a.views += Number(r.views); a.days++; a.users = Math.max(a.users, Number(r.users));
+      if (!a.last || r.last_at > a.last) a.last = r.last_at;
+      agg.set(r.name, a);
+    });
+    var list = Array.from(agg.values()).sort(function (a, b) { return b.views - a.views; });
+    var mx = list[0].views;
+    thead.innerHTML = '<tr><th>#</th><th>종목</th><th class="num">조회</th><th class="num">날짜 수</th><th class="num">최다 회원/일</th><th>마지막 조회</th></tr>';
+    list.forEach(function (a, i) {
+      h += '<tr><td>' + (i + 1) + '</td><td><a href="/tools/etf/?stock=' + encodeURIComponent(a.name) + '" target="_blank" rel="noopener">' + esc(a.name) + '</a></td>' +
+        '<td class="num"><span class="bar" style="width:' + Math.max(4, a.views / mx * 90) + 'px"></span>' + a.views.toLocaleString() + '</td>' +
+        '<td class="num">' + a.days + '</td><td class="num">' + a.users + '</td><td>' + fmtDT(a.last) + '</td></tr>';
+    });
+  } else {
+    thead.innerHTML = '<tr><th>날짜</th><th>종목</th><th class="num">조회</th><th class="num">회원</th><th>마지막 조회</th></tr>';
+    var cur = null;
+    rows.forEach(function (r) {
+      if (r.d !== cur) {
+        cur = r.d;
+        var dayRows = rows.filter(function (x) { return x.d === cur; });
+        var dv = dayRows.reduce(function (s, x) { return s + Number(x.views); }, 0);
+        h += '<tr class="day"><td colspan="5">' + esc(cur) + '<small>' + dayRows.length + '종목 · ' + dv.toLocaleString() + '회</small></td></tr>';
+      }
+      h += '<tr><td></td><td><a href="/tools/etf/?stock=' + encodeURIComponent(r.name) + '&date=' + esc(r.d) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></td>' +
+        '<td class="num"><span class="bar" style="width:' + Math.max(4, Number(r.views) / maxV * 70) + 'px"></span>' + Number(r.views).toLocaleString() + '</td>' +
+        '<td class="num">' + Number(r.users) + '</td><td>' + fmtDT(r.last_at) + '</td></tr>';
+    });
+  }
+  tb.innerHTML = h;
+}
+
+/* ---------- 회원별 ---------- */
+async function loadUsers() {
+  var tb = $('userTbl').querySelector('tbody');
+  $('uRange').textContent = $('dFrom').value + ' ~ ' + $('dTo').value;
+  var r = await sb.rpc('admin_user_stats', { d_from: $('dFrom').value, d_to: $('dTo').value });
+  if (r.error) { tb.innerHTML = '<tr><td colspan="6" class="empty">' + esc(r.error.message) + '</td></tr>'; return; }
+  USERS = r.data || [];
+  var active = USERS.filter(function (u) { return Number(u.views) > 0; });
+  $('sUsers').innerHTML = active.length.toLocaleString() + ' <small>/ 회원 ' + USERS.length.toLocaleString() + '</small>';
+  if (!USERS.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">회원이 없습니다</td></tr>'; return; }
+  var h = '';
+  USERS.forEach(function (u, i) {
+    h += '<tr><td>' + (i + 1) + '</td><td>' + esc(u.name || '') + ' <span class="muted">' + esc(u.email) + '</span></td>' +
+      '<td><span class="role ' + esc(u.role) + '">' + (ROLE_KO[u.role] || u.role) + '</span></td>' +
+      '<td class="num">' + Number(u.views).toLocaleString() + '</td><td class="num">' + Number(u.stocks) + '</td><td>' + fmtDT(u.last_at) + '</td></tr>';
+  });
+  tb.innerHTML = h;
+}
+
+/* ---------- 역할 관리 ---------- */
+async function loadProfiles() {
+  var r = await sb.from('profiles').select('id,email,name,role,created_at').order('created_at', { ascending: false });
+  if (r.error) { $('roleTbl').querySelector('tbody').innerHTML = '<tr><td colspan="5" class="empty">' + esc(r.error.message) + '</td></tr>'; return; }
+  PROFILES = r.data || [];
+  renderProfiles();
+}
+$('rq').oninput = renderProfiles; $('rRole').onchange = renderProfiles;
+
+function canSet(target, newRole) {
+  if (target.role === 'master') return false;
+  if (target.id === Auth.user.id) return false;
+  if (me.role === 'master') return true;
+  if (me.role === 'admin') return newRole !== 'admin' && target.role !== 'admin';
+  return false;
+}
+
+function renderProfiles() {
+  var q = $('rq').value.trim().toLowerCase(), rf = $('rRole').value;
+  var list = PROFILES.filter(function (p) {
+    return (!rf || p.role === rf) && (!q || (p.email || '').toLowerCase().indexOf(q) >= 0 || (p.name || '').toLowerCase().indexOf(q) >= 0);
+  });
+  var cnt = { master: 0, admin: 0, sub: 0, member: 0 };
+  PROFILES.forEach(function (p) { cnt[p.role] = (cnt[p.role] || 0) + 1; });
+  $('rCnt').textContent = '전체 ' + PROFILES.length + '명 · 관리자 ' + cnt.admin + ' · 부관리자 ' + cnt.sub + ' · 일반 ' + cnt.member;
+  $('rHint').textContent = '내 역할: ' + (ROLE_KO[me.role] || me.role);
+  var tb = $('roleTbl').querySelector('tbody');
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">해당 회원이 없습니다</td></tr>'; return; }
+  var h = '';
+  list.forEach(function (p, i) {
+    var acts = '';
+    var opts = [['admin', '관리자로'], ['sub', '부관리자로'], ['member', '일반으로']];
+    opts.forEach(function (o) {
+      if (o[0] === p.role) return;
+      if (!canSet(p, o[0])) return;
+      var cls = o[0] === 'member' ? 'btn warn' : 'btn sub';
+      acts += '<button class="' + cls + '" data-id="' + esc(p.id) + '" data-role="' + o[0] + '" data-email="' + esc(p.email) + '">' + o[1] + '</button>';
+    });
+    h += '<tr><td>' + (i + 1) + '</td><td>' + esc(p.name || '') + ' <span class="muted">' + esc(p.email) + '</span>' + (p.id === Auth.user.id ? ' <span class="muted">(나)</span>' : '') + '</td>' +
+      '<td><span class="role ' + esc(p.role) + '">' + (ROLE_KO[p.role] || p.role) + '</span></td>' +
+      '<td>' + fmtD(p.created_at) + '</td><td><span class="act">' + (acts || '<span class="muted">–</span>') + '</span></td></tr>';
+  });
+  tb.innerHTML = h;
+  tb.querySelectorAll('button[data-role]').forEach(function (b) {
+    b.onclick = async function () {
+      var label = ROLE_KO[b.dataset.role];
+      if (!confirm(b.dataset.email + ' 을(를) "' + label + '" 으로 바꿀까요?')) return;
+      b.disabled = true;
+      var r = await sb.rpc('admin_set_role', { target: b.dataset.id, new_role: b.dataset.role });
+      if (r.error) { msg('err', '변경 실패: <code>' + esc(r.error.message) + '</code>'); b.disabled = false; return; }
+      msg('info', b.dataset.email + ' → ' + label + ' 으로 변경했습니다.');
+      await loadProfiles(); loadUsers();
+    };
+  });
+}
+
+/* ---------- 최근 조회 ---------- */
+async function loadRecent() {
+  var tb = $('recentTbl').querySelector('tbody');
+  var r = await sb.rpc('admin_recent_views', { n: 200 });
+  if (r.error) { tb.innerHTML = '<tr><td colspan="5" class="empty">' + esc(r.error.message) + '</td></tr>'; return; }
+  var list = r.data || [];
+  if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">아직 조회 기록이 없습니다</td></tr>'; return; }
+  tb.innerHTML = list.map(function (v) {
+    return '<tr><td>' + fmtDT(v.viewed_at) + '</td><td>' + esc(v.email) + '</td><td>' + (v.view_type === 'etf' ? 'ETF' : '종목') + '</td><td>' + esc(v.name) + '</td><td>' + esc(v.base_date || '') + '</td></tr>';
+  }).join('');
+}
+
+boot().catch(function (e) { gate('오류: ' + (e && e.message || e)); });
+})();
+</script>
+</body>
+</html>
