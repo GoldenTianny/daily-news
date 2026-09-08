@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>편입 비중 증가 TOP 10 검증 | 가좌버핏 스터디</title>
+<meta name="description" content="ETF 검색기 초기화면 '편입 비중 증가 TOP 10'에 오른 종목이 이후 시장보다 잘 갔는지 — 진입 후 1·5·10·20거래일 수익률을 비중 감소 종목·시장 평균과 비교.">
+<link rel="canonical" href="https://gjbuffet.kr/study/etf-movers/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="편입 비중 증가 TOP 10 검증 | 가좌버핏 스터디">
+<meta property="og:description" content="ETF 편입 비중이 늘어난 종목, 그 뒤에 정말 올랐을까 — 데이터로 확인">
+<meta property="og:url" content="https://gjbuffet.kr/study/etf-movers/">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #f0f2f5; --card: #ffffff; --line: #e6e9f0; --txt: #333;
+    --sub: #667; --faint: #99a; --navy: #1a237e; --accent: #3f51b5;
+    --up: #d32f2f; --down: #1565c0; --grid: #e3e6ee;
+    --top: #e5533d; --bot: #3b7dd8; --mkt: #9aa3b2;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: var(--bg); color: var(--txt); min-height: 100vh;
+}
+.topnav {
+    display: flex; align-items: center; gap: 6px;
+    background: #12274d; padding: 0 8px;
+    position: sticky; top: 0; z-index: 500; overflow-x: auto;
+}
+.topnav a {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #dbe6fb; text-decoration: none; font-size: 14px; font-weight: 600;
+    padding: 12px 14px; white-space: nowrap; border-bottom: 3px solid transparent;
+}
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+.header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 30px 20px 26px; text-align: center;
+}
+.header .crumb { font-size: 12.5px; opacity: 0.75; margin-bottom: 6px; }
+.header .crumb a { color: #cdd8f8; text-decoration: none; }
+.header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13.5px; opacity: 0.85; }
+.container { max-width: 860px; margin: 0 auto; padding: 22px 14px 60px; }
+.loading-box { text-align: center; padding: 60px 0; color: var(--faint); font-size: 14px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+@media (max-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 22px; font-weight: 800; color: var(--navy); }
+.stat .v small { font-size: 13px; font-weight: 700; }
+.stat .k { font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
+
+.insight {
+    background: linear-gradient(135deg, #fff8ec, #fff3dd);
+    border: 1px solid #f0dcb0; border-radius: 14px; padding: 18px 18px 14px; margin-bottom: 24px;
+}
+.insight h2 { font-size: 15.5px; color: #8a5a00; margin-bottom: 10px; }
+.insight ul { list-style: none; }
+.insight li { font-size: 13.5px; color: #5c4a1e; line-height: 1.65; padding-left: 20px; position: relative; margin-bottom: 6px; }
+.insight li::before { content: "▸"; position: absolute; left: 4px; color: #d09a2a; }
+.insight b { color: #a34700; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; margin-bottom: 18px; }
+.card h2 { font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+.card .sub { font-size: 12.5px; color: var(--faint); margin-bottom: 12px; line-height: 1.5; }
+.chart-svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--sub); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: right; padding: 8px 7px; color: var(--sub); font-size: 12px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+th.l, td.l { text-align: left; }
+td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+td .nm { font-weight: 600; }
+tr.grp-top td.l { color: var(--top); font-weight: 700; }
+tr.grp-bot td.l { color: var(--bot); font-weight: 700; }
+tr.grp-mkt td { color: var(--sub); }
+.pos { color: var(--up); font-weight: 600; }
+.neg { color: var(--down); }
+.dim { color: var(--faint); }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+.tag.top { background: #fdecea; color: #c62828; }
+.tag.bot { background: #e8f0fe; color: #2a56c6; }
+
+/* 날짜별 사례 */
+.ev { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+.ev summary { cursor: pointer; padding: 10px 12px; font-size: 13px; display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; list-style: none; }
+.ev summary::-webkit-details-marker { display: none; }
+.ev summary .d { font-weight: 700; color: var(--navy); }
+.ev summary .names { color: var(--sub); flex: 1; min-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev summary .ex { font-weight: 700; white-space: nowrap; }
+.ev .body { padding: 4px 12px 12px; border-top: 1px dashed var(--line); }
+.ev .body h4 { font-size: 12.5px; margin: 10px 0 4px; }
+.ev .body h4.t { color: var(--top); } .ev .body h4.b { color: var(--bot); }
+.ev table { font-size: 12.5px; }
+.ev td, .ev th { padding: 5px 6px; }
+.more-btn {
+    display: block; width: 100%; margin-top: 12px; padding: 11px; font-size: 14px; font-weight: 700;
+    color: var(--accent); background: transparent; border: 1.5px dashed var(--accent); border-radius: 10px; cursor: pointer;
+}
+.more-btn:hover { background: rgba(63,81,181,0.06); }
+
+.freq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .freq-grid { grid-template-columns: 1fr; } }
+.freq h3 { font-size: 13.5px; margin-bottom: 6px; }
+.freq h3.t { color: var(--top); } .freq h3.b { color: var(--bot); }
+.freq ol { list-style: none; }
+.freq li { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 4px; border-bottom: 1px solid var(--line); }
+.freq li span:last-child { color: var(--sub); font-size: 12px; }
+
+.method { font-size: 12.5px; color: var(--sub); line-height: 1.7; }
+.method b { color: var(--txt); }
+.method ul { padding-left: 18px; margin: 6px 0; }
+.foot-note { font-size: 12px; color: var(--faint); text-align: center; margin-top: 20px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #101418; --card: #1a2029; --line: #2a3242; --txt: #d5d9e0;
+        --sub: #9aa3b2; --faint: #778; --navy: #9fb4f5; --accent: #7f95e8;
+        --up: #ef6a5a; --down: #64a0e8; --grid: #2a3242;
+        --top: #ef7a66; --bot: #6fa2ee; --mkt: #778;
+    }
+    .topnav { background: #0d1a33; }
+    .insight { background: linear-gradient(135deg, #2a2416, #241f10); border-color: #4a3d1c; }
+    .insight h2 { color: #e8b45a; }
+    .insight li { color: #cdbd94; }
+    .insight li::before { color: #b98c2e; }
+    .insight b { color: #f0a050; }
+    .tag.top { background: #402020; color: #ef8a7a; }
+    .tag.bot { background: #1e2c4d; color: #8fb0f5; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="/console/">🎙️ 받아쓰기</a>
+    <a href="/study/">📚 스터디</a>
+    <a href="/tools/etf/">📊 ETF 검색</a>
+</nav>
+
+<div class="header">
+    <div class="crumb"><a href="/study/">📚 스터디</a> › 편입 비중 증가 TOP 10 검증</div>
+    <h1>🔥 편입 비중 증가 TOP 10, 그 뒤에 올랐을까</h1>
+    <p id="headSub">ETF 검색기 초기화면 위젯에 오른 종목의 이후 수익률 검증</p>
+</div>
+
+<div class="container">
+    <div class="loading-box" id="loading">📈 분석 데이터를 불러오는 중...</div>
+    <div id="app" style="display:none">
+
+        <div class="stat-grid" id="statGrid"></div>
+
+        <div class="insight">
+            <h2>💡 한 줄 결론 (데이터 요약)</h2>
+            <ul id="insightList"></ul>
+        </div>
+
+        <div class="card">
+            <h2>보유기간별 평균 수익률</h2>
+            <div class="sub">위젯이 뜬 날(기준일 다음 거래일) 종가에 사서 N거래일 뒤 종가에 판다고 가정 · 날짜별 TOP 10 동일가중 포트폴리오의 평균</div>
+            <svg class="chart-svg" id="barChart" viewBox="0 0 800 300"></svg>
+            <div class="legend">
+                <span><i style="background:var(--top)"></i>비중 증가 TOP 10</span>
+                <span><i style="background:var(--bot)"></i>비중 감소 TOP 10 (대조군)</span>
+                <span><i style="background:var(--mkt)"></i>모집단 평균 (ETF 보유 종목 전체)</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>수치로 보기</h2>
+            <div class="sub">초과수익 = TOP 10 수익률 − 모집단 평균 · '이긴 날'은 모집단 평균보다 높았던 시그널 날짜의 비율 · t값은 초과수익이 0과 다르다고 볼 수 있는지의 지표(|t| ≥ 2면 우연이라고 보기 어려움)</div>
+            <div class="tbl-wrap"><table id="portTable"></table></div>
+        </div>
+
+        <div class="card">
+            <h2>종목 단위로 보기</h2>
+            <div class="sub">TOP 10에 오른 종목 하나하나를 사건으로 세었을 때 · 승률 = 수익이 +인 비율 · 시장 이김 = 모집단 평균보다 높았던 비율</div>
+            <div class="tbl-wrap"><table id="stockTable"></table></div>
+        </div>
+
+        <div class="card">
+            <h2>이미 오른 종목을 뽑는 건 아닐까</h2>
+            <div class="sub">ETF 비중은 '금액 기준'이라 주가가 오르면 비중도 저절로 늘어난다. TOP 10이 시그널 직전 10거래일에 얼마나 올랐는지 확인</div>
+            <div class="stat-grid" id="priorGrid"></div>
+        </div>
+
+        <div class="card">
+            <h2>날짜별 사례</h2>
+            <div class="sub">클릭하면 그날의 TOP 10 · 대조군 종목과 각 종목의 이후 수익률을 볼 수 있습니다 · 10일·20일 칸은 데이터가 쌓이면 채워집니다</div>
+            <div id="events"></div>
+            <button class="more-btn" id="moreBtn" style="display:none">더 보기</button>
+        </div>
+
+        <div class="card">
+            <h2>자주 오른 종목</h2>
+            <div class="sub">TOP 10에 여러 번 오른 종목 · 괄호 안은 평균 비중 변화(%p, 전체 ETF 합산)</div>
+            <div class="freq-grid" id="freq"></div>
+        </div>
+
+        <div class="card">
+            <h2>📐 분석 방법</h2>
+            <div class="method" id="method"></div>
+        </div>
+
+        <div class="foot-note" id="foot"></div>
+    </div>
+</div>
+
+<script>
+let D = null;
+const H = [1, 5, 10, 20];
+const pct = (v, nd) => v == null ? '<span class="dim">-</span>' : ((v >= 0 ? '+' : '') + (v * 100).toFixed(nd == null ? 1 : nd) + '%');
+const cls = v => v == null ? '' : (v > 0 ? 'pos' : (v < 0 ? 'neg' : ''));
+const pc = (v, nd) => '<span class="' + cls(v) + '">' + pct(v, nd) + '</span>';
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const find = (arr, g, h) => arr.find(x => x.group === g && x.h === h);
+
+fetch('data.json').then(r => {
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+}).then(d => { D = d; render(); }).catch(e => {
+    document.getElementById('loading').textContent = '데이터를 불러오지 못했습니다. (' + e.message + ')';
+});
+
+function render() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = '';
+    document.getElementById('headSub').textContent =
+        D.range.etf_first + ' ~ ' + D.range.etf_last + ' 스냅샷 ' + D.range.n_snapshots + '개 · 시그널 ' + D.range.n_signals + '일';
+    renderStats(); renderInsights(); renderBars(); renderPort(); renderStock(); renderPrior();
+    renderEvents(); renderFreq(); renderMethod();
+    document.getElementById('foot').innerHTML = '데이터 생성: ' + esc(D.generated) + ' · 수정주가 최종일 ' + esc(D.range.price_last) +
+        '<br>매일 ETF 데이터가 쌓일수록 표본이 늘어나 결과가 달라질 수 있습니다.';
+}
+
+function renderStats() {
+    const t10 = find(D.port, 'top', 10), t20 = find(D.port, 'top', 20), pr = D.prior.top;
+    const items = [
+        [D.range.n_signals + '<small>일</small>', '시그널 날짜 수<br>(TOP 10을 뽑은 날)'],
+        [pr && pr.median != null ? pct(pr.median) : '-', 'TOP 10의 직전 10거래일<br>수익률 중앙값'],
+        [t10 ? pct(t10.excess_univ) : '-', '10거래일 뒤 초과수익<br>(vs 모집단 평균' + (t10 ? ', ' + t10.n_dates + '일' : '') + ')'],
+        [t20 ? pct(t20.excess_univ) : '-', '20거래일 뒤 초과수익<br>(vs 모집단 평균' + (t20 ? ', ' + t20.n_dates + '일' : '') + ')'],
+    ];
+    document.getElementById('statGrid').innerHTML = items.map(([v, k]) =>
+        '<div class="stat"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>').join('');
+}
+
+function renderInsights() {
+    const li = [];
+    const t10 = find(D.port, 'top', 10), b10 = find(D.port, 'bottom', 10);
+    const t20 = find(D.port, 'top', 20), b20 = find(D.port, 'bottom', 20);
+    const pr = D.prior;
+    if (pr.top && pr.top.median != null) {
+        li.push('TOP 10에 오른 종목은 시그널 직전 10거래일에 이미 중앙값 <b>' + pct(pr.top.median) + '</b> 올라 있었다 (같은 기간 시장 중앙값 ' +
+            pct(pr.mkt_med) + '). ETF 비중은 금액 기준이라 <b>주가가 오르면 비중이 저절로 늘어나기</b> 때문 — 즉 이 위젯은 "새로 사들인 종목"보다 "이미 오른 종목" 목록에 가깝다.');
+    }
+    if (t10) {
+        const bad = t10.excess_univ < 0;
+        li.push('위젯이 뜬 날 사서 10거래일 들고 있으면 평균 <b>' + pct(t10.ret) + '</b>, 같은 기간 모집단 평균은 ' + pct(t10.univ) +
+            ' → 초과수익 <b>' + pct(t10.excess_univ) + '</b>. 모집단 평균을 이긴 날은 ' + t10.n_dates + '일 중 ' +
+            Math.round(t10.beat_univ_days * t10.n_dates) + '일(' + Math.round(t10.beat_univ_days * 100) + '%)' +
+            (t10.t_univ != null ? ', t=' + t10.t_univ : '') + '. ' +
+            (bad ? '<b>시장보다 못했다.</b>' : '<b>시장보다 나았다.</b>'));
+    }
+    if (t20) {
+        li.push('20거래일 보유 시 초과수익 <b>' + pct(t20.excess_univ) + '</b> (' + t20.n_dates + '일 표본' + (t20.t_univ != null ? ', t=' + t20.t_univ : '') + ').');
+    }
+    if (b10) {
+        li.push('반대로 <b>비중 감소 TOP 10</b>(대조군)은 10거래일 초과수익 <b>' + pct(b10.excess_univ) + '</b>' +
+            (b20 ? ', 20거래일 ' + pct(b20.excess_univ) : '') + '. 직전 10거래일에 ' + pct(pr.bottom.median) +
+            ' 빠져 있던 종목들이라, 단기 되돌림(평균회귀) 성격이 보인다.');
+    }
+    li.push('표본이 아직 <b>' + D.range.n_signals + '일</b>(약 두 달)이고 시그널 날짜끼리 보유기간이 겹쳐 사실상 독립된 관측은 더 적다. ' +
+        '방향은 분명하지만 "확정된 법칙"으로 보기엔 이르니, 데이터가 쌓이는 대로 이 페이지에서 다시 확인하는 것이 좋다.');
+    li.push('활용 팁: 이 위젯은 <b>추격 매수 신호가 아니라 "최근 자금·주가가 몰린 종목" 확인용</b>으로 보는 게 맞다. 매수 후보를 찾는다면 비중이 늘었는데도 주가는 아직 안 오른 종목(신규 편입 등)을 따로 걸러보는 편이 낫다.');
+    document.getElementById('insightList').innerHTML = li.map(s => '<li>' + s + '</li>').join('');
+}
+
+function svgEl(tag, attrs, text) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (text != null) el.textContent = text;
+    return el;
+}
+
+function renderBars() {
+    const svg = document.getElementById('barChart');
+    svg.innerHTML = '';
+    const W = 800, Hh = 300, padL = 56, padR = 16, padT = 20, padB = 40;
+    const series = [['top', 'var(--top)'], ['bottom', 'var(--bot)'], ['univ', 'var(--mkt)']];
+    const vals = [];
+    const data = H.map(h => {
+        const t = find(D.port, 'top', h), b = find(D.port, 'bottom', h);
+        const row = { h: h, top: t ? t.ret : null, bottom: b ? b.ret : null, univ: t ? t.univ : (b ? b.univ : null), n: t ? t.n_dates : 0 };
+        for (const s of series) if (row[s[0]] != null) vals.push(row[s[0]]);
+        return row;
+    });
+    if (!vals.length) return;
+    let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+    const span = (hi - lo) || 0.01; lo -= span * 0.1; hi += span * 0.1;
+    const y = v => padT + (hi - v) / (hi - lo) * (Hh - padT - padB);
+    // 격자·눈금
+    const step = span > 0.15 ? 0.05 : (span > 0.06 ? 0.02 : 0.01);
+    for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) {
+        const yy = y(v);
+        svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: yy, y2: yy, stroke: 'var(--grid)', 'stroke-width': 1 }));
+        svg.appendChild(svgEl('text', { x: padL - 6, y: yy + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--sub)' }, (v * 100).toFixed(0) + '%'));
+    }
+    svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y(0), y2: y(0), stroke: 'var(--sub)', 'stroke-width': 1.2 }));
+    const gw = (W - padL - padR) / data.length, bw = gw / 4.2;
+    data.forEach((row, i) => {
+        const gx = padL + gw * i + gw * 0.15;
+        series.forEach((s, j) => {
+            const v = row[s[0]];
+            if (v == null) return;
+            const x = gx + bw * j;
+            svg.appendChild(svgEl('rect', { x: x, y: Math.min(y(v), y(0)), width: bw - 3, height: Math.abs(y(v) - y(0)), rx: 3, fill: s[1] }));
+            svg.appendChild(svgEl('text', { x: x + (bw - 3) / 2, y: (v >= 0 ? y(v) - 4 : y(v) + 12), 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, fill: 'var(--txt)' }, (v >= 0 ? '+' : '') + (v * 100).toFixed(1)));
+        });
+        svg.appendChild(svgEl('text', { x: padL + gw * i + gw / 2, y: Hh - 14, 'text-anchor': 'middle', 'font-size': 12.5, 'font-weight': 700, fill: 'var(--txt)' }, row.h + '거래일 뒤'));
+        svg.appendChild(svgEl('text', { x: padL + gw * i + gw / 2, y: Hh - 2, 'text-anchor': 'middle', 'font-size': 10.5, fill: 'var(--faint)' }, row.n + '일 표본'));
+    });
+}
+
+function renderPort() {
+    let html = '<tr><th class="l">구분</th>' + H.map(h => '<th>' + h + '거래일</th>').join('') + '</tr>';
+    const row = (label, f, klass) => '<tr class="' + (klass || '') + '"><td class="l">' + label + '</td>' +
+        H.map(h => '<td>' + f(h) + '</td>').join('') + '</tr>';
+    const t = h => find(D.port, 'top', h), b = h => find(D.port, 'bottom', h);
+    html += row('🔥 비중 증가 TOP 10 수익률', h => t(h) ? pc(t(h).ret) : '-', 'grp-top');
+    html += row('&nbsp;&nbsp;초과수익 (vs 모집단 평균)', h => t(h) ? pc(t(h).excess_univ) : '-', 'grp-top');
+    html += row('&nbsp;&nbsp;초과수익 (vs KODEX 200)', h => t(h) ? pc(t(h).excess_kodex) : '-', 'grp-top');
+    html += row('&nbsp;&nbsp;모집단 평균 이긴 날', h => t(h) ? Math.round(t(h).beat_univ_days * 100) + '% <span class="dim">(' + t(h).n_dates + '일)</span>' : '-', 'grp-top');
+    html += row('&nbsp;&nbsp;t값 (초과수익 vs 모집단)', h => t(h) && t(h).t_univ != null ? t(h).t_univ.toFixed(2) : '-', 'grp-top');
+    html += row('🧊 비중 감소 TOP 10 수익률', h => b(h) ? pc(b(h).ret) : '-', 'grp-bot');
+    html += row('&nbsp;&nbsp;초과수익 (vs 모집단 평균)', h => b(h) ? pc(b(h).excess_univ) : '-', 'grp-bot');
+    html += row('&nbsp;&nbsp;모집단 평균 이긴 날', h => b(h) ? Math.round(b(h).beat_univ_days * 100) + '% <span class="dim">(' + b(h).n_dates + '일)</span>' : '-', 'grp-bot');
+    html += row('&nbsp;&nbsp;t값 (초과수익 vs 모집단)', h => b(h) && b(h).t_univ != null ? b(h).t_univ.toFixed(2) : '-', 'grp-bot');
+    html += row('모집단 평균 (동일가중)', h => t(h) ? pc(t(h).univ) : '-', 'grp-mkt');
+    html += row('모집단 중앙값', h => t(h) ? pc(t(h).med) : '-', 'grp-mkt');
+    html += row('KODEX 200', h => t(h) ? pc(t(h).kodex) : '-', 'grp-mkt');
+    document.getElementById('portTable').innerHTML = html;
+}
+
+function renderStock() {
+    let html = '<tr><th class="l">구분</th><th>보유</th><th>사건 수</th><th>평균</th><th>중앙값</th><th>승률</th><th>시장 이김</th><th>KODEX 이김</th></tr>';
+    for (const g of ['top', 'bottom']) {
+        for (const h of H) {
+            const s = find(D.summary, g, h);
+            if (!s) continue;
+            html += '<tr class="' + (g === 'top' ? 'grp-top' : 'grp-bot') + '"><td class="l">' +
+                (g === 'top' ? '<span class="tag top">증가</span>' : '<span class="tag bot">감소</span>') + '</td>' +
+                '<td>' + h + '일</td><td>' + s.n + '</td><td>' + pc(s.mean) + '</td><td>' + pc(s.median) + '</td>' +
+                '<td>' + Math.round(s.win * 100) + '%</td><td>' + Math.round(s.beat_univ * 100) + '%</td><td>' + Math.round(s.beat_kodex * 100) + '%</td></tr>';
+        }
+    }
+    document.getElementById('stockTable').innerHTML = html;
+}
+
+function renderPrior() {
+    const p = D.prior;
+    const items = [
+        [pct(p.top.median), '비중 증가 TOP 10<br>직전 10거래일 수익률 중앙값'],
+        [pct(p.top.mean), '비중 증가 TOP 10<br>직전 10거래일 수익률 평균'],
+        [pct(p.bottom.median), '비중 감소 TOP 10<br>직전 10거래일 수익률 중앙값'],
+        [pct(p.mkt_med), '모집단 중앙값<br>(같은 기간 시장)'],
+    ];
+    document.getElementById('priorGrid').innerHTML = items.map(([v, k]) =>
+        '<div class="stat"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>').join('');
+}
+
+let shown = 0;
+function renderEvents() {
+    const box = document.getElementById('events');
+    const btn = document.getElementById('moreBtn');
+    const PAGE = 10;
+    const add = () => {
+        const slice = D.events.slice(shown, shown + PAGE);
+        for (const ev of slice) box.insertAdjacentHTML('beforeend', eventHtml(ev));
+        shown += slice.length;
+        btn.style.display = shown < D.events.length ? '' : 'none';
+        btn.textContent = '더 보기 (' + shown + '/' + D.events.length + ')';
+    };
+    btn.onclick = add;
+    add();
+}
+
+function eventHtml(ev) {
+    const top = ev.groups.top || [], bot = ev.groups.bottom || [];
+    const avg = (items, h) => {
+        const v = items.map(it => it.ret[h]).filter(x => x != null);
+        return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+    };
+    const m10 = ev.mkt['10'], m5 = ev.mkt['5'];
+    const a10 = avg(top, '10'), a5 = avg(top, '5');
+    let ex;
+    if (a10 != null && m10) ex = '10일 ' + pc(a10) + ' <span class="dim">(시장 ' + pct(m10.univ) + ')</span>';
+    else if (a5 != null && m5) ex = '5일 ' + pc(a5) + ' <span class="dim">(시장 ' + pct(m5.univ) + ')</span>';
+    else ex = '<span class="dim">수익률 집계 전</span>';
+    const tbl = (items, klass, title) => {
+        if (!items.length) return '';
+        let h = '<h4 class="' + klass + '">' + title + '</h4><div class="tbl-wrap"><table><tr><th class="l">종목</th><th>Δ비중(%p)</th><th>직전10일</th>' +
+            H.map(x => '<th>' + x + '일</th>').join('') + '</tr>';
+        for (const it of items) {
+            h += '<tr><td class="l"><span class="nm">' + esc(it.name) + '</span></td><td>' + (it.delta >= 0 ? '+' : '') + it.delta.toFixed(1) + '</td>' +
+                '<td>' + pc(it.prior) + '</td>' + H.map(x => '<td>' + pc(it.ret[String(x)]) + '</td>').join('') + '</tr>';
+        }
+        return h + '</table></div>';
+    };
+    return '<details class="ev"><summary><span class="d">' + esc(ev.sig_date) + '</span>' +
+        '<span class="names">' + esc(top.map(t => t.name).join(' · ')) + '</span><span class="ex">' + ex + '</span></summary>' +
+        '<div class="body"><div class="dim" style="font-size:12px;margin-top:8px">비교일 ' + esc(ev.comp_date) + ' (' + ev.off + '개 스냅샷 전) · 진입일 ' + esc(ev.entry) + ' 종가' +
+        (ev.mkt.prior != null ? ' · 시장 직전10일 중앙값 ' + pct(ev.mkt.prior) : '') + '</div>' +
+        tbl(top, 't', '🔥 비중 증가 TOP 10') + tbl(bot, 'b', '🧊 비중 감소 TOP 10 (대조군)') + '</div></details>';
+}
+
+function renderFreq() {
+    const list = (arr, klass, title) => '<div class="freq"><h3 class="' + klass + '">' + title + '</h3><ol>' +
+        arr.map(f => '<li><span>' + esc(f.name) + '</span><span>' + f.n + '회 (' + (f.delta >= 0 ? '+' : '') + f.delta.toFixed(1) + '%p)</span></li>').join('') + '</ol></div>';
+    document.getElementById('freq').innerHTML = list(D.freq.top, 't', '🔥 비중 증가 TOP 10') + list(D.freq.bottom, 'b', '🧊 비중 감소 TOP 10');
+}
+
+function renderMethod() {
+    const p = D.params;
+    document.getElementById('method').innerHTML =
+        '<b>TOP 10 뽑는 법</b> — ETF 검색기 초기화면 위젯(weightMovers)과 같은 계산을 과거 날짜마다 다시 돌렸습니다.<ul>' +
+        '<li>기준일보다 <b>' + p.off + '개 앞선 스냅샷</b>(약 ' + p.off + '영업일 전)과 비교. 초기에 스냅샷이 부족하면 5개·1개 앞으로 대체.</li>' +
+        '<li>종목별 Δ = 모든 ETF의 (오늘 비중 − 비교일 비중) 합계. 레버리지·인버스 ETF와 현금·채권·선물 등 비주식 항목 제외. Δ > ' + p.min_delta + ' 중 상위 ' + p.topn + '개.</li>' +
+        '<li>대조군: 같은 방식으로 Δ가 가장 많이 줄어든 ' + p.topn + '개.</li></ul>' +
+        '<b>수익률 재는 법</b><ul>' +
+        '<li>기준일 데이터는 다음 영업일에 올라와 위젯에 보이므로, <b>진입 = 기준일 다음 거래일 종가</b>, 청산 = 진입 후 ' + p.horizons.join('·') + '거래일 종가.</li>' +
+        '<li>비교 기준: ① 모집단 평균 — 그날 ETF에 담긴 모든 종목(비주식 제외, 가격 매칭분)의 동일가중 평균 ② 모집단 중앙값 ③ ' + esc(p.bench) + '.</li>' +
+        '<li>직전 모멘텀: 진입일 종가 기준 직전 ' + p.prior + '거래일 수익률.</li>' +
+        '<li>가격 DB에 이름이 없는 항목(해외주식·우선주·리츠 등)은 수익률 집계에서 빠집니다.</li></ul>' +
+        '<b>주의</b> — 표본 기간이 짧고 시그널 날짜 간 보유기간이 겹쳐 t값이 실제보다 과장될 수 있습니다. 데이터: <code>db/etf/</code>, <code>db/market/price/</code> · 생성 스크립트: <code>tools/study/build_etf_movers.py</code>';
+}
+</script>
+</body>
+</html>
