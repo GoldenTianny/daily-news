@@ -1457,7 +1457,7 @@ async function shareIntro(btn) {
     if (INTRO_READY) await INTRO_READY;
     const nm = code => ETFS_CUR[code] || code;
     const pc = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
-    const top = (list, f, n) => (list || []).slice(0, n || 2).map(f).join(', ');   // 뉴스 공유와 비슷한 길이로 줄당 2개
+    const top = (list, f, n) => (list || []).slice(0, n || 5).map(f).join(', ');   // 줄당 5개
     const [y, m, d] = currentDate.split('-');
     const lines = ['[' + y + '/' + m + '/' + d + '] ETF 시황 한눈에 · 가좌버핏', ''];
     if (RET && RET.top1 && RET.top1.length)
@@ -1469,8 +1469,6 @@ async function shareIntro(btn) {
       lines.push('🧲 편입 비중 증가(' + wm.off + '일): ' + top(wm.topD, t => t[0] + ' +' + t[1].toFixed(1) + '%p'));
     if (TPM && TPM.up && TPM.up.length)
       lines.push('🎯 목표주가 상향 ETF: ' + top(TPM.up, t => nm(t[0]) + ' ' + pc(t[1])));
-    if (RSM && RSM.top && RSM.top.length)
-      lines.push('📶 RS 급등: ' + top(RSM.top, t => nm(t[0]) + ' ' + (t[2] - t[1]) + '→' + t[2], 2));
     if (lines.length === 2) lines.push('수익률·비중 데이터를 아직 불러오지 못했습니다.');
     const url = location.origin + location.pathname + '?date=' + currentDate;
     const message = lines.join('\n') + '\n\n' + url;
