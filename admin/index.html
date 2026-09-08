@@ -55,6 +55,9 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
 .role.admin { background: #e0e9fb; color: #1a3a6c; }
 .role.sub { background: #e6f6ed; color: #0f7a41; }
 .role.member { background: #eef1f6; color: #6b7280; }
+.kind { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: 10.5px; font-weight: 800; margin-right: 6px; vertical-align: 1px; }
+.kind.stock { background: #e0e9fb; color: #1a3a6c; }
+.kind.etf { background: #fde7c8; color: #8a4b00; }
 .muted { color: #9099a6; font-size: 12px; }
 .msg { padding: 12px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 12px; display: none; }
 .msg.on { display: block; }
@@ -116,7 +119,7 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
             <option value="view">조회한 날 (실제 접속 날짜)</option>
           </select>
           <label>유형</label>
-          <select id="vtype"><option value="stock">종목 상세</option><option value="etf">ETF 상세</option></select>
+          <select id="vtype"><option value="all">종목 + ETF</option><option value="stock">종목만</option><option value="etf">ETF만</option></select>
           <label>대상</label>
           <select id="who"><option value="all">회원+비회원</option><option value="member">회원만</option><option value="guest">비회원만</option></select>
           <label>보기</label>
@@ -128,7 +131,7 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
           <div class="stat"><div class="k">총 조회</div><div class="v" id="sViews">–</div></div>
           <div class="stat"><div class="k">회원 조회</div><div class="v" id="sMember">–</div></div>
           <div class="stat"><div class="k">비회원 조회</div><div class="v" id="sGuest">–</div></div>
-          <div class="stat"><div class="k">종목 수</div><div class="v" id="sNames">–</div></div>
+          <div class="stat"><div class="k">종목·ETF 수</div><div class="v" id="sNames">–</div></div>
           <div class="stat"><div class="k">날짜 수</div><div class="v" id="sDays">–</div></div>
         </div>
         <div class="twrap"><table id="statTbl"><thead></thead><tbody><tr><td class="empty">불러오는 중…</td></tr></tbody></table></div>
@@ -274,10 +277,16 @@ function renderStats() {
   var q = $('q').value.trim().toLowerCase();
   var rows = STATS.filter(function (r) { return !q || (r.name || '').toLowerCase().indexOf(q) >= 0; });
   var names = new Set(), days = new Set();
-  rows.forEach(function (r) { names.add(r.name); days.add(r.d); });
+  rows.forEach(function (r) { names.add((r.view_type || 'stock') + '|' + r.name); days.add(r.d); });
   $('sNames').textContent = names.size.toLocaleString();
   $('sDays').textContent = days.size.toLocaleString();
   var mg = function (r) { return '<span class="muted">' + Number(r.member_views || 0) + ' / ' + Number(r.guest_views || 0) + '</span>'; };
+  var nameCell = function (r, date) {
+    var t = r.view_type || 'stock';
+    var href = t === 'etf' && r.code ? '/tools/etf/?etf=' + encodeURIComponent(r.code) : '/tools/etf/?stock=' + encodeURIComponent(r.name);
+    if (date) href += '&date=' + encodeURIComponent(date);
+    return '<span class="kind ' + t + '">' + (t === 'etf' ? 'ETF' : '종목') + '</span><a href="' + href + '" target="_blank" rel="noopener">' + esc(r.name) + '</a>';
+  };
   var thead = $('statTbl').querySelector('thead'), tb = $('statTbl').querySelector('tbody');
   if (!rows.length) { thead.innerHTML = ''; tb.innerHTML = '<tr><td class="empty">해당 기간에 조회 기록이 없습니다</td></tr>'; return; }
   var maxV = Math.max.apply(null, rows.map(function (r) { return Number(r.views); }));
@@ -285,17 +294,18 @@ function renderStats() {
   if ($('layout').value === 'total') {
     var agg = new Map();
     rows.forEach(function (r) {
-      var a = agg.get(r.name) || { name: r.name, code: r.code, views: 0, member_views: 0, guest_views: 0, days: 0, users: 0, last: null };
+      var k = (r.view_type || 'stock') + '|' + r.name;
+      var a = agg.get(k) || { name: r.name, code: r.code, view_type: r.view_type || 'stock', views: 0, member_views: 0, guest_views: 0, days: 0, users: 0, last: null };
       a.views += Number(r.views); a.member_views += Number(r.member_views || 0); a.guest_views += Number(r.guest_views || 0);
       a.days++; a.users = Math.max(a.users, Number(r.users));
       if (!a.last || r.last_at > a.last) a.last = r.last_at;
-      agg.set(r.name, a);
+      agg.set(k, a);
     });
     var list = Array.from(agg.values()).sort(function (a, b) { return b.views - a.views; });
     var mx = list[0].views;
     thead.innerHTML = '<tr><th>#</th><th>종목</th><th class="num">조회</th><th class="num">회원 / 비회원</th><th class="num">날짜 수</th><th class="num">최다 회원/일</th><th>마지막 조회</th></tr>';
     list.forEach(function (a, i) {
-      h += '<tr><td>' + (i + 1) + '</td><td><a href="/tools/etf/?stock=' + encodeURIComponent(a.name) + '" target="_blank" rel="noopener">' + esc(a.name) + '</a></td>' +
+      h += '<tr><td>' + (i + 1) + '</td><td>' + nameCell(a) + '</td>' +
         '<td class="num"><span class="bar" style="width:' + Math.max(4, a.views / mx * 90) + 'px"></span>' + a.views.toLocaleString() + '</td>' +
         '<td class="num">' + mg(a) + '</td>' +
         '<td class="num">' + a.days + '</td><td class="num">' + a.users + '</td><td>' + fmtDT(a.last) + '</td></tr>';
@@ -308,9 +318,9 @@ function renderStats() {
         cur = r.d;
         var dayRows = rows.filter(function (x) { return x.d === cur; });
         var dv = dayRows.reduce(function (s, x) { return s + Number(x.views); }, 0);
-        h += '<tr class="day"><td colspan="7">' + esc(cur) + '<small>' + dayRows.length + '종목 · ' + dv.toLocaleString() + '회</small></td></tr>';
+        h += '<tr class="day"><td colspan="7">' + esc(cur) + '<small>' + dayRows.length + '건 · ' + dv.toLocaleString() + '회</small></td></tr>';
       }
-      h += '<tr><td></td><td><a href="/tools/etf/?stock=' + encodeURIComponent(r.name) + '&date=' + esc(r.d) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></td>' +
+      h += '<tr><td></td><td>' + nameCell(r, r.d) + '</td>' +
         '<td class="num"><span class="bar" style="width:' + Math.max(4, Number(r.views) / maxV * 70) + 'px"></span>' + Number(r.views).toLocaleString() + '</td>' +
         '<td class="num">' + mg(r) + '</td>' +
         '<td class="num">' + Number(r.users) + '</td><td class="num">' + Number(r.guests || 0) + '</td><td>' + fmtDT(r.last_at) + '</td></tr>';

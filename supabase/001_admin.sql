@@ -120,12 +120,14 @@ create policy "views_read_staff" on public.stock_views
 
 -- 통계 1: 날짜 × 종목  (by_view_date = true 면 '조회한 날' 기준, false 면 '보던 기준일' 기준)
 --   who = 'all' | 'member' | 'guest'
+--   vtype = 'all' | 'stock' | 'etf'
 drop function if exists public.admin_view_stats(date, date, text, boolean);
-create or replace function public.admin_view_stats(d_from date, d_to date, vtype text default 'stock', by_view_date boolean default false, who text default 'all')
-returns table (d date, name text, code text, views bigint, member_views bigint, guest_views bigint, users bigint, guests bigint, last_at timestamptz)
+drop function if exists public.admin_view_stats(date, date, text, boolean, text);
+create or replace function public.admin_view_stats(d_from date, d_to date, vtype text default 'all', by_view_date boolean default false, who text default 'all')
+returns table (d date, view_type text, name text, code text, views bigint, member_views bigint, guest_views bigint, users bigint, guests bigint, last_at timestamptz)
 language sql stable security definer set search_path = public as $$
   select case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end as d,
-         name, max(code),
+         view_type, name, max(code),
          count(*),
          count(*) filter (where user_id is not null),
          count(*) filter (where user_id is null),
@@ -134,12 +136,12 @@ language sql stable security definer set search_path = public as $$
          max(viewed_at)
   from public.stock_views
   where public.is_staff()
-    and view_type = vtype
+    and (vtype = 'all' or view_type = vtype)
     and (user_id is null or user_id not in (select id from public.profiles where role = 'master'))   -- 마스터 제외
     and (who = 'all' or (who = 'member' and user_id is not null) or (who = 'guest' and user_id is null))
     and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
-  group by 1, 2
-  order by 1 desc, 4 desc
+  group by 1, 2, 3
+  order by 1 desc, 5 desc
 $$;
 
 -- 통계 2: 회원별
@@ -168,7 +170,7 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- 통계 4: 기간 요약 (회원/비회원 조회 수와 사람 수)
-create or replace function public.admin_view_summary(d_from date, d_to date, vtype text default 'stock', by_view_date boolean default false)
+create or replace function public.admin_view_summary(d_from date, d_to date, vtype text default 'all', by_view_date boolean default false)
 returns table (views bigint, member_views bigint, guest_views bigint, users bigint, guests bigint, names bigint)
 language sql stable security definer set search_path = public as $$
   select count(*),
@@ -179,7 +181,7 @@ language sql stable security definer set search_path = public as $$
          count(distinct name)
   from public.stock_views
   where public.is_staff()
-    and view_type = vtype
+    and (vtype = 'all' or view_type = vtype)
     and (user_id is null or user_id not in (select id from public.profiles where role = 'master'))   -- 마스터 제외
     and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
 $$;
