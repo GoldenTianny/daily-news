@@ -176,6 +176,8 @@
   .widget .wname .wsub { font-size: 11px; color: #999; font-weight: 400; margin-left: 6px; }
   .widget .wbar { height: 5px; border-radius: 3px; flex: none; background: linear-gradient(90deg, #3f51b5, #7986cb); }
   .widget .wbar.hot { background: linear-gradient(90deg, #c62828, #ef9a9a); }
+  .widget .wbar.cold { background: linear-gradient(90deg, #1565c0, #90caf9); }
+  .widget .sub a { color: #3f51b5; }
   .widget .wval { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; flex: none; }
   .widget .wval.up { color: #c62828; }
   .widget .wval.down { color: #2a5ca8; }
@@ -1430,9 +1432,9 @@ function weightMovers() {
 
   // ② 편입 비중 증가 TOP: N영업일 전 대비 비중합 변화(%p), 10일 우선
   const off = COMPS[10] ? 10 : COMPS[5] ? 5 : COMPS[1] ? 1 : null;
-  let topD = [];
+  let topD = [], topDn = [];
   if (off) {
-    const deltas = [];
+    const deltas = [], downs = [];
     for (const name in DATA) {
       if (NONEQ.test(name)) continue;
       let d = 0, has = false;
@@ -1442,11 +1444,14 @@ function weightMovers() {
         if (dd != null) { d += dd; has = true; }
       }
       if (has && d > 0.005) deltas.push([name, d]);
+      else if (has && d < -0.005) downs.push([name, d]);
     }
     deltas.sort((a, b) => b[1] - a[1]);
     topD = deltas.slice(0, 10);
+    downs.sort((a, b) => a[1] - b[1]);
+    topDn = downs.slice(0, 10);
   }
-  return { topW: topW, topD: topD, off: off };
+  return { topW: topW, topD: topD, topDn: topDn, off: off };
 }
 
 // 기준일 시황을 짧은 텍스트로 만들어 공유 (Web Share API, 미지원 시 클립보드 복사)
@@ -1489,7 +1494,7 @@ async function shareIntro(btn) {
 
 function renderIntro() {
   const wm = weightMovers();
-  const topW = wm.topW, topD = wm.topD, off = wm.off;
+  const topW = wm.topW, topD = wm.topD, topDn = wm.topDn, off = wm.off;
 
   const row = (i, name, sub, bar, barCls, val, valCls) =>
     '<div class="wrow" onclick="searchComponent(\'' + safeAttr(name) + '\')">' +
@@ -1539,6 +1544,15 @@ function renderIntro() {
   const maxD = topD.length ? topD[0][1] : 0;
   topD.forEach((t, i) => {
     html += row(i, t[0], '', maxD ? Math.max(4, t[1] / maxD * 56) : 0, 'hot', '+' + t[1].toFixed(1) + '%p', 'up');
+  });
+  html += '</div>';
+
+  // 편입 비중 감소 TOP 10 — 백테스트(스터디)에서 유일하게 이후 수익률이 시장을 웃돈 목록(되돌림 관찰용)
+  html += '<div class="widget"><h3>&#129482; 편입 비중 감소 TOP 10</h3>' +
+    '<div class="sub">' + (off ? off + '영업일 전(' + COMPS[off].date + ') 대비 비중합 변화(%p) · 레버리지·인버스 제외 · <a href="/study/etf-movers/">검증 통계 보기</a>' : '비교할 과거 데이터가 없습니다') + '</div>';
+  const maxDn = topDn.length ? Math.abs(topDn[0][1]) : 0;
+  topDn.forEach((t, i) => {
+    html += row(i, t[0], '', maxDn ? Math.max(4, Math.abs(t[1]) / maxDn * 56) : 0, 'cold', t[1].toFixed(1) + '%p', 'down');
   });
   html += '</div>';
 

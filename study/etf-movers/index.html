@@ -99,6 +99,15 @@ tr.grp-mkt td { color: var(--sub); }
 .tag.top { background: #fdecea; color: #c62828; }
 .tag.bot { background: #e8f0fe; color: #2a56c6; }
 
+/* 조건 탭 */
+.seg-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 6px; }
+.seg-tabs button { flex: 1; min-width: 120px; padding: 8px 8px; font-size: 12.5px; font-weight: 700; color: var(--sub); background: transparent; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; font-family: inherit; }
+.seg-tabs button.on { background: var(--accent); color: #fff; }
+tr.good td { background: rgba(46,125,50,0.08); }
+tr.good td.l { color: #2e7d32; font-weight: 700; }
+tr.bad td.l { color: var(--sub); }
+td .desc { display: block; font-size: 11px; color: var(--faint); white-space: normal; font-weight: 400; }
+
 /* 날짜별 사례 */
 .ev { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
 .ev summary { cursor: pointer; padding: 10px 12px; font-size: 13px; display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; list-style: none; }
@@ -205,6 +214,20 @@ tr.grp-mkt td { color: var(--sub); }
         </div>
 
         <div class="card">
+            <h2>🧭 매수 후보 조건 비교 — 어떤 조건이 통했나</h2>
+            <div class="sub">ETF 비중 데이터로 만들 수 있는 후보 조건들을 같은 잣대(진입 후 N거래일, 모집단 평균 대비 초과수익)로 비교 · 초록색은 시장을 이긴 조건 · t값 |2| 이상이면 우연으로 보기 어려움</div>
+            <div class="tbl-wrap"><table id="variantTable"></table></div>
+            <div class="sub" style="margin-top:10px" id="variantNote"></div>
+        </div>
+
+        <div class="card">
+            <h2>📌 오늘 기준 후보 종목</h2>
+            <div class="sub" id="latestSub"></div>
+            <div class="seg-tabs" id="latestTabs"></div>
+            <div class="tbl-wrap"><table id="latestTable"></table></div>
+        </div>
+
+        <div class="card">
             <h2>날짜별 사례</h2>
             <div class="sub">클릭하면 그날의 TOP 10 · 대조군 종목과 각 종목의 이후 수익률을 볼 수 있습니다 · 10일·20일 칸은 데이터가 쌓이면 채워집니다</div>
             <div id="events"></div>
@@ -248,7 +271,7 @@ function render() {
     document.getElementById('headSub').textContent =
         D.range.etf_first + ' ~ ' + D.range.etf_last + ' 스냅샷 ' + D.range.n_snapshots + '개 · 시그널 ' + D.range.n_signals + '일';
     renderStats(); renderInsights(); renderBars(); renderPort(); renderStock(); renderPrior();
-    renderEvents(); renderFreq(); renderMethod();
+    renderVariants(); renderLatest(); renderEvents(); renderFreq(); renderMethod();
     document.getElementById('foot').innerHTML = '데이터 생성: ' + esc(D.generated) + ' · 수정주가 최종일 ' + esc(D.range.price_last) +
         '<br>매일 ETF 데이터가 쌓일수록 표본이 늘어나 결과가 달라질 수 있습니다.';
 }
@@ -292,7 +315,11 @@ function renderInsights() {
     }
     li.push('표본이 아직 <b>' + D.range.n_signals + '일</b>(약 두 달)이고 시그널 날짜끼리 보유기간이 겹쳐 사실상 독립된 관측은 더 적다. ' +
         '방향은 분명하지만 "확정된 법칙"으로 보기엔 이르니, 데이터가 쌓이는 대로 이 페이지에서 다시 확인하는 것이 좋다.');
-    li.push('활용 팁: 이 위젯은 <b>추격 매수 신호가 아니라 "최근 자금·주가가 몰린 종목" 확인용</b>으로 보는 게 맞다. 매수 후보를 찾는다면 비중이 늘었는데도 주가는 아직 안 오른 종목(신규 편입 등)을 따로 걸러보는 편이 낫다.');
+    const vb = (D.variants || []).find(v => v.key === 'bot'), vq = (D.variants || []).find(v => v.key === 'flowq');
+    let tip = '활용 팁: 이 위젯은 <b>추격 매수 신호가 아니라 "최근 자금·주가가 몰린 종목" 확인용</b>으로 보는 게 맞다. ';
+    if (vq && vq.stats['10']) tip += '"비중은 늘었는데 아직 안 오른 종목"으로 걸러도 초과수익은 ' + pct(vq.stats['10'].excess) + '(10일)로 손해만 없앨 뿐 플러스는 아니었다. ';
+    if (vb && vb.stats['10']) tip += '지금까지 데이터에서 유일하게 플러스인 조건은 <b>비중 감소 TOP 10(되돌림)</b>뿐이다 — 아래 조건 비교표와 오늘 기준 후보 참고.';
+    li.push(tip);
     document.getElementById('insightList').innerHTML = li.map(s => '<li>' + s + '</li>').join('');
 }
 
@@ -432,6 +459,50 @@ function eventHtml(ev) {
         '<div class="body"><div class="dim" style="font-size:12px;margin-top:8px">비교일 ' + esc(ev.comp_date) + ' (' + ev.off + '개 스냅샷 전) · 진입일 ' + esc(ev.entry) + ' 종가' +
         (ev.mkt.prior != null ? ' · 시장 직전10일 중앙값 ' + pct(ev.mkt.prior) : '') + '</div>' +
         tbl(top, 't', '🔥 비중 증가 TOP 10') + tbl(bot, 'b', '🧊 비중 감소 TOP 10 (대조군)') + '</div></details>';
+}
+
+function renderVariants() {
+    const V = D.variants || [];
+    if (!V.length) { document.getElementById('variantTable').innerHTML = ''; return; }
+    const HS = [5, 10, 20];
+    let html = '<tr><th class="l">조건</th>' + HS.map(h => '<th>' + h + '일 초과수익</th><th>이긴 날</th><th>t</th>').join('') + '</tr>';
+    for (const v of V) {
+        const s10 = v.stats['10'] || v.stats['5'];
+        const klass = s10 ? (s10.excess > 0 ? 'good' : 'bad') : '';
+        html += '<tr class="' + klass + '"><td class="l">' + esc(v.label) + '<span class="desc">' + esc(v.desc) + '</span></td>' +
+            HS.map(h => {
+                const st = v.stats[String(h)];
+                if (!st) return '<td class="dim">-</td><td class="dim">-</td><td class="dim">-</td>';
+                return '<td>' + pc(st.excess) + '</td><td>' + Math.round(st.beat * 100) + '% <span class="dim">(' + st.n_dates + ')</span></td><td>' + (st.t == null ? '-' : st.t.toFixed(2)) + '</td>';
+            }).join('') + '</tr>';
+    }
+    document.getElementById('variantTable').innerHTML = html;
+    document.getElementById('variantNote').innerHTML =
+        '순매수 = 비교일 비중 × (1+종목수익률)/(1+ETF수익률)을 "거래가 없었을 때 비중"으로 보고 실제 비중과의 차이를 잰 값(주가 상승으로 저절로 늘어난 비중 제거). ' +
+        '괄호는 시그널 날짜 수. 표본이 짧아 조건 간 순위는 바뀔 수 있으니, 데이터가 쌓이는 대로 다시 확인하세요.';
+}
+
+let latestKey = 'bot';
+function renderLatest() {
+    const L = D.latest;
+    const box = document.getElementById('latestTable'), tabs = document.getElementById('latestTabs');
+    if (!L) { document.getElementById('latestSub').textContent = '후보를 계산할 데이터가 없습니다'; return; }
+    const V = D.variants || [];
+    document.getElementById('latestSub').innerHTML = '기준일 ' + esc(L.sig_date) + ' 스냅샷 · 비교일 ' + esc(L.comp_date) +
+        (L.mkt_prior != null ? ' · 시장 직전 10거래일 중앙값 ' + pct(L.mkt_prior) : '') +
+        ' · 조건을 눌러 목록을 바꿀 수 있습니다. <b>투자 추천이 아니라 관찰 목록</b>이며, 위 비교표에서 초과수익이 플러스인 조건만 참고할 가치가 있습니다.';
+    tabs.innerHTML = V.map(v => '<button class="' + (v.key === latestKey ? 'on' : '') + '" data-k="' + v.key + '">' + esc(v.label) + '</button>').join('');
+    tabs.querySelectorAll('button').forEach(b => b.onclick = () => { latestKey = b.dataset.k; renderLatest(); });
+    const list = L.lists[latestKey] || [];
+    if (!list.length) { box.innerHTML = '<tr><td class="l dim">해당 조건에 맞는 종목이 없습니다</td></tr>'; return; }
+    let html = '<tr><th class="l">종목</th><th>Δ비중(%p)</th><th>순매수(%p)</th><th>신규 편입 ETF</th><th>직전 10일</th></tr>';
+    for (const it of list) {
+        html += '<tr><td class="l"><a class="nm" href="/tools/etf/?stock=' + encodeURIComponent(it.name) + '" style="color:inherit;text-decoration:none">' + esc(it.name) + '</a></td>' +
+            '<td>' + (it.raw == null ? '-' : (it.raw >= 0 ? '+' : '') + it.raw.toFixed(1)) + '</td>' +
+            '<td>' + (it.flow == null ? '-' : (it.flow >= 0 ? '+' : '') + it.flow.toFixed(1)) + '</td>' +
+            '<td>' + it.new + '개</td><td>' + pc(it.prior) + '</td></tr>';
+    }
+    box.innerHTML = html;
 }
 
 function renderFreq() {
