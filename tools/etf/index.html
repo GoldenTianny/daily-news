@@ -1457,21 +1457,20 @@ async function shareIntro(btn) {
     if (INTRO_READY) await INTRO_READY;
     const nm = code => ETFS_CUR[code] || code;
     const pc = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
-    const top = (list, f, n) => (list || []).slice(0, n || 5).map(f).join(', ');   // 줄당 5개
+    // 항목별 TOP 3을 번호 목록으로
+    const sec = (title, list, f) => (list && list.length)
+      ? title + '\n' + list.slice(0, 3).map((t, i) => (i + 1) + '. ' + f(t)).join('\n') : null;
     const [y, m, d] = currentDate.split('-');
-    const lines = ['[' + y + '/' + m + '/' + d + '] ETF 시황 한눈에 · 가좌버핏', ''];
-    if (RET && RET.top1 && RET.top1.length)
-      lines.push('📈 오늘 수익률: ' + top(RET.top1, t => nm(t[0]) + ' ' + pc(t[1])));
-    if (RET && RET.top20 && RET.top20.length)
-      lines.push('📅 20일 수익률: ' + top(RET.top20, t => nm(t[0]) + ' ' + pc(t[1])));
     const wm = weightMovers();
-    if (wm.topD.length)
-      lines.push('🧲 편입 비중 증가(' + wm.off + '일): ' + top(wm.topD, t => t[0] + ' +' + t[1].toFixed(1) + '%p'));
-    if (TPM && TPM.up && TPM.up.length)
-      lines.push('🎯 목표주가 상향 ETF: ' + top(TPM.up, t => nm(t[0]) + ' ' + pc(t[1])));
-    if (lines.length === 2) lines.push('수익률·비중 데이터를 아직 불러오지 못했습니다.');
+    const secs = [
+      sec('📈 오늘 수익률', RET && RET.top1, t => nm(t[0]) + ' ' + pc(t[1])),
+      sec('📅 20일 수익률', RET && RET.top20, t => nm(t[0]) + ' ' + pc(t[1])),
+      sec('🧲 편입 비중 증가(' + wm.off + '일)', wm.topD, t => t[0] + ' +' + t[1].toFixed(1) + '%p'),
+      sec('🎯 목표주가 상향 ETF', TPM && TPM.up, t => nm(t[0]) + ' ' + pc(t[1])),
+    ].filter(Boolean);
+    if (!secs.length) secs.push('수익률·비중 데이터를 아직 불러오지 못했습니다.');
     const url = location.origin + location.pathname + '?date=' + currentDate;
-    const message = lines.join('\n') + '\n\n' + url;
+    const message = '[' + y + '/' + m + '/' + d + '] ETF 시황 한눈에 · 가좌버핏\n\n' + secs.join('\n\n') + '\n\n' + url;
     const data = { title: '가좌버핏 ETF 시황 ' + y + '/' + m + '/' + d, text: message };
     if (navigator.share) {
       try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
