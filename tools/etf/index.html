@@ -1790,6 +1790,7 @@ function showStockResults(name) {
     '<div class="stat-card"><div class="label">보유 ETF 수</div><div class="value">' + rows.length.toLocaleString() + '</div></div>' +
     '<div class="stat-card"><div class="label">최대 비중</div><div class="value">' + (maxWeight ? maxWeight.toFixed(2) + '%' : '-') + '</div></div>';
   statsArea.style.display = 'flex';
+  if (window.Auth) Auth.logView('stock', name, null, currentDate);   // 조회 기록 (회원·비회원 모두, 벽에 막혀도 기록)
 
   if (!isMember()) {                      // 비회원: 여기서 멈추고 로그인 벽
     hideStockChart();
@@ -1800,8 +1801,6 @@ function showStockResults(name) {
     syncUrl();
     return;
   }
-
-  if (window.Auth) Auth.logView('stock', name, null, currentDate);   // 회원 조회 기록
 
   const sortTh = (k, label, tip) => '<th class="th-sort' + (stockSort === k ? ' on' : '') +
     '" style="text-align:right" title="' + tip + ' (재클릭 시 방향 전환)" onclick="setStockSort(\'' + k + '\')">' +
@@ -1863,7 +1862,7 @@ function showEtfHoldings(etfCode, etfName) {
 
   const fromStock = currentView && currentView.type === 'stock' ? currentView.name : null;
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
-  if (window.Auth) Auth.logView('etf', etfName, etfCode, currentDate);   // 회원 조회 기록
+  if (window.Auth) Auth.logView('etf', etfName, etfCode, currentDate);   // 조회 기록 (회원·비회원 모두)
   showEtfChart(etfCode, etfName);
   showEtfEarnCons(etfCode, etfName);
 

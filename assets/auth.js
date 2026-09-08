@@ -154,17 +154,27 @@
       .catch(function () { Auth.role = 'member'; renderAll(); return Auth.role; });
   }
 
-  /* ---------- 종목 조회 기록 (로그인 회원만, 같은 화면 5분 내 중복은 한 번만) ---------- */
+  /* ---------- 종목 조회 기록 (회원은 user_id, 비회원은 브라우저 식별자 anon_id · 같은 화면 5분 내 중복은 한 번만) ---------- */
   var lastView = { key: '', at: 0 };
+  function anonId() {   // 좋아요 시스템과 같은 식별자(gjb_fp) 재사용 — 개인을 알아낼 수 없는 무작위 값
+    var fp = null;
+    try { fp = localStorage.getItem('gjb_fp'); } catch (e) {}
+    if (!fp) {
+      fp = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('fp_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+      try { localStorage.setItem('gjb_fp', fp); } catch (e) {}
+    }
+    return fp;
+  }
   function logView(type, name, code, baseDate) {
-    if (!client || !Auth.user || !name) return;
-    var key = type + '|' + name + '|' + (baseDate || '');
+    if (!client || !name) return;
+    var key = type + '|' + name + '|' + (baseDate || '') + '|' + (Auth.user ? Auth.user.id : 'g');
     var now = Date.now();
     if (key === lastView.key && now - lastView.at < 5 * 60 * 1000) return;
     lastView = { key: key, at: now };
-    client.from('stock_views').insert({
-      user_id: Auth.user.id, view_type: type, name: name, code: code || null, base_date: baseDate || null
-    }).then(function (r) { if (r && r.error) console.warn('[Auth] 조회 기록 실패', r.error.message); });
+    var row = { view_type: type, name: name, code: code || null, base_date: baseDate || null };
+    if (Auth.user) row.user_id = Auth.user.id; else { row.user_id = null; row.anon_id = anonId(); }
+    client.from('stock_views').insert(row)
+      .then(function (r) { if (r && r.error) console.warn('[Auth] 조회 기록 실패', r.error.message); });
   }
 
   /* ---------- 로그인 / 로그아웃 ---------- */

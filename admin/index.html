@@ -102,6 +102,8 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
         <div class="ctl">
           <label>기간</label>
           <input type="date" id="dFrom"> <span class="muted">~</span> <input type="date" id="dTo">
+          <button class="chip" data-days="1">오늘</button>
+          <button class="chip" data-days="-1">어제</button>
           <button class="chip" data-days="7">7일</button>
           <button class="chip on" data-days="14">14일</button>
           <button class="chip" data-days="30">30일</button>
@@ -115,6 +117,8 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
           </select>
           <label>유형</label>
           <select id="vtype"><option value="stock">종목 상세</option><option value="etf">ETF 상세</option></select>
+          <label>대상</label>
+          <select id="who"><option value="all">회원+비회원</option><option value="member">회원만</option><option value="guest">비회원만</option></select>
           <label>보기</label>
           <select id="layout"><option value="daily">날짜별 상세</option><option value="total">종목별 합계</option></select>
           <input type="text" id="q" placeholder="종목명 필터">
@@ -122,8 +126,9 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
         </div>
         <div class="stats">
           <div class="stat"><div class="k">총 조회</div><div class="v" id="sViews">–</div></div>
+          <div class="stat"><div class="k">회원 조회</div><div class="v" id="sMember">–</div></div>
+          <div class="stat"><div class="k">비회원 조회</div><div class="v" id="sGuest">–</div></div>
           <div class="stat"><div class="k">종목 수</div><div class="v" id="sNames">–</div></div>
-          <div class="stat"><div class="k">조회한 회원</div><div class="v" id="sUsers">–</div></div>
           <div class="stat"><div class="k">날짜 수</div><div class="v" id="sDays">–</div></div>
         </div>
         <div class="twrap"><table id="statTbl"><thead></thead><tbody><tr><td class="empty">불러오는 중…</td></tr></tbody></table></div>
@@ -134,7 +139,7 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
     <div class="panel" id="p-users">
       <div class="card">
         <h2>회원별 조회 <span class="cnt" id="uRange"></span></h2>
-        <p class="muted" style="margin-bottom:10px">통계 탭의 기간을 따릅니다 (조회한 날 기준).</p>
+        <p class="muted" style="margin-bottom:10px">통계 탭의 기간을 따릅니다 (조회한 날 기준). 비회원은 여기 없고 통계 탭의 '비회원 조회'에 합산됩니다.</p>
         <div class="twrap"><table id="userTbl">
           <thead><tr><th>#</th><th>회원</th><th>역할</th><th class="num">조회</th><th class="num">종목 수</th><th>마지막 조회</th></tr></thead>
           <tbody><tr><td colspan="6" class="empty">불러오는 중…</td></tr></tbody></table></div>
@@ -162,8 +167,9 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
       <div class="card">
         <h2>최근 조회 200건</h2>
         <div class="twrap"><table id="recentTbl">
-          <thead><tr><th>시각</th><th>회원</th><th>유형</th><th>이름</th><th>기준일</th></tr></thead>
+          <thead><tr><th>시각</th><th>누가</th><th>유형</th><th>이름</th><th>기준일</th></tr></thead>
           <tbody><tr><td colspan="5" class="empty">불러오는 중…</td></tr></tbody></table></div>
+        <p class="muted" style="margin-top:8px">비회원은 브라우저마다 붙는 무작위 식별자 앞 6자리로 표시됩니다. 같은 식별자면 같은 기기입니다.</p>
       </div>
     </div>
   </div>
@@ -213,7 +219,16 @@ async function boot() {
   await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent()]);
 }
 
-if (window.Auth) Auth.onChange(function () { location.reload(); });
+// 로그인 계정이 바뀌면(로그아웃·다른 계정) 새로 시작. 초기 세션 복원 알림은 무시해야 무한 새로고침이 안 남.
+var bootedId = null;
+if (window.Auth) {
+  Auth.ready.then(function (u) { bootedId = u ? u.id : null; });
+  Auth.onChange(function (u) {
+    var id = u ? u.id : null;
+    if (bootedId !== null || id === null) { if (id !== bootedId) location.reload(); }
+    else bootedId = id;   // 초기 복원 (아직 bootedId 미설정) — 새로고침 없이 기록만
+  });
+}
 
 /* ---------- 탭 ---------- */
 document.querySelectorAll('.tab').forEach(function (b) {
@@ -225,12 +240,14 @@ document.querySelectorAll('.tab').forEach(function (b) {
 
 /* ---------- 기간 ---------- */
 function setDays(n) {
-  var to = new Date(), from = new Date(); from.setDate(to.getDate() - (n - 1));
+  var to = new Date(), from = new Date();
+  if (n === -1) { to.setDate(to.getDate() - 1); from = new Date(to); }
+  else from.setDate(to.getDate() - (n - 1));
   $('dFrom').value = ymd(from); $('dTo').value = ymd(to);
   document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.classList.toggle('on', Number(c.dataset.days) === n); });
 }
 document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.onclick = function () { setDays(Number(c.dataset.days)); refreshAll(); }; });
-['dFrom', 'dTo', 'byMode', 'vtype'].forEach(function (id) { $(id).onchange = function () { document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.classList.remove('on'); }); refreshAll(); }; });
+['dFrom', 'dTo', 'byMode', 'vtype', 'who'].forEach(function (id) { $(id).onchange = function () { document.querySelectorAll('.chip[data-days]').forEach(function (c) { c.classList.remove('on'); }); refreshAll(); }; });
 $('layout').onchange = renderStats;
 $('q').oninput = renderStats;
 $('reload').onclick = refreshAll;
@@ -241,21 +258,26 @@ async function loadStats() {
   msg('');
   var tb = $('statTbl').querySelector('tbody');
   tb.innerHTML = '<tr><td class="empty">불러오는 중…</td></tr>';
-  var r = await sb.rpc('admin_view_stats', { d_from: $('dFrom').value, d_to: $('dTo').value, vtype: $('vtype').value, by_view_date: $('byMode').value === 'view' });
-  if (r.error) { msg('err', '통계를 불러오지 못했습니다: <code>' + esc(r.error.message) + '</code><br>Supabase 에 <code>supabase/001_admin.sql</code> 을 실행했는지 확인하세요.'); STATS = []; renderStats(); return; }
+  var args = { d_from: $('dFrom').value, d_to: $('dTo').value, vtype: $('vtype').value, by_view_date: $('byMode').value === 'view' };
+  var rs = await Promise.all([sb.rpc('admin_view_stats', Object.assign({ who: $('who').value }, args)), sb.rpc('admin_view_summary', args)]);
+  var r = rs[0], sm = rs[1];
+  if (r.error) { msg('err', '통계를 불러오지 못했습니다: <code>' + esc(r.error.message) + '</code><br>Supabase 에 <code>supabase/001_admin.sql</code> 을 (다시) 실행했는지 확인하세요.'); STATS = []; renderStats(); return; }
   STATS = r.data || [];
+  var t = (sm.data && sm.data[0]) || {};
+  $('sViews').textContent = Number(t.views || 0).toLocaleString();
+  $('sMember').innerHTML = Number(t.member_views || 0).toLocaleString() + ' <small>' + Number(t.users || 0) + '명</small>';
+  $('sGuest').innerHTML = Number(t.guest_views || 0).toLocaleString() + ' <small>' + Number(t.guests || 0) + '기기</small>';
   renderStats();
 }
 
 function renderStats() {
   var q = $('q').value.trim().toLowerCase();
   var rows = STATS.filter(function (r) { return !q || (r.name || '').toLowerCase().indexOf(q) >= 0; });
-  var views = 0, names = new Set(), days = new Set();
-  rows.forEach(function (r) { views += Number(r.views); names.add(r.name); days.add(r.d); });
-  $('sViews').textContent = views.toLocaleString();
+  var names = new Set(), days = new Set();
+  rows.forEach(function (r) { names.add(r.name); days.add(r.d); });
   $('sNames').textContent = names.size.toLocaleString();
   $('sDays').textContent = days.size.toLocaleString();
-  // 조회 회원 수는 회원별 표에서 (중복 없는 값)
+  var mg = function (r) { return '<span class="muted">' + Number(r.member_views || 0) + ' / ' + Number(r.guest_views || 0) + '</span>'; };
   var thead = $('statTbl').querySelector('thead'), tb = $('statTbl').querySelector('tbody');
   if (!rows.length) { thead.innerHTML = ''; tb.innerHTML = '<tr><td class="empty">해당 기간에 조회 기록이 없습니다</td></tr>'; return; }
   var maxV = Math.max.apply(null, rows.map(function (r) { return Number(r.views); }));
@@ -263,32 +285,35 @@ function renderStats() {
   if ($('layout').value === 'total') {
     var agg = new Map();
     rows.forEach(function (r) {
-      var a = agg.get(r.name) || { name: r.name, code: r.code, views: 0, days: 0, users: 0, last: null };
-      a.views += Number(r.views); a.days++; a.users = Math.max(a.users, Number(r.users));
+      var a = agg.get(r.name) || { name: r.name, code: r.code, views: 0, member_views: 0, guest_views: 0, days: 0, users: 0, last: null };
+      a.views += Number(r.views); a.member_views += Number(r.member_views || 0); a.guest_views += Number(r.guest_views || 0);
+      a.days++; a.users = Math.max(a.users, Number(r.users));
       if (!a.last || r.last_at > a.last) a.last = r.last_at;
       agg.set(r.name, a);
     });
     var list = Array.from(agg.values()).sort(function (a, b) { return b.views - a.views; });
     var mx = list[0].views;
-    thead.innerHTML = '<tr><th>#</th><th>종목</th><th class="num">조회</th><th class="num">날짜 수</th><th class="num">최다 회원/일</th><th>마지막 조회</th></tr>';
+    thead.innerHTML = '<tr><th>#</th><th>종목</th><th class="num">조회</th><th class="num">회원 / 비회원</th><th class="num">날짜 수</th><th class="num">최다 회원/일</th><th>마지막 조회</th></tr>';
     list.forEach(function (a, i) {
       h += '<tr><td>' + (i + 1) + '</td><td><a href="/tools/etf/?stock=' + encodeURIComponent(a.name) + '" target="_blank" rel="noopener">' + esc(a.name) + '</a></td>' +
         '<td class="num"><span class="bar" style="width:' + Math.max(4, a.views / mx * 90) + 'px"></span>' + a.views.toLocaleString() + '</td>' +
+        '<td class="num">' + mg(a) + '</td>' +
         '<td class="num">' + a.days + '</td><td class="num">' + a.users + '</td><td>' + fmtDT(a.last) + '</td></tr>';
     });
   } else {
-    thead.innerHTML = '<tr><th>날짜</th><th>종목</th><th class="num">조회</th><th class="num">회원</th><th>마지막 조회</th></tr>';
+    thead.innerHTML = '<tr><th>날짜</th><th>종목</th><th class="num">조회</th><th class="num">회원 / 비회원</th><th class="num">회원 수</th><th class="num">비회원 기기</th><th>마지막 조회</th></tr>';
     var cur = null;
     rows.forEach(function (r) {
       if (r.d !== cur) {
         cur = r.d;
         var dayRows = rows.filter(function (x) { return x.d === cur; });
         var dv = dayRows.reduce(function (s, x) { return s + Number(x.views); }, 0);
-        h += '<tr class="day"><td colspan="5">' + esc(cur) + '<small>' + dayRows.length + '종목 · ' + dv.toLocaleString() + '회</small></td></tr>';
+        h += '<tr class="day"><td colspan="7">' + esc(cur) + '<small>' + dayRows.length + '종목 · ' + dv.toLocaleString() + '회</small></td></tr>';
       }
       h += '<tr><td></td><td><a href="/tools/etf/?stock=' + encodeURIComponent(r.name) + '&date=' + esc(r.d) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></td>' +
         '<td class="num"><span class="bar" style="width:' + Math.max(4, Number(r.views) / maxV * 70) + 'px"></span>' + Number(r.views).toLocaleString() + '</td>' +
-        '<td class="num">' + Number(r.users) + '</td><td>' + fmtDT(r.last_at) + '</td></tr>';
+        '<td class="num">' + mg(r) + '</td>' +
+        '<td class="num">' + Number(r.users) + '</td><td class="num">' + Number(r.guests || 0) + '</td><td>' + fmtDT(r.last_at) + '</td></tr>';
     });
   }
   tb.innerHTML = h;
@@ -302,7 +327,7 @@ async function loadUsers() {
   if (r.error) { tb.innerHTML = '<tr><td colspan="6" class="empty">' + esc(r.error.message) + '</td></tr>'; return; }
   USERS = r.data || [];
   var active = USERS.filter(function (u) { return Number(u.views) > 0; });
-  $('sUsers').innerHTML = active.length.toLocaleString() + ' <small>/ 회원 ' + USERS.length.toLocaleString() + '</small>';
+  $('uRange').textContent = $('dFrom').value + ' ~ ' + $('dTo').value + ' · 조회한 회원 ' + active.length + ' / 전체 ' + USERS.length + '명';
   if (!USERS.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">회원이 없습니다</td></tr>'; return; }
   var h = '';
   USERS.forEach(function (u, i) {
@@ -377,7 +402,8 @@ async function loadRecent() {
   var list = r.data || [];
   if (!list.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">아직 조회 기록이 없습니다</td></tr>'; return; }
   tb.innerHTML = list.map(function (v) {
-    return '<tr><td>' + fmtDT(v.viewed_at) + '</td><td>' + esc(v.email) + '</td><td>' + (v.view_type === 'etf' ? 'ETF' : '종목') + '</td><td>' + esc(v.name) + '</td><td>' + esc(v.base_date || '') + '</td></tr>';
+    var who = v.email ? esc(v.email) : '<span class="role member">비회원</span> <span class="muted">' + esc(v.anon || '') + '</span>';
+    return '<tr><td>' + fmtDT(v.viewed_at) + '</td><td>' + who + '</td><td>' + (v.view_type === 'etf' ? 'ETF' : '종목') + '</td><td>' + esc(v.name) + '</td><td>' + esc(v.base_date || '') + '</td></tr>';
   }).join('');
 }
 
