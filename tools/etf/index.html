@@ -1801,6 +1801,8 @@ function showStockResults(name) {
     return;
   }
 
+  if (window.Auth) Auth.logView('stock', name, null, currentDate);   // 회원 조회 기록
+
   const sortTh = (k, label, tip) => '<th class="th-sort' + (stockSort === k ? ' on' : '') +
     '" style="text-align:right" title="' + tip + ' (재클릭 시 방향 전환)" onclick="setStockSort(\'' + k + '\')">' +
     label + (stockSort === k ? (stockSortDir < 0 ? ' &#9660;' : ' &#9650;') : '') + '</th>';
@@ -1861,6 +1863,7 @@ function showEtfHoldings(etfCode, etfName) {
 
   const fromStock = currentView && currentView.type === 'stock' ? currentView.name : null;
   currentView = { type: 'etf', code: etfCode, name: etfName, fromStock: fromStock };
+  if (window.Auth) Auth.logView('etf', etfName, etfCode, currentDate);   // 회원 조회 기록
   showEtfChart(etfCode, etfName);
   showEtfEarnCons(etfCode, etfName);
 

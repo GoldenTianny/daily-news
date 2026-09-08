@@ -105,3 +105,20 @@ window.GJ_AUTH = {
 ("로그인 준비 중"으로 보이면 4단계 값이 아직 비어 있는 것)
 
 회원 명단은 Supabase → **Authentication → Users** 에서 볼 수 있습니다.
+
+---
+
+## ⚙️ 관리자 페이지 (`/admin/`)
+
+회원 역할(마스터·관리자·부관리자)과 종목 조회 통계를 보는 화면입니다. 한 번만 준비하면 됩니다.
+
+1. `supabase/001_admin.sql` 파일 내용을 전부 복사
+2. https://supabase.com/dashboard/project/ujpelcnigrryjprztzhf/sql/new 에 붙여넣고 **Run**
+3. `gjbuffet.kr/admin/` 을 마스터 계정(tyannytyanny@gmail.com)으로 열기
+
+역할 규칙
+- **마스터**: 관리자·부관리자 지정/해제, 통계 열람. 마스터는 SQL 로만 바꿀 수 있음
+- **관리자**: 부관리자 지정/해제, 통계 열람
+- **부관리자**: 통계 열람만
+
+조회 기록은 로그인한 회원이 ETF 검색기에서 종목·ETF 상세를 열 때 남습니다 (같은 화면 5분 내 재조회는 1건).
