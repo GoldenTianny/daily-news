@@ -135,6 +135,7 @@ language sql stable security definer set search_path = public as $$
   from public.stock_views
   where public.is_staff()
     and view_type = vtype
+    and (user_id is null or user_id not in (select id from public.profiles where role = 'master'))   -- 마스터 제외
     and (who = 'all' or (who = 'member' and user_id is not null) or (who = 'guest' and user_id is null))
     and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
   group by 1, 2
@@ -149,7 +150,7 @@ language sql stable security definer set search_path = public as $$
   from public.profiles p
   left join public.stock_views v
     on v.user_id = p.id and (v.viewed_at at time zone 'Asia/Seoul')::date between d_from and d_to
-  where public.is_staff()
+  where public.is_staff() and p.role <> 'master'   -- 마스터 제외
   group by p.id, p.email, p.name, p.role
   order by count(v.id) desc, p.created_at desc
 $$;
@@ -161,7 +162,7 @@ returns table (viewed_at timestamptz, email text, anon text, name text, view_typ
 language sql stable security definer set search_path = public as $$
   select v.viewed_at, p.email, left(v.anon_id, 6), v.name, v.view_type, v.base_date
   from public.stock_views v left join public.profiles p on p.id = v.user_id
-  where public.is_staff()
+  where public.is_staff() and coalesce(p.role, '') <> 'master'   -- 마스터 제외
   order by v.viewed_at desc
   limit greatest(1, least(n, 1000))
 $$;
@@ -179,5 +180,6 @@ language sql stable security definer set search_path = public as $$
   from public.stock_views
   where public.is_staff()
     and view_type = vtype
+    and (user_id is null or user_id not in (select id from public.profiles where role = 'master'))   -- 마스터 제외
     and (case when by_view_date then (viewed_at at time zone 'Asia/Seoul')::date else base_date end) between d_from and d_to
 $$;

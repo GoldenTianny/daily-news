@@ -167,6 +167,7 @@
   }
   function logView(type, name, code, baseDate) {
     if (!client || !name) return;
+    if (Auth.role === 'master') return;   // 마스터 관리자 본인의 조회는 기록하지 않음 (통계 RPC 에서도 한 번 더 제외)
     var key = type + '|' + name + '|' + (baseDate || '') + '|' + (Auth.user ? Auth.user.id : 'g');
     var now = Date.now();
     if (key === lastView.key && now - lastView.at < 5 * 60 * 1000) return;
