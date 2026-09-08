@@ -102,10 +102,10 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
         <div class="ctl">
           <label>기간</label>
           <input type="date" id="dFrom"> <span class="muted">~</span> <input type="date" id="dTo">
-          <button class="chip" data-days="1">오늘</button>
+          <button class="chip on" data-days="1">오늘</button>
           <button class="chip" data-days="-1">어제</button>
           <button class="chip" data-days="7">7일</button>
-          <button class="chip on" data-days="14">14일</button>
+          <button class="chip" data-days="14">14일</button>
           <button class="chip" data-days="30">30일</button>
           <button class="chip" data-days="90">90일</button>
         </div>
@@ -215,7 +215,7 @@ async function boot() {
     return gate('권한이 없습니다.');
   }
   $('gate').style.display = 'none'; $('main').style.display = '';
-  setDays(14);
+  setDays(1);   // 기본: 오늘
   await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent()]);
 }
 
