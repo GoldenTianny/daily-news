@@ -38,7 +38,7 @@ def main():
     og.draw_text_smart(draw, (62, 415), '보유 ETF를 비중순으로 한눈에',
                        44, og.WEIGHT_MEDIUM, (160, 182, 224))
 
-    og.draw_footer(draw, PAL, '가좌버핏')
+    og.draw_footer(draw, PAL, '')   # 하단 좌측 '가좌버핏' 표기 없이 도메인만
 
     out = REPO / 'assets' / 'og' / 'etf.png'
     img.save(out)
