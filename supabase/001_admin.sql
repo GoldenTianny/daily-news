@@ -15,17 +15,29 @@ create table if not exists public.profiles (
 );
 alter table public.profiles enable row level security;
 
--- 가입하면 자동으로 프로필 생성. 마스터 이메일은 master 로.
+-- 아직 가입하지 않은 사람을 이메일로 미리 관리자/부관리자 지정 (가입 순간 적용 후 삭제)
+create table if not exists public.role_grants (
+  email      text primary key,
+  role       text not null check (role in ('admin','sub')),
+  granted_by uuid,
+  created_at timestamptz not null default now()
+);
+alter table public.role_grants enable row level security;
+
+-- 가입하면 자동으로 프로필 생성. 마스터 이메일은 master 로, 미리 지정된 이메일은 그 역할로.
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
+declare granted text;
 begin
+  select role into granted from public.role_grants where email = lower(new.email);
   insert into public.profiles (id, email, name, role)
   values (
     new.id, new.email,
     coalesce(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', split_part(coalesce(new.email,''),'@',1)),
-    case when lower(new.email) = 'tyannytyanny@gmail.com' then 'master' else 'member' end
+    case when lower(new.email) = 'tyannytyanny@gmail.com' then 'master' else coalesce(granted, 'member') end
   )
   on conflict (id) do update set email = excluded.email, name = excluded.name, updated_at = now();
+  if granted is not null then delete from public.role_grants where email = lower(new.email); end if;
   return new;
 end $$;
 
@@ -61,6 +73,10 @@ drop policy if exists "profiles_read" on public.profiles;
 create policy "profiles_read" on public.profiles
   for select to authenticated using (id = auth.uid() or public.is_staff());
 
+drop policy if exists "grants_read_staff" on public.role_grants;
+create policy "grants_read_staff" on public.role_grants
+  for select to authenticated using (public.is_staff());
+
 -- 역할 변경 규칙
 --   master : 누구든 admin / sub / member 로 변경 (단 master 본인은 불변)
 --   admin  : sub <-> member 만 변경 (admin 지정·해제는 master 만)
@@ -84,6 +100,48 @@ begin
     raise exception '권한이 없습니다';
   end if;
   update public.profiles set role = new_role, updated_at = now() where id = target;
+end $$;
+
+-- 이메일로 지정: 이미 가입한 회원이면 즉시 적용('applied'), 아니면 예약('pending')
+create or replace function public.admin_grant_by_email(p_email text, new_role text)
+returns text language plpgsql security definer set search_path = public as $$
+declare me text; em text; tid uuid; tgt text;
+begin
+  select role into me from public.profiles where id = auth.uid();
+  em := lower(trim(p_email));
+  if em !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$' then raise exception '이메일 형식이 아닙니다'; end if;
+  if new_role not in ('admin','sub') then raise exception '지정할 수 없는 역할입니다'; end if;
+  if me = 'master' then null;
+  elsif me = 'admin' then
+    if new_role = 'admin' then raise exception '관리자 지정은 마스터만 할 수 있습니다'; end if;
+  else raise exception '권한이 없습니다'; end if;
+
+  select id, role into tid, tgt from public.profiles where lower(email) = em;
+  if tid is not null then
+    if tgt = 'master' then raise exception '마스터 관리자는 변경할 수 없습니다'; end if;
+    if me = 'admin' and tgt = 'admin' then raise exception '관리자 변경은 마스터만 할 수 있습니다'; end if;
+    update public.profiles set role = new_role, updated_at = now() where id = tid;
+    delete from public.role_grants where email = em;
+    return 'applied';
+  end if;
+  insert into public.role_grants (email, role, granted_by) values (em, new_role, auth.uid())
+  on conflict (email) do update set role = excluded.role, granted_by = excluded.granted_by, created_at = now();
+  return 'pending';
+end $$;
+
+-- 예약 취소
+create or replace function public.admin_revoke_grant(p_email text)
+returns void language plpgsql security definer set search_path = public as $$
+declare me text; r text;
+begin
+  select role into me from public.profiles where id = auth.uid();
+  select role into r from public.role_grants where email = lower(trim(p_email));
+  if r is null then return; end if;
+  if me = 'master' then null;
+  elsif me = 'admin' then
+    if r = 'admin' then raise exception '관리자 예약 취소는 마스터만 할 수 있습니다'; end if;
+  else raise exception '권한이 없습니다'; end if;
+  delete from public.role_grants where email = lower(trim(p_email));
 end $$;
 
 -- 2) 종목 조회 기록 ---------------------------------------------------------
