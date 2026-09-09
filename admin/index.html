@@ -115,8 +115,8 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
         <div class="ctl">
           <label>날짜 기준</label>
           <select id="byMode">
-            <option value="base">화면 기준일 (회원이 보던 데이터 날짜)</option>
             <option value="view">조회한 날 (실제 접속 날짜)</option>
+            <option value="base">화면 기준일 (보고 있던 데이터 날짜 · 보통 전 거래일)</option>
           </select>
           <label>유형</label>
           <select id="vtype"><option value="all">종목 + ETF</option><option value="stock">종목만</option><option value="etf">ETF만</option></select>
@@ -134,6 +134,7 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
           <div class="stat"><div class="k">종목·ETF 수</div><div class="v" id="sNames">–</div></div>
           <div class="stat"><div class="k">날짜 수</div><div class="v" id="sDays">–</div></div>
         </div>
+        <p class="muted" id="modeHint" style="margin:-4px 0 8px"></p>
         <div class="twrap"><table id="statTbl"><thead></thead><tbody><tr><td class="empty">불러오는 중…</td></tr></tbody></table></div>
       </div>
     </div>
@@ -292,6 +293,9 @@ function renderStats() {
   var rows = STATS.filter(function (r) { return !q || (r.name || '').toLowerCase().indexOf(q) >= 0; });
   var names = new Set(), days = new Set();
   rows.forEach(function (r) { names.add((r.view_type || 'stock') + '|' + r.name); days.add(r.d); });
+  $('modeHint').textContent = $('byMode').value === 'view'
+    ? '날짜 = 실제로 접속한 날 (한국 시간)'
+    : '날짜 = 접속자가 보고 있던 화면 기준일. 오늘 데이터가 아직 발행 전이면 "오늘"은 비어 있고 전 거래일에 잡힙니다.';
   $('sNames').textContent = names.size.toLocaleString();
   $('sDays').textContent = days.size.toLocaleString();
   var mg = function (r) { return '<span class="muted">' + Number(r.member_views || 0) + ' / ' + Number(r.guest_views || 0) + '</span>'; };
