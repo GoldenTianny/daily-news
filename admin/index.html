@@ -152,6 +152,19 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
     <!-- 역할 관리 -->
     <div class="panel" id="p-roles">
       <div class="card">
+        <h2>이메일로 미리 지정</h2>
+        <p class="muted" style="margin-bottom:8px">아직 가입 안 한 사람도 이메일을 넣어두면 구글 로그인하는 순간 그 역할이 됩니다. 이미 가입한 회원이면 바로 적용됩니다.</p>
+        <div class="ctl">
+          <input type="text" id="gEmail" placeholder="구글 계정 이메일" style="min-width:240px" inputmode="email" autocomplete="off">
+          <select id="gRole"><option value="sub">부관리자</option><option value="admin">관리자</option></select>
+          <button class="btn" id="gBtn">지정</button>
+        </div>
+        <div class="twrap" id="gWrap" style="display:none"><table id="grantTbl">
+          <thead><tr><th>가입 대기 이메일</th><th>예약 역할</th><th>등록일</th><th></th></tr></thead>
+          <tbody></tbody></table></div>
+      </div>
+
+      <div class="card">
         <h2>회원 · 역할 관리 <span class="cnt" id="rCnt"></span></h2>
         <div class="ctl">
           <input type="text" id="rq" placeholder="이메일·이름 검색">
@@ -219,7 +232,8 @@ async function boot() {
   }
   $('gate').style.display = 'none'; $('main').style.display = '';
   setDays(1);   // 기본: 오늘
-  await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent()]);
+  if (me.role !== 'master') $('gRole').querySelector('option[value="admin"]').remove();   // 관리자는 부관리자만 지정 가능
+  await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent(), loadGrants()]);
 }
 
 // 로그인 계정이 바뀌면(로그아웃·다른 계정) 새로 시작. 초기 세션 복원 알림은 무시해야 무한 새로고침이 안 남.
@@ -347,6 +361,42 @@ async function loadUsers() {
   });
   tb.innerHTML = h;
 }
+
+/* ---------- 이메일로 미리 지정 ---------- */
+async function loadGrants() {
+  var r = await sb.from('role_grants').select('email,role,created_at').order('created_at', { ascending: false });
+  var tb = $('grantTbl').querySelector('tbody');
+  var list = (r && r.data) || [];
+  $('gWrap').style.display = list.length ? '' : 'none';
+  tb.innerHTML = list.map(function (g) {
+    var can = me.role === 'master' || (me.role === 'admin' && g.role === 'sub');
+    return '<tr><td>' + esc(g.email) + '</td><td><span class="role ' + esc(g.role) + '">' + (ROLE_KO[g.role] || g.role) + '</span></td><td>' + fmtD(g.created_at) + '</td>' +
+      '<td>' + (can ? '<button class="btn warn" data-revoke="' + esc(g.email) + '" style="padding:4px 9px;font-size:11.5px">취소</button>' : '') + '</td></tr>';
+  }).join('');
+  tb.querySelectorAll('button[data-revoke]').forEach(function (b) {
+    b.onclick = async function () {
+      if (!confirm(b.dataset.revoke + ' 예약을 취소할까요?')) return;
+      var rr = await sb.rpc('admin_revoke_grant', { p_email: b.dataset.revoke });
+      if (rr.error) { msg('err', '취소 실패: <code>' + esc(rr.error.message) + '</code>'); return; }
+      msg('info', b.dataset.revoke + ' 예약을 취소했습니다.');
+      loadGrants();
+    };
+  });
+}
+$('gBtn').onclick = async function () {
+  var em = $('gEmail').value.trim(), role = $('gRole').value;
+  if (!em) { $('gEmail').focus(); return; }
+  if (!confirm(em + ' 을(를) "' + ROLE_KO[role] + '" 으로 지정할까요?')) return;
+  $('gBtn').disabled = true;
+  var r = await sb.rpc('admin_grant_by_email', { p_email: em, new_role: role });
+  $('gBtn').disabled = false;
+  if (r.error) { msg('err', '지정 실패: <code>' + esc(r.error.message) + '</code>'); return; }
+  if (r.data === 'applied') msg('info', em + ' 은(는) 이미 가입한 회원이라 바로 ' + ROLE_KO[role] + '(으)로 바꿨습니다.');
+  else msg('info', em + ' 을(를) ' + ROLE_KO[role] + '(으)로 예약했습니다. 그 계정으로 구글 로그인하면 자동 적용됩니다.');
+  $('gEmail').value = '';
+  loadGrants(); loadProfiles(); loadUsers();
+};
+$('gEmail').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('gBtn').click(); });
 
 /* ---------- 역할 관리 ---------- */
 async function loadProfiles() {
