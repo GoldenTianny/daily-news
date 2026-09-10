@@ -34,20 +34,26 @@ NAME_DBS = [   # name 컬럼을 코드 기준으로 정정할 DB (glob)
 ]
 
 
+def find_sheet(wb):
+    """'Peer Analysis' 태그 + Code 헤더 행에 '수정주가' 항목이 있는 시트명 (시트명 무관, 없으면 None)"""
+    for ws in wb.worksheets:
+        peer = False
+        for i, row in enumerate(ws.iter_rows(values_only=True)):
+            if i > 16:
+                break
+            first = str(row[0] or '') if row else ''
+            if 'Peer Analysis' in first:
+                peer = True
+            if first.strip() == 'Code':
+                if peer and any(str(v or '').strip() == '수정주가' for v in row[3:8]):
+                    return ws.title
+                break
+    return None
+
+
 def is_price_history_file(xlsx_path):
-    """첫 시트 상단에 'Peer Analysis' 태그 + Code/Name 헤더 행 아래 '수정주가' 항목이면 해당"""
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
-    ws = wb[wb.sheetnames[0]]
-    peer = False
-    for i, row in enumerate(ws.iter_rows(values_only=True)):
-        if i > 14:
-            break
-        first = str(row[0] or '') if row else ''
-        if 'Peer Analysis' in first:
-            peer = True
-        if first.strip() == 'Code' and peer:
-            return any(str(v or '').strip() == '수정주가' for v in row[3:8])
-    return False
+    return find_sheet(wb) is not None
 
 
 def clean_name(s):
@@ -57,8 +63,10 @@ def clean_name(s):
 def parse(xlsx_path):
     """-> DataFrame(date, code, name, close)"""
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
-    ws = wb[wb.sheetnames[0]]
-    rows = list(ws.iter_rows(values_only=True))
+    sn = find_sheet(wb)
+    if not sn:
+        return pd.DataFrame(columns=['date', 'code', 'name', 'close'])
+    rows = list(wb[sn].iter_rows(values_only=True))
     hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:14]) if r and r[1]}
     period = rows[hdr['Period']]
     code_hdr = next(i for i, r in enumerate(rows[:16]) if r and str(r[0] or '').strip() == 'Code')
@@ -88,6 +96,16 @@ def load_price_db():
     return df
 
 
+def norm(d):
+    """비교용 정규화 — parquet 왕복으로 dtype(str/object, date/object)이 달라져도 같은 내용이면 같게"""
+    d = d[['date', 'code', 'name', 'close']].copy()
+    d['date'] = d['date'].astype(str).str[:10]
+    d['code'] = d['code'].astype(object)
+    d['name'] = d['name'].astype(object)
+    d['close'] = d['close'].astype('float64')
+    return d.sort_values(['date', 'code']).reset_index(drop=True)
+
+
 def write_monthly(df):
     """월별 파일 저장 (내용이 같은 달은 건너뜀)"""
     con = duckdb.connect()
@@ -95,13 +113,9 @@ def write_monthly(df):
     for ym, g in df.groupby(df['date'].map(lambda d: f'{d.year:04d}-{d.month:02d}')):
         dst = os.path.join(PRICE_DIR, ym + '.parquet')
         g = g.sort_values(['date', 'code']).reset_index(drop=True)
-        if os.path.exists(dst):
-            old = pd.read_parquet(dst)
-            old['date'] = pd.to_datetime(old['date']).dt.date
-            old = old.sort_values(['date', 'code']).reset_index(drop=True)
-            if old.equals(g):
-                n_same += 1
-                continue
+        if os.path.exists(dst) and norm(pd.read_parquet(dst)).equals(norm(g)):
+            n_same += 1
+            continue
         con.execute(f"""
             COPY (SELECT CAST(date AS DATE) AS date, code, name, CAST(close AS DOUBLE) AS close FROM g)
             TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
@@ -134,7 +148,7 @@ def refresh(xlsx_path, dry_run=False):
     src = parse(xlsx_path)
     if src.empty:
         print('SKIP: 수정주가 데이터 없음')
-        return
+        return {'price_changed': False}
     old = load_price_db()
     print(f"원본: 종목 {src['code'].nunique():,}개, {src['date'].min()} ~ {src['date'].max()}, {len(src):,}행")
     print(f"DB  : 종목 {old['code'].nunique():,}개, {old['date'].min()} ~ {old['date'].max()}, {len(old):,}행")
@@ -171,7 +185,7 @@ def refresh(xlsx_path, dry_run=False):
           f"그 외 {len(missing_non_etf):,} — 기존 행 유지)")
     if dry_run:
         print('\n(dry-run: 저장하지 않음)')
-        return
+        return {'price_changed': False}
 
     # --- 가격 upsert + 종목명 정본화
     ren = {c: b for c, (_, b) in renames.items()}
@@ -188,7 +202,8 @@ def refresh(xlsx_path, dry_run=False):
             n = rename_in_db(pat, ren)
             if n:
                 print(f"OK  종목명 정정 {os.path.relpath(pat, REPO)}: {n:,}행")
-    return {'renames': renames, 'changed': chg_codes, 'new': new_codes, 'missing': missing}
+    return {'renames': renames, 'changed': chg_codes, 'new': new_codes, 'missing': missing,
+            'price_changed': n_new > 0}   # 가격 파일이 바뀌었을 때만 RS 등 재계산이 필요
 
 
 if __name__ == '__main__':
