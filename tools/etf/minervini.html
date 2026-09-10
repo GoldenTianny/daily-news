@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="미너비니 트렌드 템플릿 | 가좌버핏">
 <meta property="og:description" content="8개 추세 조건을 모두 충족한 종목을 매일 선별. 이동평균 정렬 · 52주 고저 · RS 등급.">
-<meta property="og:image" content="https://gjbuffet.kr/assets/og/etf.png">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/minervini.png">
 <meta property="og:url" content="https://gjbuffet.kr/tools/etf/minervini.html">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
@@ -67,6 +67,12 @@
   .datenav .hint { font-size: 12px; color: #999; }
   .datenav .hint.past { color: #e65100; font-weight: 600; }
   .datenav #authBox { margin-left: auto; }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #c5cae9; border-radius: 8px;
+    padding: 7px 12px; font-size: 12.5px; font-weight: 700; color: #3f51b5; cursor: pointer; font-family: inherit; line-height: 1.2;
+  }
+  .share-btn:hover:not(:disabled) { background: #e8eaf6; border-color: #3f51b5; }
+  .share-btn:disabled { opacity: .6; cursor: default; }
   /* CANSLIM */
   .cs-badges { display: inline-flex; gap: 3px; }
   .cs-badges b { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 5px;
@@ -157,6 +163,7 @@
       <select id="dateSel" aria-label="기준일 선택"><option>불러오는 중&hellip;</option></select>
       <button class="dbtn" id="nextDay" title="다음 거래일 (→)" aria-label="다음 거래일">&#9654;</button>
       <span class="hint" id="dateHint"></span>
+      <button class="share-btn" type="button" id="shareBtn" onclick="shareTemplate(this)" aria-label="기준일 결과 공유하기">&#128228; 공유</button>
       <span id="authBox"></span>
     </div>
     <div class="stats">
@@ -581,6 +588,49 @@ function renderCanslim() {
   h += '<div class="twrap"><table>' + head + '<tbody>' + (n.map(row).join('') || '<tr><td colspan="8" class="loading">근접 종목이 없습니다</td></tr>') + '</tbody></table></div>';
   h += '<div class="note">배지에 마우스를 올리면 각 조건의 근거가 보입니다. S(수급)는 거래량 자료가 없어 판정에서 뺐고, I(기관)는 ETF 보유 수로 대신했습니다. 선별은 참고용이며 매수 신호가 아닙니다.</div>';
   box.innerHTML = h;
+}
+
+// 기준일 결과를 짧은 텍스트로 공유 (Web Share API, 미지원 시 클립보드 복사)
+async function shareTemplate(btn) {
+  if (!curDate || !ROWS.length) return;
+  const orig = btn.innerHTML;
+  btn.disabled = true; btn.textContent = '준비 중…';
+  try {
+    const [y, m, d] = curDate.split('-');
+    const passed = ROWS.filter(r => r.passed);
+    const near = ROWS.filter(r => Number(r.pass_n) === 7);
+    const fresh = passed.filter(r => Number(r.streak) === 1);
+    const nUniv = ROWS.length ? Number(ROWS[0].n_univ) : 0;
+    const top = passed.slice().sort((a, b) => (b.rs || 0) - (a.rs || 0)).slice(0, 5);
+    const lines = [
+      '[' + y + '/' + m + '/' + d + '] 미너비니 트렌드 템플릿',
+      '',
+      '✅ 충족 ' + passed.length + '종목' + (nUniv ? ' (' + (passed.length / nUniv * 100).toFixed(1) + '%)' : '') +
+        ' · 🆕 신규 ' + fresh.length + ' · 👀 근접 ' + near.length,
+    ];
+    if (top.length) {
+      lines.push('', '🏅 RS 상위');
+      top.forEach((r, i) => lines.push((i + 1) + '. ' + r.name + ' RS ' + (r.rs == null ? '–' : r.rs) +
+        (r.close / r.hi52 >= 0.9995 ? ' 신고가' : '') + (Number(r.streak) === 1 ? ' NEW' : '')));
+    }
+    if (EARN_Q && MKT.ok != null) {
+      const ev = passed.map(r => canslim(r));
+      lines.push('', '🏆 CANSLIM 부합 ' + ev.filter(c => c.pass === 6).length + ' · 근접 ' + ev.filter(c => c.pass === 5).length +
+        ' · 시장 ' + (MKT.ok ? '상승 추세' : '50일선 아래'));
+    }
+    const url = location.origin + location.pathname + '?date=' + curDate;
+    lines.push('', url);
+    const message = lines.join('\n');
+    const data = { title: '미너비니 템플릿 ' + y + '/' + m + '/' + d, text: message };
+    if (navigator.share) {
+      try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+      try { await navigator.clipboard.writeText(message); alert('아래 내용이 복사되었습니다:\n\n' + message); }
+      catch (e) { prompt('아래 내용을 복사해 주세요:', message); }
+    }
+  } finally {
+    btn.disabled = false; btn.innerHTML = orig;
+  }
 }
 
 function sorted(list) {
