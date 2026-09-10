@@ -12,16 +12,22 @@
   손절 2N (마지막 추가 유닛 기준), 0.5N 상승마다 1유닛 추가, 최대 4유닛, 1유닛 = 자본 1% / N
 실행: python3 tools/backtest/turtle_kodex200.py  → tools/backtest/turtle_kodex200.html
 """
-import glob, os, math, json, datetime as dt
+import glob, os, math, json, sys, datetime as dt
 import pyarrow.parquet as pq
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CODE, NAME = 'A069500', 'KODEX 200'
+# 대상 ETF: 기본 KODEX 200. 다른 종목은  python3 ... --code A122630 --name "KODEX 레버리지" --out turtle_kodex_lev.html
+CODE, NAME, OUT_NAME = 'A069500', 'KODEX 200', 'turtle_kodex200.html'
+args = sys.argv[1:]
+for i, a in enumerate(args):
+    if a == '--code': CODE = args[i + 1]
+    if a == '--name': NAME = args[i + 1]
+    if a == '--out': OUT_NAME = args[i + 1]
 INIT = 10_000_000
 FEE = 0.0005          # 편도 (수수료+슬리피지)
 RISK = 0.01           # 1유닛 = 자본의 1% / N
 MAX_UNITS = 4
-OUT = os.path.join(REPO, 'tools', 'backtest', 'turtle_kodex200.html')
+OUT = os.path.join(REPO, 'tools', 'backtest', OUT_NAME)
 
 # ---------- 데이터 ----------
 rows = []
@@ -168,7 +174,7 @@ def trade_table(s):
     return h or '<tr><td colspan="6" style="color:#999;text-align:center">거래 없음</td></tr>'
 
 html = f'''<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>터틀 백테스트 · KODEX 200</title>
+<meta name="robots" content="noindex"><title>터틀 백테스트 · {NAME}</title>
 <style>
 body{{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:#f0f2f5;color:#222;margin:0;font-size:14px;line-height:1.6}}
 .hero{{background:linear-gradient(135deg,#1a237e,#283593);color:#fff;padding:26px 20px}} .hero h1{{margin:0;font-size:22px}} .hero p{{margin:6px 0 0;opacity:.85;font-size:13px}}
@@ -194,7 +200,7 @@ ul{{margin:6px 0;padding-left:18px}} li{{margin:2px 0}} details summary{{cursor:
 <div class="note">기간이 2년 1개월로 짧고, 이 기간 코스피가 강한 상승장이었습니다. 추세추종 전략은 큰 추세 한두 번이 성적을 좌우하므로 이 결과를 일반화하면 안 됩니다. 종가 기준 판정이라 실제 장중 돌파 매매보다 진입이 하루 늦습니다.</div></div>
 <div class="card"><details><summary>S1 거래 내역 ({len([t for t in S1["trades"] if t["act"]=="청산"])}회 청산)</summary><div class="twrap"><table><thead><tr><th>날짜</th><th>행동</th><th class="n">가격</th><th class="n">수량</th><th>사유</th><th class="n">손익</th></tr></thead><tbody>{trade_table(S1)}</tbody></table></div></details></div>
 <div class="card"><details><summary>S2 거래 내역 ({len([t for t in S2["trades"] if t["act"]=="청산"])}회 청산)</summary><div class="twrap"><table><thead><tr><th>날짜</th><th>행동</th><th class="n">가격</th><th class="n">수량</th><th>사유</th><th class="n">손익</th></tr></thead><tbody>{trade_table(S2)}</tbody></table></div></details></div>
-<p style="font-size:12px;color:#999;text-align:center">생성: {dt.date.today()} · tools/backtest/turtle_kodex200.py</p>
+<p style="font-size:12px;color:#999;text-align:center">생성: {dt.date.today()} · tools/backtest/turtle_kodex200.py ({CODE})</p>
 </div></body></html>'''
 with open(OUT, 'w', encoding='utf-8') as f: f.write(html)
 
