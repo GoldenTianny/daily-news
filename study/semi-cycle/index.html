@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반도체 병목 업종 과열 계기판 | 가좌버핏 스터디</title>
+<meta name="description" content="메모리 대형주에서 소부장으로 주도권이 넘어간 뒤, 테스트·기판·후공정 등 공정별 업종이 사이클의 어느 단계인지 신고가 비율·목표주가 괴리·이익 전망 상향 폭으로 매일 점검.">
+<link rel="canonical" href="https://gjbuffet.kr/study/semi-cycle/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="반도체 병목 업종 과열 계기판 | 가좌버핏 스터디">
+<meta property="og:description" content="소부장 주도 사이클, 지금 어느 단계인가 — 과열 신호 계기판">
+<meta property="og:url" content="https://gjbuffet.kr/study/semi-cycle/">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #f0f2f5; --card: #ffffff; --line: #e6e9f0; --txt: #333;
+    --sub: #667; --faint: #99a; --navy: #1a237e; --accent: #3f51b5;
+    --up: #d32f2f; --down: #1565c0; --grid: #e3e6ee;
+    --early: #2e7d32; --mid: #f9a825; --hot: #d32f2f; --warn: #8e24aa; --ok: #2e7d32; --dull: #78909c;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
+.topnav { display: flex; align-items: center; gap: 6px; background: #12274d; padding: 0 8px; position: sticky; top: 0; z-index: 500; overflow-x: auto; }
+.topnav a { display: inline-flex; align-items: center; gap: 5px; color: #dbe6fb; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 14px; white-space: nowrap; border-bottom: 3px solid transparent; }
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+.header { background: linear-gradient(135deg, #1a237e, #283593); color: white; padding: 30px 20px 26px; text-align: center; }
+.header .crumb { font-size: 12.5px; opacity: 0.75; margin-bottom: 6px; }
+.header .crumb a { color: #cdd8f8; text-decoration: none; }
+.header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13.5px; opacity: 0.85; }
+.container { max-width: 900px; margin: 0 auto; padding: 22px 14px 60px; }
+.loading-box { text-align: center; padding: 60px 0; color: var(--faint); font-size: 14px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+@media (max-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 20px; font-weight: 800; color: var(--navy); }
+.stat .v small { font-size: 12px; font-weight: 700; }
+.stat .k { font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
+
+.insight { background: linear-gradient(135deg, #fff8ec, #fff3dd); border: 1px solid #f0dcb0; border-radius: 14px; padding: 18px 18px 14px; margin-bottom: 24px; }
+.insight h2 { font-size: 15.5px; color: #8a5a00; margin-bottom: 10px; }
+.insight ul { list-style: none; }
+.insight li { font-size: 13.5px; color: #5c4a1e; line-height: 1.65; padding-left: 20px; position: relative; margin-bottom: 6px; }
+.insight li::before { content: "▸"; position: absolute; left: 4px; color: #d09a2a; }
+.insight b { color: #a34700; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; margin-bottom: 18px; }
+.card h2 { font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+.card .sub { font-size: 12.5px; color: var(--faint); margin-bottom: 12px; line-height: 1.5; }
+
+.stage { display: inline-block; font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: 10px; color: #fff; white-space: nowrap; }
+.stage.s-초입 { background: var(--early); } .stage.s-진행 { background: var(--mid); color: #3a2a00; }
+.stage.s-과열 { background: #ef6c00; } .stage.s-고점 { background: var(--hot); } .stage.s-모멘텀 { background: var(--dull); }
+.lv { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.lv.early, .lv.ok { background: var(--early); } .lv.mid { background: var(--mid); } .lv.hot { background: var(--hot); } .lv.warn { background: var(--warn); }
+td.c-early, td.c-ok { color: var(--early); font-weight: 600; } td.c-mid { color: #b8860b; font-weight: 600; }
+td.c-hot { color: var(--hot); font-weight: 700; } td.c-warn { color: var(--warn); font-weight: 700; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--sub); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+.seg-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 6px; }
+.seg-tabs button { flex: 1; min-width: 110px; padding: 8px 6px; font-size: 12.5px; font-weight: 700; color: var(--sub); background: transparent; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap; font-family: inherit; }
+.seg-tabs button.on { background: var(--accent); color: #fff; }
+
+.flags { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.flag { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+.flag .n { font-weight: 700; } .flag .t { color: var(--sub); margin-top: 2px; font-size: 12.5px; } .flag .why { color: var(--faint); font-size: 11.5px; margin-top: 4px; line-height: 1.4; }
+
+.chart-svg { width: 100%; height: auto; display: block; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: right; padding: 8px 7px; color: var(--sub); font-size: 12px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+th.l, td.l { text-align: left; }
+td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+td .nm { font-weight: 600; }
+tr.lead td.l { color: var(--navy); font-weight: 800; }
+tr.big td { background: rgba(63,81,181,0.05); }
+.pos { color: var(--up); font-weight: 600; } .neg { color: var(--down); } .dim { color: var(--faint); }
+.tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; background: #fdecea; color: #c62828; margin-left: 4px; }
+.method { font-size: 12.5px; color: var(--sub); line-height: 1.7; }
+.method b { color: var(--txt); }
+.method ul { padding-left: 18px; margin: 6px 0; }
+.foot-note { font-size: 12px; color: var(--faint); text-align: center; margin-top: 20px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+    :root { --bg: #101418; --card: #1a2029; --line: #2a3242; --txt: #d5d9e0; --sub: #9aa3b2; --faint: #778; --navy: #9fb4f5; --accent: #7f95e8; --up: #ef6a5a; --down: #64a0e8; --grid: #2a3242; --early: #66bb6a; --mid: #fdd835; --hot: #ef5350; --warn: #ce93d8; --ok: #66bb6a; --dull: #90a4ae; }
+    .topnav { background: #0d1a33; }
+    .insight { background: linear-gradient(135deg, #2a2416, #241f10); border-color: #4a3d1c; }
+    .insight h2 { color: #e8b45a; } .insight li { color: #cdbd94; } .insight li::before { color: #b98c2e; } .insight b { color: #f0a050; }
+    .stage.s-진행 { color: #3a2a00; } .tag { background: #402020; color: #ef8a7a; }
+    td.c-mid { color: #fdd835; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="/console/">🎙️ 받아쓰기</a>
+    <a href="/study/">📚 스터디</a>
+    <a href="/tools/etf/">📊 ETF 검색</a>
+</nav>
+
+<div class="header">
+    <div class="crumb"><a href="/study/">📚 스터디</a> › 병목 업종 과열 계기판</div>
+    <h1>🌡️ 반도체 병목 업종 과열 계기판</h1>
+    <p id="headSub">소부장 주도 사이클, 지금 어느 단계인가</p>
+</div>
+
+<div class="container">
+    <div class="loading-box" id="loading">📈 계기판 데이터를 불러오는 중...</div>
+    <div id="app" style="display:none">
+
+        <div class="stat-grid" id="statGrid"></div>
+
+        <div class="insight">
+            <h2>💡 오늘의 읽기</h2>
+            <ul id="insightList"></ul>
+        </div>
+
+        <div class="card">
+            <h2>업종별 계기판</h2>
+            <div class="sub">저점 = 메모리 대형주 지수의 최근 90거래일 최저일 · 신고가 비율 = 52주 신고가에 있는 종목 비율 · 괴리 = 목표주가가 주가보다 얼마나 위인가(커버 종목 중앙값) · 상향 폭 = 20거래일 전보다 ±2% 넘게 오른 종목 수 − 내린 종목 수 ÷ 커버 수</div>
+            <div class="tbl-wrap"><table id="segTable"></table></div>
+            <div class="legend">
+                <span><i style="background:var(--early)"></i>초입·양호</span>
+                <span><i style="background:var(--mid)"></i>진행</span>
+                <span><i style="background:var(--hot)"></i>과열 신호</span>
+                <span><i style="background:var(--warn)"></i>약화 신호</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>업종 상세 <span id="segTitle" style="font-size:13px;color:var(--faint);font-weight:600"></span></h2>
+            <div class="sub">탭을 눌러 업종을 바꿉니다 · 기본은 저점 이후 가장 많이 오른 주도 업종</div>
+            <div class="seg-tabs" id="segTabs"></div>
+            <div class="flags" id="flags"></div>
+            <svg class="chart-svg" id="chart" viewBox="0 0 860 300"></svg>
+            <div class="legend">
+                <span><i style="background:var(--accent)"></i>신고가 비율(월중 최대, 왼쪽 축)</span>
+                <span><i style="background:var(--hot)"></i>목표주가 괴리 중앙값(월말, 오른쪽 축)</span>
+            </div>
+            <div class="tbl-wrap" style="margin-top:12px"><table id="monthTable"></table></div>
+        </div>
+
+        <div class="card">
+            <h2>종목별 <span id="stockTitle" style="font-size:13px;color:var(--faint);font-weight:600"></span></h2>
+            <div class="sub">저점 이후 상승률 순 · 60일 변화는 60거래일 전 대비 목표주가·이익 전망 변화 · 커버리지 없는 종목은 회색 표시</div>
+            <div class="tbl-wrap"><table id="stockTable"></table></div>
+        </div>
+
+        <div class="card">
+            <h2>대형주 vs 소부장 월별 흐름</h2>
+            <div class="sub">동일가중 지수 월수익률 · 상대강도 = 소부장 지수 ÷ 대형주 지수 (시작=1). 상대강도가 바닥에서 돌아서는 달이 손바뀜의 시작</div>
+            <div class="tbl-wrap"><table id="relTable"></table></div>
+        </div>
+
+        <div class="card">
+            <h2>📐 읽는 법과 계산 방법</h2>
+            <div class="method" id="method"></div>
+        </div>
+
+        <div class="foot-note" id="foot"></div>
+    </div>
+</div>
+
+<script>
+let D = null, cur = null;
+const pct = (v, nd) => v == null ? '<span class="dim">-</span>' : ((v >= 0 ? '+' : '') + v.toFixed(nd == null ? 0 : nd) + '%');
+const cls = v => v == null ? '' : (v > 0 ? 'pos' : (v < 0 ? 'neg' : ''));
+const pc = (v, nd) => '<span class="' + cls(v) + '">' + pct(v, nd) + '</span>';
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const stageCls = s => 's-' + (s || '').split(' ')[0].slice(0, 2);
+const stageTag = s => '<span class="stage ' + stageCls(s) + '">' + esc(s || '-') + '</span>';
+const WHY = {
+    '신고가 비율': '과거 고점 때 50~70%까지 올라갔다. 40% 이상이면 과열, 15% 미만이면 초입.',
+    '목표주가 괴리': '주가가 목표주가를 따라잡으면(10% 미만) 애널리스트가 더 올릴 근거가 없어진다. 고점 때는 마이너스까지 갔다.',
+    '목표주가 상향 폭': '마이너스면 아직 깎는 중(초입), 50%를 넘으면 앞다퉈 올리는 과열 국면.',
+    '소형주 과열(비커버 > 커버)': '증권사 커버가 없는 소형주가 더 뛰면 막바지 자금이 들어온 것.',
+    '추세 이탈(반등 고점 미갱신)': '이익 전망은 오르는데 지수가 저점 이후 반등 고점을 10거래일 넘게 못 넘으면 시장이 먼저 다 반영됐다고 말하는 것.',
+};
+
+fetch('data.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => { D = d; cur = D.leader; render(); })
+    .catch(e => { document.getElementById('loading').textContent = '데이터를 불러오지 못했습니다. (' + e.message + ')'; });
+
+function allSegs() { return [D.big, D.sobu].concat(D.segments); }
+function seg(key) { return allSegs().find(s => s.key === key); }
+
+function render() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = '';
+    document.getElementById('headSub').textContent = D.price_last + ' 종가 기준 · 대형주 저점 ' + D.big_low.date + ' 이후';
+    renderStats(); renderInsights(); renderSegTable(); renderTabs(); renderDetail(); renderRel(); renderMethod();
+    document.getElementById('foot').innerHTML = '데이터 생성: ' + esc(D.generated) + ' · 수정주가·RS·컨센서스 DB 기준 · 투자 추천이 아니라 관찰용 계기판입니다.';
+}
+
+function renderStats() {
+    const L = seg(D.leader), g = L.signals, B = D.big_low;
+    const lastRel = D.relative.length ? D.relative[D.relative.length - 1] : null;
+    const items = [
+        [esc(L.label.split('(')[0]), '주도 업종<br>(저점 이후 ' + pct(g.idx_from_low) + ')'],
+        [stageTag(g.stage), '주도 업종 단계<br>과열 ' + g.hot + '개 · 약화 ' + g.warn + '개'],
+        [pct(B.from_low), '대형주 저점(' + B.date.slice(5) + ') 대비<br>' + (B.broke ? '<b style="color:var(--hot)">저점 이탈!</b>' : '저점 위 유지') + ' · 고점 대비 ' + pct(B.from_peak)],
+        [lastRel ? lastRel.rel.toFixed(2) : '-', '소부장/대형주 상대강도<br>(' + (lastRel ? lastRel.m : '') + ' 월말, 시작=1)'],
+    ];
+    document.getElementById('statGrid').innerHTML = items.map(([v, k]) => '<div class="stat"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>').join('');
+}
+
+function renderInsights() {
+    const L = seg(D.leader), g = L.signals, B = D.big, bg = B.signals;
+    const li = [];
+    li.push('저점 이후 가장 많이 오른 업종은 <b>' + esc(L.label) + '</b>(' + pct(g.idx_from_low) + ')이고 단계는 <b>' + esc(g.stage) + '</b>입니다. ' +
+        '신고가 비율 ' + (g.nh == null ? '-' : g.nh.toFixed(0) + '%') + ', 목표주가 괴리 ' + pct(g.gap) + ', 목표주가 상향 폭 ' + pct(g.tp) + ', ' + D.fy0 + 'E 이익 전망 상향 폭 ' + pct(g.e0) + '.');
+    const hots = g.flags.filter(f => f.level === 'hot').map(f => f.name), warns = g.flags.filter(f => f.level === 'warn').map(f => f.name);
+    if (hots.length) li.push('켜진 과열 신호: <b>' + hots.map(esc).join(', ') + '</b>. 과열 신호가 2개면 과열, 3개(또는 2개+약화 1개)면 고점 임박으로 봅니다.');
+    else li.push('과열 신호는 아직 하나도 켜지지 않았습니다. 과거 고점은 신고가 비율 40% 이상, 괴리 10% 미만, 목표주가 상향 폭 50% 이상이 겹칠 때 왔습니다.');
+    if (warns.length) li.push('약화 신호: ' + warns.map(esc).join(', ') + '. 과열 없이 약화만 있으면 아직 주도 업종이 아니거나 쉬어가는 구간입니다.');
+    li.push('메모리 대형주는 저점 대비 ' + pct(D.big_low.from_low) + ', 고점 대비 ' + pct(D.big_low.from_peak) + ', ' + D.fy0 + 'E 이익 전망 상향 폭 ' + pct(bg.e0) + ' (' + esc(bg.stage) + '). ' +
+        (D.big_low.broke ? '<b>대형주가 저점을 깼습니다. 과거엔 이때 소부장이 더 크게 빠졌습니다.</b>' : '대형주가 ' + D.big_low.date + ' 저점을 지키는 한 소부장 주도는 유효합니다. 이 저점이 깨지면 손절 기준으로 쓰세요.'));
+    const lagging = D.segments.filter(s => s.signals.stage === '모멘텀 둔화').map(s => s.label.split('(')[0]);
+    if (lagging.length) li.push('주도에서 빠져 있는 업종: ' + lagging.map(esc).join(', ') + '.');
+    document.getElementById('insightList').innerHTML = li.map(s => '<li>' + s + '</li>').join('');
+}
+
+function lvOf(f) { return f ? f.level : ''; }
+function flag(s, name) { return s.signals.flags.find(f => f.name.startsWith(name)); }
+
+function renderSegTable() {
+    const rows = allSegs();
+    let html = '<tr><th class="l">업종</th><th>단계</th><th>저점 이후</th><th>20일</th><th>고점 대비</th><th>RS</th><th>신고가 비율</th><th>목표가 괴리</th><th>목표가 상향폭</th><th>' + D.fy0 + 'E 상향폭</th><th>' + D.fy1 + 'E 상향폭</th><th>소형주 과열</th><th>반등고점 후</th></tr>';
+    for (const s of rows) {
+        const g = s.signals;
+        const cell = (v, f, fmt) => '<td class="c-' + lvOf(f) + '">' + (v == null ? '<span class="dim">-</span>' : fmt(v)) + '</td>';
+        html += '<tr class="' + (s.key === D.leader ? 'lead' : '') + (s.key === 'big' ? ' big' : '') + '"><td class="l">' + esc(s.label) + ' <span class="dim">' + s.n + '</span></td>' +
+            '<td>' + stageTag(g.stage) + '</td><td>' + pc(g.idx_from_low) + '</td><td>' + pc(g.ret20) + '</td><td>' + pc(g.gap_hi) + '</td><td>' + (g.rs == null ? '-' : g.rs.toFixed(0)) + '</td>' +
+            cell(g.nh, flag(s, '신고가'), v => v.toFixed(0) + '%') + cell(g.gap, flag(s, '목표주가 괴리'), v => pct(v)) + cell(g.tp, flag(s, '목표주가 상향'), v => pct(v)) +
+            cell(g.e0, flag(s, D.fy0 + 'E'), v => pct(v)) + cell(g.e1, flag(s, D.fy1 + 'E'), v => pct(v)) +
+            '<td class="c-' + lvOf(flag(s, '소형주')) + '">' + (g.uncov_ret == null || g.cov_ret == null ? '<span class="dim">-</span>' : (g.uncov_ret > g.cov_ret ? '경고' : '정상')) + '</td>' +
+            '<td class="c-' + lvOf(flag(s, '추세')) + '">' + g.days_no_high + '일</td></tr>';
+    }
+    document.getElementById('segTable').innerHTML = html;
+}
+
+function renderTabs() {
+    const tabs = document.getElementById('segTabs');
+    tabs.innerHTML = allSegs().map(s => '<button class="' + (s.key === cur ? 'on' : '') + '" data-k="' + s.key + '">' + esc(s.label.split('(')[0]) + (s.key === D.leader ? ' ★' : '') + '</button>').join('');
+    tabs.querySelectorAll('button').forEach(b => b.onclick = () => { cur = b.dataset.k; renderTabs(); renderDetail(); });
+}
+
+function renderDetail() {
+    const s = seg(cur), g = s.signals;
+    document.getElementById('segTitle').textContent = s.label + ' · ' + s.n + '종목 · 지수 고점 ' + g.peak_date + ' 대비 ' + (g.idx_from_peak == null ? '-' : (g.idx_from_peak >= 0 ? '+' : '') + g.idx_from_peak.toFixed(0) + '%');
+    document.getElementById('flags').innerHTML = g.flags.map(f => {
+        const key = Object.keys(WHY).find(k => f.name.startsWith(k.split('(')[0]));
+        return '<div class="flag"><div class="n"><span class="lv ' + f.level + '"></span>' + esc(f.name) + '</div><div class="t">' + esc(f.text) + ' · ' +
+            ({ early: '초입', mid: '진행', hot: '과열', warn: '약화', ok: '양호' }[f.level] || '') + '</div>' + (key ? '<div class="why">' + esc(WHY[key]) + '</div>' : (f.name.indexOf('이익 전망') >= 0 ? '<div class="why">이익 전망이 오르는 동안은 주가 고점이 와도 얕은 조정으로 끝났고, 상향이 멈추면 주도권이 넘어갔다.</div>' : '')) + '</div>';
+    }).join('');
+    renderChart(s); renderMonth(s); renderStocks(s);
+}
+
+function svgEl(tag, attrs, text) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (text != null) el.textContent = text;
+    return el;
+}
+
+function renderChart(s) {
+    const svg = document.getElementById('chart'); svg.innerHTML = '';
+    const M = s.monthly.filter(m => m.nh_max != null || m.gap != null).slice(-14);
+    if (!M.length) return;
+    const W = 860, H = 300, pl = 44, pr = 48, pt = 16, pb = 34;
+    const gw = (W - pl - pr) / M.length;
+    const nhMax = Math.max(50, ...M.map(m => m.nh_max || 0));
+    const gaps = M.map(m => m.gap).filter(v => v != null);
+    let gLo = Math.min(0, ...gaps), gHi = Math.max(20, ...gaps); const span = gHi - gLo || 1; gLo -= span * 0.1; gHi += span * 0.1;
+    const yN = v => pt + (1 - v / nhMax) * (H - pt - pb), yG = v => pt + (gHi - v) / (gHi - gLo) * (H - pt - pb);
+    for (let v = 0; v <= nhMax; v += 25) {
+        svg.appendChild(svgEl('line', { x1: pl, x2: W - pr, y1: yN(v), y2: yN(v), stroke: 'var(--grid)' }));
+        svg.appendChild(svgEl('text', { x: pl - 6, y: yN(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: 'var(--sub)' }, v + '%'));
+    }
+    svg.appendChild(svgEl('line', { x1: pl, x2: W - pr, y1: yN(40), y2: yN(40), stroke: 'var(--hot)', 'stroke-dasharray': '4 4', 'stroke-width': 1 }));
+    svg.appendChild(svgEl('text', { x: W - pr - 4, y: yN(40) - 4, 'text-anchor': 'end', 'font-size': 10.5, fill: 'var(--hot)' }, '과열 40%'));
+    M.forEach((m, i) => {
+        const x = pl + gw * i;
+        if (m.nh_max != null) svg.appendChild(svgEl('rect', { x: x + gw * 0.2, y: yN(m.nh_max), width: gw * 0.6, height: yN(0) - yN(m.nh_max), rx: 3, fill: 'var(--accent)', opacity: 0.8 }));
+        svg.appendChild(svgEl('text', { x: x + gw / 2, y: H - 14, 'text-anchor': 'middle', 'font-size': 11, fill: 'var(--txt)' }, m.m.slice(2)));
+        if (m.ret != null) svg.appendChild(svgEl('text', { x: x + gw / 2, y: H - 2, 'text-anchor': 'middle', 'font-size': 10, fill: m.ret >= 0 ? 'var(--up)' : 'var(--down)' }, (m.ret >= 0 ? '+' : '') + m.ret.toFixed(0) + '%'));
+    });
+    // 괴리 라인 (오른쪽 축)
+    for (const v of [gLo + span * 0.1, 0, 10, 30]) {
+        if (v < gLo || v > gHi) continue;
+        svg.appendChild(svgEl('text', { x: W - pr + 6, y: yG(v) + 4, 'text-anchor': 'start', 'font-size': 11, fill: 'var(--hot)' }, (v >= 0 ? '+' : '') + v.toFixed(0) + '%'));
+    }
+    svg.appendChild(svgEl('line', { x1: pl, x2: W - pr, y1: yG(10), y2: yG(10), stroke: 'var(--hot)', 'stroke-dasharray': '2 4', 'stroke-width': 1, opacity: 0.6 }));
+    let path = ''; M.forEach((m, i) => { if (m.gap == null) return; const x = pl + gw * i + gw / 2; path += (path ? ' L' : 'M') + x + ' ' + yG(m.gap); });
+    if (path) svg.appendChild(svgEl('path', { d: path, fill: 'none', stroke: 'var(--hot)', 'stroke-width': 2.2 }));
+    M.forEach((m, i) => { if (m.gap == null) return; svg.appendChild(svgEl('circle', { cx: pl + gw * i + gw / 2, cy: yG(m.gap), r: 3.5, fill: 'var(--hot)' })); });
+}
+
+function renderMonth(s) {
+    const M = s.monthly.slice(-14).reverse();
+    let html = '<tr><th class="l">월</th><th>지수 수익</th><th>신고가 비율(최대/월말)</th><th>목표가 괴리</th><th>목표가 상향폭</th><th>' + D.fy0 + 'E 상향폭</th><th>' + D.fy1 + 'E 상향폭</th></tr>';
+    for (const m of M) {
+        html += '<tr><td class="l">' + m.m + '</td><td>' + pc(m.ret) + '</td><td>' + (m.nh_max == null ? '-' : m.nh_max.toFixed(0) + '% / ' + (m.nh_last == null ? '-' : m.nh_last.toFixed(0) + '%')) + '</td>' +
+            '<td>' + pct(m.gap) + '</td><td>' + pc(m.tp) + '</td><td>' + pc(m.e0) + '</td><td>' + pc(m.e1) + '</td></tr>';
+    }
+    document.getElementById('monthTable').innerHTML = html;
+}
+
+function renderStocks(s) {
+    document.getElementById('stockTitle').textContent = s.label;
+    if (!s.stocks.length) { document.getElementById('stockTable').innerHTML = '<tr><td class="l dim">업종 탭에서 개별 업종을 선택하면 종목이 표시됩니다</td></tr>'; return; }
+    let html = '<tr><th class="l">종목</th><th>종가</th><th>저점 이후</th><th>20일</th><th>고점 대비</th><th>RS</th><th>목표가 괴리</th><th>목표가 60일</th><th>' + D.fy0 + 'E 60일</th><th>' + D.fy1 + 'E 60일</th></tr>';
+    for (const t of s.stocks) {
+        html += '<tr' + (t.covered ? '' : ' style="color:var(--faint)"') + '><td class="l"><a class="nm" href="/tools/etf/?stock=' + encodeURIComponent(t.name) + '" style="color:inherit;text-decoration:none">' + esc(t.name) + '</a>' + (t.nh ? '<span class="tag">신고가</span>' : '') + '</td>' +
+            '<td>' + t.close.toLocaleString() + '</td><td>' + pc(t.ret_low) + '</td><td>' + pc(t.ret20) + '</td><td>' + pc(t.gap_hi) + '</td><td>' + (t.rs == null ? '-' : t.rs) + '</td>' +
+            '<td>' + pct(t.tp_gap) + '</td><td>' + pc(t.tp60) + '</td><td>' + pc(t.e0_60) + '</td><td>' + pc(t.e1_60) + '</td></tr>';
+    }
+    document.getElementById('stockTable').innerHTML = html;
+}
+
+function renderRel() {
+    const R = D.relative.slice(-14).reverse();
+    let html = '<tr><th class="l">월</th><th>대형주</th><th>소부장</th><th>차이</th><th>상대강도</th></tr>';
+    for (const m of R) {
+        const diff = (m.big != null && m.sobu != null) ? m.sobu - m.big : null;
+        html += '<tr><td class="l">' + m.m + '</td><td>' + pc(m.big) + '</td><td>' + pc(m.sobu) + '</td><td>' + pc(diff) + '</td><td>' + (m.rel == null ? '-' : m.rel.toFixed(2)) + '</td></tr>';
+    }
+    document.getElementById('relTable').innerHTML = html;
+}
+
+function renderMethod() {
+    const T = D.thresholds;
+    document.getElementById('method').innerHTML =
+        '<b>왜 이 계기판인가</b> — 2017년, 2021년, 2023~24년 모두 메모리 대형주가 먼저 오르고, 대형주 이익 전망 상향이 멈추면 소부장(그 사이클의 병목 공정)이 4~10개월 주도했습니다. 병목 업종의 고점은 "애널리스트가 앞다퉈 목표주가를 올리고, 주가가 그 목표주가를 넘어서고, 대부분 종목이 신고가에 있을 때" 왔습니다. 이 페이지는 그 조건이 얼마나 갖춰졌는지 매일 잽니다.<ul>' +
+        '<li><b>업종 지수</b>: 업종 종목 일수익률 동일가중 누적. 저점 = 대형주 지수의 최근 90거래일 최저일.</li>' +
+        '<li><b>신고가 비율</b>: 종가 ≥ 직전 252거래일 최고가인 종목 비율. ' + T.nh_hot + '% 이상 과열, ' + T.nh_early + '% 미만 초입.</li>' +
+        '<li><b>목표주가 괴리</b>: (목표주가 ÷ 종가 − 1) 커버 종목 중앙값. ' + T.gap_near + '% 미만 임박, ' + T.gap_room + '% 이상 여유.</li>' +
+        '<li><b>상향 폭</b>: 20거래일 전 대비 ±2% 넘게 오른 종목 수 − 내린 종목 수를 커버 수로 나눈 값. 목표주가는 0 미만 초입, ' + T.tp_hot + '% 초과 과열. 이익 전망은 0 이하면 약화.</li>' +
+        '<li><b>소형주 과열</b>: 커버리지 없는 종목의 저점 이후 수익률 중앙값이 커버 종목보다 높으면 약화 신호(막바지 자금).</li>' +
+        '<li><b>추세 이탈</b>: 이익 전망이 오르는데 지수가 저점 이후 반등 고점을 10거래일 넘게 못 넘으면 약화 신호. 표의 숫자는 반등 고점 이후 지난 거래일 수.</li>' +
+        '<li><b>단계</b>: 과열 신호 0개 초입 / 1개 진행 / 2개 과열 / 3개(또는 2개+약화 1개) 고점 임박. 과열 없이 약화만 2개 이상이면 모멘텀 둔화(주도 업종 아님).</li></ul>' +
+        '<b>주의</b> — 과거 두 번의 소부장 고점(2026년 1~3월, 4~5월)에서 신고가 비율이 정점을 찍은 뒤 지수 고점까지 2주~2개월이 걸렸고 그 뒤 -16%, -58% 빠졌습니다. 초입 판정은 조정이 없다는 뜻이 아니라 고점이 뒤에 있을 확률이 높다는 뜻입니다. 대형주 저점 이탈은 이 계기판과 무관하게 손절 기준으로 쓰세요. 생성: <code>tools/study/build_semi_cycle.py</code>';
+}
+</script>
+</body>
+</html>
