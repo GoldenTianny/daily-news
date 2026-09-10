@@ -193,7 +193,7 @@
     <details>
       <summary>CANSLIM 판정 기준 보기 (이 사이트 데이터 기준)</summary>
       <div class="cs-rule">
-        <b>C</b><span>최근 분기 영업이익이 전년 같은 분기 대비 <b>+25% 이상</b> (흑자전환도 인정, 적자면 탈락)</span>
+        <b>C</b><span>최근 분기 영업이익이 전년 같은 분기 대비 <b>+25% 이상</b>이고 <b>최근 4분기 합산이 흑자</b> (흑자전환 인정, 적자면 탈락 · 작은 흑자의 비율 착시 방지)</span>
         <b>A</b><span>최근 확정 연도 영업이익이 전년 대비 <b>+25% 이상</b>이고, 최근 3개 확정 연도 모두 흑자</span>
         <b>N</b><span>종가가 52주 고점의 <b>95% 이상</b> (신고가 부근)</span>
         <b>S</b><span>수급(거래량·유통주식) — <b>거래량 데이터가 없어 판정에서 제외</b></span>
@@ -201,7 +201,7 @@
         <b>I</b><span>기관 보유 대신 <b>보유 ETF 3개 이상</b>으로 판정</span>
         <b>M</b><span>시장 방향: 코스피 지수 종가가 <b>50일 이동평균 위</b> (기준일 기준, 전 종목 공통)</span>
       </div>
-      <p class="muted" style="font-size:12.5px">순서: ① 전 종목 중 미너비니 템플릿 8개 조건 충족 → ② 그 종목들에만 위 CANSLIM 기준 적용. EPS 대신 영업이익을 씁니다. 6개 조건(S 제외)을 모두 충족하면 '부합', 하나만 부족하면 '근접'으로 표시합니다.</p>
+      <p class="muted" style="font-size:12.5px">순서: ① 전 종목 중 미너비니 템플릿 8개 조건 충족 → ② 그 종목들에만 위 CANSLIM 기준 적용. EPS 대신 영업이익을 씁니다. 6개 조건(S 제외)을 모두 충족하면 '부합'. '근접'은 실적 조건 C·A를 둘 다 충족한 상태에서 N·L·I·M 중 하나만 부족한 경우입니다 (실적이 안 되는 종목은 근접에도 들지 않음). 올해 컨센서스가 없는 종목은 연간 칸에 '올해E 없음'으로 표시됩니다.</p>
     </details>
     <div id="csBody"><div class="loading">불러오는 중&hellip;</div></div>
   </div>
@@ -502,7 +502,11 @@ function canslim(r) {
     const keys = Array.from(q.keys()).sort((a, b) => a - b);
     const k = keys[keys.length - 1];
     const [ok, lbl] = yoy(q.get(k), q.get(k - 10));
-    out.C = { ok, lbl: Math.floor(k / 10) + 'Q' + (k % 10) + ' ' + lbl };
+    // 작은 흑자의 비율 착시 방지: 최근 4분기 합산(TTM)이 흑자여야 인정
+    const last4 = keys.slice(-4).map(x => q.get(x));
+    const ttm = last4.length === 4 ? last4.reduce((a, b) => a + b, 0) : null;
+    const ttmOk = ttm != null && ttm > 0;
+    out.C = { ok: ok && ttmOk, lbl: Math.floor(k / 10) + 'Q' + (k % 10) + ' ' + lbl + (ok && !ttmOk ? ' · 4분기 합산 적자' : '') };
   } else out.C = { ok: false, lbl: '자료 없음' };
   // A: 최근 확정연도 YoY ≥ 25% + 3년 흑자
   const a = EARN_A && EARN_A.get(r.code);
@@ -514,7 +518,7 @@ function canslim(r) {
       const black3 = [fy, fy - 1, fy - 2].every(y => a.has(y) && a.get(y)[0] > 0);
       out.A = { ok: ok && black3, lbl: fy + ' ' + lbl + (black3 ? '' : ' · 3년 흑자 아님') };
       const eY = a.has(fy + 1) && a.get(fy + 1)[1] === 'E' ? fy + 1 : null;
-      out.Ae = eY ? yoy(a.get(eY)[0], a.get(fy)[0])[1] : null;
+      out.Ae = eY ? yoy(a.get(eY)[0], a.get(fy)[0])[1] : '없음';
     } else out.A = { ok: false, lbl: '확정 실적 없음' };
   } else out.A = { ok: false, lbl: '자료 없음' };
   // N: 52주 고점 95% 이상
@@ -530,6 +534,8 @@ function canslim(r) {
   // M: 시장
   out.M = { ok: MKT.ok === true, lbl: MKT.ok == null ? '확인 중' : (MKT.ok ? '상승 추세' : '50일선 아래') };
   out.pass = ['C', 'A', 'N', 'L', 'I', 'M'].filter(k => out[k].ok).length;
+  const otherFails = ['N', 'L', 'I', 'M'].filter(k => !out[k].ok).length;
+  out.tier = out.pass === 6 ? 'fit' : (out.C.ok && out.A.ok && otherFails === 1 ? 'near' : null);
   return out;
 }
 
@@ -552,16 +558,16 @@ function renderCanslim() {
   const q = query.trim().toLowerCase();
   const passed = ROWS.filter(r => r.passed);
   const evald = passed.map(r => Object.assign({ cs: canslim(r) }, r));
-  const fit = evald.filter(x => x.cs.pass === 6);
-  const near = evald.filter(x => x.cs.pass === 5);
+  const fit = evald.filter(x => x.cs.tier === 'fit');
+  const near = evald.filter(x => x.cs.tier === 'near');
   // 전 거래일 CANSLIM 판정 (같은 규칙, ETF 보유·시장 방향은 오늘 값으로 근사) → 오늘 새로 들어온 종목에 NEW
   const idx = DATES.indexOf(curDate);
   const prevDate = idx > 0 ? DATES[idx - 1] : null;
   const prevRows = prevDate ? (MONTHS.get(prevDate.slice(0, 7)) || []).filter(r => r.date === prevDate && r.passed) : null;
-  const prevTier = new Map();   // name -> 6 | 5
-  if (prevRows) prevRows.forEach(r => { const c = canslim(r); if (c.pass >= 5) prevTier.set(r.name, c.pass); });
-  const isNew = x => !!prevRows && prevTier.get(x.name) !== x.cs.pass;   // 어제 같은 등급이 아니었으면 NEW (근접→부합 승격 포함)
-  fit.forEach(x => { x.csNew = isNew(x); x.csUp = !!prevRows && prevTier.get(x.name) === 5; });
+  const prevTier = new Map();   // name -> 'fit' | 'near'
+  if (prevRows) prevRows.forEach(r => { const c = canslim(r); if (c.tier) prevTier.set(r.name, c.tier); });
+  const isNew = x => !!prevRows && prevTier.get(x.name) !== x.cs.tier;   // 어제 같은 등급이 아니었으면 NEW (근접→부합 승격 포함)
+  fit.forEach(x => { x.csNew = isNew(x); x.csUp = !!prevRows && prevTier.get(x.name) === 'near'; });
   near.forEach(x => { x.csNew = isNew(x); x.csUp = false; });
   const nNew = fit.filter(x => x.csNew).length + near.filter(x => x.csNew).length;
   cnt.textContent = '부합 ' + fit.length + '개 · 근접 ' + near.length + '개' + (prevRows ? ' · 신규 ' + nNew + '개' : '') + ' / 템플릿 충족 ' + passed.length + '개';
@@ -583,7 +589,7 @@ function renderCanslim() {
         (x.csNew ? '<span class="badge" title="' + (x.csUp ? '전 거래일 근접 → 오늘 부합' : '전 거래일 CANSLIM 목록에 없음') + '">' + (x.csUp ? 'UP' : 'NEW') + '</span>' : '') + '</td>' +
       '<td>' + badges(c) + '</td>' +
       '<td class="' + (c.C.ok ? 'up' : 'fail') + '">' + esc(c.C.lbl) + '</td>' +
-      '<td class="' + (c.A.ok ? 'up' : 'fail') + '">' + esc(c.A.lbl) + (c.Ae ? '<span class="sub">올해E ' + esc(c.Ae) + '</span>' : '') + '</td>' +
+      '<td class="' + (c.A.ok ? 'up' : 'fail') + '">' + esc(c.A.lbl) + '<span class="sub">올해E ' + esc(c.Ae || '없음') + '</span></td>' +
       '<td>' + esc(c.N.lbl) + '</td>' +
       '<td><span class="rs' + ((x.rs || 0) >= 80 ? ' hi' : '') + '">' + (x.rs == null ? '–' : x.rs) + '</span></td>' +
       '<td>' + etfCell(x.name) + '</td></tr>';
@@ -592,9 +598,9 @@ function renderCanslim() {
   const sortFn = (a, b) => (b.rs || 0) - (a.rs || 0);
   const f = fit.filter(x => !q || x.name.toLowerCase().includes(q)).sort(sortFn);
   const n = near.filter(x => !q || x.name.toLowerCase().includes(q)).sort(sortFn);
-  let h = '<h3 style="font-size:14px;color:#2e7d32;margin:10px 0 6px">&#9989; 부합 (6/6) <span class="cnt">' + f.length + '개</span></h3>';
+  let h = '<h3 style="font-size:14px;color:#2e7d32;margin:10px 0 6px">&#9989; 부합 (6개 모두) <span class="cnt">' + f.length + '개</span></h3>';
   h += '<div class="twrap"><table>' + head + '<tbody>' + (f.map(row).join('') || '<tr><td colspan="8" class="loading">부합 종목이 없습니다</td></tr>') + '</tbody></table></div>';
-  h += '<h3 style="font-size:14px;color:#e65100;margin:16px 0 6px">&#128064; 근접 (5/6) <span class="cnt">' + n.length + '개</span></h3>';
+  h += '<h3 style="font-size:14px;color:#e65100;margin:16px 0 6px">&#128064; 근접 (실적 C·A 충족, 나머지 하나만 부족) <span class="cnt">' + n.length + '개</span></h3>';
   h += '<div class="twrap"><table>' + head + '<tbody>' + (n.map(row).join('') || '<tr><td colspan="8" class="loading">근접 종목이 없습니다</td></tr>') + '</tbody></table></div>';
   h += '<div class="note">NEW = 전 거래일 CANSLIM 목록에 없던 종목, UP = 근접에서 부합으로 올라온 종목 (템플릿 표의 NEW 와는 별개). 배지에 마우스를 올리면 각 조건의 근거가 보입니다. S(수급)는 거래량 자료가 없어 판정에서 뺐고, I(기관)는 ETF 보유 수로 대신했습니다. 선별은 참고용이며 매수 신호가 아닙니다.</div>';
   box.innerHTML = h;
@@ -625,7 +631,7 @@ async function shareTemplate(btn) {
     }
     if (EARN_Q && MKT.ok != null) {
       const ev = passed.map(r => canslim(r));
-      lines.push('', '🏆 CANSLIM 부합 ' + ev.filter(c => c.pass === 6).length + ' · 근접 ' + ev.filter(c => c.pass === 5).length +
+      lines.push('', '🏆 CANSLIM 부합 ' + ev.filter(c => c.tier === 'fit').length + ' · 근접 ' + ev.filter(c => c.tier === 'near').length +
         ' · 시장 ' + (MKT.ok ? '상승 추세' : '50일선 아래'));
     }
     const url = location.origin + location.pathname + '?date=' + curDate;
