@@ -66,6 +66,29 @@
   .dbtn:disabled { opacity: .35; cursor: default; }
   .datenav .hint { font-size: 12px; color: #999; }
   .datenav .hint.past { color: #e65100; font-weight: 600; }
+  .datenav #authBox { margin-left: auto; }
+  /* CANSLIM */
+  .cs-badges { display: inline-flex; gap: 3px; }
+  .cs-badges b { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 5px;
+    font-size: 11px; font-weight: 800; background: #e8eaf6; color: #9fa8da; }
+  .cs-badges b.ok { background: #2e7d32; color: #fff; }
+  .cs-badges b.no { background: #ffebee; color: #c62828; }
+  .cs-badges b.na { background: #eee; color: #bbb; text-decoration: line-through; }
+  .cs-rule { display: grid; grid-template-columns: 28px 1fr; gap: 4px 8px; font-size: 13px; color: #444; margin: 6px 0; }
+  .cs-rule b { color: #1a237e; }
+  .mkt { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; }
+  .mkt.up { background: #e8f5e9; color: #2e7d32; }
+  .mkt.down { background: #ffebee; color: #c62828; }
+  .mkt.na { background: #eee; color: #888; }
+  .lock-wrap { position: relative; min-height: 170px; border-radius: 10px; overflow: hidden; margin: 6px 0 4px; }
+  .lock-blur { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 6px; padding: 18px 16px 10px; filter: blur(4px); opacity: .5; pointer-events: none; }
+  .lock-blur i { display: block; flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #7986cb, #c5cae9); }
+  .lock-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    min-height: 170px; padding: 18px 12px; text-align: center; background: rgba(255,255,255,.55); }
+  .lock-panel .lock-ttl { font-size: 14.5px; font-weight: 700; color: #1a237e; }
+  .lock-panel .lock-sub { font-size: 12.5px; color: #666; line-height: 1.55; }
+  .lock-panel .lock-btn { margin-top: 4px; padding: 9px 20px; border: none; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #1a237e, #3f51b5); }
 
   details { margin-top: 6px; }
   summary { cursor: pointer; font-size: 13.5px; color: #3f51b5; font-weight: 600; }
@@ -134,6 +157,7 @@
       <select id="dateSel" aria-label="기준일 선택"><option>불러오는 중&hellip;</option></select>
       <button class="dbtn" id="nextDay" title="다음 거래일 (→)" aria-label="다음 거래일">&#9654;</button>
       <span class="hint" id="dateHint"></span>
+      <span id="authBox"></span>
     </div>
     <div class="stats">
       <div class="stat"><div class="k">템플릿 충족</div><div class="v" id="stPass">–</div></div>
@@ -171,6 +195,25 @@
     </table></div>
   </div>
 
+  <div class="card" id="csCard">
+    <h2>&#127942; CANSLIM 추가 선별 <span class="cnt" id="csCnt"></span> <span class="mkt na" id="mkt">시장 확인 중&hellip;</span></h2>
+    <p class="muted" style="font-size:13px;margin-bottom:6px">위 템플릿 충족 종목 중에서 윌리엄 오닐의 CANSLIM 기준을 추가로 적용합니다. 회원 전용입니다.</p>
+    <details>
+      <summary>CANSLIM 판정 기준 보기 (이 사이트 데이터 기준)</summary>
+      <div class="cs-rule">
+        <b>C</b><span>최근 분기 영업이익이 전년 같은 분기 대비 <b>+25% 이상</b> (흑자전환도 인정, 적자면 탈락)</span>
+        <b>A</b><span>최근 확정 연도 영업이익이 전년 대비 <b>+25% 이상</b>이고, 최근 3개 확정 연도 모두 흑자</span>
+        <b>N</b><span>종가가 52주 고점의 <b>95% 이상</b> (신고가 부근)</span>
+        <b>S</b><span>수급(거래량·유통주식) — <b>거래량 데이터가 없어 판정에서 제외</b></span>
+        <b>L</b><span>RS 등급 <b>80 이상</b> (주도주)</span>
+        <b>I</b><span>기관 보유 대신 <b>보유 ETF 3개 이상</b>으로 판정</span>
+        <b>M</b><span>시장 방향: KODEX 200 종가가 <b>50일 이동평균 위</b> (기준일 기준, 전 종목 공통)</span>
+      </div>
+      <p class="muted" style="font-size:12.5px">EPS 대신 영업이익을 씁니다. 6개 조건(S 제외)을 모두 충족하면 '부합', 하나만 부족하면 '근접'으로 표시합니다.</p>
+    </details>
+    <div id="csBody"><div class="loading">불러오는 중&hellip;</div></div>
+  </div>
+
   <div class="card">
     <h2>&#128064; 근접 종목 (7/8 충족) <span class="cnt" id="nearCnt"></span></h2>
     <p class="muted" style="font-size:13px;margin-bottom:8px">조건 하나만 남은 종목. 어떤 조건이 부족한지 함께 표시합니다.</p>
@@ -183,6 +226,9 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/auth-config.js"></script>
+<script src="/assets/auth.js"></script>
 <script src="hyparquet.min.js"></script>
 <script>
 const COND = ['150·200일선 아래', '150일선 < 200일선', '200일선 하락', '50일선 < 150·200일선',
@@ -299,7 +345,14 @@ async function showDate(d, replace) {
   document.title = '미너비니 트렌드 템플릿 ' + d + ' (' + passed.length + '종목) | 가좌버핏';
   renderDateNav();
   ETFMAP = ETF_CACHE.get(d) || null;
+  MKT = MKT_CACHE.get(d) || { date: null, ok: null, close: null, ma: null };
   render();
+  // CANSLIM 재료: 실적(1회) + 시장 방향(날짜별) — 준비되면 다시 그림
+  Promise.all([loadEarnings(), loadMarket(d)]).then(([, m]) => {
+    if (curDate !== d) return;
+    MKT = m;
+    render();
+  }).catch(() => { MKT = { date: d, ok: null, close: null, ma: null }; render(); });
 
   // 주소에 기준일 반영 (최신이면 생략) — 뒤로가기로 이전 기준일로 돌아갈 수 있게
   const url = location.pathname + (isLatest ? '' : '?date=' + d);
@@ -357,9 +410,14 @@ async function load() {
   if (!found) throw new Error('데이터 없음');
   earliestYm = found;
   await loadOlderMonth();
+  if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, /[?&]code=/.test(location.search) ? 6000 : 1500))]);
   await goTo(new URLSearchParams(location.search).get('date'), true);
 }
 
+if (window.Auth) {
+  Auth.mount(document.getElementById('authBox'));
+  Auth.onChange(function () { if (ROWS.length) render(); });
+}
 document.getElementById('prevDay').addEventListener('click', () => step(-1));
 document.getElementById('nextDay').addEventListener('click', () => step(1));
 document.getElementById('dateSel').addEventListener('change', async e => {
@@ -381,6 +439,149 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') step(-1);
   else if (e.key === 'ArrowRight') step(1);
 });
+
+// ===== CANSLIM 추가 선별 (회원 전용) =====
+const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
+let EARN_Q = null, EARN_A = null, MKT = { date: null, ok: null, close: null, ma: null };
+const MKT_CACHE = new Map();
+
+async function loadEarnings() {
+  if (EARN_Q && EARN_A) return;
+  const [q, a] = await Promise.all([readParquet('/db/market/earnings/quarterly.parquet'), readParquet('/db/market/earnings/annual.parquet')]);
+  EARN_Q = new Map(); EARN_A = new Map();
+  for (const r of q) { let e = EARN_Q.get(r.code); if (!e) EARN_Q.set(r.code, e = new Map()); e.set(Number(r.fy) * 10 + Number(r.q), r.op); }
+  for (const r of a) { let e = EARN_A.get(r.code); if (!e) EARN_A.set(r.code, e = new Map()); e.set(Number(r.fy), [r.op, r.src]); }
+}
+
+// 시장 방향: KODEX 200 종가 vs 50일 이동평균 (기준일 이하 최근 50거래일)
+async function loadMarket(d) {
+  if (MKT_CACHE.has(d)) return MKT_CACHE.get(d);
+  const closes = [];
+  let ym = d.slice(0, 7);
+  for (let i = 0; i < 5; i++) {
+    try {
+      for (const r of await readParquet('/db/market/price/' + ym + '.parquet')) {
+        if (r.code !== 'A069500') continue;
+        const dd = dstr(r.date);
+        if (dd <= d) closes.push([dd, r.close]);
+      }
+    } catch (e) { /* 파일 없음 */ }
+    ym = prevMonth(ym);
+  }
+  closes.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  const last50 = closes.slice(-50);
+  const res = { date: d, ok: null, close: null, ma: null };
+  if (last50.length >= 50) {
+    res.close = last50[last50.length - 1][1];
+    res.ma = last50.reduce((s, x) => s + x[1], 0) / 50;
+    res.ok = res.close > res.ma;
+  }
+  MKT_CACHE.set(d, res);
+  return res;
+}
+
+const yoy = (cur, prev) => {   // [ok, 표시] — 25% 룰, 흑자전환 인정, 적자 탈락
+  if (cur == null || prev == null) return [false, '자료 없음'];
+  if (cur <= 0) return [false, cur < 0 ? '적자' : '0'];
+  if (prev <= 0) return [true, '흑전'];
+  const g = (cur / prev - 1) * 100;
+  return [g >= 25, (g >= 0 ? '+' : '') + (Math.abs(g) >= 100 ? g.toFixed(0) : g.toFixed(1)) + '%'];
+};
+
+function canslim(r) {
+  const out = {};
+  // C: 최근 분기 YoY
+  const q = EARN_Q && EARN_Q.get(r.code);
+  if (q && q.size) {
+    const keys = Array.from(q.keys()).sort((a, b) => a - b);
+    const k = keys[keys.length - 1];
+    const [ok, lbl] = yoy(q.get(k), q.get(k - 10));
+    out.C = { ok, lbl: Math.floor(k / 10) + 'Q' + (k % 10) + ' ' + lbl };
+  } else out.C = { ok: false, lbl: '자료 없음' };
+  // A: 최근 확정연도 YoY ≥ 25% + 3년 흑자
+  const a = EARN_A && EARN_A.get(r.code);
+  if (a && a.size) {
+    const act = Array.from(a.entries()).filter(e => e[1][1] === 'A').map(e => e[0]).sort((x, y) => x - y);
+    if (act.length) {
+      const fy = act[act.length - 1];
+      const [ok, lbl] = yoy(a.get(fy)[0], a.has(fy - 1) ? a.get(fy - 1)[0] : null);
+      const black3 = [fy, fy - 1, fy - 2].every(y => a.has(y) && a.get(y)[0] > 0);
+      out.A = { ok: ok && black3, lbl: fy + ' ' + lbl + (black3 ? '' : ' · 3년 흑자 아님') };
+      const eY = a.has(fy + 1) && a.get(fy + 1)[1] === 'E' ? fy + 1 : null;
+      out.Ae = eY ? yoy(a.get(eY)[0], a.get(fy)[0])[1] : null;
+    } else out.A = { ok: false, lbl: '확정 실적 없음' };
+  } else out.A = { ok: false, lbl: '자료 없음' };
+  // N: 52주 고점 95% 이상
+  const vh = r.close / r.hi52 - 1;
+  out.N = { ok: vh >= -0.05, lbl: vh >= -0.0005 ? '신고가' : pct(vh) };
+  // S: 판정 제외
+  out.S = { ok: null, lbl: '거래량 자료 없음' };
+  // L: RS ≥ 80
+  out.L = { ok: (r.rs || 0) >= 80, lbl: 'RS ' + (r.rs == null ? '–' : r.rs) };
+  // I: 보유 ETF ≥ 3
+  const e = ETFMAP ? ETFMAP.get(r.name) : null;
+  out.I = ETFMAP ? { ok: !!e && e.n >= 3, lbl: 'ETF ' + (e ? e.n : 0) + '개' } : { ok: false, lbl: '확인 중' };
+  // M: 시장
+  out.M = { ok: MKT.ok === true, lbl: MKT.ok == null ? '확인 중' : (MKT.ok ? '상승 추세' : '50일선 아래') };
+  out.pass = ['C', 'A', 'N', 'L', 'I', 'M'].filter(k => out[k].ok).length;
+  return out;
+}
+
+function badges(cs) {
+  return '<span class="cs-badges">' + ['C', 'A', 'N', 'S', 'L', 'I', 'M'].map(k => {
+    const v = cs[k];
+    const cls = v.ok === null ? 'na' : v.ok ? 'ok' : 'no';
+    return '<b class="' + cls + '" title="' + k + ': ' + esc(v.lbl) + '">' + k + '</b>';
+  }).join('') + '</span>';
+}
+
+function renderCanslim() {
+  const box = document.getElementById('csBody');
+  const cnt = document.getElementById('csCnt');
+  const mk = document.getElementById('mkt');
+  if (MKT.ok == null) { mk.className = 'mkt na'; mk.textContent = MKT.date ? '시장 판정 불가 (가격 이력 부족)' : '시장 확인 중…'; }
+  else { mk.className = 'mkt ' + (MKT.ok ? 'up' : 'down'); mk.textContent = 'M · KODEX 200 ' + fmtN(MKT.close) + ' vs 50일선 ' + fmtN(MKT.ma) + (MKT.ok ? ' · 상승 추세' : ' · 50일선 아래'); }
+
+  if (!EARN_Q) { box.innerHTML = '<div class="loading">실적 데이터를 불러오는 중&hellip;</div>'; return; }
+  const q = query.trim().toLowerCase();
+  const passed = ROWS.filter(r => r.passed);
+  const evald = passed.map(r => Object.assign({ cs: canslim(r) }, r));
+  const fit = evald.filter(x => x.cs.pass === 6);
+  const near = evald.filter(x => x.cs.pass === 5);
+  cnt.textContent = '부합 ' + fit.length + '개 · 근접 ' + near.length + '개 / 템플릿 충족 ' + passed.length + '개';
+
+  if (!isMember()) {
+    const bars = [30, 44, 40, 55, 50, 63, 60, 72, 68, 80, 76, 88].map(h => '<i style="height:' + h + '%"></i>').join('');
+    box.innerHTML = '<div class="lock-wrap"><div class="lock-blur">' + bars + '</div><div class="lock-panel">' +
+      '<div class="lock-ttl">&#128274; CANSLIM 선별 결과는 회원에게만 보입니다</div>' +
+      '<div class="lock-sub">' + curDate + ' 기준 <b>부합 ' + fit.length + '종목 · 근접 ' + near.length + '종목</b><br>무료 회원 · 구글 계정으로 10초면 끝납니다</div>' +
+      '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
+    return;
+  }
+
+  const row = (x, i) => {
+    const c = x.cs;
+    return '<tr class="row" onclick="location.href=\'' + link(x.name) + '\'">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(x.name) + '</span>' + (Number(x.streak) === 1 ? '<span class="badge">NEW</span>' : '') + '</td>' +
+      '<td>' + badges(c) + '</td>' +
+      '<td class="' + (c.C.ok ? 'up' : 'fail') + '">' + esc(c.C.lbl) + '</td>' +
+      '<td class="' + (c.A.ok ? 'up' : 'fail') + '">' + esc(c.A.lbl) + (c.Ae ? '<span class="sub">올해E ' + esc(c.Ae) + '</span>' : '') + '</td>' +
+      '<td>' + esc(c.N.lbl) + '</td>' +
+      '<td><span class="rs' + ((x.rs || 0) >= 80 ? ' hi' : '') + '">' + (x.rs == null ? '–' : x.rs) + '</span></td>' +
+      '<td>' + etfCell(x.name) + '</td></tr>';
+  };
+  const head = '<thead><tr><th>#</th><th>종목</th><th>CANSLIM</th><th>분기 영업이익 YoY</th><th>연간 영업이익 YoY</th><th>52주 고점比</th><th>RS</th><th>보유 ETF</th></tr></thead>';
+  const sortFn = (a, b) => (b.rs || 0) - (a.rs || 0);
+  const f = fit.filter(x => !q || x.name.toLowerCase().includes(q)).sort(sortFn);
+  const n = near.filter(x => !q || x.name.toLowerCase().includes(q)).sort(sortFn);
+  let h = '<h3 style="font-size:14px;color:#2e7d32;margin:10px 0 6px">&#9989; 부합 (6/6) <span class="cnt">' + f.length + '개</span></h3>';
+  h += '<div class="twrap"><table>' + head + '<tbody>' + (f.map(row).join('') || '<tr><td colspan="8" class="loading">부합 종목이 없습니다</td></tr>') + '</tbody></table></div>';
+  h += '<h3 style="font-size:14px;color:#e65100;margin:16px 0 6px">&#128064; 근접 (5/6) <span class="cnt">' + n.length + '개</span></h3>';
+  h += '<div class="twrap"><table>' + head + '<tbody>' + (n.map(row).join('') || '<tr><td colspan="8" class="loading">근접 종목이 없습니다</td></tr>') + '</tbody></table></div>';
+  h += '<div class="note">배지에 마우스를 올리면 각 조건의 근거가 보입니다. S(수급)는 거래량 자료가 없어 판정에서 뺐고, I(기관)는 ETF 보유 수로 대신했습니다. 선별은 참고용이며 매수 신호가 아닙니다.</div>';
+  box.innerHTML = h;
+}
 
 function sorted(list) {
   const arr = list.slice();
@@ -432,6 +633,7 @@ function render() {
       '<td class="fail">' + fails.map(esc).join(', ') + '</td></tr>';
   });
   document.getElementById('nearBody').innerHTML = n || '<tr><td colspan="6" class="loading">해당 종목이 없습니다</td></tr>';
+  renderCanslim();
 }
 
 document.querySelectorAll('.chip[data-sort]').forEach(b => b.addEventListener('click', () => {
