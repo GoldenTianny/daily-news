@@ -97,6 +97,21 @@
 - **저장은 6개 이상 충족 종목만** (충족 + 근접). streak는 전 종목으로 계산한 뒤 걸러 저장. 월당 약 7천 행·150KB
 - 소비처: `tools/etf/minervini.html` (최신 월 파일의 마지막 날짜)
 
+## db/market/index/ — 시장지수 (코스피·코스닥)
+
+원본 `kospi_kosdaq.xlsx` (HTS Time Series (Sector) 다운로드). `python3 tools/market/build_index.py <원본.xlsx>` 로 갱신 (ingest_daily.py가 시트 구조로 자동 인식). **연도별** 파일 `YYYY.parquet`.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` | DATE | 거래일 |
+| `code` | VARCHAR | `IKS900` 코스피 / `IKQ900` 코스닥 |
+| `name` | VARCHAR | 코스피 / 코스닥 |
+| `open` / `high` / `low` / `close` | DOUBLE | 시가·고가·저가·종가 지수(포인트) |
+
+- 범위: 1999-12-28 ~ (업로드 전 영업일). 원본 마지막 행(당일 CPD)은 값이 없어 제외
+- 원본에 있는 날짜만 교체하는 병합이라 재업로드 시 과거 유지, 내용이 같은 연도 파일은 재기록하지 않음
+- 용도: 백테스트 벤치마크·시장 국면(추세) 판단. 종목 DB와 `date`로 조인
+
 ## 쿼리 예시 (DuckDB)
 
 ```python

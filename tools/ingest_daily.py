@@ -11,6 +11,8 @@
   -> build_semi_cycle(반도체 병목 업종 과열 계기판, 스터디)
   -> build_minervini(미너비니 트렌드 템플릿)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
+- 별도 형식 파일은 시트 구조로 자동 인식: concensus_for_db*.xlsx(영업이익 실적·컨센서스 -> build_earnings),
+  kospi_kosdaq.xlsx(코스피·코스닥 지수 -> build_index)
 """
 import sys, os, re, datetime, numbers
 import openpyxl
@@ -20,7 +22,7 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
-import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_semi_cycle
+import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index, build_semi_cycle
 
 
 def detect_date(xlsx_path):
@@ -66,6 +68,12 @@ def main():
     if any('annual margin' in s for s in sheets):
         print(f'== 영업이익 실적·컨센서스 파일 · {os.path.basename(xlsx)}')
         build_earnings.build(xlsx)
+        print('== 완료')
+        return
+    # 시장지수 파일(kospi_kosdaq.xlsx)이면 index 적재만 수행
+    if 'ETF raw' not in sheets and build_index.is_index_file(xlsx):
+        print(f'== 시장지수 파일 · {os.path.basename(xlsx)}')
+        build_index.build(xlsx)
         print('== 완료')
         return
 
