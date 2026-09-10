@@ -20,8 +20,9 @@
 | `name` | VARCHAR | 종목명 |
 | `close` | DOUBLE | 수정주가(원) |
 
-- 범위: 2024-08-14 ~ (업로드 시점 전 영업일), 약 4,200개 종목·ETF
+- 범위: 2023-12-28 ~ (업로드 시점 전 영업일), 약 4,300개 종목·ETF
 - 규모: 월당 약 7만~8만 행, 파일당 약 500KB
+- **전면 갱신(분할·합병·사명변경 반영)**: HTS Peer Analysis 배열로 내려받은 수정주가 전체 이력 파일(`수정주가_YYYYMMDD.xlsx`, 행=종목·열=일자)을 `python3 tools/ingest_daily.py <파일>`에 넣으면 자동 인식해 `tools/market/refresh_prices.py`를 실행. (date, code) 단위 upsert라 ETF 등 원본에 없는 코드의 행은 유지되고, 코드별 현재 사명을 정본으로 가격·목표주가·RS·미너비니·영업이익 DB의 종목명을 일괄 정정한 뒤 RS 전체 재계산과 파생 스터디를 다시 만든다. 실행 전 `--dry-run`으로 소급 변경·사명변경 목록만 볼 수 있음
 
 ## db/market/consensus/ — 목표주가 컨센서스
 
