@@ -199,7 +199,7 @@
         <b>S</b><span>수급(거래량·유통주식) — <b>거래량 데이터가 없어 판정에서 제외</b></span>
         <b>L</b><span>RS 등급 <b>80 이상</b> (주도주)</span>
         <b>I</b><span>기관 보유 대신 <b>보유 ETF 3개 이상</b>으로 판정</span>
-        <b>M</b><span>시장 방향: KODEX 200 종가가 <b>50일 이동평균 위</b> (기준일 기준, 전 종목 공통)</span>
+        <b>M</b><span>시장 방향: 코스피 지수 종가가 <b>50일 이동평균 위</b> (기준일 기준, 전 종목 공통)</span>
       </div>
       <p class="muted" style="font-size:12.5px">EPS 대신 영업이익을 씁니다. 6개 조건(S 제외)을 모두 충족하면 '부합', 하나만 부족하면 '근접'으로 표시합니다.</p>
     </details>
@@ -460,20 +460,19 @@ async function loadEarnings() {
   for (const r of a) { let e = EARN_A.get(r.code); if (!e) EARN_A.set(r.code, e = new Map()); e.set(Number(r.fy), [r.op, r.src]); }
 }
 
-// 시장 방향: KODEX 200 종가 vs 50일 이동평균 (기준일 이하 최근 50거래일)
+// 시장 방향: 코스피 지수 종가 vs 50일 이동평균 (db/market/index, 기준일 이하 최근 50거래일)
 async function loadMarket(d) {
   if (MKT_CACHE.has(d)) return MKT_CACHE.get(d);
   const closes = [];
-  let ym = d.slice(0, 7);
-  for (let i = 0; i < 5; i++) {
+  const y = parseInt(d.slice(0, 4));
+  for (const yy of [y, y - 1]) {   // 연도별 파일 — 연초에는 전년 파일까지
     try {
-      for (const r of await readParquet('/db/market/price/' + ym + '.parquet')) {
-        if (r.code !== 'A069500') continue;
+      for (const r of await readParquet('/db/market/index/' + yy + '.parquet')) {
+        if (r.code !== 'IKS900') continue;
         const dd = dstr(r.date);
         if (dd <= d) closes.push([dd, r.close]);
       }
     } catch (e) { /* 파일 없음 */ }
-    ym = prevMonth(ym);
   }
   closes.sort((a, b) => a[0] < b[0] ? -1 : 1);
   const last50 = closes.slice(-50);
@@ -547,7 +546,7 @@ function renderCanslim() {
   const cnt = document.getElementById('csCnt');
   const mk = document.getElementById('mkt');
   if (MKT.ok == null) { mk.className = 'mkt na'; mk.textContent = MKT.date ? '시장 판정 불가 (가격 이력 부족)' : '시장 확인 중…'; }
-  else { mk.className = 'mkt ' + (MKT.ok ? 'up' : 'down'); mk.textContent = 'M · KODEX 200 ' + fmtN(MKT.close) + ' vs 50일선 ' + fmtN(MKT.ma) + (MKT.ok ? ' · 상승 추세' : ' · 50일선 아래'); }
+  else { mk.className = 'mkt ' + (MKT.ok ? 'up' : 'down'); mk.textContent = 'M · 코스피 ' + MKT.close.toFixed(2) + ' vs 50일선 ' + MKT.ma.toFixed(2) + (MKT.ok ? ' · 상승 추세' : ' · 50일선 아래'); }
 
   if (!EARN_Q) { box.innerHTML = '<div class="loading">실적 데이터를 불러오는 중&hellip;</div>'; return; }
   const q = query.trim().toLowerCase();
