@@ -22,7 +22,8 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
-import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index, build_semi_cycle
+import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
+import refresh_prices, build_semi_cycle
 
 
 def detect_date(xlsx_path):
@@ -74,6 +75,22 @@ def main():
     if 'ETF raw' not in sheets and build_index.is_index_file(xlsx):
         print(f'== 시장지수 파일 · {os.path.basename(xlsx)}')
         build_index.build(xlsx)
+        print('== 완료')
+        return
+    # 수정주가 전체 이력 파일(Peer Analysis 배열)이면 가격 DB 전면 갱신 + 종목명 정정 + 파생 재계산
+    if 'ETF raw' not in sheets and refresh_prices.is_price_history_file(xlsx):
+        print(f'== 수정주가 전체 갱신 파일 · {os.path.basename(xlsx)}')
+        refresh_prices.refresh(xlsx)
+        print('[재계산 1/5] RS 등급 전체')
+        build_rs.build(force=True)
+        print('[재계산 2/5] 52주 신고가 돌파 분석')
+        build_high52.build()
+        print('[재계산 3/5] 편입 비중 증가 TOP 10 검증')
+        build_etf_movers.build()
+        print('[재계산 4/5] 반도체 병목 업종 과열 계기판')
+        build_semi_cycle.build()
+        print('[재계산 5/5] 미너비니 트렌드 템플릿')
+        build_minervini.build()
         print('== 완료')
         return
 
