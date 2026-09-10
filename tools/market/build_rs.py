@@ -5,6 +5,8 @@
   백분위로 1~99 등급 산정. 순위 모집단은 **일반 종목만** — ETF는 종목
   조합의 복제라 모집단에서 제외하되, 자신의 점수가 일반 종목 분포에서
   어느 백분위인지로 등급을 부여 (예: ETF 등급 90 = 일반 종목 상위 10% 성과)
+- 동점(예: 거래정지로 가격 불변 → 점수 1.0)은 같은 순위(동점 그룹의 마지막 순위)를
+  받아 결과가 결정적 — 같은 가격 DB면 언제 다시 계산해도 동일
 - 252거래일(약 1년) 이력이 확보된 날짜만 계산하며, 이미 계산된 날짜는 건너뜀
   (일일 갱신 시 새 날짜 1개만 추가 계산됨)
 - 실행: python3 tools/market/build_rs.py        (build_market.py 실행 후)
@@ -71,13 +73,16 @@ def build(force=False):
         ),
         -- 순위 모집단은 일반 종목만: 누적 카운트가 종목만 세므로 ETF 행이
         -- 끼어 있어도 종목끼리의 순위는 그대로이고, ETF는 "자기보다 점수가
-        -- 높은 종목 수"로 같은 분포 위에서 백분위를 받는다
+        -- 높은 종목 수"로 같은 분포 위에서 백분위를 받는다.
+        -- RANGE 프레임: 점수가 같은 종목(거래정지로 가격이 불변이면 정확히 1.0으로
+        -- 다수 동점)은 모두 같은 순위(동점 그룹의 마지막 순위)를 받아 실행마다
+        -- 결과가 달라지지 않는다 (ROWS 프레임은 동점 내 순서가 임의라 비결정적)
         r AS (
           SELECT date, code, name, is_etf,
                  count(*) FILTER (WHERE NOT is_etf) OVER (PARTITION BY date) AS n_stk,
                  count(*) FILTER (WHERE NOT is_etf) OVER (
                    PARTITION BY date ORDER BY score DESC
-                   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_stk
+                   RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_stk
           FROM s
         )
         SELECT date, code, name,
@@ -87,6 +92,14 @@ def build(force=False):
     """).df()
     df['date'] = pd.to_datetime(df['date']).dt.date
 
+    def norm(d):   # 비교용 정규화 (parquet 왕복 시 str/object, date/object dtype 차이 무시)
+        d = d[['date', 'code', 'name', 'rs']].copy()
+        d['date'] = d['date'].astype(str).str[:10]
+        d['code'] = d['code'].astype(object)
+        d['name'] = d['name'].astype(object)
+        d['rs'] = d['rs'].astype('int64')
+        return d.sort_values(['date', 'code']).reset_index(drop=True)
+
     n_new = n_same = 0
     for ym, g in df.groupby(df['date'].map(lambda d: f'{d.year:04d}-{d.month:02d}')):
         dst = os.path.join(OUT, ym + '.parquet')
@@ -95,12 +108,9 @@ def build(force=False):
             old['date'] = pd.to_datetime(old['date']).dt.date
             g = pd.concat([old[~old['date'].isin(set(g['date']))], g])
         g = g.sort_values(['date', 'code']).reset_index(drop=True)
-        if os.path.exists(dst):
-            prev = pd.read_parquet(dst)
-            prev['date'] = pd.to_datetime(prev['date']).dt.date
-            if prev.sort_values(['date', 'code']).reset_index(drop=True).equals(g):
-                n_same += 1
-                continue
+        if os.path.exists(dst) and norm(pd.read_parquet(dst)).equals(norm(g)):
+            n_same += 1
+            continue
         con.execute(f"""
             COPY (SELECT CAST(date AS DATE) AS date, code, name, CAST(rs AS UTINYINT) AS rs FROM g)
             TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
