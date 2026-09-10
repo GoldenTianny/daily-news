@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""kospi_kosdaq.xlsx -> 시장지수 DB (db/market/index/)
+"""코스피·코스닥 지수 시트 -> 시장지수 DB (db/market/index/)
 
-원본: HTS 'Time Series (Sector)' 다운로드 (1시트). 헤더 행에 Code(IKS900 코스피 /
+원본: HTS 'Time Series (Sector)' 형식 시트. 헤더 행에 Code(IKS900 코스피 /
 IKQ900 코스닥)·Name·Item Code, 'D A T E' 행 아래로 일별 종가·시가·고가·저가 지수.
-1999-12-28부터의 전체 이력이 담기며, 마지막 행(당일 CPD)은 값이 비어 있어 제외된다.
+단독 파일(kospi_kosdaq.xlsx, 1999-12-28부터 전체 이력)이든 일일 파일
+(ETF_price_concensus_*.xlsx)에 추가된 시트든, 시트명과 무관하게 Code 행의 지수 코드로
+인식한다. 값이 비어 있는 행(당일 CPD)은 제외.
 
 산출물: db/market/index/YYYY.parquet (연도별)
   date DATE, code VARCHAR(IKS900/IKQ900), name VARCHAR(코스피/코스닥),
   open/high/low/close DOUBLE (지수 포인트)
 - 원본에 있는 날짜만 교체하고 나머지는 유지(병합). 내용이 같은 연도 파일은 다시 쓰지 않음
 - 백테스트에서 벤치마크·시장 국면 판단용. 예: duckdb.sql("SELECT * FROM 'db/market/index/*.parquet'")
-실행: python3 tools/market/build_index.py <kospi_kosdaq.xlsx>
-      (ingest_daily.py가 시트 구조로 자동 인식해 호출)
+실행: python3 tools/market/build_index.py <kospi_kosdaq.xlsx 또는 지수 시트가 있는 일일 파일>
+      (ingest_daily.py가 시트 구조로 자동 인식해 호출 — 일일 파일은 3단계에서 실행)
 """
 import sys, os, numbers, datetime
 import openpyxl
@@ -25,21 +27,38 @@ ITEMS = {'종가지수': 'close', '시가지수': 'open', '고가지수': 'high'
 COLS = ['date', 'code', 'name', 'open', 'high', 'low', 'close']
 
 
+def index_sheets(wb):
+    """Code 행에 지수 코드(IK…)가 있는 시트 목록 — 시트명과 무관하게 구조로 인식.
+    단독 파일(kospi_kosdaq.xlsx)이든 일일 파일에 추가된 '코스피, 코스닥' 시트든 동일하게 처리"""
+    out = []
+    for ws in wb.worksheets:
+        for i, row in enumerate(ws.iter_rows(values_only=True)):
+            if i > 12:
+                break
+            if row and str(row[0] or '').strip() == 'Code':
+                if any(str(v or '').startswith('IK') for v in row[1:]):
+                    out.append(ws.title)
+                break
+    return out
+
+
 def is_index_file(xlsx_path):
-    """첫 시트 Code 행이 지수 코드(IKS/IKQ…)로 시작하면 지수 파일"""
+    """지수 시트가 하나라도 있으면 True (일일 파일은 호출 측에서 'ETF raw' 유무로 구분)"""
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
-    ws = wb[wb.sheetnames[0]]
-    for i, row in enumerate(ws.iter_rows(values_only=True)):
-        if i > 12:
-            break
-        if row and str(row[0] or '').strip() == 'Code':
-            return any(str(v or '').startswith('IK') for v in row[1:])
-    return False
+    return bool(index_sheets(wb))
 
 
 def parse(xlsx_path):
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
-    ws = wb[wb.sheetnames[0]]
+    frames = [parse_sheet(wb[s]) for s in index_sheets(wb)]
+    frames = [f for f in frames if not f.empty]
+    if not frames:
+        return pd.DataFrame(columns=COLS)
+    df = pd.concat(frames, ignore_index=True)
+    return df.drop_duplicates(['date', 'code'], keep='last').reset_index(drop=True)
+
+
+def parse_sheet(ws):
     rows = list(ws.iter_rows(values_only=True))
     header = {str(r[0]).strip(): i for i, r in enumerate(rows[:16]) if r and r[0]}
     code_row, name_row, item_row = rows[header['Code']], rows[header['Name']], rows[header['D A T E']]

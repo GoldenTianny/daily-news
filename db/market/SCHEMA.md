@@ -99,7 +99,7 @@
 
 ## db/market/index/ — 시장지수 (코스피·코스닥)
 
-원본 `kospi_kosdaq.xlsx` (HTS Time Series (Sector) 다운로드). `python3 tools/market/build_index.py <원본.xlsx>` 로 갱신 (ingest_daily.py가 시트 구조로 자동 인식). **연도별** 파일 `YYYY.parquet`.
+원본은 HTS Time Series (Sector) 형식의 코스피·코스닥 시트 — 단독 파일 `kospi_kosdaq.xlsx`(전체 이력)이든 일일 파일 `ETF_price_concensus_*.xlsx`에 추가된 시트든 시트명과 무관하게 Code 행의 지수 코드로 자동 인식 (ingest_daily.py 3단계). `python3 tools/market/build_index.py <원본.xlsx>` 로 단독 실행도 가능. **연도별** 파일 `YYYY.parquet`.
 
 | 컬럼 | 타입 | 설명 |
 |---|---|---|
