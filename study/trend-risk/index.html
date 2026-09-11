@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>추세추종 리스크 관리 | 가좌버핏 스터디</title>
+<meta name="description" content="추세추종 돌파매매의 리스크 관리 총정리 — 2% 룰, R과 손절, 손익비 1:3, 유닛과 점진적 배팅, 장세 판단. 시드를 넣으면 최대 투자금·유닛이 계산되는 계산기와 코스피 60일선 기준 현재 장세 표시.">
+<link rel="canonical" href="https://gjbuffet.kr/study/trend-risk/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="추세추종 리스크 관리 | 가좌버핏 스터디">
+<meta property="og:description" content="2% 룰 · R · 손익비 1:3 · 유닛 · 장세 판단 — 진입 비중과 손절 기준 계산기">
+<meta property="og:url" content="https://gjbuffet.kr/study/trend-risk/">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<script src="/tools/etf/hyparquet.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #f0f2f5; --card: #ffffff; --line: #e6e9f0; --txt: #333;
+    --sub: #667; --faint: #99a; --navy: #1a237e; --accent: #3f51b5;
+    --up: #d32f2f; --down: #1565c0; --ok: #2e7d32; --warn: #ef6c00;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
+.topnav { display: flex; align-items: center; gap: 6px; background: #12274d; padding: 0 8px; position: sticky; top: 0; z-index: 500; overflow-x: auto; }
+.topnav a { display: inline-flex; align-items: center; gap: 5px; color: #dbe6fb; text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px 14px; white-space: nowrap; border-bottom: 3px solid transparent; }
+.topnav a:hover, .topnav a:active { color: #fff; border-bottom-color: #4d8ce8; }
+.topnav a.home { font-weight: 700; }
+.topnav .spacer { flex: 1; }
+.header { background: linear-gradient(135deg, #1a237e, #283593); color: white; padding: 30px 20px 26px; text-align: center; }
+.header .crumb { font-size: 12.5px; opacity: 0.75; margin-bottom: 6px; }
+.header .crumb a { color: #cdd8f8; text-decoration: none; }
+.header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.header p { font-size: 13.5px; opacity: 0.85; }
+.container { max-width: 860px; margin: 0 auto; padding: 22px 14px 60px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+@media (max-width: 640px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; text-align: center; }
+.stat .v { font-size: 21px; font-weight: 800; color: var(--navy); }
+.stat .v small { font-size: 12px; font-weight: 700; }
+.stat .k { font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.4; }
+
+.insight { background: linear-gradient(135deg, #fff8ec, #fff3dd); border: 1px solid #f0dcb0; border-radius: 14px; padding: 18px 18px 14px; margin-bottom: 24px; }
+.insight h2 { font-size: 15.5px; color: #8a5a00; margin-bottom: 10px; }
+.insight ul { list-style: none; }
+.insight li { font-size: 13.5px; color: #5c4a1e; line-height: 1.65; padding-left: 20px; position: relative; margin-bottom: 6px; }
+.insight li::before { content: "▸"; position: absolute; left: 4px; color: #d09a2a; }
+.insight b { color: #a34700; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; margin-bottom: 18px; }
+.card h2 { font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+.card .sub { font-size: 12.5px; color: var(--faint); margin-bottom: 12px; line-height: 1.5; }
+.card p { font-size: 13.5px; line-height: 1.7; margin-bottom: 8px; }
+.card p b { color: var(--navy); }
+.formula { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 6px 0 10px; display: inline-block; }
+
+.inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.inputs label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+.inputs input, .inputs select { width: 100%; padding: 9px 10px; font-size: 14px; border: 1.5px solid var(--line); border-radius: 9px; background: var(--card); color: var(--txt); outline: none; font-family: inherit; }
+.inputs input:focus, .inputs select:focus { border-color: var(--accent); }
+.result { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.result .r { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.result .r .k { font-size: 11.5px; color: var(--sub); }
+.result .r .v { font-size: 18px; font-weight: 800; color: var(--navy); margin-top: 2px; }
+.result .r .v small { font-size: 11.5px; font-weight: 600; color: var(--sub); }
+.pos { color: var(--up); } .neg { color: var(--down); }
+
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: right; padding: 8px 7px; color: var(--sub); font-size: 12px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+th.l, td.l { text-align: left; }
+td { padding: 8px 7px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+tr.now td { background: rgba(63,81,181,0.08); font-weight: 700; }
+
+.units { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+.unit { flex: 1; min-width: 60px; height: 44px; border-radius: 8px; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--faint); }
+.unit.mkt { border-style: dashed; }
+.unit.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.unit.on.mkt { background: #7986cb; border-color: #7986cb; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.btns button { padding: 10px 14px; font-size: 13.5px; font-weight: 700; border: none; border-radius: 9px; cursor: pointer; font-family: inherit; }
+.btn-ok { background: #e8f5e9; color: var(--ok); } .btn-bad { background: #fdecea; color: var(--up); } .btn-gray { background: var(--bg); color: var(--sub); border: 1px solid var(--line) !important; }
+.seg-tabs { display: inline-flex; gap: 4px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px; margin-bottom: 8px; }
+.seg-tabs button { padding: 7px 12px; font-size: 12.5px; font-weight: 700; color: var(--sub); background: transparent; border: none; border-radius: 7px; cursor: pointer; font-family: inherit; }
+.seg-tabs button.on { background: var(--accent); color: #fff; }
+.log { font-size: 12.5px; color: var(--sub); margin-top: 8px; line-height: 1.6; }
+
+.regime { display: flex; gap: 10px; flex-wrap: wrap; }
+.regime .box { flex: 1; min-width: 220px; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.regime .box h3 { font-size: 14px; margin-bottom: 6px; }
+.regime .tag { display: inline-block; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 10px; color: #fff; margin-left: 6px; }
+.tag.bull { background: var(--up); } .tag.bear { background: var(--down); }
+.regime .row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+.regime .row:last-child { border-bottom: none; }
+.foot-note { font-size: 12px; color: var(--faint); text-align: center; margin-top: 20px; line-height: 1.6; }
+
+@media (prefers-color-scheme: dark) {
+    :root { --bg: #101418; --card: #1a2029; --line: #2a3242; --txt: #d5d9e0; --sub: #9aa3b2; --faint: #778; --navy: #9fb4f5; --accent: #7f95e8; --up: #ef6a5a; --down: #64a0e8; --ok: #66bb6a; --warn: #ffa726; }
+    .topnav { background: #0d1a33; }
+    .insight { background: linear-gradient(135deg, #2a2416, #241f10); border-color: #4a3d1c; }
+    .insight h2 { color: #e8b45a; } .insight li { color: #cdbd94; } .insight li::before { color: #b98c2e; } .insight b { color: #f0a050; }
+    .btn-ok { background: #1f3a22; } .btn-bad { background: #402020; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="/" class="home">🏠 가좌버핏</a>
+    <span class="spacer"></span>
+    <a href="/console/">🎙️ 받아쓰기</a>
+    <a href="/study/">📚 스터디</a>
+    <a href="/tools/etf/">📊 ETF 검색</a>
+</nav>
+
+<div class="header">
+    <div class="crumb"><a href="/study/">📚 스터디</a> › 추세추종 리스크 관리</div>
+    <h1>🎯 추세추종 리스크 관리 총정리</h1>
+    <p>진입 시점 · 매수 비중 · 손절 기준 — 2% 룰, R, 손익비, 유닛, 장세 판단 (깡토 영상 정리)</p>
+</div>
+
+<div class="container">
+
+    <div class="stat-grid">
+        <div class="stat"><div class="v">2<small>%</small></div><div class="k">한 번 매매 최대 손실<br>(시드 대비)</div></div>
+        <div class="stat"><div class="v">1 : 3</div><div class="k">최소 손익비<br>(손절 −1R, 목표 +3R)</div></div>
+        <div class="stat"><div class="v">30~40<small>%</small></div><div class="k">돌파매매 평균 승률<br>(10·20년 통계)</div></div>
+        <div class="stat"><div class="v">5</div><div class="k">유닛 수 예시<br>(종목 3 + 장세 2)</div></div>
+    </div>
+
+    <div class="insight">
+        <h2>💡 한 장 요약</h2>
+        <ul>
+            <li><b>예측하지 않고 대응한다.</b> 오를지 내릴지 맞추는 게임이 아니라, 시장 흐름에 따라 비중을 조절하는 게임이다. 시장은 항상 옳다.</li>
+            <li><b>승률은 낮아도 된다.</b> 돌파매매 승률은 30~40%. 대신 손실은 −1R에서 자르고 수익은 +3R 이상 끌고 가면, 열 번 중 일곱 번 져도 남는다.</li>
+            <li><b>리스크 관리의 핵심은 손절이 아니라 배팅 크기다.</b> 한 번 매매에서 시드의 2%보다 많이 잃지 않도록 매수 금액을 정한다(2% 룰). 여기서 종목당 최대 투자금과 유닛 크기가 자동으로 나온다.</li>
+            <li><b>성공하면 늘리고 실패하면 줄인다(점진적 배팅).</b> 새 종목은 1유닛으로 시작, +3R을 달성할 때마다 다음 종목은 1유닛 더, 손절할 때마다 1유닛 덜. 장이 좋으면 저절로 풀 배팅, 나쁘면 저절로 최소 배팅이 된다.</li>
+            <li><b>장세도 유닛으로 반영한다.</b> 코스피가 60일선 위면 강세(시장 유닛 2), 아래면 약세(시장 유닛 1). 종목 유닛과 합쳐 최종 비중을 정한다.</li>
+        </ul>
+    </div>
+
+    <!-- 1. 2% 룰 계산기 -->
+    <div class="card">
+        <h2>1. 2% 룰 → 종목당 최대 투자금과 유닛 크기</h2>
+        <div class="sub">2% 룰은 "−2%에 손절"이 아니라 "한 번 매매에서 시드의 2%보다 많이 잃지 않는다"는 뜻이다. 손절폭을 정하면 살 수 있는 최대 금액이 역산된다. 시드가 줄면 손실 한도도 같이 줄어 파산 확률이 낮아진다(몬테카를로 시뮬레이션에서 나온 기준).</div>
+        <div class="formula">종목 최대 투자금 = 시드 × 최대 손실률 ÷ 손절폭 &nbsp;&nbsp;(예: 1,000만 × 2% ÷ 8% = 250만 원, 시드의 25%)</div>
+        <div class="inputs">
+            <div><label>시드 머니 (원)</label><input id="seed" type="number" value="10000000" step="100000"></div>
+            <div><label>한 번 매매 최대 손실 (% of 시드)</label><input id="maxLoss" type="number" value="2" step="0.5" min="0.1"></div>
+            <div><label>손절폭 R (%)</label><input id="stopPct" type="number" value="8" step="0.5" min="0.5"></div>
+            <div><label>목표 손익비 (R 배수)</label><input id="rr" type="number" value="3" step="0.5" min="0.5"></div>
+            <div><label>유닛 수 (종목+장세)</label><input id="nUnits" type="number" value="5" step="1" min="1" max="10"></div>
+        </div>
+        <div class="result" id="calc1"></div>
+    </div>
+
+    <!-- 2. 승률·손익비 -->
+    <div class="card">
+        <h2>2. 승률 × 손익비 → 반복했을 때 남는가</h2>
+        <div class="sub">영상의 계산: 열 번 중 일곱 번 −8%로 손절(−56%)해도 세 번 +24%(+72%)면 +16%가 남는다. 손익비 1:3은 승률 30~40%에서 여유 있게 남도록 잡은 최소 기준이고, 실제로는 추세가 꺾일 때까지 끌고 가는 것이 원칙이다.</div>
+        <div class="inputs">
+            <div><label>승률 (%)</label><input id="winRate" type="number" value="30" step="5" min="1" max="99"></div>
+        </div>
+        <div class="result" id="calc2"></div>
+        <div class="tbl-wrap" style="margin-top:12px"><table id="rrTable"></table></div>
+    </div>
+
+    <!-- 3. 유닛 시뮬레이터 -->
+    <div class="card">
+        <h2>3. 유닛과 점진적 배팅 시뮬레이터</h2>
+        <div class="sub">유닛은 한 종목을 나눠 사는 분할매수가 아니다. <b>다음에 사는 다른 종목</b>의 비중을 정하는 방법이다. 새 종목은 1유닛으로 시작하고, 보유 종목이 +3R에 도달(성공)하면 다음 종목은 1유닛 더, 손절(실패)하면 1유닛 덜 산다. 장세 유닛은 코스피 60일선 위면 2, 아래면 1을 기본으로 더한다.</div>
+        <div class="seg-tabs" id="regimeTabs">
+            <button data-r="bull">강세장 (60일선 위) · 시장 유닛 2</button>
+            <button data-r="bear">약세장 (60일선 아래) · 시장 유닛 1</button>
+        </div>
+        <div class="units" id="unitBar"></div>
+        <div class="result" id="calc3"></div>
+        <div class="btns">
+            <button class="btn-ok" id="btnWin">✅ 보유 종목이 +3R 달성 (성공, +1유닛)</button>
+            <button class="btn-bad" id="btnLose">❌ 보유 종목 손절 (실패, −1유닛)</button>
+            <button class="btn-gray" id="btnReset">초기화</button>
+        </div>
+        <div class="log" id="unitLog"></div>
+    </div>
+
+    <!-- 4. 현재 장세 -->
+    <div class="card">
+        <h2>4. 지금 장세는? (코스피·코스닥 60일선 기준, DB 자동 계산)</h2>
+        <div class="sub">이 저장소의 지수 DB(<code>db/market/index</code>)에서 최신 종가와 60일 이동평균을 읽어 강세·약세를 판정합니다. 장세는 예측이 아니라 후행 판단이며, 기준선(60일)은 본인 스타일에 맞게 20일·120일로 바꿔 써도 됩니다.</div>
+        <div class="regime" id="regime"><div class="box">지수 데이터를 불러오는 중…</div></div>
+    </div>
+
+    <!-- 5. 원칙 정리 -->
+    <div class="card">
+        <h2>5. 용어와 원칙 정리</h2>
+        <p><b>R (리스크)</b> — 한 번 매매에서 감수하기로 정한 손실폭. 영상 예시는 −8%지만 고정값이 아니라 종목·상황에 따라 −5%나 −10%가 될 수 있다. 중요한 건 R 대비 목표 수익이 몇 배인가(손익비)다.</p>
+        <p><b>2% 룰</b> — 한 번 매매의 최대 손실 = 시드의 2%. 손절만 잘하면 되는 게 아니라 "얼마를 살 것인가"가 리스크 관리의 본체다. 시드 대비 비율이라 자산이 줄면 손실 한도도 같이 줄어드는 자동 브레이크가 된다.</p>
+        <p><b>손익비 1:3</b> — 승률 30~40%를 전제로 반복했을 때 수익이 쌓이도록 잡은 최소 기준. 손익분기 손익비는 2배 남짓이지만 여유를 두어 3배. 이 기준은 유닛 조절에서 "성공"을 판정하는 잣대(+3R 도달)로도 쓰인다.</p>
+        <p><b>유닛·점진적 배팅</b> — 최대 투자금을 N등분한 것이 1유닛. 시장이 좋으면 종목들이 같이 성공해 자연스럽게 풀 배팅이 되고, 나쁘면 연속 손절로 최소 배팅이 된다. 손실은 작게, 수익은 크게 만드는 구조. 여러 종목을 동시에 매매할 때는 "+3R 달성 여부"를 기준으로 유닛을 세면 헷갈리지 않는다.</p>
+        <p><b>장세 판단</b> — 지수가 60일선 위인지 아래인지로 시장 유닛을 달리 준다. 강세·횡보·약세 세 단계로 나눠도 된다. 약세장 최소 2유닛부터 최대 4유닛, 강세장 3유닛부터 최대 5유닛(예시 기준).</p>
+        <p><b>왜 추세추종인가</b> — 가치투자는 옳아도 시장이 알아주기까지 시간이 걸리고, 단타는 성향·능력 차이가 커서 통계로 검증하면 예금 수준의 수익에 그쳤다. 추세추종은 규칙이 정형화돼 있어 누구나 따라 할 수 있고, 횡보장이 길었던 국내 시장에서도 장기 통계로 초과수익이 확인됐다는 것이 영상의 요지.</p>
+        <p><b>한 줄</b> — 손실은 짧게, 수익은 길게. 살아남아야 시장이 주는 수익을 받는다.</p>
+    </div>
+
+    <div class="foot-note">출처: 유튜브 '진입시점·매수비중·손절기준 이 영상 하나로 총정리 | 깡토' 자막을 바탕으로 원칙만 정리한 것입니다. 숫자(2%, 8%, 1:3, 유닛 5개)는 영상의 예시이며 본인 성향에 맞게 바꿔 쓰라는 것이 영상의 전제입니다. 투자 판단의 책임은 본인에게 있습니다.</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const won = v => Math.round(v).toLocaleString() + '원';
+const pct = (v, nd) => (v >= 0 ? '+' : '') + v.toFixed(nd == null ? 1 : nd) + '%';
+
+function calc1() {
+    const seed = +$('seed').value || 0, ml = +$('maxLoss').value / 100, sp = +$('stopPct').value / 100, rr = +$('rr').value, n = Math.max(1, +$('nUnits').value | 0);
+    const maxLoss = seed * ml, maxPos = sp > 0 ? maxLoss / sp : 0, unit = maxPos / n;
+    $('calc1').innerHTML = [
+        ['한 번 매매 최대 손실 금액', won(maxLoss), (ml * 100).toFixed(1) + '% of 시드'],
+        ['종목당 최대 투자금 (풀 유닛)', won(maxPos), seed ? (maxPos / seed * 100).toFixed(1) + '% of 시드' : ''],
+        ['1유닛 금액', won(unit), n + '유닛 분할'],
+        ['동시에 풀 배팅 가능한 종목 수', seed && maxPos ? Math.floor(seed / maxPos) + '종목' : '-', '시드 ÷ 최대 투자금'],
+        ['손절 기준 (−1R)', pct(-sp * 100), '매수가 대비'],
+        ['성공 기준 (+' + rr + 'R)', pct(sp * rr * 100), '이 수익률에 도달하면 다음 종목 +1유닛'],
+    ].map(([k, v, s]) => '<div class="r"><div class="k">' + k + '</div><div class="v">' + v + (s ? ' <small>' + s + '</small>' : '') + '</div></div>').join('');
+    calc2(); renderUnits();
+}
+
+function calc2() {
+    const w = +$('winRate').value / 100, sp = +$('stopPct').value, rr = +$('rr').value;
+    const win = sp * rr, ev = w * win - (1 - w) * sp, ten = ev * 10, be = 1 / (1 + rr) * 100;
+    $('calc2').innerHTML = [
+        ['매매 1회 기대 수익률', '<span class="' + (ev >= 0 ? 'pos' : 'neg') + '">' + pct(ev, 2) + '</span>', '승률×' + win.toFixed(0) + '% − 패율×' + sp + '%'],
+        ['10회 반복 시 합계', '<span class="' + (ten >= 0 ? 'pos' : 'neg') + '">' + pct(ten) + '</span>', Math.round(w * 10) + '승 ' + Math.round((1 - w) * 10) + '패 기준'],
+        ['손익분기 승률', be.toFixed(1) + '%', '손익비 1:' + rr + '일 때 이보다 높으면 남는다'],
+        ['현재 승률의 여유', pct(w * 100 - be), '승률 − 손익분기 승률'],
+    ].map(([k, v, s]) => '<div class="r"><div class="k">' + k + '</div><div class="v">' + v + (s ? ' <small>' + s + '</small>' : '') + '</div></div>').join('');
+    // 승률 × 손익비 표
+    let html = '<tr><th class="l">승률 ＼ 손익비</th>' + [1, 1.5, 2, 2.5, 3, 4].map(r => '<th>1:' + r + '</th>').join('') + '</tr>';
+    for (const wr of [20, 30, 40, 50, 60]) {
+        html += '<tr' + (Math.abs(wr - w * 100) < 5 ? ' class="now"' : '') + '><td class="l">' + wr + '%</td>' + [1, 1.5, 2, 2.5, 3, 4].map(r => {
+            const e = (wr / 100 * sp * r - (1 - wr / 100) * sp) * 10;
+            return '<td class="' + (e >= 0 ? 'pos' : 'neg') + '">' + pct(e, 0) + '</td>';
+        }).join('') + '</tr>';
+    }
+    $('rrTable').innerHTML = html;
+}
+
+// ---- 유닛 시뮬레이터 ----
+let regime = 'bull', stockUnits = 1, log = [];
+function renderUnits() {
+    const n = Math.max(1, +$('nUnits').value | 0);
+    const mktUnits = Math.min(n - 1, regime === 'bull' ? 2 : 1);     // 시장 유닛
+    const maxStock = n - mktUnits;                                      // 종목 유닛 최대
+    stockUnits = Math.min(Math.max(1, stockUnits), maxStock);
+    const total = mktUnits + stockUnits;
+    const seed = +$('seed').value || 0, ml = +$('maxLoss').value / 100, sp = +$('stopPct').value / 100;
+    const unit = sp > 0 ? seed * ml / sp / n : 0;
+    document.querySelectorAll('#regimeTabs button').forEach(b => b.classList.toggle('on', b.dataset.r === regime));
+    let bar = '';
+    for (let i = 0; i < mktUnits; i++) bar += '<div class="unit mkt on">시장</div>';
+    for (let i = 0; i < maxStock; i++) bar += '<div class="unit ' + (i < stockUnits ? 'on' : '') + '">종목 ' + (i + 1) + '</div>';
+    $('unitBar').innerHTML = bar;
+    $('calc3').innerHTML = [
+        ['다음 종목 매수 비중', total + ' / ' + n + ' 유닛', '시장 ' + mktUnits + ' + 종목 ' + stockUnits],
+        ['다음 종목 매수 금액', won(unit * total), '1유닛 ' + won(unit)],
+        ['최대 손실 (손절 시)', won(unit * total * sp), '시드의 ' + (seed ? (unit * total * sp / seed * 100).toFixed(2) : 0) + '%'],
+        ['풀 배팅까지', maxStock - stockUnits === 0 ? '풀 배팅 상태' : (maxStock - stockUnits) + '번 더 성공', '연속 성공 시'],
+    ].map(([k, v, s]) => '<div class="r"><div class="k">' + k + '</div><div class="v">' + v + (s ? ' <small>' + s + '</small>' : '') + '</div></div>').join('');
+    $('unitLog').innerHTML = log.length ? '기록: ' + log.slice(-12).join(' → ') : '성공·실패 버튼을 눌러 유닛이 어떻게 변하는지 확인해 보세요.';
+}
+document.querySelectorAll('#regimeTabs button').forEach(b => b.onclick = () => { regime = b.dataset.r; log.push(regime === 'bull' ? '강세장' : '약세장'); renderUnits(); });
+$('btnWin').onclick = () => { stockUnits++; log.push('성공(+1)'); renderUnits(); };
+$('btnLose').onclick = () => { stockUnits--; log.push('실패(−1)'); renderUnits(); };
+$('btnReset').onclick = () => { stockUnits = 1; log = []; renderUnits(); };
+['seed', 'maxLoss', 'stopPct', 'rr', 'nUnits'].forEach(id => $(id).addEventListener('input', calc1));
+$('winRate').addEventListener('input', calc2);
+calc1();
+
+// ---- 현재 장세: 지수 DB에서 60일선 계산 ----
+async function loadIndex() {
+    const y = new Date().getFullYear();
+    const rows = [];
+    for (const yy of [y - 1, y]) {
+        try {
+            const resp = await fetch('/db/market/index/' + yy + '.parquet');
+            if (!resp.ok) continue;
+            rows.push(...await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() }));
+        } catch (e) { /* 파일 없음 */ }
+    }
+    if (!rows.length) { $('regime').innerHTML = '<div class="box">지수 DB를 읽지 못했습니다.</div>'; return; }
+    const by = {};
+    for (const r of rows) {
+        const d = r.date instanceof Date ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+        (by[r.name] || (by[r.name] = [])).push([d, Number(r.close)]);
+    }
+    let html = '';
+    for (const name of ['코스피', '코스닥']) {
+        const s = (by[name] || []).sort((a, b) => a[0] < b[0] ? -1 : 1);
+        if (s.length < 60) continue;
+        const c = s[s.length - 1][1], date = s[s.length - 1][0];
+        const ma = k => s.slice(-k).reduce((a, x) => a + x[1], 0) / k;
+        const ma20 = ma(20), ma60 = ma(60), ma120 = s.length >= 120 ? ma(120) : null;
+        // 60일선 위/아래가 바뀐 지 며칠째
+        let days = 0; const above = c > ma60;
+        for (let i = s.length - 1; i >= 59; i--) {
+            const m = s.slice(i - 59, i + 1).reduce((a, x) => a + x[1], 0) / 60;
+            if ((s[i][1] > m) !== above) break; days++;
+        }
+        const bull = c > ma60;
+        html += '<div class="box"><h3>' + name + ' <span class="tag ' + (bull ? 'bull' : 'bear') + '">' + (bull ? '강세장 · 시장 유닛 2' : '약세장 · 시장 유닛 1') + '</span></h3>' +
+            '<div class="row"><span>종가 (' + date + ')</span><b>' + c.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '</b></div>' +
+            '<div class="row"><span>60일선</span><span>' + ma60.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' <b class="' + (bull ? 'pos' : 'neg') + '">(' + pct((c / ma60 - 1) * 100) + ')</b></span></div>' +
+            '<div class="row"><span>20일선</span><span>' + ma20.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' (' + pct((c / ma20 - 1) * 100) + ')</span></div>' +
+            (ma120 ? '<div class="row"><span>120일선</span><span>' + ma120.toLocaleString(undefined, { maximumFractionDigits: 0 }) + ' (' + pct((c / ma120 - 1) * 100) + ')</span></div>' : '') +
+            '<div class="row"><span>60일선 ' + (bull ? '위' : '아래') + ' 유지</span><span>' + days + '거래일째</span></div></div>';
+        if (name === '코스피') { regime = bull ? 'bull' : 'bear'; renderUnits(); }
+    }
+    $('regime').innerHTML = html || '<div class="box">지수 데이터가 부족합니다.</div>';
+}
+loadIndex();
+</script>
+</body>
+</html>
