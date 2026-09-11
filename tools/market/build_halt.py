@@ -4,6 +4,9 @@
 원본: HTS Peer Analysis 다운로드. 행 = 종목(Code, Name, 결산월), 열 = 일자(Period 행 YYYYMMDD),
 값 = '정상' / '거래정지'. 시트명과 무관하게 Code 헤더 행에 '거래정지구분' 항목이 있는 시트를 찾는다.
 
+일일 파일(ETF_price_concensus_*.xlsx)의 스냅샷 시트('수정주가, 목표주가')에 든 기준일 1일치
+'거래정지구분' 열(Period 'CPD')도 build_snapshot()으로 같은 DB에 병합한다 (ingest_daily 4단계).
+
 산출물: db/market/halt/YYYY-MM.parquet — **거래정지인 (date, code)만** 저장
   date DATE, code VARCHAR, name VARCHAR('(주)'·'㈜' 접두 제거)
 - 행이 없으면 그 날 정상 거래 (원본 전 종목이 '정상'/'거래정지' 둘 중 하나로 채워져 있음)
@@ -75,11 +78,47 @@ def parse(xlsx_path):
     return pd.DataFrame(out, columns=['date', 'code', 'name']), [d for _, d in date_cols]
 
 
+def parse_snapshot(xlsx_path, date_key):
+    """일일 스냅샷 시트(기준일 1일치, Period 'CPD')의 '거래정지구분' 열 -> (거래정지 행 DataFrame, [기준일])
+    열이 없으면 ([], [])"""
+    wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+    sn = find_sheet(wb)
+    if not sn:
+        return pd.DataFrame(columns=['date', 'code', 'name']), []
+    rows = list(wb[sn].iter_rows(values_only=True))
+    hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:16]) if r and r[1]}
+    code_hdr = next(i for i, r in enumerate(rows[:18]) if r and str(r[0] or '').strip() == 'Code')
+    period, item_row = rows[hdr['Period']], rows[code_hdr]
+    col = next((c for c in range(3, len(item_row))
+                if str(item_row[c] or '').strip() == ITEM and str(period[c] or '').strip() == 'CPD'), None)
+    if col is None:
+        return pd.DataFrame(columns=['date', 'code', 'name']), []
+    d = datetime.date.fromisoformat(date_key)
+    out = [(d, str(r[0]).strip(), clean_name(r[1])) for r in rows[code_hdr + 1:]
+           if r and str(r[0] or '').strip().startswith('A') and col < len(r)
+           and r[col] is not None and str(r[col]).strip() == HALT]
+    return pd.DataFrame(out, columns=['date', 'code', 'name']), [d]
+
+
+def build_snapshot(xlsx_path, date_key):
+    """일일 파일용: 스냅샷 시트의 거래정지구분 열을 기준일 1일치로 병합"""
+    df, dates = parse_snapshot(xlsx_path, date_key)
+    if not dates:
+        print('SKIP: 거래정지구분 열 없음')
+        return
+    write(df, dates)
+
+
 def build(xlsx_path):
+    """Peer Analysis 시계열 시트용"""
     df, dates = parse(xlsx_path)
     if not dates:
         print('SKIP: 거래정지 시트 없음')
         return
+    write(df, dates)
+
+
+def write(df, dates):
     os.makedirs(OUT, exist_ok=True)
     con = duckdb.connect()
     n_new = n_same = 0
