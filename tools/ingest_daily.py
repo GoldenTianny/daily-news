@@ -6,7 +6,8 @@
 - 기준일은 'ETF raw' 시트의 Date 셀(CPD [YYYYMMDD] / CPD-1TD [YYYYMMDD])에서 자동 인식
   (인식 실패 시 두 번째 인자로 YYYY-MM-DD 직접 지정)
 - 실행 순서: build_data(ETF 보유내역) -> build_market(수정주가·컨센서스)
-  -> build_index(코스피·코스닥 지수, 시트가 있을 때) -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급)
+  -> build_index(코스피·코스닥 지수, 시트가 있을 때) -> build_halt.build_snapshot(거래정지 여부, 열이 있을 때)
+  -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급)
   -> build_high52(52주 신고가 돌파 분석, 스터디) -> build_etf_movers(편입 비중 증가 TOP 10 검증, 스터디)
   -> build_semi_cycle(반도체 병목 업종 과열 계기판, 스터디)
   -> build_minervini(미너비니 트렌드 템플릿)
@@ -113,29 +114,34 @@ def main():
 
     snap = build_market.SNAP_SHEET in sheets   # 신형 일일 스냅샷 형식
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/9] ETF 보유내역')
+    print('[1/10] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/9] 수정주가 · 목표주가')
+    print('[2/10] 수정주가 · 목표주가')
     build_market.build(xlsx, date_key)
-    print('[3/9] 코스피·코스닥 지수')
+    print('[3/10] 코스피·코스닥 지수')
     if build_index.is_index_file(xlsx):
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[4/9] 영업이익 컨센서스')
+    print('[4/10] 거래정지 여부')
+    if snap:
+        build_halt.build_snapshot(xlsx, date_key)
+    else:
+        print('SKIP: 스냅샷 시트 없음 (구형 파일)')
+    print('[5/10] 영업이익 컨센서스')
     if snap:
         build_earnings.build_daily(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[5/9] RS 등급')
+    print('[6/10] RS 등급')
     build_rs.build()
-    print('[6/9] 52주 신고가 돌파 분석')
+    print('[7/10] 52주 신고가 돌파 분석')
     build_high52.build()
-    print('[7/9] 편입 비중 증가 TOP 10 검증')
+    print('[8/10] 편입 비중 증가 TOP 10 검증')
     build_etf_movers.build()
-    print('[8/9] 반도체 병목 업종 과열 계기판')
+    print('[9/10] 반도체 병목 업종 과열 계기판')
     build_semi_cycle.build()
-    print('[9/9] 미너비니 트렌드 템플릿')
+    print('[10/10] 미너비니 트렌드 템플릿')
     build_minervini.build()
     print('== 완료')
 

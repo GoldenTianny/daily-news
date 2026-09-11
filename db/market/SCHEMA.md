@@ -101,7 +101,7 @@
 
 ## db/market/halt/ — 거래정지 시계열
 
-원본은 HTS Peer Analysis 배열의 `거래정지구분` 시트(값 '정상'/'거래정지', 2023-12-28~). `tools/market/build_halt.py`가 시트명과 무관하게 항목명으로 인식해 적재 (ingest_daily.py 자동 인식). **월별** 파일 `YYYY-MM.parquet`.
+원본은 HTS Peer Analysis 배열의 `거래정지구분` 시트(값 '정상'/'거래정지', 2023-12-28~ 전체 이력)와, 일일 파일 `ETF_price_concensus_*.xlsx` 스냅샷 시트의 `거래정지구분` 열(기준일 1일치, 2026-09-11~). `tools/market/build_halt.py`가 시트명과 무관하게 항목명으로 인식해 적재 (ingest_daily.py — 일일 파일은 4단계). **월별** 파일 `YYYY-MM.parquet`.
 
 | 컬럼 | 타입 | 설명 |
 |---|---|---|
