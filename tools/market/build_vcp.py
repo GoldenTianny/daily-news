@@ -10,8 +10,14 @@
     흔해, 이를 빼면 완성 직전 종목을 놓친다. 추세 구조 조건(②③④)은 반드시 충족해야 하므로
     pass_n=7 이면서 ⑤만 빠진 경우로 한정한다.
 
-판정 (기준일 기준 최근 WINDOW 거래일 고가·저가)
-  1. 베이스 고점 = 창 안의 최고 고가. 그 뒤로 MIN_BASE 거래일 이상 남아 있어야 베이스로 본다
+시간축은 두 가지를 같이 계산한다 (tf 컬럼)
+  - 'D' 일봉: 최근 120거래일 창, 베이스 최소 10거래일, 지그재그 5%
+  - 'W' 주봉: 최근 52주 창, 베이스 최소 3주, 지그재그 6% — 미너비니가 베이스를 볼 때 쓰는 기본
+    시간축. 일봉의 잔흔들림이 묶여 베이스 구조가 뚜렷해진다. 주봉 막대는 월~일 단위로 묶고,
+    기준일이 속한 주는 그날까지의 미완성 막대로 쓴다
+
+판정 (기준일 기준 최근 창의 고가·저가)
+  1. 베이스 고점 = 창 안의 최고 고가. 그 뒤로 최소 길이 이상 남아 있어야 베이스로 본다
   2. 베이스 고점 이후를 지그재그(ZIGZAG 반전폭)로 훑어 고점→저점 하락(수축)들을 추출
   3. 수축 2~5회, 첫 수축이 가장 깊고 MAX_FIRST 이하, 현재가가 피벗 대비 -MAX_DIST ~ +MAX_ABOVE
   4. 등급 — 완성(fit): 마지막 수축이 FIT_LAST 이하이고 첫 수축의 FIT_RATIO 이하이며 끝까지 좁아짐
@@ -19,13 +25,15 @@
   5. 피벗 = 마지막 수축의 고점. 종가가 이를 넘으면 돌파
 
 산출물: db/market/vcp/YYYY-MM.parquet
-  date, code, name, close, rs, in_tpl(8개 통과 여부), pivot_px, dist(피벗 대비 %, 음수=아래),
-  n_cont(수축 횟수), d1~d4(각 수축 깊이 %), base_days(베이스 길이), tight(마지막 수축 깊이 %),
+  date, tf('D' 일봉 / 'W' 주봉), code, name, close, rs, in_tpl(8개 통과 여부),
+  pivot_px, dist(피벗 대비 %, 음수=아래),
+  n_cont(수축 횟수), d1~d5(각 수축 깊이 %), base_days(베이스 길이 — 일봉은 거래일·주봉은 주),
+  tight(마지막 수축 깊이 %),
   tier('fit' 완성 / 'near' 형성 중)
 실행: python3 tools/market/build_vcp.py        (미계산 날짜만)
       python3 tools/market/build_vcp.py --all  (전체 재계산)
 """
-import sys, os, glob
+import sys, os, glob, datetime
 import duckdb
 import numpy as np
 import pandas as pd
@@ -36,9 +44,11 @@ PRICE = os.path.join(REPO, 'db', 'market', 'price', '*.parquet')
 MV = os.path.join(REPO, 'db', 'market', 'minervini', '*.parquet')
 OUT = os.path.join(REPO, 'db', 'market', 'vcp')
 
-WINDOW = 120      # 베이스를 찾는 창 (거래일)
-MIN_BASE = 10     # 베이스 최소 길이 (거래일)
-ZIGZAG = 0.05     # 지그재그 반전폭 — 이보다 작은 흔들림은 잡음으로 보고 무시
+# 시간축별 파라미터 — window는 daily 막대 기준으로 잘라낼 길이 (주봉은 그 구간을 주 단위로 묶음)
+TF = {
+    'D': {'window': 120, 'min_base': 10, 'zig': 0.05},   # 일봉
+    'W': {'window': 260, 'min_base': 3,  'zig': 0.06},   # 주봉 (약 52주)
+}
 MAX_FIRST = 0.35  # 첫 수축 최대 깊이 (너무 깊은 베이스 제외)
 MIN_CONT, MAX_N = 2, 5    # 수축 횟수 범위
 MONO = 1.05       # '완성' 판정 시 허용하는 단조성 이탈 (직전의 이 배까지는 수축으로 인정)
@@ -46,16 +56,16 @@ FIT_LAST, FIT_RATIO = 0.12, 0.6     # 완성: 마지막 수축 깊이 · 첫 수
 NEAR_LAST, NEAR_RATIO = 0.20, 0.85  # 형성 중: 같은 기준의 완화판
 MAX_DIST = 0.20   # 현재가가 피벗 대비 이보다 더 아래면 제외 (베이스에서 너무 멀다)
 MAX_ABOVE = 0.05  # 피벗을 이보다 더 넘어섰으면 제외 (이미 돌파해 매수 시점이 지남)
-MAX_CONT = 4      # 저장할 수축 깊이 개수
+MAX_CONT = 5      # 저장할 수축 깊이 개수 (MAX_N과 같게 두어 마지막 수축까지 모두 남긴다)
 COND_MA50 = 4     # 조건 ⑤(종가 > 50일선)의 flags 비트 자리 (0-based)
 
 
-def contractions(high, low):
+def contractions(high, low, p):
     """베이스 고점 이후의 수축 목록 -> (깊이 리스트, 피벗, 베이스 길이, 등급).
     등급: 'fit' 완성 / 'near' 형성 중 / None 해당 없음"""
     n = len(high)
     i_peak = int(np.argmax(high))
-    if n - i_peak - 1 < MIN_BASE:      # 고점이 너무 최근이면 아직 베이스가 아님
+    if n - i_peak - 1 < p['min_base']:      # 고점이 너무 최근이면 아직 베이스가 아님
         return None, None, None, None
     h, l = high[i_peak:], low[i_peak:]
 
@@ -66,13 +76,13 @@ def contractions(high, low):
         if direction < 0:                                   # 하락 중 — 저점 갱신 추적
             if l[i] < ext:
                 ext = float(l[i])
-            elif h[i] >= ext * (1 + ZIGZAG):                # 반등 확인 -> 저점 확정
+            elif h[i] >= ext * (1 + p['zig']):              # 반등 확인 -> 저점 확정
                 pivots.append(('L', ext))
                 direction, ext = 1, float(h[i])
         else:                                               # 상승 중 — 고점 갱신 추적
             if h[i] > ext:
                 ext = float(h[i])
-            elif l[i] <= ext * (1 - ZIGZAG):                # 되밀림 확인 -> 고점 확정
+            elif l[i] <= ext * (1 - p['zig']):              # 되밀림 확인 -> 고점 확정
                 pivots.append(('H', ext))
                 direction, ext = -1, float(l[i])
     pivots.append(('L' if direction < 0 else 'H', ext))      # 진행 중인 마지막 극값
@@ -97,32 +107,39 @@ def contractions(high, low):
     return depths, pivot_price, n - i_peak - 1, tier
 
 
-def compute(targets, series):
-    """targets: DataFrame(date, code, name, close, rs, in_tpl) / series: code -> (dates, high, low)"""
+def compute(targets, series, tf):
+    """targets: DataFrame(date, code, name, close, rs, in_tpl)
+    series: code -> (dates, high, low, week) / tf: 'D' 일봉 · 'W' 주봉"""
+    p = TF[tf]
     out = []
     for code, g in targets.groupby('code', sort=False):
         s = series.get(code)
         if s is None:
             continue
-        dates, high, low = s
+        dates, high, low, week = s
         pos = {d: i for i, d in enumerate(dates)}
         for r in g.itertuples(index=False):
             i = pos.get(r.date)
-            if i is None or i + 1 < MIN_BASE + 5:
+            if i is None or i + 1 < p['min_base'] + 5:
                 continue
-            j = max(0, i + 1 - WINDOW)
-            depths, pivot_px, base_days, tier = contractions(high[j:i + 1], low[j:i + 1])
+            j = max(0, i + 1 - p['window'])
+            h, l = high[j:i + 1], low[j:i + 1]
+            if tf == 'W':                       # 같은 주의 일봉을 한 막대로 묶음 (마지막 주는 기준일까지)
+                w = week[j:i + 1]
+                st = np.flatnonzero(np.r_[True, w[1:] != w[:-1]])
+                h, l = np.maximum.reduceat(h, st), np.minimum.reduceat(l, st)
+            depths, pivot_px, base_days, tier = contractions(h, l, p)
             if depths is None or not pivot_px:
                 continue
             dist = r.close / pivot_px - 1
             if dist < -MAX_DIST or dist > MAX_ABOVE:
                 continue
             d = list(depths[:MAX_CONT]) + [None] * (MAX_CONT - min(len(depths), MAX_CONT))
-            out.append((r.date, code, r.name, r.close, r.rs, r.in_tpl, round(pivot_px, 2),
+            out.append((r.date, tf, code, r.name, r.close, r.rs, r.in_tpl, round(pivot_px, 2),
                         round(dist * 100, 2), len(depths),
                         *[round(x * 100, 2) if x is not None else None for x in d],
                         base_days, round(depths[-1] * 100, 2), tier))
-    cols = ['date', 'code', 'name', 'close', 'rs', 'in_tpl', 'pivot_px', 'dist', 'n_cont',
+    cols = ['date', 'tf', 'code', 'name', 'close', 'rs', 'in_tpl', 'pivot_px', 'dist', 'n_cont',
             *[f'd{k}' for k in range(1, MAX_CONT + 1)], 'base_days', 'tight', 'tier']
     return pd.DataFrame(out, columns=cols)
 
@@ -130,14 +147,14 @@ def compute(targets, series):
 def norm(x):
     x = x.copy()
     x['date'] = x['date'].astype(str).str[:10]
-    for c in ('code', 'name', 'tier'):
+    for c in ('tf', 'code', 'name', 'tier'):
         x[c] = x[c].astype(object)
     for c in ('close', 'pivot_px', 'dist', 'tight', *[f'd{k}' for k in range(1, MAX_CONT + 1)]):
         x[c] = x[c].astype('float64')
     for c in ('rs', 'n_cont', 'base_days'):
         x[c] = x[c].astype('int64')
     x['in_tpl'] = x['in_tpl'].astype(bool)
-    return x.sort_values(['date', 'code']).reset_index(drop=True)
+    return x.sort_values(['date', 'tf', 'code']).reset_index(drop=True)
 
 
 def build(force=False):
@@ -166,10 +183,14 @@ def build(force=False):
         SELECT CAST(date AS VARCHAR) AS date, code, high, low FROM '{OHLC}'
         WHERE code IN (SELECT DISTINCT code FROM targets) ORDER BY code, date
     """).df()
-    series = {c: (g['date'].to_numpy(), g['high'].to_numpy(float), g['low'].to_numpy(float))
+    # 주(월~일) 번호 — 서기 1년 1월 1일이 월요일이므로 (ordinal-1)//7 이 월요일 기준 주 버킷
+    wk = {d: (datetime.date.fromisoformat(d).toordinal() - 1) // 7 for d in px['date'].unique()}
+    px['wk'] = px['date'].map(wk)
+    series = {c: (g['date'].to_numpy(), g['high'].to_numpy(float), g['low'].to_numpy(float),
+                  g['wk'].to_numpy())
               for c, g in px.groupby('code', sort=False)}
 
-    df = compute(targets, series)
+    df = pd.concat([compute(targets, series, tf) for tf in TF], ignore_index=True)
     if df.empty:
         print('SKIP: VCP 조건을 충족한 종목 없음')
         return
@@ -186,18 +207,20 @@ def build(force=False):
             n_same += 1
             continue
         con.execute(f"""
-            COPY (SELECT CAST(date AS DATE) AS date, code, name, CAST(close AS DOUBLE) AS close,
+            COPY (SELECT CAST(date AS DATE) AS date, tf, code, name, CAST(close AS DOUBLE) AS close,
                          CAST(rs AS UTINYINT) AS rs, in_tpl, CAST(pivot_px AS DOUBLE) AS pivot_px,
                          CAST(dist AS DOUBLE) AS dist, CAST(n_cont AS UTINYINT) AS n_cont,
                          {', '.join(f'CAST(d{k} AS DOUBLE) AS d{k}' for k in range(1, MAX_CONT + 1))},
                          CAST(base_days AS USMALLINT) AS base_days, CAST(tight AS DOUBLE) AS tight, tier
-                  FROM g ORDER BY date, code)
+                  FROM g ORDER BY date, tf, code)
             TO '{dst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
         n_new += 1
     last = df[df['date'] == df['date'].max()]
+    detail = ' · '.join(
+        f"{'일봉' if tf == 'D' else '주봉'} 완성 {int(((last['tf'] == tf) & (last['tier'] == 'fit')).sum())}"
+        f"/형성 중 {int(((last['tf'] == tf) & (last['tier'] == 'near')).sum())}" for tf in TF)
     print(f"OK  VCP -> db/market/vcp/: {len(df):,}행, 날짜 {df['date'].nunique()}개 | "
-          f"월 파일 {n_new}개 갱신, {n_same}개 동일 | {last['date'].iloc[0]} "
-          f"{len(last)}종목 (템플릿 통과 {int(last['in_tpl'].sum())} · 베이스 중 {len(last) - int(last['in_tpl'].sum())})")
+          f"월 파일 {n_new}개 갱신, {n_same}개 동일 | {last['date'].iloc[0]} {detail}")
 
 
 if __name__ == '__main__':
