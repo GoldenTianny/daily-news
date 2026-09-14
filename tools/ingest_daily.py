@@ -119,34 +119,39 @@ def main():
 
     snap = build_market.SNAP_SHEET in sheets   # 신형 일일 스냅샷 형식
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/10] ETF 보유내역')
+    print('[1/11] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/10] 수정주가 · 목표주가')
+    print('[2/11] 수정주가 · 목표주가')
     build_market.build(xlsx, date_key)
-    print('[3/10] 코스피·코스닥 지수')
+    print('[3/11] 수정 시가·고가·저가')
+    if snap and build_ohlc.build_snapshot(xlsx, date_key):
+        build_ohlc.reconcile_price()      # 분할·병합으로 종가가 고저 범위를 벗어나면 소급 보정
+    elif not snap:
+        print('SKIP: 스냅샷 시트 없음 (구형 파일)')
+    print('[4/11] 코스피·코스닥 지수')
     if build_index.is_index_file(xlsx):
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[4/10] 거래정지 여부')
+    print('[5/11] 거래정지 여부')
     if snap:
         build_halt.build_snapshot(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[5/10] 영업이익 컨센서스')
+    print('[6/11] 영업이익 컨센서스')
     if snap:
         build_earnings.build_daily(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[6/10] RS 등급')
+    print('[7/11] RS 등급')
     build_rs.build()
-    print('[7/10] 52주 신고가 돌파 분석')
+    print('[8/11] 52주 신고가 돌파 분석')
     build_high52.build()
-    print('[8/10] 편입 비중 증가 TOP 10 검증')
+    print('[9/11] 편입 비중 증가 TOP 10 검증')
     build_etf_movers.build()
-    print('[9/10] 반도체 병목 업종 과열 계기판')
+    print('[10/11] 반도체 병목 업종 과열 계기판')
     build_semi_cycle.build()
-    print('[10/10] 미너비니 트렌드 템플릿')
+    print('[11/11] 미너비니 트렌드 템플릿')
     build_minervini.build()
     print('== 완료')
 
