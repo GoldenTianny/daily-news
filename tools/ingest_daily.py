@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
-import refresh_prices, build_halt, build_semi_cycle
+import refresh_prices, build_halt, build_ohlc, build_semi_cycle
 
 
 def detect_date(xlsx_path):
@@ -83,7 +83,8 @@ def main():
     if 'ETF raw' not in sheets:
         has_price = refresh_prices.is_price_history_file(xlsx)
         has_halt = build_halt.is_halt_file(xlsx)
-        if has_price or has_halt:
+        has_ohlc = build_ohlc.is_ohlc_file(xlsx)
+        if has_price or has_halt or has_ohlc:
             print(f'== Peer Analysis 파일 · {os.path.basename(xlsx)}')
             changed = False
             if has_price:
@@ -92,6 +93,10 @@ def main():
             if has_halt:
                 print('[거래정지 시계열]')
                 build_halt.build(xlsx)
+            if has_ohlc:
+                print('[수정 시가·고가·저가]')
+                build_ohlc.build(xlsx)
+                changed = bool(build_ohlc.reconcile_price()) or changed
             if changed:
                 print('[재계산 1/5] RS 등급 전체')
                 build_rs.build(force=True)
@@ -103,7 +108,7 @@ def main():
                 build_semi_cycle.build()
                 print('[재계산 5/5] 미너비니 트렌드 템플릿')
                 build_minervini.build()
-            elif has_price:
+            elif has_price or has_ohlc:
                 print('가격 변경 없음 — 파생 재계산 생략')
             print('== 완료')
             return
