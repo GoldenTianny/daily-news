@@ -206,6 +206,24 @@
     <div id="csBody"><div class="loading">불러오는 중&hellip;</div></div>
   </div>
 
+  <div class="card" id="vcpCard">
+    <h2>&#128202; VCP 베이스 <span class="cnt" id="vcpCnt"></span></h2>
+    <p class="muted" style="font-size:13px;margin-bottom:6px"><b>템플릿 통과 종목과, 조건 ⑤(종가 &gt; 50일선)만 미달인 종목이 대상입니다.</b> 베이스 후반에는 주가가 50일선 아래로 잠시 내려가는 일이 흔해, 완성 직전 종목을 놓치지 않으려 둘을 함께 봅니다. 그 안에서 조정 폭이 단계적으로 좁아지는 <b>변동성 수축(VCP)</b> 모양을 찾아 매수 기준선(피벗)까지의 거리를 보여줍니다. 회원 전용입니다.</p>
+    <details>
+      <summary>VCP 판정 기준 보기 (이 사이트 데이터 기준)</summary>
+      <div class="cs-rule">
+        <b>①</b><span>최근 120거래일 중 <b>가장 높은 고가</b>를 베이스 시작점으로 잡고, 그 뒤로 <b>10거래일 이상</b> 지나야 베이스로 인정</span>
+        <b>②</b><span>베이스 안에서 <b>5% 이상 반전</b>만 골라 고점→저점 하락(수축)을 <b>2~5회</b> 추출 (그보다 작은 흔들림은 잡음으로 무시)</span>
+        <b>③</b><span><b>첫 수축이 가장 깊고</b> 35% 이하 (중간에 더 깊게 밀리면 실패한 베이스로 보고 제외)</span>
+        <b>④</b><span><b>완성</b>: 마지막 수축이 <b>12% 이하</b>이고 첫 수축의 <b>60% 이하</b>이며, 뒤로 갈수록 계속 좁아짐</span>
+        <b>⑤</b><span><b>형성 중</b>: 마지막 수축이 <b>20% 이하</b>이고 첫 수축의 <b>85% 이하</b> (좁아지는 중이나 아직 여유가 있음)</span>
+        <b>⑥</b><span>종가가 피벗 대비 <b>−20% ~ +5%</b> (너무 멀거나 이미 크게 돌파한 종목은 제외)</span>
+      </div>
+      <p class="muted" style="font-size:12.5px">피벗은 마지막 수축의 고점이며, 종가가 이를 넘으면 돌파입니다. 거래량 자료가 없어 <b>각 수축에서 거래가 말랐는지는 확인하지 못합니다</b>. 미너비니 원전은 가격 수축과 거래량 감소를 함께 보므로, 여기 결과는 가격 쪽 절반만 본 것입니다. 매수 신호가 아니라 관찰 후보입니다.</p>
+    </details>
+    <div id="vcpBody"><div class="loading">불러오는 중&hellip;</div></div>
+  </div>
+
   <div class="card">
     <h2>&#9989; 템플릿 충족 종목 <span class="cnt" id="passCnt"></span></h2>
     <div class="toolbar">
@@ -360,6 +378,11 @@ async function showDate(d, replace) {
     MKT = m;
     render();
   }).catch(() => { MKT = { date: d, ok: null, close: null, ma: null }; render(); });
+
+  // VCP 베이스 (사전 계산 DB) — 준비되면 해당 카드만 다시 그림
+  VCP = null;
+  loadVcp(d).then(v => { if (curDate !== d) return; VCP = v; renderVcp(); })
+            .catch(() => { if (curDate === d) { VCP = []; renderVcp(); } });
 
   // 주소에 기준일 반영 (최신이면 생략) — 뒤로가기로 이전 기준일로 돌아갈 수 있게
   const url = location.pathname + (isLatest ? '' : '?date=' + d);
@@ -700,6 +723,74 @@ function render() {
   });
   document.getElementById('nearBody').innerHTML = n || '<tr><td colspan="6" class="loading">해당 종목이 없습니다</td></tr>';
   renderCanslim();
+  renderVcp();
+}
+
+// ===== VCP 베이스 (회원 전용) — db/market/vcp 사전 계산 결과 =====
+const VCP_MONTHS = new Map();   // 'YYYY-MM' -> 행 배열 (파일 없으면 null)
+let VCP = null;                 // 기준일 행 (로드 전 null)
+
+async function loadVcp(d) {
+  const ym = d.slice(0, 7);
+  if (!VCP_MONTHS.has(ym)) {
+    let rows = null;
+    try {
+      rows = await readParquet('/db/market/vcp/' + ym + '.parquet');
+      rows.forEach(r => { r.date = dstr(r.date); });
+    } catch (e) { rows = null; }
+    VCP_MONTHS.set(ym, rows);
+  }
+  return (VCP_MONTHS.get(ym) || []).filter(r => r.date === d);
+}
+
+function renderVcp() {
+  const box = document.getElementById('vcpBody'), cnt = document.getElementById('vcpCnt');
+  if (!VCP) { box.innerHTML = '<div class="loading">불러오는 중&hellip;</div>'; cnt.textContent = ''; return; }
+  const q = query.trim().toLowerCase();
+  const all = VCP.filter(r => !q || r.name.toLowerCase().includes(q));
+  const fit = all.filter(r => r.tier === 'fit').sort((a, b) => b.dist - a.dist);
+  const near = all.filter(r => r.tier === 'near').sort((a, b) => b.dist - a.dist);
+  cnt.textContent = '완성 ' + fit.length + '개 · 형성 중 ' + near.length + '개';
+
+  if (!isMember()) {
+    const bars = [70, 40, 62, 46, 58, 50, 55, 52, 54, 53, 53, 54].map(h => '<i style="height:' + h + '%"></i>').join('');
+    box.innerHTML = '<div class="lock-wrap"><div class="lock-blur">' + bars + '</div><div class="lock-panel">' +
+      '<div class="lock-ttl">&#128274; VCP 베이스는 회원에게만 보입니다</div>' +
+      '<div class="lock-sub">' + curDate + ' 기준 <b>완성 ' + fit.length + '종목 · 형성 중 ' + near.length + '종목</b><br>무료 회원 · 구글 계정으로 10초면 끝납니다</div>' +
+      '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
+    return;
+  }
+  if (!all.length) {
+    box.innerHTML = '<div class="loading">' + (q ? '검색 결과가 없습니다' : '이 날짜에는 VCP 모양을 갖춘 종목이 없습니다') + '</div>';
+    return;
+  }
+
+  const row = (r, i) => {
+    const ds = [r.d1, r.d2, r.d3, r.d4].filter(v => v != null && !isNaN(v));
+    const chain = ds.map(v => v.toFixed(1) + '%').join(' → ');
+    const near0 = r.dist >= -3;            // 피벗 3% 이내면 돌파 임박
+    return '<tr class="row" onclick="location.href=\'' + link(r.name) + '\'">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(r.name) + '</span>' +
+      (r.in_tpl ? '' : '<span class="sub" title="템플릿 조건 ⑤(종가 > 50일선)만 미달 — 베이스 후반">50일선 아래</span>') + '</td>' +
+      '<td>' + fmtN(r.close) + '</td>' +
+      '<td>' + fmtN(r.pivot_px) + '</td>' +
+      '<td class="' + (near0 ? 'up' : '') + '">' + (r.dist >= 0 ? '+' : '') + r.dist.toFixed(1) + '%' +
+      (near0 ? '<span class="badge" title="피벗까지 3% 이내">임박</span>' : '') + '</td>' +
+      '<td style="text-align:left;font-size:12.5px">' + chain + '</td>' +
+      '<td>' + r.base_days + '일</td>' +
+      '<td><span class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs || '–') + '</span></td>' +
+      '<td>' + etfCell(r.name) + '</td></tr>';
+  };
+  const head = '<thead><tr><th>#</th><th>종목</th><th>종가</th><th>피벗</th><th>피벗까지</th>' +
+    '<th style="text-align:left">수축 추이</th><th>베이스</th><th>RS</th><th>보유 ETF</th></tr></thead>';
+  let h = '';
+  if (fit.length) h += '<h3 style="font-size:14px;color:#2e7d32;margin:10px 0 4px">&#9989; 완성 ' + fit.length + '개 <span class="muted" style="font-weight:400;font-size:12px">· 수축이 끝까지 좁아진 상태</span></h3>' +
+    '<div class="twrap"><table>' + head + '<tbody>' + fit.map(row).join('') + '</tbody></table></div>';
+  if (near.length) h += '<h3 style="font-size:14px;color:#e65100;margin:14px 0 4px">&#128064; 형성 중 ' + near.length + '개 <span class="muted" style="font-weight:400;font-size:12px">· 좁아지는 중이나 아직 여유가 있음</span></h3>' +
+    '<div class="twrap"><table>' + head + '<tbody>' + near.map(row).join('') + '</tbody></table></div>';
+  h += '<div class="note">수축 추이는 베이스 안에서 고점 대비 밀린 폭을 순서대로 적은 것입니다. 뒤로 갈수록 작아질수록 좋습니다. 피벗은 마지막 수축의 고점이며 종가가 이를 넘으면 돌파입니다. <b>거래량 자료가 없어 수축 구간의 거래 감소는 확인하지 못했습니다.</b> 관찰 후보이며 매수 신호가 아닙니다.</div>';
+  box.innerHTML = h;
 }
 
 document.querySelectorAll('.chip[data-sort]').forEach(b => b.addEventListener('click', () => {

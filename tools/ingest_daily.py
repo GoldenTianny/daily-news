@@ -10,7 +10,7 @@
   -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급)
   -> build_high52(52주 신고가 돌파 분석, 스터디) -> build_etf_movers(편입 비중 증가 TOP 10 검증, 스터디)
   -> build_semi_cycle(반도체 병목 업종 과열 계기판, 스터디)
-  -> build_minervini(미너비니 트렌드 템플릿)
+  -> build_minervini(미너비니 트렌드 템플릿) -> build_vcp(VCP 베이스)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 - 별도 형식 파일은 시트 구조로 자동 인식: concensus_for_db*.xlsx(영업이익 실적·컨센서스 -> build_earnings),
   kospi_kosdaq.xlsx(코스피·코스닥 지수 -> build_index)
@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
-import refresh_prices, build_halt, build_ohlc, build_semi_cycle
+import refresh_prices, build_halt, build_ohlc, build_vcp, build_semi_cycle
 
 
 def detect_date(xlsx_path):
@@ -98,16 +98,18 @@ def main():
                 build_ohlc.build(xlsx)
                 changed = bool(build_ohlc.reconcile_price()) or changed
             if changed:
-                print('[재계산 1/5] RS 등급 전체')
+                print('[재계산 1/6] RS 등급 전체')
                 build_rs.build(force=True)
-                print('[재계산 2/5] 52주 신고가 돌파 분석')
+                print('[재계산 2/6] 52주 신고가 돌파 분석')
                 build_high52.build()
-                print('[재계산 3/5] 편입 비중 증가 TOP 10 검증')
+                print('[재계산 3/6] 편입 비중 증가 TOP 10 검증')
                 build_etf_movers.build()
-                print('[재계산 4/5] 반도체 병목 업종 과열 계기판')
+                print('[재계산 4/6] 반도체 병목 업종 과열 계기판')
                 build_semi_cycle.build()
-                print('[재계산 5/5] 미너비니 트렌드 템플릿')
+                print('[재계산 5/6] 미너비니 트렌드 템플릿')
                 build_minervini.build()
+                print('[재계산 6/6] VCP 베이스')
+                build_vcp.build(force=True)
             elif has_price or has_ohlc:
                 print('가격 변경 없음 — 파생 재계산 생략')
             print('== 완료')
@@ -119,40 +121,42 @@ def main():
 
     snap = build_market.SNAP_SHEET in sheets   # 신형 일일 스냅샷 형식
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/11] ETF 보유내역')
+    print('[1/12] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/11] 수정주가 · 목표주가')
+    print('[2/12] 수정주가 · 목표주가')
     build_market.build(xlsx, date_key)
-    print('[3/11] 수정 시가·고가·저가')
+    print('[3/12] 수정 시가·고가·저가')
     if snap and build_ohlc.build_snapshot(xlsx, date_key):
         build_ohlc.reconcile_price()      # 분할·병합으로 종가가 고저 범위를 벗어나면 소급 보정
     elif not snap:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[4/11] 코스피·코스닥 지수')
+    print('[4/12] 코스피·코스닥 지수')
     if build_index.is_index_file(xlsx):
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[5/11] 거래정지 여부')
+    print('[5/12] 거래정지 여부')
     if snap:
         build_halt.build_snapshot(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[6/11] 영업이익 컨센서스')
+    print('[6/12] 영업이익 컨센서스')
     if snap:
         build_earnings.build_daily(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[7/11] RS 등급')
+    print('[7/12] RS 등급')
     build_rs.build()
-    print('[8/11] 52주 신고가 돌파 분석')
+    print('[8/12] 52주 신고가 돌파 분석')
     build_high52.build()
-    print('[9/11] 편입 비중 증가 TOP 10 검증')
+    print('[9/12] 편입 비중 증가 TOP 10 검증')
     build_etf_movers.build()
-    print('[10/11] 반도체 병목 업종 과열 계기판')
+    print('[10/12] 반도체 병목 업종 과열 계기판')
     build_semi_cycle.build()
-    print('[11/11] 미너비니 트렌드 템플릿')
+    print('[11/12] 미너비니 트렌드 템플릿')
     build_minervini.build()
+    print('[12/12] VCP 베이스')
+    build_vcp.build()
     print('== 완료')
 
 
