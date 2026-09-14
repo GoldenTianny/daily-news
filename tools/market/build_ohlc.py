@@ -5,6 +5,9 @@
 행 = 종목(Code, Name, 결산월), 열 = 일자(Period 행 YYYYMMDD). 시트명과 무관하게
 Code 헤더 행의 항목명으로 어떤 값인지 판별한다.
 
+일일 파일(ETF_price_concensus_*.xlsx)의 스냅샷 시트에 든 기준일 1일치 수정시가·고가·저가
+열(Period 'CPD')도 build_snapshot()으로 같은 DB에 병합한다 (ingest_daily 3단계).
+
 종가(close)는 이미 db/market/price/에 있으므로 **여기엔 open·high·low만** 저장한다.
 가격 DB는 검색기가 매 화면 13개월치를 읽으므로 컬럼을 늘리지 않고 분리 (백테스트 전용).
 
@@ -104,11 +107,55 @@ def norm(d):
     return d.sort_values(['date', 'code']).reset_index(drop=True)
 
 
+def parse_snapshot(xlsx_path, date_key):
+    """일일 스냅샷 시트(Period 'CPD')의 수정시가·고가·저가 열 -> 기준일 1일치 DataFrame.
+    열이 없으면 빈 DataFrame"""
+    wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+    for ws in wb.worksheets:
+        rows = list(ws.iter_rows(values_only=True))
+        hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:16]) if r and r[1]}
+        code_hdr = next((i for i, r in enumerate(rows[:18]) if r and str(r[0] or '').strip() == 'Code'), None)
+        if code_hdr is None or 'Period' not in hdr:
+            continue
+        period, item_row = rows[hdr['Period']], rows[code_hdr]
+        cols = {ITEMS[str(item_row[c] or '').strip()]: c for c in range(3, len(item_row))
+                if str(item_row[c] or '').strip() in ITEMS and str(period[c] or '').strip() == 'CPD'}
+        if len(cols) < len(VALS):
+            continue
+        d = datetime.date.fromisoformat(date_key)
+        out = []
+        for r in rows[code_hdr + 1:]:
+            code = str(r[0] or '').strip()
+            if not code.startswith('A'):
+                continue
+            vals = [r[cols[v]] if cols[v] < len(r) else None for v in VALS]
+            if not all(isinstance(v, numbers.Number) and v > 0 for v in vals):
+                continue
+            out.append((d, code, clean_name(r[1]), *[float(v) for v in vals]))
+        return pd.DataFrame(out, columns=['date', 'code', 'name'] + VALS)
+    return pd.DataFrame(columns=['date', 'code', 'name'] + VALS)
+
+
+def build_snapshot(xlsx_path, date_key):
+    """일일 파일용: 스냅샷 시트의 시가·고가·저가를 기준일 1일치로 병합"""
+    df = parse_snapshot(xlsx_path, date_key)
+    if df.empty:
+        print('SKIP: 시가·고가·저가 열 없음')
+        return False
+    write(df)
+    return True
+
+
 def build(xlsx_path):
+    """Peer Analysis 시계열 시트용 (전체 이력)"""
     df = parse(xlsx_path)
     if df.empty:
         print('SKIP: 시가·고가·저가 데이터 없음')
         return
+    write(df)
+
+
+def write(df):
     os.makedirs(OUT, exist_ok=True)
     con = duckdb.connect()
     n_new = n_same = 0
