@@ -99,6 +99,24 @@
 - **저장은 6개 이상 충족 종목만** (충족 + 근접). streak는 전 종목으로 계산한 뒤 걸러 저장. 월당 약 7천 행·150KB
 - 소비처: `tools/etf/minervini.html` (최신 월 파일의 마지막 날짜)
 
+## db/market/ohlc/ — 수정 시가·고가·저가
+
+원본은 HTS Peer Analysis 배열의 `수정시가`·`수정고가`·`수정저가` 시트(항목별 1시트). `tools/market/build_ohlc.py`가 시트명과 무관하게 항목명으로 인식해 적재 (ingest_daily.py 자동 인식). **월별** 파일 `YYYY-MM.parquet`.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` / `code` / `name` | | 거래일 / 종목코드 / 종목명 |
+| `open` / `high` / `low` | DOUBLE | 수정 시가·고가·저가(원) |
+
+- **종가는 여기 없음** — `db/market/price/`가 정본. 검색기가 매 화면 13개월치 가격 파일을 읽으므로 컬럼을 늘리지 않고 분리 (백테스트 전용)
+- 범위: 2023-12-28 ~ (원본 기준일), 종목 2,651개, 1,649,070행 · 17MB
+- 적재 후 `reconcile_price()`가 가격 DB와 정합성을 점검: OHLC 파일이 수정주가 파일보다 최신이면 그 사이 시행된 액면분할·병합이 고가·저가에만 반영돼 종가가 `[low, high]` 밖으로 나간다. `close × r`이 거의 모든 날 범위에 들어가는 배율 `r`을 찾아 가격 DB를 소급 보정하고, 보정이 있으면 RS·파생을 재계산
+- 종가와 함께 쓰려면 조인:
+  ```sql
+  SELECT o.*, p.close FROM 'db/market/ohlc/*.parquet' o
+  JOIN 'db/market/price/*.parquet' p USING (date, code)
+  ```
+
 ## db/market/halt/ — 거래정지 시계열
 
 원본은 HTS Peer Analysis 배열의 `거래정지구분` 시트(값 '정상'/'거래정지', 2023-12-28~ 전체 이력)와, 일일 파일 `ETF_price_concensus_*.xlsx` 스냅샷 시트의 `거래정지구분` 열(기준일 1일치, 2026-09-11~). `tools/market/build_halt.py`가 시트명과 무관하게 항목명으로 인식해 적재 (ingest_daily.py — 일일 파일은 4단계). **월별** 파일 `YYYY-MM.parquet`.
