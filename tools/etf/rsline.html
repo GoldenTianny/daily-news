@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코스피 대비 RS선 제로선 돌파 | 가좌버핏</title>
+<meta name="description" content="스탠 와인스타인 방식의 코스피 대비 RS선(맨스필드 RS)이 1년 평균선(제로선)을 아래에서 위로 넘은 국내 종목을 매일 선별합니다. 돌파 1일째부터 며칠째인지 순서대로.">
+<link rel="canonical" href="https://gjbuffet.kr/tools/etf/rsline.html">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="코스피 대비 RS선 제로선 돌파 | 가좌버핏">
+<meta property="og:description" content="주가÷코스피 비율이 1년 평균선을 아래에서 위로 넘은 종목. 돌파 1일째부터 순서대로 매일 갱신.">
+<meta property="og:url" content="https://gjbuffet.kr/tools/etf/rsline.html">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: #f0f2f5; color: #333; min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 32px 20px 28px; text-align: center; position: relative;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 14px; opacity: 0.8; }
+  .header .nav-link {
+    position: absolute; top: 16px; color: rgba(255,255,255,0.85);
+    text-decoration: none; font-size: 13px;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 20px 22px 18px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h2 { font-size: 17px; color: #1a237e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card h2 .cnt { font-size: 13px; color: #666; font-weight: 500; }
+  .card p, .card li { font-size: 14px; line-height: 1.75; color: #444; }
+  .card ol, .card ul { padding-left: 20px; margin: 6px 0; }
+  .card li::marker { color: #7986cb; }
+
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
+  .stat { flex: 1 1 120px; background: #f5f6fa; border-radius: 10px; padding: 12px 14px; }
+  .stat .k { font-size: 12px; color: #777; }
+  .stat .v { font-size: 22px; font-weight: 700; color: #1a237e; margin-top: 2px; }
+  .stat .v small { font-size: 12px; color: #888; font-weight: 500; }
+  .stat.hot .v { color: #8e24aa; }
+  /* 기준일 이동 */
+  .datenav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 2px 0 12px; }
+  .datenav select { padding: 7px 10px; border: 1.5px solid #c5cae9; border-radius: 8px; font: inherit; font-size: 14px;
+    font-weight: 600; color: #1a237e; background: #fff; max-width: 100%; }
+  .dbtn { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid #c5cae9; background: #e8eaf6; color: #3f51b5;
+    font-size: 12px; cursor: pointer; font-family: inherit; }
+  .dbtn:hover:not(:disabled) { background: #3f51b5; color: #fff; }
+  .dbtn:disabled { opacity: .35; cursor: default; }
+  .datenav .hint { font-size: 12px; color: #999; }
+  .datenav .hint.past { color: #e65100; font-weight: 600; }
+  .datenav #authBox { margin-left: auto; }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1.5px solid #c5cae9; border-radius: 8px;
+    padding: 7px 12px; font-size: 12.5px; font-weight: 700; color: #3f51b5; cursor: pointer; font-family: inherit; line-height: 1.2;
+  }
+  .share-btn:hover:not(:disabled) { background: #e8eaf6; border-color: #3f51b5; }
+  .share-btn:disabled { opacity: .6; cursor: default; }
+
+  .lock-wrap { position: relative; min-height: 170px; border-radius: 10px; overflow: hidden; margin: 6px 0 4px; }
+  .lock-blur { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 6px; padding: 18px 16px 10px; filter: blur(4px); opacity: .5; pointer-events: none; }
+  .lock-blur i { display: block; flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #ab47bc, #e1bee7); }
+  .lock-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    min-height: 170px; padding: 18px 12px; text-align: center; background: rgba(255,255,255,.55); }
+  .lock-panel .lock-ttl { font-size: 14.5px; font-weight: 700; color: #1a237e; }
+  .lock-panel .lock-sub { font-size: 12.5px; color: #666; line-height: 1.55; }
+  .lock-panel .lock-btn { margin-top: 4px; padding: 9px 20px; border: none; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #1a237e, #3f51b5); }
+
+  details { margin-top: 6px; }
+  summary { cursor: pointer; font-size: 13.5px; color: #3f51b5; font-weight: 600; }
+  details p { margin-top: 6px; }
+
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0 12px; }
+  .chip {
+    display: inline-block; padding: 6px 12px; background: #e8eaf6; color: #3f51b5;
+    border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 0; user-select: none; font-family: inherit;
+  }
+  .chip.on { background: #3f51b5; color: white; }
+  .chip.vio { background: #f3e5f5; color: #8e24aa; }
+  .chip.vio.on { background: #8e24aa; color: #fff; }
+  .toolbar input {
+    flex: 1 1 140px; min-width: 120px; padding: 7px 10px; border: 1px solid #cfd8dc;
+    border-radius: 8px; font-size: 13.5px; font-family: inherit;
+  }
+  .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 620px; }
+  th, td { padding: 8px 8px; font-size: 13.5px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th { color: #555; background: #fafafa; text-align: right; font-weight: 600; font-size: 12.5px; }
+  th:nth-child(1), th:nth-child(2), td:nth-child(1), td:nth-child(2) { text-align: left; }
+  td { text-align: right; }
+  tr.row { cursor: pointer; }
+  tr.row:hover td { background: #f5f6ff; }
+  tr.grp td { background: #f3e5f5; color: #6a1b9a; font-weight: 700; font-size: 12.5px; text-align: left; padding: 6px 10px; }
+  tr.grp.ok td { background: #e8f5e9; color: #2e7d32; }
+  tr.grp.old td { background: #f5f5f5; color: #777; }
+  tr.grp td small { font-weight: 500; color: inherit; opacity: .8; margin-left: 6px; }
+  .nm { font-weight: 600; color: #1a237e; }
+  .sub { font-size: 11.5px; color: #999; font-weight: 400; margin-left: 4px; }
+  .badge {
+    display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700;
+    background: #f3e5f5; color: #8e24aa; margin-left: 5px; vertical-align: 1px;
+  }
+  .badge.ok { background: #e8f5e9; color: #2e7d32; }
+  .mrs { font-weight: 700; color: #8e24aa; }
+  .rs { font-weight: 700; }
+  .rs.hi { color: #2e7d32; }
+  .up { color: #c62828; }
+  .down { color: #1565c0; }
+  .muted { color: #999; }
+  .loading { text-align: center; padding: 30px; color: #888; font-size: 14px; }
+  .etf { font-size: 12px; color: #666; }
+  .bar { display: inline-block; height: 8px; border-radius: 4px; background: #ce93d8; vertical-align: middle; margin-right: 6px; }
+  .note {
+    margin-top: 12px; padding: 10px 14px; background: #fff8e1;
+    border-left: 3px solid #ffca28; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #795548;
+  }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 19px; }
+    .container { padding: 14px 8px 40px; }
+    .card { padding: 16px 12px 14px; }
+    th, td { padding: 7px 6px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="nav-link" style="left:16px" href="/tools/etf/">&#8592; ETF 검색기</a>
+  <a class="nav-link" style="right:16px" href="minervini.html">&#128200; 미너비니 템플릿</a>
+  <h1>&#127919; 코스피 대비 RS선 제로선 돌파</h1>
+  <p id="headSub">주가÷코스피 비율이 1년 평균선을 아래에서 위로 넘은 종목 · 매일 갱신</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>&#128197; 기준일 <span id="dateLbl" class="cnt"></span></h2>
+    <div class="datenav">
+      <button class="dbtn" id="prevDay" title="이전 거래일 (←)" aria-label="이전 거래일">&#9664;</button>
+      <select id="dateSel" aria-label="기준일 선택"><option>불러오는 중&hellip;</option></select>
+      <button class="dbtn" id="nextDay" title="다음 거래일 (→)" aria-label="다음 거래일">&#9654;</button>
+      <span class="hint" id="dateHint"></span>
+      <button class="share-btn" type="button" id="shareBtn" onclick="shareList(this)" aria-label="기준일 결과 공유하기">&#128228; 공유</button>
+      <span id="authBox"></span>
+    </div>
+    <div class="stats">
+      <div class="stat hot"><div class="k">오늘 돌파 (1일째)</div><div class="v" id="stNew">–</div></div>
+      <div class="stat"><div class="k">3일 확정 (3~10일째)</div><div class="v" id="stOk">–</div></div>
+      <div class="stat"><div class="k">제로선 위 종목 비율</div><div class="v" id="stBreadth">–</div></div>
+    </div>
+    <details>
+      <summary>RS선이 뭔가요? (읽는 법)</summary>
+      <ul>
+        <li><b>RS선</b> = 그 종목 주가 ÷ 코스피. 이 비율이 오르면 시장보다 잘 가는 것, 내리면 시장보다 못 가는 것입니다.</li>
+        <li>그 비율을 <b>1년(252거래일) 평균</b>과 비교해 몇 % 위·아래인지를 숫자로 씁니다. 평균과 같으면 <b>0(제로선)</b>, 위면 플러스, 아래면 마이너스입니다. (스탠 와인스타인이 쓰는 맨스필드 RS 방식)</li>
+        <li>와인스타인의 매수 관문은 <b>"RS선이 제로선을 아래에서 위로 넘는 순간"</b>입니다. 1년 내내 시장에 뒤지던 종목이 시장을 이기기 시작했다는 뜻입니다. 이 표는 그 순간을 잡아 <b>돌파 1일째부터</b> 며칠째인지 순서대로 보여줍니다.</li>
+        <li><b>1일째</b>는 가장 이르지만 하루 만에 다시 내려가는 가짜 돌파가 섞여 있습니다. <b>3일째</b>부터는 3거래일 연속 제로선 위에 머문 것이라 "확정"으로 표시합니다. ETF 검색기 첫 화면 위젯은 이 확정 종목만 보여줍니다.</li>
+        <li><b>돌파 전 저점</b>이 깊을수록(예: −30) 오래 소외됐다가 돌아선 것이고, 얕을수록(−3) 제로선 근처에서 흔들리다 넘은 것입니다. 후자는 다시 내려갈 확률이 높습니다.</li>
+        <li>RS선 돌파는 <b>1차 관문</b>입니다. 와인스타인은 여기에 주가가 30주선(150일선) 위로 올라서는 2단계 진입과 거래량 증가를 함께 봅니다. 미너비니 템플릿·차트와 같이 보세요.</li>
+      </ul>
+      <p class="muted" style="font-size:12.5px">모집단은 일반 종목(ETF 제외). 종목명을 누르면 ETF 검색기에서 차트 하단의 RS선 패널과 보유 ETF를 볼 수 있습니다. 회원 전용입니다.</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>&#128640; 제로선 상향 돌파 종목 <span class="cnt" id="listCnt"></span></h2>
+    <div class="toolbar">
+      <button class="chip on" data-f="all" type="button">전체</button>
+      <button class="chip vio" data-f="new" type="button">1일째만</button>
+      <button class="chip" data-f="ok" type="button">3일 확정만</button>
+      <span class="muted" style="font-size:12px">정렬:</span>
+      <button class="chip on" data-sort="days" type="button">돌파 순서 (1일째 위)</button>
+      <button class="chip" data-sort="mrs" type="button">RS선 높은순</button>
+      <button class="chip" data-sort="rs" type="button">RS 등급순</button>
+      <input type="text" id="q" placeholder="종목명 필터" autocomplete="off">
+    </div>
+    <div id="listBody"><div class="loading">불러오는 중&hellip;</div></div>
+    <div class="note">돌파 목록은 관찰 후보이지 매수 신호가 아닙니다. 1일째 종목은 다음 날 다시 마이너스로 내려갈 수 있으니, 사려면 3일 확정과 주가 추세(150일선 위)를 확인한 뒤 손절선을 먼저 정하세요.</div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/auth-config.js"></script>
+<script src="/assets/auth.js"></script>
+<script src="hyparquet.min.js"></script>
+<script>
+const MAX_DAYS = 15;                // 돌파 후 이 거래일수까지만 목록에 유지
+const OK_DAYS = 3;                  // 이 일수 이상 제로선 위면 '확정'
+const fmtN = v => Math.round(v).toLocaleString();
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const dstr = d => d instanceof Date ? d.toISOString().slice(0, 10) : String(d).slice(0, 10);
+const link = nm => '/tools/etf/?stock=' + encodeURIComponent(nm);
+const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
+
+let ROWS = [];                      // 기준일 돌파 종목 [{name, code, mrs, cross, days, low, rs, close}]
+let BREADTH = null;                 // {pos, n} 제로선 위 종목 수 / 전체
+let ETFMAP = null;                  // stock_name -> {n, top, w}
+let filt = 'all', sortKey = 'days', query = '';
+
+// ===== 월 파일(db/market/mrs/YYYY-MM.parquet): 일별 · 종목별 RS선 값 =====
+const MONTHS = new Map();           // 'YYYY-MM' -> 행 배열 (없으면 null)
+let DATES = [];                     // 읽은 거래일 (오름차순)
+let curDate = null, earliestYm = null, exhausted = false, busy = false, tok = 0;
+const ETF_CACHE = new Map(), PRICE_CACHE = new Map(), RS_CACHE = new Map();
+let ETF_DATES = null, ETF_CODES = null;
+
+async function readParquet(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ' ' + r.status);
+  return hyparquet.parquetReadObjects({ file: await r.arrayBuffer() });
+}
+function prevMonth(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const mm = m === 1 ? 12 : m - 1, yy = m === 1 ? y - 1 : y;
+  return yy + '-' + String(mm).padStart(2, '0');
+}
+async function loadMonth(ym) {
+  if (MONTHS.has(ym)) return MONTHS.get(ym);
+  let rows = null;
+  try {
+    rows = await readParquet('/db/market/mrs/' + ym + '.parquet');
+    rows.forEach(r => { r.date = dstr(r.date); r.mrs = Number(r.mrs); });
+  } catch (e) { rows = null; }
+  MONTHS.set(ym, rows);
+  if (rows && rows.length) {
+    const set = new Set(DATES);
+    rows.forEach(r => set.add(r.date));
+    DATES = Array.from(set).sort();
+  }
+  return rows;
+}
+async function loadOlderMonth() {
+  if (exhausted) return false;
+  let ym = earliestYm, miss = 0;
+  while (miss < 2) {
+    ym = prevMonth(ym);
+    const rows = await loadMonth(ym);
+    earliestYm = ym;
+    if (rows && rows.length) return true;
+    miss++;
+  }
+  exhausted = true;
+  return false;
+}
+async function resolveDate(want) {
+  if (!want || !/^\d{4}-\d{2}-\d{2}$/.test(want)) return DATES.at(-1);
+  while (!exhausted && want < DATES[0] && earliestYm > want.slice(0, 7)) await loadOlderMonth();
+  if (DATES.includes(want)) return want;
+  return DATES.filter(d => d <= want).at(-1) || DATES[0];
+}
+
+// ===== ETF 코드 집합(모집단에서 제외) + 종목별 보유 ETF 수 =====
+async function loadEtf(d) {
+  if (ETF_CACHE.has(d)) return ETF_CACHE.get(d);
+  if (!ETF_DATES) {
+    const dj = await (await fetch('data/dates.json')).json();
+    ETF_DATES = Array.isArray(dj) ? dj : dj.dates;
+  }
+  const ed = ETF_DATES.filter(x => x <= d).at(-1) || ETF_DATES[0];
+  const eh = await readParquet('/db/etf/' + ed + '.parquet');
+  const m = new Map(), codes = new Set(), brands = new Set();
+  for (const r of eh) {
+    codes.add(r.etf_code);
+    if (r.etf_name && r.etf_name.includes(' ')) brands.add(r.etf_name.split(' ')[0]);
+    if (r.weight == null || r.weight <= 0) continue;
+    const a = m.get(r.stock_name) || { n: 0, top: null, w: 0 };
+    a.n++;
+    if (r.weight > a.w) { a.w = r.weight; a.top = r.etf_name; }
+    m.set(r.stock_name, a);
+  }
+  const out = { map: m, codes: codes, brands: brands };
+  ETF_CACHE.set(d, out);
+  return out;
+}
+async function loadDayMap(kind, d, col, cache) {
+  const ym = d.slice(0, 7);
+  if (!cache.has(ym)) {
+    let by = new Map();
+    try {
+      for (const r of await readParquet('/db/market/' + kind + '/' + ym + '.parquet')) {
+        const dd = dstr(r.date);
+        let m = by.get(dd); if (!m) by.set(dd, m = new Map());
+        m.set(r.code, Number(r[col]));
+      }
+    } catch (e) { by = new Map(); }
+    cache.set(ym, by);
+  }
+  return cache.get(ym).get(d) || new Map();
+}
+
+// ===== 기준일의 돌파 종목 계산 =====
+// 기준일까지의 일별 RS선을 종목별로 모아, 현재 플러스 연속 구간의 시작(돌파일)을 찾는다.
+// 모집단: 일반 종목만 (build_high52.universe_filter 와 같은 규칙)
+// db/etf 에 나오는 ETF 코드 + 운용사 브랜드로 시작하는 이름(보유내역 없는 채권·합성형 ETF) + ETN(코드 5·7 대역) + 우선주 + 스팩 제외
+function isOrdinary(code, name, etf) {
+  if (etf) {
+    if (etf.codes.has(code)) return false;
+    const sp = name.indexOf(' ');
+    if (sp > 0 && etf.brands.has(name.slice(0, sp))) return false;
+  }
+  if (/^A[57]/.test(code) || !code.endsWith('0')) return false;
+  if (/ ETN|스팩|스펙/.test(name)) return false;
+  return true;
+}
+function computeCross(d, etf) {
+  const ym = d.slice(0, 7), pm = prevMonth(ym);
+  const byCode = new Map(), nameOf = {};
+  for (const mo of [prevMonth(pm), pm, ym]) {
+    const rows = MONTHS.get(mo);
+    if (!rows) continue;
+    for (const r of rows) {
+      if (r.date > d) continue;
+      if (!isOrdinary(r.code, r.name, etf)) continue;
+      let a = byCode.get(r.code);
+      if (!a) byCode.set(r.code, a = []);
+      a.push([r.date, r.mrs]);
+      nameOf[r.code] = r.name;
+    }
+  }
+  const list = [];
+  let pos = 0, n = 0;
+  for (const [code, a] of byCode) {
+    a.sort((x, y) => x[0] < y[0] ? -1 : 1);
+    if (a[a.length - 1][0] !== d) continue;
+    n++;
+    const now = a[a.length - 1][1];
+    if (!(now > 0)) continue;
+    pos++;
+    let i = a.length - 1;
+    while (i > 0 && a[i - 1][1] > 0) i--;
+    if (i === 0) continue;                        // 창 안에서 내내 플러스 → 돌파 아님
+    const days = a.length - i;
+    if (days > MAX_DAYS) continue;
+    let low = 0; for (let k = Math.max(0, i - 20); k < i; k++) if (a[k][1] < low) low = a[k][1];
+    list.push({ name: nameOf[code], code: code, mrs: now, cross: a[i][0], days: days, low: low, rs: null, close: null });
+  }
+  return { list: list, breadth: { pos: pos, n: n } };
+}
+
+function setBusy(on) {
+  busy = on;
+  document.getElementById('prevDay').disabled = on;
+  document.getElementById('nextDay').disabled = on;
+  document.getElementById('dateSel').disabled = on;
+  if (on) document.getElementById('dateHint').textContent = '불러오는 중…';
+}
+function renderDateNav() {
+  const sel = document.getElementById('dateSel');
+  const last = DATES.at(-1), idx = DATES.indexOf(curDate);
+  let h = '';
+  for (let i = DATES.length - 1; i >= 0; i--) {
+    h += '<option value="' + DATES[i] + '"' + (DATES[i] === curDate ? ' selected' : '') + '>' +
+      DATES[i] + (DATES[i] === last ? ' (최신)' : '') + '</option>';
+  }
+  if (!exhausted) h += '<option value="__more">이전 달 더 보기…</option>';
+  sel.innerHTML = h;
+  sel.disabled = false;
+  document.getElementById('prevDay').disabled = exhausted && idx === 0;
+  document.getElementById('nextDay').disabled = idx === DATES.length - 1;
+  const hint = document.getElementById('dateHint');
+  if (curDate === last) { hint.className = 'hint'; hint.textContent = '최신 거래일 · ◀ 로 과거 이동'; }
+  else { hint.className = 'hint past'; hint.textContent = '과거 기준일 (' + (DATES.length - 1 - idx) + '거래일 전)'; }
+}
+
+async function showDate(d, replace) {
+  curDate = d;
+  const my = ++tok;
+  // 돌파 계산에 전월·전전월이 필요 (돌파 후 15일 + 돌파 전 저점 20일)
+  await loadMonth(prevMonth(d.slice(0, 7)));
+  await loadMonth(prevMonth(prevMonth(d.slice(0, 7))));
+  let etf = null;
+  try { etf = await loadEtf(d); } catch (e) { etf = null; }
+  if (my !== tok) return;
+  ETFMAP = etf ? etf.map : null;
+  const c = computeCross(d, etf);
+  ROWS = c.list; BREADTH = c.breadth;
+  const isLatest = d === DATES.at(-1);
+  const nNew = ROWS.filter(r => r.days === 1).length;
+  const nOk = ROWS.filter(r => r.days >= OK_DAYS && r.days <= 10).length;
+  document.getElementById('dateLbl').textContent = d;
+  document.getElementById('headSub').textContent = d + ' 기준' + (isLatest ? '' : ' (과거)') +
+    ' · 오늘 돌파 ' + nNew + '개 · 최근 ' + MAX_DAYS + '거래일 돌파 ' + ROWS.length + '개';
+  document.getElementById('stNew').textContent = nNew;
+  document.getElementById('stOk').textContent = nOk;
+  document.getElementById('stBreadth').innerHTML = BREADTH.n ? (BREADTH.pos / BREADTH.n * 100).toFixed(0) + '% <small>' +
+    BREADTH.pos.toLocaleString() + ' / ' + BREADTH.n.toLocaleString() + '종목</small>' : '–';
+  document.title = 'RS선 제로선 돌파 ' + d + ' (오늘 ' + nNew + '종목) | 가좌버핏';
+  renderDateNav();
+  render();
+
+  const url = location.pathname + (isLatest ? '' : '?date=' + d);
+  if (location.pathname + location.search !== url) {
+    if (replace) history.replaceState({ date: d }, '', url); else history.pushState({ date: d }, '', url);
+  }
+
+  // 종가 · 오닐식 RS 등급 (부가 정보) — 준비되면 다시 그림
+  try {
+    const [px, rs] = await Promise.all([loadDayMap('price', d, 'close', PRICE_CACHE), loadDayMap('rs', d, 'rs', RS_CACHE)]);
+    if (my !== tok) return;
+    ROWS.forEach(r => { r.close = px.get(r.code) ?? null; r.rs = rs.get(r.code) ?? null; });
+    render();
+  } catch (e) { /* 부가 정보 — 실패해도 표는 유지 */ }
+}
+
+async function goTo(d, replace) {
+  if (busy) return;
+  setBusy(true);
+  try { await showDate(await resolveDate(d), replace); }
+  finally { setBusy(false); renderDateNav(); }
+}
+async function step(delta) {
+  if (busy) return;
+  setBusy(true);
+  try {
+    let idx = DATES.indexOf(curDate);
+    if (delta < 0 && idx === 0) { await loadOlderMonth(); idx = DATES.indexOf(curDate); }
+    const nd = DATES[idx + delta];
+    if (nd) await showDate(nd, false);
+  } finally { setBusy(false); renderDateNav(); }
+}
+async function load() {
+  let ym = new Date().toISOString().slice(0, 7), found = null;
+  for (let i = 0; i < 3 && !found; i++) {
+    const rows = await loadMonth(ym);
+    if (rows && rows.length) found = ym; else ym = prevMonth(ym);
+  }
+  if (!found) throw new Error('데이터 없음');
+  earliestYm = found;
+  await loadOlderMonth();
+  if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, /[?&]code=/.test(location.search) ? 6000 : 1500))]);
+  await goTo(new URLSearchParams(location.search).get('date'), true);
+}
+
+// ===== 표 =====
+function filtered() {
+  let l = ROWS;
+  if (filt === 'new') l = l.filter(r => r.days === 1);
+  else if (filt === 'ok') l = l.filter(r => r.days >= OK_DAYS);
+  if (query) l = l.filter(r => r.name.includes(query));
+  l = l.slice();
+  if (sortKey === 'days') l.sort((a, b) => (a.days - b.days) || (b.mrs - a.mrs));
+  else if (sortKey === 'mrs') l.sort((a, b) => b.mrs - a.mrs);
+  else l.sort((a, b) => ((b.rs || 0) - (a.rs || 0)) || (a.days - b.days));
+  return l;
+}
+function etfCell(nm) {
+  if (!ETFMAP) return '<span class="muted">…</span>';
+  const a = ETFMAP.get(nm);
+  if (!a) return '<span class="muted">–</span>';
+  return '<span class="etf">' + a.n + '개 <span class="muted">· ' + esc(a.top) + ' ' + a.w.toFixed(1) + '%</span></span>';
+}
+function grpLabel(days) {
+  if (days === 1) return ['', '&#127381; 1일째 — 오늘 제로선을 넘음', '아직 확정 아님 · 내일 다시 내려갈 수 있음'];
+  if (days === 2) return ['', '2일째', '하루 더 버티면 확정'];
+  if (days === OK_DAYS) return ['ok', '&#9989; 3일째 — 확정', '3거래일 연속 제로선 위 · 첫 화면 위젯에 표시'];
+  if (days <= 10) return ['ok', days + '일째', '확정 유지 중'];
+  return ['old', days + '일째', '돌파 후 2주 경과 · 초기 진입 시점은 지남'];
+}
+function render() {
+  const box = document.getElementById('listBody');
+  const cnt = document.getElementById('listCnt');
+  const nNew = ROWS.filter(r => r.days === 1).length;
+  cnt.textContent = ROWS.length + '개 · 1일째 ' + nNew + '개 · 최근 ' + MAX_DAYS + '거래일';
+  if (!ROWS.length) { box.innerHTML = '<div class="loading">' + (curDate || '') + ' 기준 · 최근 ' + MAX_DAYS + '거래일 안에 제로선을 넘은 종목이 없습니다</div>'; return; }
+
+  if (!isMember()) {
+    const bars = [30, 44, 40, 55, 50, 63, 60, 72, 68, 80, 76, 88].map(h => '<i style="height:' + h + '%"></i>').join('');
+    box.innerHTML = '<div class="lock-wrap"><div class="lock-blur">' + bars + '</div><div class="lock-panel">' +
+      '<div class="lock-ttl">&#128274; 돌파 종목 목록은 회원에게만 보입니다</div>' +
+      '<div class="lock-sub">' + curDate + ' 기준 <b>오늘 돌파 ' + nNew + '종목 · 최근 ' + MAX_DAYS + '거래일 ' + ROWS.length + '종목</b><br>무료 회원 · 구글 계정으로 10초면 끝납니다</div>' +
+      '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
+    return;
+  }
+
+  const l = filtered();
+  if (!l.length) { box.innerHTML = '<div class="loading">조건에 맞는 종목이 없습니다</div>'; return; }
+  const maxLow = Math.max(5, ...l.map(r => -r.low));
+  let h = '<div class="twrap"><table><thead><tr><th>#</th><th>종목</th><th>종가</th><th>RS선</th><th>돌파일</th><th>며칠째</th><th>돌파 전 저점</th><th>RS 등급</th><th>보유 ETF</th></tr></thead><tbody>';
+  let lastGrp = null;
+  l.forEach((r, i) => {
+    if (sortKey === 'days' && r.days !== lastGrp) {
+      lastGrp = r.days;
+      const [cls, ttl, sub] = grpLabel(r.days);
+      h += '<tr class="grp ' + cls + '"><td colspan="9">' + ttl + '<small>' + sub + '</small></td></tr>';
+    }
+    const badge = r.days === 1 ? '<span class="badge">NEW</span>' : (r.days === OK_DAYS ? '<span class="badge ok">확정</span>' : '');
+    h += '<tr class="row" onclick="location.href=\'' + link(r.name) + '\'"><td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(r.name) + '</span>' + badge + '<span class="sub">' + esc(r.code) + '</span></td>' +
+      '<td>' + (r.close != null ? fmtN(r.close) : '<span class="muted">…</span>') + '</td>' +
+      '<td class="mrs">+' + r.mrs.toFixed(1) + '</td>' +
+      '<td>' + r.cross.slice(5) + '</td>' +
+      '<td><b>' + r.days + '일째</b></td>' +
+      '<td><span class="bar" style="width:' + Math.round(-r.low / maxLow * 48) + 'px"></span>' + (r.low < 0 ? r.low.toFixed(1) : '0') + '</td>' +
+      '<td class="rs' + (r.rs >= 80 ? ' hi' : '') + '">' + (r.rs != null ? r.rs : '<span class="muted">…</span>') + '</td>' +
+      '<td>' + etfCell(r.name) + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  box.innerHTML = h;
+}
+
+async function shareList(btn) {
+  if (!curDate || !ROWS.length) return;
+  const orig = btn.innerHTML;
+  btn.disabled = true; btn.textContent = '준비 중…';
+  try {
+    const [y, m, d] = curDate.split('-');
+    const fresh = ROWS.filter(r => r.days === 1).sort((a, b) => b.mrs - a.mrs);
+    const ok = ROWS.filter(r => r.days >= OK_DAYS && r.days <= 10).sort((a, b) => a.days - b.days || b.mrs - a.mrs);
+    const lines = ['[' + y + '/' + m + '/' + d + '] 코스피 대비 RS선 제로선 돌파', '',
+      '🆕 오늘 돌파 ' + fresh.length + '종목 · ✅ 3일 확정 ' + ok.length + '종목' +
+      (BREADTH && BREADTH.n ? ' · 제로선 위 ' + (BREADTH.pos / BREADTH.n * 100).toFixed(0) + '%' : '')];
+    if (fresh.length) {
+      lines.push('', '🆕 1일째');
+      fresh.slice(0, 5).forEach((r, i) => lines.push((i + 1) + '. ' + r.name + ' +' + r.mrs.toFixed(1) + (r.rs != null ? ' RS ' + r.rs : '')));
+    }
+    if (ok.length) {
+      lines.push('', '✅ 확정');
+      ok.slice(0, 5).forEach((r, i) => lines.push((i + 1) + '. ' + r.name + ' ' + r.days + '일째 +' + r.mrs.toFixed(1)));
+    }
+    lines.push('', location.origin + location.pathname + '?date=' + curDate);
+    const message = lines.join('\n');
+    const data = { title: 'RS선 제로선 돌파 ' + y + '/' + m + '/' + d, text: message };
+    if (navigator.share) {
+      try { await navigator.share(data); } catch (e) { /* 사용자 취소 */ }
+    } else {
+      try { await navigator.clipboard.writeText(message); alert('아래 내용이 복사되었습니다:\n\n' + message); }
+      catch (e) { prompt('아래 내용을 복사해 주세요:', message); }
+    }
+  } finally {
+    btn.disabled = false; btn.innerHTML = orig;
+  }
+}
+
+// ===== 이벤트 =====
+if (window.Auth) {
+  Auth.mount(document.getElementById('authBox'));
+  Auth.onChange(function () { if (curDate) render(); });
+}
+document.getElementById('prevDay').addEventListener('click', () => step(-1));
+document.getElementById('nextDay').addEventListener('click', () => step(1));
+document.getElementById('dateSel').addEventListener('change', async e => {
+  const v = e.target.value;
+  if (v === '__more') {
+    if (busy) return;
+    setBusy(true);
+    try { await loadOlderMonth(); } finally { setBusy(false); renderDateNav(); }
+    e.target.value = curDate;
+    return;
+  }
+  goTo(v, false);
+});
+window.addEventListener('popstate', () => {
+  if (DATES.length) goTo(new URLSearchParams(location.search).get('date'), true);
+});
+document.addEventListener('keydown', e => {
+  if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowLeft') step(-1);
+  else if (e.key === 'ArrowRight') step(1);
+});
+document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip[data-f]').forEach(x => x.classList.toggle('on', x === b));
+  filt = b.dataset.f; render();
+}));
+document.querySelectorAll('.chip[data-sort]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.chip[data-sort]').forEach(x => x.classList.toggle('on', x === b));
+  sortKey = b.dataset.sort; render();
+}));
+document.getElementById('q').addEventListener('input', e => { query = e.target.value.trim(); render(); });
+
+load().catch(e => {
+  document.getElementById('listBody').innerHTML = '<div class="loading">데이터를 불러오지 못했습니다: ' + esc(e.message) + '</div>';
+  document.getElementById('dateSel').innerHTML = '<option>–</option>';
+});
+</script>
+</body>
+</html>

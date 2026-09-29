@@ -43,6 +43,7 @@
   }
   .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
   .header p { font-size: 14px; opacity: 0.8; }
+  .header .hnav { position: absolute; top: 16px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px; white-space: nowrap; }
   .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
 
   /* Date Selector */
@@ -290,6 +291,9 @@
   .back-btn:hover { background: #c5cae9; }
 
   @media (max-width: 600px) {
+    .header { padding-top: 14px; }
+    .header .hnav { position: static; display: inline-block; margin: 0 4px 12px; font-size: 12px; }
+    .header { padding-left: 10px; padding-right: 10px; }
     .header h1 { font-size: 20px; }
     .container { padding: 16px 10px; }
     tbody td { padding: 10px 10px; font-size: 13px; }
@@ -304,9 +308,10 @@
 <body>
 
 <div class="header">
-  <a href="/" style="position:absolute;left:16px;top:16px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;">&#8592; 홈 가기</a>
-  <a href="minervini.html" style="position:absolute;right:92px;top:16px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;">&#128200; 미너비니 템플릿</a>
-  <a href="guide.html" style="position:absolute;right:16px;top:16px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:13px;">&#10067; 사용법</a>
+  <a class="hnav" href="/" style="left:16px">&#8592; 홈 가기</a>
+  <a class="hnav" href="rsline.html" style="right:212px" title="코스피 대비 RS선이 제로선을 넘은 종목 (1일째부터)">&#127919; RS선 돌파</a>
+  <a class="hnav" href="minervini.html" style="right:92px">&#128200; 미너비니 템플릿</a>
+  <a class="hnav" href="guide.html" style="right:16px">&#10067; 사용법</a>
   <h1><a href="/tools/etf/" style="color:inherit;text-decoration:none" title="ETF 검색기 첫 화면으로">ETF 종목 검색기</a></h1>
   <p>종목명을 입력하면 해당 종목을 보유한 ETF를 비중순으로 보여줍니다</p>
 </div>
@@ -1438,9 +1443,19 @@ function renderStockChart(name, s) {
 async function loadMrsCross(date) {
   const byCode = new Map();   // code -> [[d, mrs]...]
   const nameOf = {};
+  // 모집단: 일반 종목만 — ETF 코드·운용사 브랜드명(보유내역 없는 ETF)·ETN(코드 5·7 대역)·우선주·스팩 제외
+  const brands = new Set();
+  for (const n of Object.values(ETFS_CUR)) { const sp = n.indexOf(' '); if (sp > 0) brands.add(n.slice(0, sp)); }
+  const isOrdinary = (code, name) => {
+    if (ETFS_CUR[code]) return false;
+    const sp = name.indexOf(' ');
+    if (sp > 0 && brands.has(name.slice(0, sp))) return false;
+    if (/^A[57]/.test(code) || !code.endsWith('0')) return false;
+    return !/ ETN|스팩|스펙/.test(name);
+  };
   await Promise.all(monthsList(date, 2).map(async mo => {
     for (const r of await readMonth('m', mo)) {
-      if (ETFS_CUR[r.code]) continue;   // 일반 종목만
+      if (!isOrdinary(r.code, r.name)) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
       if (d > date) continue;
       let a = byCode.get(r.code);
@@ -1741,15 +1756,15 @@ function renderIntro() {
   // 코스피 대비 RS선 제로선 돌파 위젯 (회원 전용 · 와인스타인 매수 관문)
   html += '<div class="widget"><h3>&#127919; 코스피 대비 RS선 제로선 돌파 <span class="wsub" style="color:#8e24aa">회원</span></h3>';
   if (!isMember()) {
-    html += '<div class="sub">주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘은 종목 · 3거래일 확정 · 최근 10거래일</div>' +
+    html += '<div class="sub">주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘은 종목 · 3거래일 확정 · 최근 10거래일 · <a href="rsline.html" style="color:#8e24aa">읽는 법</a></div>' +
       lockedHtml('', '로그인하면 오늘의 돌파 종목이 바로 보입니다 · 무료', { bare: true, ttl: '회원 전용 위젯입니다' });
   } else if (!MRS) {
     html += '<div class="sub">RS선 불러오는 중&hellip;</div>';
   } else if (!MRS.list || !MRS.list.length) {
-    html += '<div class="sub">' + (MRS.d0 || '') + ' 기준 · 최근 10거래일 안에 제로선을 넘어 3일 이상 유지한 종목이 없습니다</div>';
+    html += '<div class="sub">' + (MRS.d0 || '') + ' 기준 · 최근 10거래일 안에 제로선을 넘어 3일 이상 유지한 종목이 없습니다 · <a href="rsline.html" style="color:#8e24aa">1일째 보기 &rarr;</a></div>';
   } else {
     html += '<div class="sub">' + MRS.d0 + ' 기준 · 주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘고 3거래일 유지 · 최근 10거래일 · ' +
-      MRS.total + '종목 중 ' + MRS.list.length + '개 · <a href="/study/trend-risk/" style="color:#8e24aa">읽는 법</a></div>';
+      MRS.total + '종목 중 ' + MRS.list.length + '개 · <a href="rsline.html" style="color:#8e24aa">1일째부터 전체 보기 &rarr;</a></div>';
     MRS.list.forEach((t, i) => {
       html += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
         '<span class="wrank">' + (i + 1) + '</span>' +
