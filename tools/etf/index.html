@@ -374,6 +374,7 @@ let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
+let MRS = null;        // 코스피 대비 RS선(맨스필드 RS) 제로선 상향 돌파 종목 {d0, list:[[name,code,mrs,cross,days,rs]]} (db/market/mrs 기반, 회원 전용 위젯)
 let RSM = null;        // ETF RS 등급 급등 {top:[[code,delta,rs0]], d0, d20} (db/market/rs 기반)
 let INTRO_READY = null; // 시황 공유용: 수익률·목표주가·RS 로드 완료 Promise
 let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d10, d20, top10:[[code,chg,cov]], top20:[...]}] (db/market/earnings/consensus 기반)
@@ -487,6 +488,7 @@ if (window.Auth) {
   Auth.onChange(function () {
     SERIES_CACHE.clear();
     if (DATES.length && currentView) applyStateFromUrl();
+    else if (DATES.length && introArea.style.display !== 'none') renderIntro();   // 회원 전용 위젯 열고 닫기
   });
 }
 
@@ -671,7 +673,7 @@ function monthsList(date, n) {
   return out;
 }
 
-const DB_DIR = { p: 'price', c: 'consensus', r: 'rs', e: 'earnings/consensus' };
+const DB_DIR = { p: 'price', c: 'consensus', r: 'rs', e: 'earnings/consensus', m: 'mrs' };
 async function readMonth(kind, mo) {
   const key = kind + '|' + mo;
   let buf = FILE_BUFS.get(key);
@@ -750,10 +752,10 @@ function showStockChart(name) {
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  Promise.all([loadStockSeries(name), loadRsSeries(name)]).then(([s, rs]) => {
+  Promise.all([loadStockSeries(name), loadRsSeries(name), loadMrsSeries(name)]).then(([s, rs, mrs]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
-    renderStockChart(name, Object.assign({ rs: rs }, s));
+    renderStockChart(name, Object.assign({ rs: rs, mrs: mrs }, s));
   });
   showEarnings(name);
 }
@@ -776,15 +778,33 @@ async function loadRsSeries(name, code) {
   return out;
 }
 
+// 코스피 대비 RS선(맨스필드 RS) 시계열 — db/market/mrs (비율 ÷ 252일 평균 − 1, %). 0 = 1년 평균만큼 시장을 따라감
+async function loadMrsSeries(name, code) {
+  const key = 'M:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
+  if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
+  const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
+  const out = [];
+  await Promise.all(monthsList(currentDate, 13).map(async mo => {
+    for (const r of await readMonth('m', mo)) {
+      if (code ? r.code !== code : r.name !== name) continue;
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d >= from && d <= currentDate) out.push([d, Number(r.mrs)]);
+    }
+  }));
+  out.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  SERIES_CACHE.set(key, out);
+  return out;
+}
+
 function showEtfChart(code, name) {
   const tok = ++chartToken;
   chartArea.style.display = '';
   chartArea.innerHTML = '<div class="chart-card"><div class="chart-title">&#128201; ' + escHtml(name) +
     ' &middot; 최근 1년</div><div class="chart-loading">가격 데이터를 불러오는 중&hellip;</div></div>';
-  Promise.all([loadStockSeries(name, code), loadRsSeries(name, code)]).then(([s, rs]) => {
+  Promise.all([loadStockSeries(name, code), loadRsSeries(name, code), isMember() ? loadMrsSeries(name, code) : Promise.resolve([])]).then(([s, rs, mrs]) => {
     if (tok !== chartToken) return;
     if (!currentView || currentView.type !== 'etf' || currentView.code !== code) return;
-    renderStockChart(name, Object.assign({ isEtf: true, rs: rs }, s));
+    renderStockChart(name, Object.assign({ isEtf: true, rs: rs, mrs: mrs }, s));
   });
 }
 
@@ -1277,10 +1297,13 @@ function renderStockChart(name, s) {
   }
   // 오닐식 RS 등급(1~99) 추이 — 우측 고정축, 80 이상이 강세 기준
   const rs = (s.rs && s.rs.length > 1) ? s.rs : [];
+  // 코스피 대비 RS선(맨스필드 RS) — 하단 별도 패널, 제로선 기준 (회원 전용 데이터)
+  const mrs = (s.mrs && s.mrs.length > 1) ? s.mrs : [];
 
   const W = Math.max(320, chartArea.clientWidth - 40);
-  const H = 260, L = 62, R = rs.length ? 32 : 14, T = 16, B = 26;   // RS 축 자리를 우측에 확보
-  const mainB = H - B;
+  const MP = mrs.length ? 84 : 0;                                    // RS선 패널 높이
+  const H = 260 + MP, L = 62, R = (rs.length || mrs.length) ? 32 : 14, T = 16, B = 26;   // RS 축 자리를 우측에 확보
+  const mainB = H - B - MP;
   const xLabelY = H - 8;
   const x0 = Date.parse(s.from), x1 = Date.parse(currentDate);
   let vmin = Infinity, vmax = -Infinity;
@@ -1334,6 +1357,29 @@ function renderStockChart(name, s) {
     rsAt = d => { let v = null; for (const p of rs) { if (p[0] <= d) v = p[1]; else break; } return v; };
   }
 
+  // 코스피 대비 RS선 패널: 제로선(1년 평균) 위 = 시장을 이기는 중. 플러스 구간 보라, 마이너스 회색
+  let mrsAt = null, mrsNow = null;
+  if (mrs.length) {
+    const pT = mainB + 16, pB = H - B - 4, mid = (pT + pB) / 2;
+    let m = 10; for (const [, v] of mrs) if (Math.abs(v) > m) m = Math.abs(v);
+    m = Math.ceil(m / 10) * 10;
+    const YM = v => mid - v / m * (pB - pT) / 2;
+    mrsNow = mrs[mrs.length - 1][1];
+    g += '<line x1="' + L + '" y1="' + (pT - 8).toFixed(1) + '" x2="' + (W - R) + '" y2="' + (pT - 8).toFixed(1) + '" stroke="#eee"/>';
+    g += '<line x1="' + L + '" y1="' + mid.toFixed(1) + '" x2="' + (W - R) + '" y2="' + mid.toFixed(1) + '" stroke="#8e24aa" stroke-opacity="0.55" stroke-dasharray="4 3"/>';
+    for (const u of [m, 0, -m]) {
+      g += '<text x="' + (W - R + 5) + '" y="' + YM(u).toFixed(1) + '" dominant-baseline="middle" font-size="10" fill="#8e24aa" opacity="' + (u === 0 ? '1' : '0.7') + '">' + (u > 0 ? '+' : '') + u + '</text>';
+    }
+    // 플러스 구간 채우기(제로선 위만) + 선
+    let area = '';
+    for (const p of mrs) area += (area ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + YM(Math.max(0, p[1])).toFixed(1);
+    area += 'L' + X(mrs[mrs.length - 1][0]).toFixed(1) + ' ' + mid.toFixed(1) + 'L' + X(mrs[0][0]).toFixed(1) + ' ' + mid.toFixed(1) + 'Z';
+    lines += '<path d="' + area + '" fill="#8e24aa" fill-opacity="0.12"/>' +
+      '<path d="' + path(mrs, YM) + '" fill="none" stroke="#8e24aa" stroke-width="1.5"/>' +
+      '<text x="' + (L + 4) + '" y="' + (pT - 1).toFixed(1) + '" font-size="10" font-weight="700" fill="#8e24aa">코스피 대비 RS선 (0 = 1년 평균)</text>';
+    mrsAt = d => { let v = null; for (const p of mrs) { if (p[0] <= d) v = p[1]; else break; } return v; };
+  }
+
   const last = s.price.length ? s.price[s.price.length - 1][1] : null;
   const lastTp = s.tp.length ? s.tp[s.tp.length - 1][1] : null;
   const upside = (last && lastTp) ? ' &middot; 괴리율 ' + ((lastTp / last - 1) * 100).toFixed(1) + '%' : '';
@@ -1343,13 +1389,16 @@ function renderStockChart(name, s) {
       : ' (목표주가 컨센서스 없음)') +
     (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
       (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
-      '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '');
+      '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '') +
+    (mrs.length ? ' &nbsp;<span style="color:#8e24aa">&#9644;</span> 코스피 대비 RS선 <b style="color:' +
+      (mrsNow > 0 ? '#8e24aa' : '#999') + '">' + (mrsNow > 0 ? '+' : '') + mrsNow.toFixed(1) + '</b>' +
+      '<span style="color:#bbb"> (하단 · 제로선 위 = 시장 이김)</span>' : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
     '<div class="chart-title">&#128201; ' + escHtml(name) + ' &middot; 최근 1년</div>' +
     '<div class="chart-sub">' + legend + upside + '</div>' +
     '<div class="chart-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + lines +
-    '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + mainB + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
+    '<line id="chartCross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
     '</svg><div class="chart-tip" id="chartTip"></div></div></div>';
 
   // 호버 툴팁: 가장 가까운 거래일의 수정주가·목표주가 표시
@@ -1369,10 +1418,11 @@ function renderStockChart(name, s) {
     let best = s.price[0];
     for (const p of s.price) if (Math.abs(X(p[0]) - mx) < Math.abs(X(best[0]) - mx)) best = p;
     const d = best[0], tpv = at(s.tp, d);
-    const rsv = rsAt ? rsAt(d) : null;
+    const rsv = rsAt ? rsAt(d) : null, mv = mrsAt ? mrsAt(d) : null;
     cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
     tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '') +
-      (rsv != null ? '<br>RS 등급 ' + rsv + ' <span style="opacity:.7">/99</span>' : '');
+      (rsv != null ? '<br>RS 등급 ' + rsv + ' <span style="opacity:.7">/99</span>' : '') +
+      (mv != null ? '<br>코스피 대비 RS선 ' + (mv > 0 ? '+' : '') + mv.toFixed(1) : '');
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
@@ -1380,6 +1430,52 @@ function renderStockChart(name, s) {
     tip.style.bottom = (B / H * r.height + 6) + 'px';   // X축 라벨 바로 위 (하단 고정)
   });
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+}
+
+// ===== 코스피 대비 RS선 제로선 상향 돌파 (db/market/mrs, 회원 전용 위젯) =====
+// 와인스타인의 매수 관문: RS선이 마이너스(제로선 아래)에서 플러스로 넘어오는 순간.
+// 일봉 잡음을 줄이기 위해 '3거래일 연속 플러스'를 돌파 확정으로 보고, 최근 10거래일 안에 돌파한 일반 종목만 뽑는다.
+async function loadMrsCross(date) {
+  const byCode = new Map();   // code -> [[d, mrs]...]
+  const nameOf = {};
+  await Promise.all(monthsList(date, 2).map(async mo => {
+    for (const r of await readMonth('m', mo)) {
+      if (ETFS_CUR[r.code]) continue;   // 일반 종목만
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date) continue;
+      let a = byCode.get(r.code);
+      if (!a) byCode.set(r.code, a = []);
+      a.push([d, Number(r.mrs)]);
+      nameOf[r.code] = r.name;
+    }
+  }));
+  if (!byCode.size) return null;
+  const dateSet = new Set();
+  for (const a of byCode.values()) for (const p of a) dateSet.add(p[0]);
+  const ds = Array.from(dateSet).sort();
+  const d0 = ds[ds.length - 1];
+  // 오닐식 RS 등급(참고용): 기준일 등급
+  const rsNow = new Map();
+  for (const r of await readMonth('r', d0.slice(0, 7))) {
+    const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+    if (d === d0) rsNow.set(r.code, r.rs);
+  }
+  const list = [];
+  for (const [code, a] of byCode) {
+    a.sort((x, y) => x[0] < y[0] ? -1 : 1);
+    if (a.length < 5 || a[a.length - 1][0] !== d0) continue;
+    // 현재 플러스 연속 구간의 시작(돌파일) 찾기
+    let i = a.length - 1;
+    if (a[i][1] <= 0) continue;
+    while (i > 0 && a[i - 1][1] > 0) i--;
+    if (i === 0) continue;                        // 창 안에서 내내 플러스 → 돌파 아님
+    const days = a.length - i;                    // 돌파 후 플러스 유지 일수(돌파일 포함)
+    if (days < 3 || days > 10) continue;          // 3일 확정 · 10일 이내 신선
+    let low = 0; for (let k = Math.max(0, i - 20); k < i; k++) if (a[k][1] < low) low = a[k][1];
+    list.push([nameOf[code], code, a[a.length - 1][1], a[i][0], days, rsNow.get(code) || null, low]);
+  }
+  list.sort((x, y) => (x[4] - y[4]) || (y[2] - x[2]));
+  return { d0: d0, list: list.slice(0, 15), total: list.length };
 }
 
 // ===== RS 등급 급등 (db/market/rs) =====
@@ -1642,6 +1738,28 @@ function renderIntro() {
   }
   html += '</div>';
 
+  // 코스피 대비 RS선 제로선 돌파 위젯 (회원 전용 · 와인스타인 매수 관문)
+  html += '<div class="widget"><h3>&#127919; 코스피 대비 RS선 제로선 돌파 <span class="wsub" style="color:#8e24aa">회원</span></h3>';
+  if (!isMember()) {
+    html += '<div class="sub">주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘은 종목 · 3거래일 확정 · 최근 10거래일</div>' +
+      lockedHtml('', '로그인하면 오늘의 돌파 종목이 바로 보입니다 · 무료', { bare: true, ttl: '회원 전용 위젯입니다' });
+  } else if (!MRS) {
+    html += '<div class="sub">RS선 불러오는 중&hellip;</div>';
+  } else if (!MRS.list || !MRS.list.length) {
+    html += '<div class="sub">' + (MRS.d0 || '') + ' 기준 · 최근 10거래일 안에 제로선을 넘어 3일 이상 유지한 종목이 없습니다</div>';
+  } else {
+    html += '<div class="sub">' + MRS.d0 + ' 기준 · 주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘고 3거래일 유지 · 최근 10거래일 · ' +
+      MRS.total + '종목 중 ' + MRS.list.length + '개 · <a href="/study/trend-risk/" style="color:#8e24aa">읽는 법</a></div>';
+    MRS.list.forEach((t, i) => {
+      html += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
+        '<span class="wrank">' + (i + 1) + '</span>' +
+        '<span class="wname">' + escHtml(t[0]) + '<span class="wsub">돌파 ' + t[3].slice(5) + ' · ' + t[4] + '일째' +
+        (t[5] != null ? ' · RS ' + t[5] : '') + '</span></span>' +
+        '<span class="wval up">+' + t[2].toFixed(1) + '</span></div>';
+    });
+  }
+  html += '</div>';
+
   html += '</div>';
 
   introArea.innerHTML = html;
@@ -1730,6 +1848,12 @@ async function loadDateData(date) {
     const pRsm = loadRsMovers(date).then(t => {
       if (currentDate !== reqDate) return;
       RSM = t || { d0: null, d20: null, top: [] };
+      if (introArea.style.display !== 'none') renderIntro();
+    });
+    MRS = null;
+    loadMrsCross(date).then(t => {
+      if (currentDate !== reqDate) return;
+      MRS = t || { d0: null, list: [], total: 0 };
       if (introArea.style.display !== 'none') renderIntro();
     });
     INTRO_READY = Promise.allSettled([pRet, pTpm, pRsm]);   // 시황 공유 텍스트에 필요한 데이터
