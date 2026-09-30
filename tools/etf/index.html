@@ -309,7 +309,7 @@
 
 <div class="header">
   <a class="hnav" href="/" style="left:16px">&#8592; 홈 가기</a>
-  <a class="hnav" href="rsline.html" style="right:212px" title="코스피 대비 RS선이 제로선을 넘은 종목 (1일째부터)">&#127919; RS선 돌파</a>
+  <a class="hnav" href="weinstein.html" style="right:222px" title="와인스타인 RS가 제로선을 넘은 종목 (1일째부터)">&#127919; 와인스타인 RS</a>
   <a class="hnav" href="minervini.html" style="right:92px">&#128200; 미너비니 템플릿</a>
   <a class="hnav" href="guide.html" style="right:16px">&#10067; 사용법</a>
   <h1><a href="/tools/etf/" style="color:inherit;text-decoration:none" title="ETF 검색기 첫 화면으로">ETF 종목 검색기</a></h1>
@@ -379,7 +379,7 @@ let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
 let RET = null;        // ETF 수익률 랭킹 {top5:[[code,r]], top20:[], d0,d5,d20} (db/market/price 기반)
 let TPM = null;        // 목표주가 모멘텀 {up:[[code,score,cov]], down:[], d0, d20} (db/market/consensus 기반)
-let MRS = null;        // 코스피 대비 RS선(맨스필드 RS) 제로선 상향 돌파 종목 {d0, list:[[name,code,mrs,cross,days,rs]]} (db/market/mrs 기반, 회원 전용 위젯)
+let MRS = null;        // 와인스타인 RS(맨스필드 RS · 주가÷코스피 비율의 1년 평균 대비) 제로선 상향 돌파 종목 {d0, list:[[name,code,mrs,cross,days,rs]]} (db/market/mrs 기반, 회원 전용 위젯)
 let RSM = null;        // ETF RS 등급 급등 {top:[[code,delta,rs0]], d0, d20} (db/market/rs 기반)
 let INTRO_READY = null; // 시황 공유용: 수익률·목표주가·RS 로드 완료 Promise
 let OPM = null;        // 이익 컨센서스 상향 ETF — 연도별 [{fy, d0, d10, d20, top10:[[code,chg,cov]], top20:[...]}] (db/market/earnings/consensus 기반)
@@ -783,7 +783,7 @@ async function loadRsSeries(name, code) {
   return out;
 }
 
-// 코스피 대비 RS선(맨스필드 RS) 시계열 — db/market/mrs (비율 ÷ 252일 평균 − 1, %). 0 = 1년 평균만큼 시장을 따라감
+// 와인스타인 RS(맨스필드 RS · 주가÷코스피 비율의 1년 평균 대비) 시계열 — db/market/mrs (비율 ÷ 252일 평균 − 1, %). 0 = 1년 평균만큼 시장을 따라감
 async function loadMrsSeries(name, code) {
   const key = 'M:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
@@ -1302,7 +1302,7 @@ function renderStockChart(name, s) {
   }
   // 오닐식 RS 등급(1~99) 추이 — 우측 고정축, 80 이상이 강세 기준
   const rs = (s.rs && s.rs.length > 1) ? s.rs : [];
-  // 코스피 대비 RS선(맨스필드 RS) — 하단 별도 패널, 제로선 기준 (회원 전용 데이터)
+  // 와인스타인 RS(맨스필드 RS · 주가÷코스피 비율의 1년 평균 대비) — 하단 별도 패널, 제로선 기준 (회원 전용 데이터)
   const mrs = (s.mrs && s.mrs.length > 1) ? s.mrs : [];
 
   const W = Math.max(320, chartArea.clientWidth - 40);
@@ -1362,7 +1362,7 @@ function renderStockChart(name, s) {
     rsAt = d => { let v = null; for (const p of rs) { if (p[0] <= d) v = p[1]; else break; } return v; };
   }
 
-  // 코스피 대비 RS선 패널: 제로선(1년 평균) 위 = 시장을 이기는 중. 플러스 구간 보라, 마이너스 회색
+  // 와인스타인 RS 패널: 제로선(1년 평균) 위 = 시장을 이기는 중. 플러스 구간 보라, 마이너스 회색
   let mrsAt = null, mrsNow = null;
   if (mrs.length) {
     const pT = mainB + 16, pB = H - B - 4, mid = (pT + pB) / 2;
@@ -1381,7 +1381,7 @@ function renderStockChart(name, s) {
     area += 'L' + X(mrs[mrs.length - 1][0]).toFixed(1) + ' ' + mid.toFixed(1) + 'L' + X(mrs[0][0]).toFixed(1) + ' ' + mid.toFixed(1) + 'Z';
     lines += '<path d="' + area + '" fill="#8e24aa" fill-opacity="0.12"/>' +
       '<path d="' + path(mrs, YM) + '" fill="none" stroke="#8e24aa" stroke-width="1.5"/>' +
-      '<text x="' + (L + 4) + '" y="' + (pT - 1).toFixed(1) + '" font-size="10" font-weight="700" fill="#8e24aa">코스피 대비 RS선 (0 = 1년 평균)</text>';
+      '<text x="' + (L + 4) + '" y="' + (pT - 1).toFixed(1) + '" font-size="10" font-weight="700" fill="#8e24aa">와인스타인 RS (0 = 1년 평균)</text>';
     mrsAt = d => { let v = null; for (const p of mrs) { if (p[0] <= d) v = p[1]; else break; } return v; };
   }
 
@@ -1395,7 +1395,7 @@ function renderStockChart(name, s) {
     (rs.length ? ' &nbsp;<span style="color:#2e7d32">&#9644;</span> RS 등급 <b style="color:' +
       (rsNow >= 80 ? '#2e7d32' : rsNow >= 50 ? '#666' : '#c62828') + '">' + rsNow + '</b>' +
       '<span style="color:#bbb">/99 (우측축 · 일반 종목 대비)</span>' : '') +
-    (mrs.length ? ' &nbsp;<span style="color:#8e24aa">&#9644;</span> 코스피 대비 RS선 <b style="color:' +
+    (mrs.length ? ' &nbsp;<span style="color:#8e24aa">&#9644;</span> 와인스타인 RS <b style="color:' +
       (mrsNow > 0 ? '#8e24aa' : '#999') + '">' + (mrsNow > 0 ? '+' : '') + mrsNow.toFixed(1) + '</b>' +
       '<span style="color:#bbb"> (하단 · 제로선 위 = 시장 이김)</span>' : '');
 
@@ -1427,7 +1427,7 @@ function renderStockChart(name, s) {
     cross.setAttribute('x1', X(d)); cross.setAttribute('x2', X(d)); cross.style.display = '';
     tip.innerHTML = d + '<br>수정주가 ' + fmt(best[1]) + '원' + (tpv ? '<br>목표주가 ' + fmt(tpv) + '원' : '') +
       (rsv != null ? '<br>RS 등급 ' + rsv + ' <span style="opacity:.7">/99</span>' : '') +
-      (mv != null ? '<br>코스피 대비 RS선 ' + (mv > 0 ? '+' : '') + mv.toFixed(1) : '');
+      (mv != null ? '<br>와인스타인 RS ' + (mv > 0 ? '+' : '') + mv.toFixed(1) : '');
     tip.style.display = 'block';
     const px = X(d) / W * r.width;
     tip.style.left = Math.min(px + 12, r.width - tip.offsetWidth - 4) + 'px';
@@ -1437,7 +1437,7 @@ function renderStockChart(name, s) {
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
 }
 
-// ===== 코스피 대비 RS선 제로선 상향 돌파 (db/market/mrs, 회원 전용 위젯) =====
+// ===== 와인스타인 RS 제로선 상향 돌파 (db/market/mrs, 회원 전용 위젯) =====
 // 와인스타인의 매수 관문: RS선이 마이너스(제로선 아래)에서 플러스로 넘어오는 순간.
 // 일봉 잡음을 줄이기 위해 '3거래일 연속 플러스'를 돌파 확정으로 보고, 최근 10거래일 안에 돌파한 일반 종목만 뽑는다.
 async function loadMrsCross(date) {
@@ -1753,18 +1753,18 @@ function renderIntro() {
   }
   html += '</div>';
 
-  // 코스피 대비 RS선 제로선 돌파 위젯 (회원 전용 · 와인스타인 매수 관문)
-  html += '<div class="widget"><h3>&#127919; 코스피 대비 RS선 제로선 돌파 <span class="wsub" style="color:#8e24aa">회원</span></h3>';
+  // 와인스타인 RS 제로선 돌파 위젯 (회원 전용 · 와인스타인 매수 관문)
+  html += '<div class="widget"><h3>&#127919; 와인스타인 RS 제로선 돌파 <span class="wsub" style="color:#8e24aa">회원</span></h3>';
   if (!isMember()) {
-    html += '<div class="sub">주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘은 종목 · 3거래일 확정 · 최근 10거래일 · <a href="rsline.html" style="color:#8e24aa">읽는 법</a></div>' +
+    html += '<div class="sub">주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘은 종목 · 3거래일 확정 · 최근 10거래일 · <a href="weinstein.html" style="color:#8e24aa">읽는 법</a></div>' +
       lockedHtml('', '로그인하면 오늘의 돌파 종목이 바로 보입니다 · 무료', { bare: true, ttl: '회원 전용 위젯입니다' });
   } else if (!MRS) {
     html += '<div class="sub">RS선 불러오는 중&hellip;</div>';
   } else if (!MRS.list || !MRS.list.length) {
-    html += '<div class="sub">' + (MRS.d0 || '') + ' 기준 · 최근 10거래일 안에 제로선을 넘어 3일 이상 유지한 종목이 없습니다 · <a href="rsline.html" style="color:#8e24aa">1일째 보기 &rarr;</a></div>';
+    html += '<div class="sub">' + (MRS.d0 || '') + ' 기준 · 최근 10거래일 안에 제로선을 넘어 3일 이상 유지한 종목이 없습니다 · <a href="weinstein.html" style="color:#8e24aa">1일째 보기 &rarr;</a></div>';
   } else {
     html += '<div class="sub">' + MRS.d0 + ' 기준 · 주가÷코스피 비율이 1년 평균선(제로선)을 아래에서 위로 넘고 3거래일 유지 · 최근 10거래일 · ' +
-      MRS.total + '종목 중 ' + MRS.list.length + '개 · <a href="rsline.html" style="color:#8e24aa">1일째부터 전체 보기 &rarr;</a></div>';
+      MRS.total + '종목 중 ' + MRS.list.length + '개 · <a href="weinstein.html" style="color:#8e24aa">1일째부터 전체 보기 &rarr;</a></div>';
     MRS.list.forEach((t, i) => {
       html += '<div class="wrow" onclick="searchComponent(\'' + safeAttr(t[0]) + '\')">' +
         '<span class="wrank">' + (i + 1) + '</span>' +
