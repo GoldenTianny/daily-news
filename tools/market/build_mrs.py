@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""수정주가·지수 DB -> 코스피 대비 RS선(맨스필드 RS) DB (db/market/mrs/)
+"""수정주가·지수 DB -> 와인스타인 RS(맨스필드 RS) DB (db/market/mrs/)
 
 스탠 와인스타인이 쓰는 상대강도선. 오닐식 RS 등급(db/market/rs, 종목 간 백분위)과
 달리 **시장지수 대비 비율의 추세**를 본다.
@@ -70,7 +70,7 @@ def build(force=False):
         con.unregister('g')
         n_new += 1
     last = long['date'].max()
-    print(f"OK  코스피 대비 RS선 -> db/market/mrs/: {len(long):,}행, {long['date'].min()}~{last}, "
+    print(f"OK  와인스타인 RS -> db/market/mrs/: {len(long):,}행, {long['date'].min()}~{last}, "
           f"종목 {long['code'].nunique():,}개 | 월 파일 {n_new}개 갱신, {n_same}개 동일")
 
 
