@@ -20,7 +20,8 @@ Code 헤더 행의 항목명으로 어떤 값인지 판별한다.
 - 종가와 함께 쓰려면 price DB와 조인:
     SELECT o.*, p.close FROM 'db/market/ohlc/*.parquet' o
     JOIN 'db/market/price/*.parquet' p USING (date, code)
-실행: python3 tools/market/build_ohlc.py <파일.xlsx>   (ingest_daily.py가 시트 구조로 자동 인식)
+- 용량 제한으로 항목이 여러 파일에 나뉘면 함께 넘겨 필드 단위로 병합 (한 항목이라도 없으면 적재 거부)
+실행: python3 tools/market/build_ohlc.py <파일.xlsx> [<파일2.xlsx> ...]   (ingest_daily.py가 시트 구조로 자동 인식)
 """
 import sys, os, re, glob, numbers, datetime
 import openpyxl
@@ -82,13 +83,25 @@ def parse_sheet(ws, field):
     return pd.DataFrame(out, columns=['date', 'code', 'name', field])
 
 
-def parse(xlsx_path):
-    wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+def parse(xlsx_paths):
+    """xlsx 하나 또는 여러 개(용량 제한으로 항목별로 나눠 받은 파일)를 필드 단위로 병합"""
+    if isinstance(xlsx_paths, str):
+        xlsx_paths = [xlsx_paths]
     df = None
-    for sn, field in item_sheets(wb):
-        g = parse_sheet(wb[sn], field)
-        print(f"    {sn} · {field}: {len(g):,}행")
-        df = g if df is None else df.merge(g, on=['date', 'code', 'name'], how='outer')
+    for xlsx_path in xlsx_paths:
+        wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+        for sn, field in item_sheets(wb):
+            if df is not None and field in df.columns:
+                print(f"    {sn} · {field}: 중복 항목 — 건너뜀")
+                continue
+            g = parse_sheet(wb[sn], field)
+            print(f"    {os.path.basename(xlsx_path)} / {sn} · {field}: {len(g):,}행")
+            # 종목명은 파일마다 표기가 다를 수 있으므로 (date, code)로 병합
+            if df is None:
+                df = g
+            else:
+                df = df.merge(g, on=['date', 'code'], how='outer', suffixes=('', '_r'))
+                df['name'] = df['name'].fillna(df.pop('name_r'))
     if df is None:
         return pd.DataFrame(columns=['date', 'code', 'name'] + VALS)
     for v in VALS:
@@ -146,13 +159,19 @@ def build_snapshot(xlsx_path, date_key):
     return True
 
 
-def build(xlsx_path):
-    """Peer Analysis 시계열 시트용 (전체 이력)"""
-    df = parse(xlsx_path)
+def build(xlsx_paths):
+    """Peer Analysis 시계열 시트용 (전체 이력). 시가·고가·저가가 여러 파일로 나뉘어 있으면
+    전부 함께 넘긴다. 한 항목이라도 빠진 채로 쓰면 행 단위 upsert가 기존 값을 지우므로 거부"""
+    df = parse(xlsx_paths)
     if df.empty:
         print('SKIP: 시가·고가·저가 데이터 없음')
-        return
-    write(df)
+        return False
+    missing = [v for v in VALS if df[v].isna().all()]
+    if missing:
+        print(f"SKIP: {', '.join(missing)} 항목이 없음 — 기존 값이 지워지므로 적재하지 않음. "
+              f"나머지 항목이 든 파일을 함께 지정하세요")
+        return False
+    return write(df) > 0
 
 
 def write(df):
@@ -181,6 +200,7 @@ def write(df):
     print(f"OK  OHLC -> db/market/ohlc/: {len(df):,}행, 종목 {df['code'].nunique():,}개, "
           f"{df['date'].min()} ~ {df['date'].max()} | 월 파일 {n_new}개 갱신, {n_same}개 동일 "
           f"({size // 1024 // 1024}MB)")
+    return n_new
 
 
 PRICE_DIR = os.path.join(REPO, 'db', 'market', 'price')
@@ -200,7 +220,8 @@ def reconcile_price():
     bad = con.execute(f"""
         SELECT o.code, any_value(o.name) AS name, count(*) AS n,
                median((o.low + o.high) / 2 / p.close) AS r,
-               count(*) FILTER (WHERE NOT (o.low <= p.close AND p.close <= o.high)) AS outside
+               count(*) FILTER (WHERE NOT (o.low <= p.close AND p.close <= o.high)) AS outside,
+               max(date) FILTER (WHERE NOT (o.low <= p.close AND p.close <= o.high)) AS last_bad
         FROM '{os.path.join(OUT, '*.parquet')}' o
         JOIN '{os.path.join(PRICE_DIR, '*.parquet')}' p USING (date, code)
         GROUP BY o.code HAVING n >= {MIN_ROWS} AND outside >= n * {FIT_RATIO}
@@ -222,20 +243,21 @@ def reconcile_price():
             WHERE o.code = '{b['code']}'
         """).fetchone()[0]
         if fit >= FIT_RATIO:
-            fixed.append((b['code'], b['name'], r, int(b['n'])))
+            fixed.append((b['code'], b['name'], r, int(b['n']), pd.Timestamp(b['last_bad']).date()))
         else:
             print(f"   ! {b['code']} {b['name']}: 배율 {r} 후보이나 적합도 {fit:.1%} — 건너뜀")
     if not fixed:
         return 0
 
-    # OHLC가 커버하는 마지막 날짜까지만 보정 (그 이후는 이미 새 기준으로 들어온 값)
-    last = con.execute(f"SELECT max(date) FROM '{os.path.join(OUT, '*.parquet')}'").fetchone()[0]
-    ratios = {c: r for c, _, r, _ in fixed}
+    # 종목별로 범위를 벗어난 마지막 날짜까지만 보정 (그 이후는 이미 새 기준으로 들어온 값)
+    ratios = {c: r for c, _, r, _, _ in fixed}
+    upto = {c: d for c, _, _, _, d in fixed}
+    last = max(upto.values())
     n_files = 0
     for f in sorted(glob.glob(os.path.join(PRICE_DIR, '*.parquet'))):
         df = pd.read_parquet(f)
         df['date'] = pd.to_datetime(df['date']).dt.date
-        m = df['code'].isin(ratios) & (df['date'] <= last)
+        m = df['code'].isin(ratios) & (df['date'] <= df['code'].map(upto).fillna(datetime.date.min))
         if not m.any():
             continue
         df.loc[m, 'close'] = df.loc[m, 'close'] * df.loc[m, 'code'].map(ratios)
@@ -245,14 +267,15 @@ def reconcile_price():
             TO '{f}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
         n_files += 1
     print(f"OK  수정주가 소급 보정: {len(fixed)}종목 · 월 파일 {n_files}개 (~{last})")
-    for c, nm, r, n in fixed:
-        print(f"   {c} {nm}: close × {r} ({n:,}일)")
+    for c, nm, r, n, d in fixed:
+        print(f"   {c} {nm}: close × {r} ({n:,}일, ~{d})")
     return len(fixed)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit('사용법: python3 tools/market/build_ohlc.py <수정시가·고가·저가 시트가 있는 xlsx> [--reconcile-only]')
+    files = [a for a in sys.argv[1:] if not a.startswith('--')]
     if '--reconcile-only' not in sys.argv[1:]:
-        build(sys.argv[1])
+        build(files)
     reconcile_price()
