@@ -2,6 +2,7 @@
 """일일 원본 엑셀 하나로 ETF·수정주가·컨센서스·RS 등급 DB를 한 번에 갱신.
 
   python3 tools/ingest_daily.py ~/Downloads/ETF_price_concensus_20260818.xlsx
+  python3 tools/ingest_daily.py 시가고가.xlsx 저가종가.xlsx   # 나눠 받은 Peer Analysis 파일
 
 - 기준일은 'ETF raw' 시트의 Date 셀(CPD [YYYYMMDD] / CPD-1TD [YYYYMMDD])에서 자동 인식
   (인식 실패 시 두 번째 인자로 YYYY-MM-DD 직접 지정)
@@ -61,12 +62,16 @@ def detect_date(xlsx_path):
 
 
 def main():
-    if len(sys.argv) < 2:
-        sys.exit('사용법: python3 tools/ingest_daily.py <ETF_price_concensus_YYYYMMDD.xlsx> [YYYY-MM-DD]')
-    xlsx = sys.argv[1]
+    files = [a for a in sys.argv[1:] if a.lower().endswith('.xlsx')]
+    dates = [a for a in sys.argv[1:] if re.fullmatch(r'\d{4}-\d{2}-\d{2}', a)]
+    if not files:
+        sys.exit('사용법: python3 tools/ingest_daily.py <ETF_price_concensus_YYYYMMDD.xlsx> [YYYY-MM-DD]\n'
+                 '       (용량 제한으로 나눠 받은 Peer Analysis 파일은 함께 지정: <파일1.xlsx> <파일2.xlsx>)')
+    xlsx = files[0]
+    all_sheets = {f: openpyxl.load_workbook(f, read_only=True).sheetnames for f in files}
+    sheets = all_sheets[xlsx]
 
     # 실적·컨센서스 파일(concensus_for_db*.xlsx)이면 earnings 적재만 수행
-    sheets = openpyxl.load_workbook(xlsx, read_only=True).sheetnames
     if any('annual margin' in s for s in sheets):
         print(f'== 영업이익 실적·컨센서스 파일 · {os.path.basename(xlsx)}')
         build_earnings.build(xlsx)
@@ -79,23 +84,25 @@ def main():
         print('== 완료')
         return
     # Peer Analysis 배열 파일: 수정주가 전체 이력 시트(가격 DB 전면 갱신 + 종목명 정정)와
-    # 거래정지 시계열 시트(halt DB)를 시트 구조로 각각 인식. 가격이 실제로 바뀐 경우에만 파생 재계산
-    if 'ETF raw' not in sheets:
-        has_price = refresh_prices.is_price_history_file(xlsx)
-        has_halt = build_halt.is_halt_file(xlsx)
-        has_ohlc = build_ohlc.is_ohlc_file(xlsx)
-        if has_price or has_halt or has_ohlc:
-            print(f'== Peer Analysis 파일 · {os.path.basename(xlsx)}')
+    # 거래정지 시계열 시트(halt DB), 수정 시가·고가·저가 시트(OHLC DB)를 시트 구조로 각각 인식.
+    # 30MB 제한으로 항목이 여러 파일에 나뉘면 함께 넘긴다 (OHLC는 파일 간 필드 병합).
+    # 가격이 실제로 바뀐 경우에만 파생 재계산
+    if all('ETF raw' not in all_sheets[f] for f in files):
+        price_files = [f for f in files if refresh_prices.is_price_history_file(f)]
+        halt_files = [f for f in files if build_halt.is_halt_file(f)]
+        ohlc_files = [f for f in files if build_ohlc.is_ohlc_file(f)]
+        if price_files or halt_files or ohlc_files:
+            print(f"== Peer Analysis 파일 · {', '.join(os.path.basename(f) for f in files)}")
             changed = False
-            if has_price:
-                print('[수정주가 전체 갱신]')
-                changed = bool(refresh_prices.refresh(xlsx).get('price_changed'))
-            if has_halt:
-                print('[거래정지 시계열]')
-                build_halt.build(xlsx)
-            if has_ohlc:
+            for f in price_files:
+                print(f'[수정주가 전체 갱신] {os.path.basename(f)}')
+                changed = bool(refresh_prices.refresh(f).get('price_changed')) or changed
+            for f in halt_files:
+                print(f'[거래정지 시계열] {os.path.basename(f)}')
+                build_halt.build(f)
+            if ohlc_files:
                 print('[수정 시가·고가·저가]')
-                build_ohlc.build(xlsx)
+                changed = bool(build_ohlc.build(ohlc_files)) or changed
                 changed = bool(build_ohlc.reconcile_price()) or changed
             if changed:
                 print('[재계산 1/7] RS 등급 전체')
@@ -112,12 +119,12 @@ def main():
                 build_minervini.build()
                 print('[재계산 7/7] VCP 베이스')
                 build_vcp.build(force=True)
-            elif has_price or has_ohlc:
+            elif price_files or ohlc_files:
                 print('가격 변경 없음 — 파생 재계산 생략')
             print('== 완료')
             return
 
-    date_key = sys.argv[2] if len(sys.argv) > 2 else detect_date(xlsx)
+    date_key = dates[0] if dates else detect_date(xlsx)
     if not date_key:
         sys.exit('오류: 기준일을 인식하지 못했습니다. 두 번째 인자로 YYYY-MM-DD를 지정해주세요.')
 
