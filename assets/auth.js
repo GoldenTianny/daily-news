@@ -249,8 +249,8 @@
           '<span class="gj-name">' + esc(u.name) + '</span></span>' +
         (Auth.isStaff() && location.pathname.indexOf('/admin/') !== 0
           ? '<a class="gj-out" href="/admin/" style="text-decoration:none">&#9881; 관리자</a>' : '') +
-        '<button class="gj-out" type="button">로그아웃</button>';
-      el.querySelector('.gj-out').onclick = function () { logout(); };
+        '<button class="gj-out gj-logout" type="button">로그아웃</button>';
+      el.querySelector('.gj-logout').onclick = function () { logout(); };
     } else {
       el.innerHTML = '<button class="gj-btn" type="button">&#128100; 로그인</button>';
       el.querySelector('.gj-btn').onclick = function () { login(); };
