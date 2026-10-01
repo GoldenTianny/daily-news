@@ -177,6 +177,14 @@
     </div>
   </div>
 
+  <div class="card" id="gate" style="display:none">
+    <div class="lock-wrap"><div class="lock-blur"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:66%"></i><i style="height:48%"></i><i style="height:72%"></i><i style="height:58%"></i><i style="height:80%"></i><i style="height:63%"></i><i style="height:86%"></i><i style="height:70%"></i><i style="height:92%"></i></div><div class="lock-panel">
+      <div class="lock-ttl">&#128274; 주식 종목 검색기는 회원 전용입니다</div>
+      <div class="lock-sub">RS 등급 · 와인스타인 RS 돌파 · 영업이익 성장 가속 · CANSLIM · 미너비니 템플릿<br>조건을 조합해 종목을 거를 수 있습니다. 무료 회원 · 구글 계정으로 10초면 끝납니다</div>
+      <button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>
+  </div>
+
+  <div id="app" style="display:none">
   <div class="card">
     <h2>&#9881;&#65039; 조회 조건 <span class="cnt">체크한 조건을 모두 만족하는 종목만 남깁니다</span></h2>
     <div class="conds">
@@ -243,6 +251,7 @@
     </div>
     <div id="resBody"><div class="loading">불러오는 중&hellip;</div></div>
     <div class="note">모집단은 1년 이상 거래된 일반 종목입니다 (ETF·ETN·스팩·우선주 제외). 표 머리글을 누르면 정렬이 바뀌고, 종목을 누르면 ETF 검색기에서 차트와 보유 ETF를 볼 수 있습니다. 과거 기준일의 연간 확정 실적(A)은 지금 DB 값을 그대로 쓰므로 당시에는 아직 발표 전이었을 수 있습니다. 검색 결과는 참고용이며 매수 신호가 아닙니다.</div>
+  </div>
   </div>
 
 </div>
@@ -666,6 +675,10 @@ function gCell(g, src) {
 function render() {
   const box = document.getElementById('resBody'), cnt = document.getElementById('resCnt');
   if (!curDate) return;
+  const member = isMember();
+  document.getElementById('gate').style.display = member ? 'none' : '';
+  document.getElementById('app').style.display = member ? '' : 'none';
+  if (!member) { document.getElementById('headSub').textContent = '회원 전용 · 로그인하면 조건 검색을 쓸 수 있습니다'; return; }
   const needsData = C.accOn || C.csOn;
   if (!READY && needsData) {
     cnt.textContent = '';
@@ -675,15 +688,6 @@ function render() {
   const res = ROWS.filter(matches);
   cnt.textContent = res.length.toLocaleString() + '종목 / 모집단 ' + ROWS.length.toLocaleString();
   document.getElementById('headSub').textContent = curDate + ' 기준 · 조건 충족 ' + res.length.toLocaleString() + '종목 · 회원 전용';
-
-  if (!isMember()) {
-    const bars = [34, 52, 41, 66, 48, 72, 58, 80, 63, 86, 70, 92].map(h => '<i style="height:' + h + '%"></i>').join('');
-    box.innerHTML = '<div class="lock-wrap"><div class="lock-blur">' + bars + '</div><div class="lock-panel">' +
-      '<div class="lock-ttl">&#128274; 주식 종목 검색기는 회원에게만 열려 있습니다</div>' +
-      '<div class="lock-sub">' + curDate + ' 기준 지금 조건으로 <b>' + res.length.toLocaleString() + '종목</b>이 걸러졌습니다<br>무료 회원 · 구글 계정으로 10초면 끝납니다</div>' +
-      '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
-    return;
-  }
 
   const q = query.trim().toLowerCase();
   const list = res.filter(r => !q || r.name.toLowerCase().includes(q)).sort(cmp);
