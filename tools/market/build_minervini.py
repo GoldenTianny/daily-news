@@ -46,7 +46,7 @@ COLS = ['date', 'code', 'name', 'close', 'rs', 'ma50', 'ma150', 'ma200', 'hi52',
 KEEP_MIN = 6        # 저장 하한(충족 조건 수)
 
 
-def compute():
+def compute(keep_min=KEEP_MIN):
     con = duckdb.connect()
     latest = con.execute(f"SELECT max(date) FROM '{PRICE}'").fetchone()[0]
     snap = con.execute(f"SELECT code, name FROM '{PRICE}' WHERE date = ?", [latest]).df()
@@ -92,7 +92,7 @@ def compute():
     df['streak'] = df['passed'].astype(int).groupby([df['code'], grp]).cumsum()
     df['date'] = pd.to_datetime(df['date']).dt.date
     df['n_univ'] = df.groupby('date')['code'].transform('size')
-    df = df[df['pass_n'] >= KEEP_MIN]
+    df = df[df['pass_n'] >= keep_min]
     for k in ('ma50', 'ma150', 'ma200'):
         df[k] = df[k].round(2)
     return df[COLS]

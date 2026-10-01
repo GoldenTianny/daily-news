@@ -11,7 +11,7 @@
   -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급) -> build_mrs(와인스타인 RS)
   -> build_high52(52주 신고가 돌파 분석, 스터디) -> build_etf_movers(편입 비중 증가 TOP 10 검증, 스터디)
   -> build_semi_cycle(반도체 병목 업종 과열 계기판, 스터디)
-  -> build_minervini(미너비니 트렌드 템플릿) -> build_vcp(VCP 베이스)
+  -> build_minervini(미너비니 트렌드 템플릿) -> build_vcp(VCP 베이스) -> build_screen(주식 검색기 스냅샷)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 - 별도 형식 파일은 시트 구조로 자동 인식: concensus_for_db*.xlsx(영업이익 실적·컨센서스 -> build_earnings),
   kospi_kosdaq.xlsx(코스피·코스닥 지수 -> build_index)
@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
-import refresh_prices, build_halt, build_ohlc, build_vcp, build_semi_cycle, build_mrs
+import refresh_prices, build_halt, build_ohlc, build_vcp, build_semi_cycle, build_mrs, build_screen
 
 
 def detect_date(xlsx_path):
@@ -105,20 +105,22 @@ def main():
                 changed = bool(build_ohlc.build(ohlc_files)) or changed
                 changed = bool(build_ohlc.reconcile_price()) or changed
             if changed:
-                print('[재계산 1/7] RS 등급 전체')
+                print('[재계산 1/8] RS 등급 전체')
                 build_rs.build(force=True)
-                print('[재계산 2/7] 와인스타인 RS')
+                print('[재계산 2/8] 와인스타인 RS')
                 build_mrs.build(force=True)
-                print('[재계산 3/7] 52주 신고가 돌파 분석')
+                print('[재계산 3/8] 52주 신고가 돌파 분석')
                 build_high52.build()
-                print('[재계산 4/7] 편입 비중 증가 TOP 10 검증')
+                print('[재계산 4/8] 편입 비중 증가 TOP 10 검증')
                 build_etf_movers.build()
-                print('[재계산 5/7] 반도체 병목 업종 과열 계기판')
+                print('[재계산 5/8] 반도체 병목 업종 과열 계기판')
                 build_semi_cycle.build()
-                print('[재계산 6/7] 미너비니 트렌드 템플릿')
+                print('[재계산 6/8] 미너비니 트렌드 템플릿')
                 build_minervini.build()
-                print('[재계산 7/7] VCP 베이스')
+                print('[재계산 7/8] VCP 베이스')
                 build_vcp.build(force=True)
+                print('[재계산 8/8] 주식 검색기 스냅샷')
+                build_screen.build()
             elif price_files or ohlc_files:
                 print('가격 변경 없음 — 파생 재계산 생략')
             print('== 완료')
@@ -130,44 +132,46 @@ def main():
 
     snap = build_market.SNAP_SHEET in sheets   # 신형 일일 스냅샷 형식
     print(f'== 기준일 {date_key} · {os.path.basename(xlsx)}')
-    print('[1/13] ETF 보유내역')
+    print('[1/14] ETF 보유내역')
     build_data.build(xlsx, date_key, os.path.join(REPO, 'tools', 'etf', 'data'))
-    print('[2/13] 수정주가 · 목표주가')
+    print('[2/14] 수정주가 · 목표주가')
     build_market.build(xlsx, date_key)
-    print('[3/13] 수정 시가·고가·저가')
+    print('[3/14] 수정 시가·고가·저가')
     if snap and build_ohlc.build_snapshot(xlsx, date_key):
         build_ohlc.reconcile_price()      # 분할·병합으로 종가가 고저 범위를 벗어나면 소급 보정
     elif not snap:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[4/13] 코스피·코스닥 지수')
+    print('[4/14] 코스피·코스닥 지수')
     if build_index.is_index_file(xlsx):
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[5/13] 거래정지 여부')
+    print('[5/14] 거래정지 여부')
     if snap:
         build_halt.build_snapshot(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[6/13] 영업이익 컨센서스')
+    print('[6/14] 영업이익 컨센서스')
     if snap:
         build_earnings.build_daily(xlsx, date_key)
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
-    print('[7/13] RS 등급')
+    print('[7/14] RS 등급')
     build_rs.build()
-    print('[8/13] 와인스타인 RS')
+    print('[8/14] 와인스타인 RS')
     build_mrs.build()
-    print('[9/13] 52주 신고가 돌파 분석')
+    print('[9/14] 52주 신고가 돌파 분석')
     build_high52.build()
-    print('[10/13] 편입 비중 증가 TOP 10 검증')
+    print('[10/14] 편입 비중 증가 TOP 10 검증')
     build_etf_movers.build()
-    print('[11/13] 반도체 병목 업종 과열 계기판')
+    print('[11/14] 반도체 병목 업종 과열 계기판')
     build_semi_cycle.build()
-    print('[12/13] 미너비니 트렌드 템플릿')
+    print('[12/14] 미너비니 트렌드 템플릿')
     build_minervini.build()
-    print('[13/13] VCP 베이스')
+    print('[13/14] VCP 베이스')
     build_vcp.build()
+    print('[14/14] 주식 검색기 스냅샷')
+    build_screen.build()
     print('== 완료')
 
 
