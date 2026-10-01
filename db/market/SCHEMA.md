@@ -2,7 +2,7 @@
 
 수정주가·목표주가 컨센서스 시계열. **월별 Parquet 파일**(YYYY-MM.parquet)로 저장됩니다.
 
-> **일일 갱신은 한 줄로**: `python3 tools/ingest_daily.py <원본.xlsx>` — 기준일을 자동 인식해 ETF·수정주가·컨센서스·영업이익 컨센서스·RS 등급·신고가 분석·미너비니 템플릿을 순서대로 갱신합니다. 아래는 개별 단계 설명.
+> **일일 갱신은 한 줄로**: `python3 tools/ingest_daily.py <원본.xlsx>` — 기준일을 자동 인식해 ETF·수정주가·컨센서스·영업이익 컨센서스·RS 등급·신고가 분석·미너비니 템플릿·주식 검색기 스냅샷을 순서대로 갱신합니다. 아래는 개별 단계 설명.
 
 - 원천: HTS 다운로드 엑셀 `ETF_price_concensus_YYYYMMDD.xlsx` (시트: `수정주가`, `consencus` — `ETF raw` 시트는 `tools/etf/build_data.py` 담당)
 - 생성: `python3 tools/market/build_market.py <원본.xlsx>` — 원본에 담긴 날짜만 교체하고 나머지는 유지(병합)하므로, 짧은 기간(예: 최근 2일)만 담긴 일일 원본을 올려도 과거 데이터가 지워지지 않음. 내용이 같은 달은 건너뜀
@@ -113,6 +113,23 @@
 - 모집단: 일반 종목만 (`tools/study/build_high52.universe_filter` — ETF·ETN·스팩·우선주·동전주 제외), 260거래일 이상 이력 필요
 - **저장은 6개 이상 충족 종목만** (충족 + 근접). streak는 전 종목으로 계산한 뒤 걸러 저장. 월당 약 7천 행·150KB
 - 소비처: `tools/etf/minervini.html` (최신 월 파일의 마지막 날짜)
+
+## db/market/screen/ — 주식 검색기 일별 스냅샷
+
+주식 검색기(`tools/etf/screener.html`, 회원 전용)가 기준일 하루치 조건을 한 파일로 거르도록 일반 종목 전부의 기술 지표를 거래일별로 모은 DB. `tools/market/build_screen.py`가 미너비니 판정(저장 하한 없이)과 와인스타인 RS DB에서 계산 (ingest_daily 14단계). **월별** 파일 `YYYY-MM.parquet`.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` / `code` / `name` | | 기준일 / 종목코드 / 종목명 |
+| `close` | DOUBLE | 종가(원) |
+| `rs` | UTINYINT | 오닐식 RS 등급 (없으면 NULL) |
+| `mrs` | FLOAT | 와인스타인 RS |
+| `mrs_days` | USMALLINT | 와인스타인 RS 제로선 위 연속 거래일 = 돌파 n일째 (제로선 아래면 0, DB 시작부터 내내 플러스라 돌파일을 모르면 NULL) |
+| `hi52` | DOUBLE | 252거래일 종가 최고 |
+| `tpl_flags` / `tpl_n` | UTINYINT | 미너비니 조건 비트(비트 i-1 = 조건 i) / 충족 개수 0~8 |
+
+- 모집단·이력: 미너비니 DB와 같음 (일반 종목 · 260거래일 이상), 전 종목 저장. 월당 약 5만 행·600KB
+- 영업이익 성장 가속·CANSLIM 실적 조건은 이 DB에 넣지 않고 검색기가 `db/market/earnings/`(연간·분기·기준일 컨센서스)를 직접 읽어 판정
 
 ## db/market/vcp/ — VCP(변동성 수축 패턴) 베이스 판정
 

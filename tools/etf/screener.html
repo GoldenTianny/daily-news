@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주식 종목 검색기 | 가좌버핏</title>
+<meta name="description" content="RS 등급, 와인스타인 RS 제로선 돌파, 영업이익 성장 가속, CANSLIM, 미너비니 트렌드 템플릿 조건으로 국내 종목을 거르는 회원 전용 검색기.">
+<link rel="canonical" href="https://gjbuffet.kr/tools/etf/screener.html">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1a237e">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/pwa/icon-192.png">
+<link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="주식 종목 검색기 | 가좌버핏">
+<meta property="og:description" content="RS · 와인스타인 RS 돌파 · 영업이익 성장 가속 · CANSLIM · 미너비니 템플릿 조건 검색 (회원 전용).">
+<meta property="og:image" content="https://gjbuffet.kr/assets/og/etf.png">
+<meta property="og:url" content="https://gjbuffet.kr/tools/etf/screener.html">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4BP2MLV035"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4BP2MLV035');
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: #f0f2f5; color: #333; min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white; padding: 32px 20px 28px; text-align: center; position: relative;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 14px; opacity: 0.8; }
+  .header .nav-link {
+    position: absolute; top: 16px; color: rgba(255,255,255,0.85);
+    text-decoration: none; font-size: 13px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 20px 22px 18px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h2 { font-size: 17px; color: #1a237e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card h2 .cnt { font-size: 13px; color: #666; font-weight: 500; }
+  .card p, .card li { font-size: 14px; line-height: 1.75; color: #444; }
+  .card ul { padding-left: 20px; margin: 6px 0; }
+
+  /* 기준일 이동 */
+  .datenav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 2px 0 4px; }
+  .datenav select { padding: 7px 10px; border: 1.5px solid #c5cae9; border-radius: 8px; font: inherit; font-size: 14px;
+    font-weight: 600; color: #1a237e; background: #fff; max-width: 100%; }
+  .dbtn { width: 34px; height: 34px; border-radius: 8px; border: 1.5px solid #c5cae9; background: #e8eaf6; color: #3f51b5;
+    font-size: 12px; cursor: pointer; font-family: inherit; }
+  .dbtn:hover:not(:disabled) { background: #3f51b5; color: #fff; }
+  .dbtn:disabled { opacity: .35; cursor: default; }
+  .datenav .hint { font-size: 12px; color: #999; }
+  .datenav .hint.past { color: #e65100; font-weight: 600; }
+  .datenav #authBox { margin-left: auto; }
+
+  /* 조회 조건 */
+  .conds { display: flex; flex-direction: column; gap: 8px; }
+  .cond { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 11px 14px; border: 1.5px solid #e3e6f0;
+    border-radius: 10px; background: #fafbff; }
+  .cond.on { border-color: #7986cb; background: #f3f4fd; }
+  .cond > label.sw { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: #1a237e; font-size: 14px;
+    min-width: 200px; cursor: pointer; }
+  .cond > label.sw input { width: 17px; height: 17px; accent-color: #3f51b5; cursor: pointer; }
+  .cond .opt { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13.5px; color: #444; }
+  .cond:not(.on) .opt { opacity: .45; }
+  .cond input[type=number] { width: 64px; padding: 6px 8px; border: 1px solid #c5cae9; border-radius: 7px; font: inherit; font-size: 13.5px; }
+  .cond select { padding: 6px 8px; border: 1px solid #c5cae9; border-radius: 7px; font: inherit; font-size: 13.5px; background: #fff; }
+  .cond .opt label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+  .cond .help { flex-basis: 100%; font-size: 12px; color: #888; line-height: 1.6; padding-left: 26px; }
+  .cond-foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .btn { padding: 8px 14px; border-radius: 8px; border: 1.5px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit;
+    font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn:hover { background: #e8eaf6; }
+  .mkt { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; }
+  .mkt.up { background: #e8f5e9; color: #2e7d32; }
+  .mkt.down { background: #ffebee; color: #c62828; }
+  .mkt.na { background: #eee; color: #888; }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; font-size: 13.5px; color: #3f51b5; font-weight: 600; }
+  .cs-rule { display: grid; grid-template-columns: 28px 1fr; gap: 4px 8px; font-size: 13px; color: #444; margin: 6px 0; }
+  .cs-rule b { color: #1a237e; }
+
+  /* 결과 */
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 2px 0 10px; }
+  .toolbar input {
+    flex: 1 1 140px; min-width: 120px; padding: 7px 10px; border: 1px solid #cfd8dc;
+    border-radius: 8px; font-size: 13.5px; font-family: inherit;
+  }
+  .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 820px; }
+  th, td { padding: 8px 7px; font-size: 13.5px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th { color: #555; background: #fafafa; text-align: right; font-weight: 600; font-size: 12.5px; cursor: pointer; user-select: none; }
+  th.on { color: #1a237e; }
+  th.on::after { content: ' \25BE'; }
+  th.on.asc::after { content: ' \25B4'; }
+  th:nth-child(1), th:nth-child(2), td:nth-child(1), td:nth-child(2) { text-align: left; }
+  th:nth-child(1) { cursor: default; }
+  td { text-align: right; }
+  tr.row { cursor: pointer; }
+  tr.row:hover td { background: #f5f6ff; }
+  .nm { font-weight: 600; color: #1a237e; }
+  .sub { font-size: 11.5px; color: #999; font-weight: 400; margin-left: 4px; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 700;
+    background: #ffebee; color: #c62828; margin-left: 4px; vertical-align: 1px; }
+  .badge.g { background: #e8f5e9; color: #2e7d32; }
+  .rs { font-weight: 700; }
+  .rs.hi { color: #2e7d32; }
+  .up { color: #c62828; }
+  .down { color: #1565c0; }
+  .muted { color: #999; }
+  .cs-badges { display: inline-flex; gap: 2px; }
+  .cs-badges b { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 4px;
+    font-size: 10.5px; font-weight: 800; background: #e8eaf6; color: #9fa8da; }
+  .cs-badges b.ok { background: #2e7d32; color: #fff; }
+  .cs-badges b.no { background: #ffebee; color: #c62828; }
+  .cs-badges b.na { background: #eee; color: #bbb; text-decoration: line-through; }
+  .tpl { font-weight: 700; }
+  .tpl.full { color: #2e7d32; }
+  .loading { text-align: center; padding: 30px; color: #888; font-size: 14px; }
+  .more { display: block; margin: 12px auto 0; }
+  .note {
+    margin-top: 12px; padding: 10px 14px; background: #fff8e1;
+    border-left: 3px solid #ffca28; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #795548;
+  }
+  .lock-wrap { position: relative; min-height: 190px; border-radius: 10px; overflow: hidden; margin: 6px 0 4px; }
+  .lock-blur { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 6px; padding: 18px 16px 10px; filter: blur(4px); opacity: .5; pointer-events: none; }
+  .lock-blur i { display: block; flex: 1; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #7986cb, #c5cae9); }
+  .lock-panel { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    min-height: 190px; padding: 18px 12px; text-align: center; background: rgba(255,255,255,.55); }
+  .lock-panel .lock-ttl { font-size: 14.5px; font-weight: 700; color: #1a237e; }
+  .lock-panel .lock-sub { font-size: 12.5px; color: #666; line-height: 1.55; }
+  .lock-panel .lock-btn { margin-top: 4px; padding: 9px 20px; border: none; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700;
+    color: #fff; background: linear-gradient(135deg, #1a237e, #3f51b5); }
+  @media (max-width: 600px) {
+    .header { padding-top: 14px; padding-left: 10px; padding-right: 10px; }
+    .header .nav-link { position: static; display: inline-block; margin: 0 4px 12px; font-size: 12px; }
+    .header h1 { font-size: 19px; }
+    .container { padding: 14px 8px 40px; }
+    .card { padding: 16px 12px 14px; }
+    .cond > label.sw { min-width: 0; flex-basis: 100%; }
+    .cond .help { padding-left: 0; }
+    th, td { padding: 7px 5px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="nav-link" style="left:16px" href="/tools/etf/">&#8592; ETF 검색기</a>
+  <a class="nav-link" style="right:150px" href="weinstein.html">&#127919; 와인스타인 RS</a>
+  <a class="nav-link" style="right:16px" href="minervini.html">&#128200; 미너비니 템플릿</a>
+  <h1>&#128269; 주식 종목 검색기</h1>
+  <p id="headSub">RS · 와인스타인 RS 돌파 · 영업이익 성장 가속 · CANSLIM · 미너비니 템플릿 · 회원 전용</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>&#128197; 기준일 <span id="dateLbl" class="cnt"></span></h2>
+    <div class="datenav">
+      <button class="dbtn" id="prevDay" title="이전 거래일 (←)" aria-label="이전 거래일">&#9664;</button>
+      <select id="dateSel" aria-label="기준일 선택"><option>불러오는 중&hellip;</option></select>
+      <button class="dbtn" id="nextDay" title="다음 거래일 (→)" aria-label="다음 거래일">&#9654;</button>
+      <span class="hint" id="dateHint"></span>
+      <span id="authBox"></span>
+    </div>
+  </div>
+
+  <div class="card" id="gate" style="display:none">
+    <div class="lock-wrap"><div class="lock-blur"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:66%"></i><i style="height:48%"></i><i style="height:72%"></i><i style="height:58%"></i><i style="height:80%"></i><i style="height:63%"></i><i style="height:86%"></i><i style="height:70%"></i><i style="height:92%"></i></div><div class="lock-panel">
+      <div class="lock-ttl">&#128274; 주식 종목 검색기는 회원 전용입니다</div>
+      <div class="lock-sub">RS 등급 · 와인스타인 RS 돌파 · 영업이익 성장 가속 · CANSLIM · 미너비니 템플릿<br>조건을 조합해 종목을 거를 수 있습니다. 무료 회원 · 구글 계정으로 10초면 끝납니다</div>
+      <button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>
+  </div>
+
+  <div id="app" style="display:none">
+  <div class="card">
+    <h2>&#9881;&#65039; 조회 조건 <span class="cnt">체크한 조건을 모두 만족하는 종목만 남깁니다</span></h2>
+    <div class="conds">
+      <div class="cond" data-c="rs">
+        <label class="sw"><input type="checkbox" id="rsOn"> RS 등급</label>
+        <span class="opt"><input type="number" id="rsMin" min="1" max="99" value="80"> 이상
+          <input type="number" id="rsMax" min="1" max="99" value="99"> 이하</span>
+        <span class="help">오닐식 RS 등급(1~99). 최근 1년 수익률을 최근 분기에 더 무게를 둬 일반 종목 사이에서 순위를 매긴 값입니다. 80 이상이면 상위 20%.</span>
+      </div>
+      <div class="cond" data-c="mrs">
+        <label class="sw"><input type="checkbox" id="mrsOn"> 와인스타인 RS 0 돌파</label>
+        <span class="opt">돌파 <input type="number" id="mrsFrom" min="1" value="1"> 일째 ~
+          <input type="number" id="mrsTo" min="1" value="5"> 일째</span>
+        <span class="help">와인스타인 RS(주가÷코스피 비율의 1년 평균 대비)가 제로선을 아래에서 위로 넘은 뒤 플러스를 유지한 거래일 수. 1일째 = 기준일에 처음 넘음, 3일째부터는 3거래일 연속 유지(확정).</span>
+      </div>
+      <div class="cond" data-c="acc">
+        <label class="sw"><input type="checkbox" id="accOn"> 영업이익 성장 가속</label>
+        <span class="opt"><select id="accY" aria-label="비교 연도"></select>
+          <label><input type="checkbox" id="accPos" checked> 두 해 모두 증가</label>
+          <span>· 뒤 해 증가율 <input type="number" id="accMin" value="" placeholder="없음"> % 이상</span></span>
+        <span class="help">예: "2027 &gt; 2026" = 2027년 영업이익 증가율(2027÷2026)이 2026년 증가율(2026÷2025)보다 큰 종목. 확정 실적(A)이 없는 연도는 기준일 당시 컨센서스(E)를 씁니다. 적자→흑자 전환은 가장 큰 증가로, 적자는 가장 낮은 값으로 봅니다.</span>
+      </div>
+      <div class="cond" data-c="cs">
+        <label class="sw"><input type="checkbox" id="csOn"> CANSLIM 달성</label>
+        <span class="opt"><select id="csTier" aria-label="CANSLIM 수준">
+            <option value="fit">부합 (6개 모두)</option>
+            <option value="near">부합 + 근접</option>
+          </select> <span class="mkt na" id="mkt">시장 확인 중&hellip;</span></span>
+        <span class="help">C·A·N·L·I·M 6개 조건(S는 거래량 자료가 없어 제외)을 전 종목에 적용합니다. 근접 = 실적 C·A는 충족하고 N·L·I·M 중 하나만 부족. 판정 기준은 아래 "CANSLIM 판정 기준 보기".</span>
+      </div>
+      <div class="cond" data-c="tpl">
+        <label class="sw"><input type="checkbox" id="tplOn"> 미너비니 템플릿</label>
+        <span class="opt"><select id="tplMin" aria-label="충족 조건 수">
+            <option value="8">8개 모두 충족</option>
+            <option value="7">7개 이상 (근접 포함)</option>
+            <option value="6">6개 이상</option>
+          </select></span>
+        <span class="help">이동평균 정렬(50·150·200일선) · 52주 고저 위치 · RS 70 이상의 8개 추세 조건. 자세한 조건은 <a href="minervini.html" style="color:#3f51b5">미너비니 템플릿</a> 페이지 참고.</span>
+      </div>
+    </div>
+    <div class="cond-foot">
+      <button class="btn" type="button" id="resetBtn">&#8634; 조건 초기화</button>
+      <span class="muted" style="font-size:12px">조건은 이 브라우저에 저장되어 다음에 열 때 그대로 남습니다.</span>
+    </div>
+    <details>
+      <summary>CANSLIM 판정 기준 보기 (이 사이트 데이터 기준)</summary>
+      <div class="cs-rule">
+        <b>C</b><span>기준일까지 발표된 최근 분기 영업이익이 전년 같은 분기 대비 <b>+25% 이상</b>이고 <b>최근 4분기 합산이 흑자</b> (흑자전환 인정)</span>
+        <b>A</b><span>기준일까지 확정된 최근 연도 영업이익이 전년 대비 <b>+25% 이상</b>이고, 최근 3개 확정 연도 모두 흑자</span>
+        <b>N</b><span>종가가 52주 고점의 <b>95% 이상</b> (신고가 부근)</span>
+        <b>S</b><span>수급(거래량·유통주식) — <b>거래량 데이터가 없어 판정에서 제외</b></span>
+        <b>L</b><span>RS 등급 <b>80 이상</b> (주도주)</span>
+        <b>I</b><span>기관 보유 대신 <b>보유 ETF 3개 이상</b>으로 판정</span>
+        <b>M</b><span>시장 방향: 코스피 지수 종가가 <b>50일 이동평균 위</b> (기준일 기준, 전 종목 공통)</span>
+      </div>
+      <p class="muted" style="font-size:12.5px">EPS 대신 영업이익을 씁니다. 분기 실적은 분기 말 45일 뒤(4분기는 90일 뒤), 연간 확정 실적은 이듬해 3월 말부터 "발표된 것"으로 봅니다. 미너비니 페이지의 CANSLIM 표는 템플릿 충족 종목만 대상으로 하지만, 여기서는 전 종목에 적용합니다. 두 조건을 함께 켜면 같은 결과가 됩니다.</p>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>&#128203; 검색 결과 <span class="cnt" id="resCnt"></span></h2>
+    <div class="toolbar">
+      <input type="text" id="q" placeholder="결과 안에서 종목명 찾기" autocomplete="off">
+    </div>
+    <div id="resBody"><div class="loading">불러오는 중&hellip;</div></div>
+    <div class="note">모집단은 1년 이상 거래된 일반 종목입니다 (ETF·ETN·스팩·우선주 제외). 표 머리글을 누르면 정렬이 바뀌고, 종목을 누르면 ETF 검색기에서 차트와 보유 ETF를 볼 수 있습니다. 과거 기준일의 연간 확정 실적(A)은 지금 DB 값을 그대로 쓰므로 당시에는 아직 발표 전이었을 수 있습니다. 검색 결과는 참고용이며 매수 신호가 아닙니다.</div>
+  </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/assets/auth-config.js"></script>
+<script src="/assets/auth.js"></script>
+<script src="hyparquet.min.js"></script>
+<script>
+const TPL_COND = ['종가 > 150·200일선', '150일선 > 200일선', '200일선 상승', '50일선 > 150·200일선',
+                  '종가 > 50일선', '52주 저점 +30%', '52주 고점 −25% 이내', 'RS 70 이상'];
+const PAGE = 200;                   // 한 번에 그리는 행 수
+const fmtN = v => Math.round(v).toLocaleString();
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const dstr = d => d instanceof Date ? d.toISOString().slice(0, 10) : String(d).slice(0, 10);
+const link = nm => '/tools/etf/?stock=' + encodeURIComponent(nm);
+const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
+
+async function readParquet(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ' ' + r.status);
+  return hyparquet.parquetReadObjects({ file: await r.arrayBuffer() });
+}
+function prevMonth(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const mm = m === 1 ? 12 : m - 1, yy = m === 1 ? y - 1 : y;
+  return yy + '-' + String(mm).padStart(2, '0');
+}
+
+// ===== 기준일: 월 파일(db/market/screen/YYYY-MM.parquet)에 거래일별 · 종목별 지표 =====
+const MONTHS = new Map();           // 'YYYY-MM' -> 행 배열 (파일 없으면 null)
+let DATES = [];
+let curDate = null, earliestYm = null, exhausted = false, busy = false, tok = 0;
+let ROWS = [];                      // 기준일 행 + 파생 값
+let READY = false;                  // 실적·ETF·시장 판정 재료 준비 완료
+let shown = PAGE, sortKey = 'rs', sortAsc = false, query = '';
+
+async function loadMonth(ym) {
+  if (MONTHS.has(ym)) return MONTHS.get(ym);
+  let rows = null;
+  try {
+    rows = await readParquet('/db/market/screen/' + ym + '.parquet');
+    rows.forEach(r => { r.date = dstr(r.date); });
+  } catch (e) { rows = null; }
+  MONTHS.set(ym, rows);
+  if (rows && rows.length) {
+    const set = new Set(DATES);
+    rows.forEach(r => set.add(r.date));
+    DATES = Array.from(set).sort();
+  }
+  return rows;
+}
+async function loadOlderMonth() {
+  if (exhausted) return false;
+  let ym = earliestYm, miss = 0;
+  while (miss < 2) {
+    ym = prevMonth(ym);
+    const rows = await loadMonth(ym);
+    earliestYm = ym;
+    if (rows && rows.length) return true;
+    miss++;
+  }
+  exhausted = true;
+  return false;
+}
+async function resolveDate(want) {
+  if (!want || !/^\d{4}-\d{2}-\d{2}$/.test(want)) return DATES.at(-1);
+  while (!exhausted && want < DATES[0] && earliestYm > want.slice(0, 7)) await loadOlderMonth();
+  if (DATES.includes(want)) return want;
+  return DATES.filter(d => d <= want).at(-1) || DATES[0];
+}
+
+// ===== 재료: 영업이익(연간·분기) · 기준일 컨센서스 · 보유 ETF · 시장 방향 =====
+let EARN_Q = null, EARN_A = null;   // code -> Map(fy*10+q -> op) / code -> Map(fy -> [op, src])
+const CONS_CACHE = new Map(), ETF_CACHE = new Map(), MKT_CACHE = new Map(), CONS_MONTH = new Map();
+let ETF_DATES = null;
+
+async function loadEarnings() {
+  if (EARN_Q && EARN_A) return;
+  const [q, a] = await Promise.all([readParquet('/db/market/earnings/quarterly.parquet'), readParquet('/db/market/earnings/annual.parquet')]);
+  const Q = new Map(), A = new Map();
+  for (const r of q) { let e = Q.get(r.code); if (!e) Q.set(r.code, e = new Map()); e.set(Number(r.fy) * 10 + Number(r.q), r.op); }
+  for (const r of a) { let e = A.get(r.code); if (!e) A.set(r.code, e = new Map()); e.set(Number(r.fy), [r.op, r.src]); }
+  EARN_Q = Q; EARN_A = A;
+}
+
+// 기준일 당시 연간 영업이익 컨센서스: code -> Map(fy -> op) (그 달과 전월에서 기준일 이하 가장 최근 값)
+async function loadConsMonth(ym) {
+  if (!CONS_MONTH.has(ym)) {
+    let rows = [];
+    try { rows = await readParquet('/db/market/earnings/consensus/' + ym + '.parquet'); } catch (e) { rows = []; }
+    rows.forEach(r => { r.date = dstr(r.date); });
+    CONS_MONTH.set(ym, rows);
+  }
+  return CONS_MONTH.get(ym);
+}
+async function loadCons(d) {
+  if (CONS_CACHE.has(d)) return CONS_CACHE.get(d);
+  const ym = d.slice(0, 7);
+  const rows = (await loadConsMonth(prevMonth(ym))).concat(await loadConsMonth(ym));
+  const best = new Map();           // code|fy -> [date, op]
+  for (const r of rows) {
+    if (r.date > d || r.op == null) continue;
+    const k = r.code + '|' + r.fy, b = best.get(k);
+    if (!b || r.date > b[0]) best.set(k, [r.date, r.op]);
+  }
+  const m = new Map();
+  for (const [k, v] of best) {
+    const [code, fy] = k.split('|');
+    let e = m.get(code); if (!e) m.set(code, e = new Map());
+    e.set(Number(fy), v[1]);
+  }
+  CONS_CACHE.set(d, m);
+  return m;
+}
+
+async function loadEtf(d) {
+  if (ETF_CACHE.has(d)) return ETF_CACHE.get(d);
+  if (!ETF_DATES) {
+    const dj = await (await fetch('data/dates.json')).json();
+    ETF_DATES = Array.isArray(dj) ? dj : dj.dates;
+  }
+  const ed = ETF_DATES.filter(x => x <= d).at(-1) || ETF_DATES[0];
+  const m = new Map();
+  for (const r of await readParquet('/db/etf/' + ed + '.parquet')) {
+    if (r.weight == null || r.weight <= 0) continue;
+    m.set(r.stock_name, (m.get(r.stock_name) || 0) + 1);
+  }
+  ETF_CACHE.set(d, m);
+  return m;
+}
+
+// 시장 방향: 코스피 종가 vs 50일 이동평균 (기준일 이하 최근 50거래일)
+async function loadMarket(d) {
+  if (MKT_CACHE.has(d)) return MKT_CACHE.get(d);
+  const closes = [];
+  const y = parseInt(d.slice(0, 4));
+  for (const yy of [y, y - 1]) {
+    try {
+      for (const r of await readParquet('/db/market/index/' + yy + '.parquet')) {
+        if (r.code !== 'IKS900') continue;
+        const dd = dstr(r.date);
+        if (dd <= d) closes.push([dd, r.close]);
+      }
+    } catch (e) { /* 파일 없음 */ }
+  }
+  closes.sort((a, b) => a[0] < b[0] ? -1 : 1);
+  const last50 = closes.slice(-50);
+  const res = { ok: null, close: null, ma: null };
+  if (last50.length >= 50) {
+    res.close = last50[last50.length - 1][1];
+    res.ma = last50.reduce((s, x) => s + x[1], 0) / 50;
+    res.ok = res.close > res.ma;
+  }
+  MKT_CACHE.set(d, res);
+  return res;
+}
+
+// ===== 파생 값 =====
+// 영업이익 증가율: 숫자(%) · 흑자전환 = +Infinity · 적자 = -Infinity · 자료 없음 = null
+function growth(cur, prev) {
+  if (cur == null || prev == null) return null;
+  if (cur <= 0) return -Infinity;
+  if (prev <= 0) return Infinity;
+  return (cur / prev - 1) * 100;
+}
+function gLabel(g) {
+  if (g == null) return '–';
+  if (g === Infinity) return '흑전';
+  if (g === -Infinity) return '적자';
+  return (g >= 0 ? '+' : '') + (Math.abs(g) >= 100 ? g.toFixed(0) : g.toFixed(1)) + '%';
+}
+// 확정(A)이 있으면 확정, 없으면 기준일 컨센서스, 그것도 없으면 최신 컨센서스(E)
+function opOf(code, fy, cons) {
+  const a = EARN_A.get(code), ent = a && a.get(fy);
+  if (ent && ent[1] === 'A') return [ent[0], 'A'];
+  const c = cons.get(code);
+  if (c && c.has(fy)) return [c.get(fy), 'E'];
+  if (ent) return [ent[0], 'E'];
+  return [null, null];
+}
+
+// 분기 실적 발표 시점 근사: 분기 말 + 45일 (4분기는 + 90일)
+function qAvail(key, d) {
+  const fy = Math.floor(key / 10), q = key % 10;
+  const end = new Date(Date.UTC(fy, q * 3, 0));                // 분기 말일
+  end.setUTCDate(end.getUTCDate() + (q === 4 ? 90 : 45));
+  return end.toISOString().slice(0, 10) <= d;
+}
+const aAvail = (fy, d) => (fy + 1) + '-03-31' <= d;            // 연간 확정은 이듬해 3월 말
+
+function canslim(r, d, etf, mkt) {
+  const out = {};
+  const yoy = (cur, prev) => {
+    const g = growth(cur, prev);
+    return [g != null && g >= 25, gLabel(g)];
+  };
+  // C: 기준일까지 발표된 최근 분기 YoY + 최근 4분기 합산 흑자
+  const q = EARN_Q.get(r.code);
+  const keys = q ? Array.from(q.keys()).filter(k => qAvail(k, d)).sort((a, b) => a - b) : [];
+  if (keys.length) {
+    const k = keys[keys.length - 1];
+    const [ok, lbl] = yoy(q.get(k), q.get(k - 10));
+    const last4 = keys.slice(-4).map(x => q.get(x));
+    const ttmOk = last4.length === 4 && last4.reduce((s, v) => s + v, 0) > 0;
+    out.C = { ok: ok && ttmOk, lbl: Math.floor(k / 10) + 'Q' + (k % 10) + ' ' + lbl + (ok && !ttmOk ? ' · 4분기 합산 적자' : '') };
+  } else out.C = { ok: false, lbl: '자료 없음' };
+  // A: 기준일까지 확정된 최근 연도 YoY ≥ 25% + 3년 흑자
+  const a = EARN_A.get(r.code);
+  const act = a ? Array.from(a.entries()).filter(e => e[1][1] === 'A' && aAvail(e[0], d)).map(e => e[0]).sort((x, y) => x - y) : [];
+  if (act.length) {
+    const fy = act[act.length - 1];
+    const [ok, lbl] = yoy(a.get(fy)[0], a.has(fy - 1) ? a.get(fy - 1)[0] : null);
+    const black3 = [fy, fy - 1, fy - 2].every(y => a.has(y) && a.get(y)[0] > 0);
+    out.A = { ok: ok && black3, lbl: fy + ' ' + lbl + (black3 ? '' : ' · 3년 흑자 아님') };
+  } else out.A = { ok: false, lbl: '확정 실적 없음' };
+  const vh = r.close / r.hi52 - 1;
+  out.N = { ok: vh >= -0.05, lbl: vh >= -0.0005 ? '신고가' : '고점比 ' + (vh * 100).toFixed(1) + '%' };
+  out.S = { ok: null, lbl: '거래량 자료 없음' };
+  out.L = { ok: (r.rs || 0) >= 80, lbl: 'RS ' + (r.rs == null ? '–' : r.rs) };
+  const n = etf.get(r.name) || 0;
+  out.I = { ok: n >= 3, lbl: '보유 ETF ' + n + '개' };
+  out.M = { ok: mkt.ok === true, lbl: mkt.ok == null ? '판정 불가' : (mkt.ok ? '코스피 50일선 위' : '코스피 50일선 아래') };
+  out.pass = ['C', 'A', 'N', 'L', 'I', 'M'].filter(k => out[k].ok).length;
+  const otherFails = ['N', 'L', 'I', 'M'].filter(k => !out[k].ok).length;
+  out.tier = out.pass === 6 ? 'fit' : (out.C.ok && out.A.ok && otherFails === 1 ? 'near' : null);
+  return out;
+}
+
+let ACC_Y = null;                   // 성장 가속 비교 연도 (Y+1 증가율 > Y 증가율)
+function derive(d, cons, etf, mkt) {
+  for (const r of ROWS) {
+    r.cs = canslim(r, d, etf, mkt);
+    r.etfN = etf.get(r.name) || 0;
+  }
+  deriveGrowth(cons);
+}
+let CONS_NOW = null;
+function deriveGrowth(cons) {
+  if (cons) CONS_NOW = cons;
+  if (!CONS_NOW || !EARN_A) return;
+  const y = ACC_Y;
+  for (const r of ROWS) {
+    const [o0] = opOf(r.code, y - 1, CONS_NOW), [o1, s1] = opOf(r.code, y, CONS_NOW), [o2, s2] = opOf(r.code, y + 1, CONS_NOW);
+    r.g1 = growth(o1, o0); r.g2 = growth(o2, o1);
+    r.s1 = s1; r.s2 = s2;
+  }
+}
+
+// ===== 조건 =====
+const C = {};
+const DEF = { rsOn: true, rsMin: 80, rsMax: 99, mrsOn: false, mrsFrom: 1, mrsTo: 5, accOn: false, accY: null, accPos: true,
+              accMin: '', csOn: false, csTier: 'fit', tplOn: false, tplMin: '8' };
+const IDS = Object.keys(DEF);
+function readForm() {
+  for (const k of IDS) {
+    const el = document.getElementById(k);
+    C[k] = el.type === 'checkbox' ? el.checked : el.value;
+  }
+  document.querySelectorAll('.cond').forEach(el => el.classList.toggle('on', !!C[el.dataset.c + 'On']));
+  try { localStorage.setItem('gj-screener', JSON.stringify(C)); } catch (e) {}
+}
+function writeForm(v) {
+  for (const k of IDS) {
+    const el = document.getElementById(k);
+    if (v[k] == null) continue;
+    if (el.type === 'checkbox') el.checked = !!v[k]; else el.value = v[k];
+  }
+}
+const num = (v, def) => { const n = parseFloat(v); return isNaN(n) ? def : n; };
+
+function matches(r) {
+  if (C.rsOn) {
+    if (r.rs == null || r.rs < num(C.rsMin, 1) || r.rs > num(C.rsMax, 99)) return false;
+  }
+  if (C.mrsOn) {
+    if (r.mrs_days == null || r.mrs_days < Math.max(1, num(C.mrsFrom, 1)) || r.mrs_days > num(C.mrsTo, 9999)) return false;
+  }
+  if (C.accOn) {
+    if (r.g1 == null || r.g2 == null || !(r.g2 > r.g1)) return false;
+    if (C.accPos && !(r.g1 > 0 && r.g2 > 0)) return false;
+    const mn = num(C.accMin, null);
+    if (mn != null && !(r.g2 >= mn)) return false;
+  }
+  if (C.csOn) {
+    if (!r.cs || !(r.cs.tier === 'fit' || (C.csTier === 'near' && r.cs.tier === 'near'))) return false;
+  }
+  if (C.tplOn) {
+    if (r.tpl_n == null || r.tpl_n < num(C.tplMin, 8)) return false;
+  }
+  return true;
+}
+
+// ===== 기준일 표시 =====
+function setBusy(on) {
+  busy = on;
+  document.getElementById('prevDay').disabled = on;
+  document.getElementById('nextDay').disabled = on;
+  document.getElementById('dateSel').disabled = on;
+  if (on) document.getElementById('dateHint').textContent = '불러오는 중…';
+}
+function renderDateNav() {
+  const sel = document.getElementById('dateSel');
+  const last = DATES.at(-1), idx = DATES.indexOf(curDate);
+  let h = '';
+  for (let i = DATES.length - 1; i >= 0; i--) {
+    h += '<option value="' + DATES[i] + '"' + (DATES[i] === curDate ? ' selected' : '') + '>' +
+      DATES[i] + (DATES[i] === last ? ' (최신)' : '') + '</option>';
+  }
+  if (!exhausted) h += '<option value="__more">이전 달 더 보기…</option>';
+  sel.innerHTML = h;
+  sel.disabled = false;
+  document.getElementById('prevDay').disabled = exhausted && idx === 0;
+  document.getElementById('nextDay').disabled = idx === DATES.length - 1;
+  const hint = document.getElementById('dateHint');
+  if (curDate === last) { hint.className = 'hint'; hint.textContent = '최신 거래일 · ◀ 로 과거 이동'; }
+  else { hint.className = 'hint past'; hint.textContent = '과거 기준일 (' + (DATES.length - 1 - idx) + '거래일 전)'; }
+}
+
+// 성장 가속 비교 연도 목록: 기준일 연도 기준 기본값, 선택 범위는 실적 DB가 있는 해
+function renderYearSel(d) {
+  const sel = document.getElementById('accY');
+  const y0 = parseInt(d.slice(0, 4));
+  let want = ACC_Y || num(C.accY, null) || y0;
+  let h = '';
+  for (let y = y0 + 1; y >= 2020; y--) h += '<option value="' + y + '">' + (y + 1) + ' 증가율 &gt; ' + y + ' 증가율</option>';
+  sel.innerHTML = h;
+  if (want > y0 + 1) want = y0;
+  sel.value = String(want);
+  ACC_Y = want;
+}
+
+async function showDate(d, replace) {
+  curDate = d;
+  const my = ++tok;
+  READY = false;
+  ROWS = (MONTHS.get(d.slice(0, 7)) || []).filter(r => r.date === d).map(r => Object.assign({}, r, {
+    rs: r.rs == null ? null : Number(r.rs), mrs: r.mrs == null ? null : Number(r.mrs),
+    mrs_days: r.mrs_days == null ? null : Number(r.mrs_days), tpl_n: r.tpl_n == null ? null : Number(r.tpl_n),
+    tpl_flags: Number(r.tpl_flags || 0)
+  }));
+  const isLatest = d === DATES.at(-1);
+  document.getElementById('dateLbl').textContent = d + (isLatest ? '' : ' (과거)') + ' · 모집단 ' + ROWS.length.toLocaleString() + '종목';
+  document.title = '주식 종목 검색기 ' + d + ' | 가좌버핏';
+  renderDateNav();
+  renderYearSel(d);
+  shown = PAGE;
+  render();
+
+  const url = location.pathname + (isLatest ? '' : '?date=' + d);
+  if (location.pathname + location.search !== url) {
+    if (replace) history.replaceState({ date: d }, '', url); else history.pushState({ date: d }, '', url);
+  }
+
+  try {
+    const [, cons, etf, mkt] = await Promise.all([loadEarnings(), loadCons(d), loadEtf(d), loadMarket(d)]);
+    if (my !== tok) return;
+    derive(d, cons, etf, mkt);
+    READY = true;
+    const mk = document.getElementById('mkt');
+    if (mkt.ok == null) { mk.className = 'mkt na'; mk.textContent = 'M 판정 불가'; }
+    else { mk.className = 'mkt ' + (mkt.ok ? 'up' : 'down'); mk.textContent = 'M · 코스피 ' + (mkt.ok ? '50일선 위' : '50일선 아래'); }
+  } catch (e) {
+    if (my !== tok) return;
+    document.getElementById('resBody').innerHTML = '<div class="loading">실적·ETF 데이터를 불러오지 못했습니다 (' + esc(e.message) + ')</div>';
+    return;
+  }
+  render();
+}
+
+async function goTo(d, replace) {
+  if (busy) return;
+  setBusy(true);
+  try { await showDate(await resolveDate(d), replace); }
+  finally { setBusy(false); renderDateNav(); }
+}
+async function step(delta) {
+  if (busy) return;
+  setBusy(true);
+  try {
+    let idx = DATES.indexOf(curDate);
+    if (delta < 0 && idx === 0) { await loadOlderMonth(); idx = DATES.indexOf(curDate); }
+    const nd = DATES[idx + delta];
+    if (nd) await showDate(nd, false);
+  } finally { setBusy(false); renderDateNav(); }
+}
+
+// ===== 결과 표 =====
+const COLS = [
+  ['#', null], ['종목', 'name'], ['종가', 'close'], ['RS', 'rs'], ['와인스타인 RS', 'mrs'], ['돌파', 'mrs_days'],
+  ['g1', 'g1'], ['g2', 'g2'], ['CANSLIM', 'cs'], ['미너비니', 'tpl_n'], ['52주 고점比', 'hi']
+];
+function sortVal(r, k) {
+  if (k === 'cs') return r.cs ? r.cs.pass + (r.cs.tier === 'fit' ? 10 : r.cs.tier === 'near' ? 5 : 0) : -1;
+  if (k === 'hi') return r.close / r.hi52;
+  if (k === 'mrs_days') return r.mrs_days == null || r.mrs_days === 0 ? -1 : -r.mrs_days;   // 1일째가 위로
+  return r[k];
+}
+function cmp(a, b) {
+  if (sortKey === 'name') return sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+  let x = sortVal(a, sortKey), y = sortVal(b, sortKey);
+  const nx = x == null || Number.isNaN(x), ny = y == null || Number.isNaN(y);
+  if (nx || ny) return nx === ny ? 0 : nx ? 1 : -1;        // 값 없는 종목은 항상 아래
+  const c = sortAsc ? x - y : y - x;
+  return c || ((b.rs || 0) - (a.rs || 0));
+}
+
+function badges(cs) {
+  if (!cs) return '<span class="muted">…</span>';
+  return '<span class="cs-badges">' + ['C', 'A', 'N', 'S', 'L', 'I', 'M'].map(k => {
+    const v = cs[k];
+    const cls = v.ok === null ? 'na' : v.ok ? 'ok' : 'no';
+    return '<b class="' + cls + '" title="' + k + ': ' + esc(v.lbl) + '">' + k + '</b>';
+  }).join('') + '</span>';
+}
+function gCell(g, src) {
+  const cls = g == null ? 'muted' : g > 0 ? 'up' : 'down';
+  return '<td class="' + cls + '">' + gLabel(g) + (g != null && src === 'E' ? '<span class="sub">E</span>' : '') + '</td>';
+}
+
+function render() {
+  const box = document.getElementById('resBody'), cnt = document.getElementById('resCnt');
+  if (!curDate) return;
+  const member = isMember();
+  document.getElementById('gate').style.display = member ? 'none' : '';
+  document.getElementById('app').style.display = member ? '' : 'none';
+  if (!member) { document.getElementById('headSub').textContent = '회원 전용 · 로그인하면 조건 검색을 쓸 수 있습니다'; return; }
+  const needsData = C.accOn || C.csOn;
+  if (!READY && needsData) {
+    cnt.textContent = '';
+    box.innerHTML = '<div class="loading">실적·ETF·시장 데이터를 불러오는 중&hellip;</div>';
+    return;
+  }
+  const res = ROWS.filter(matches);
+  cnt.textContent = res.length.toLocaleString() + '종목 / 모집단 ' + ROWS.length.toLocaleString();
+  document.getElementById('headSub').textContent = curDate + ' 기준 · 조건 충족 ' + res.length.toLocaleString() + '종목 · 회원 전용';
+
+  const q = query.trim().toLowerCase();
+  const list = res.filter(r => !q || r.name.toLowerCase().includes(q)).sort(cmp);
+  if (!list.length) {
+    box.innerHTML = '<div class="loading">' + (q ? '검색 결과가 없습니다' : '조건을 모두 만족하는 종목이 없습니다. 조건을 조금 풀어 보세요.') + '</div>';
+    return;
+  }
+  const y = ACC_Y;
+  const lbl = { g1: y + ' 영업익', g2: (y + 1) + ' 영업익' };
+  let h = '<div class="twrap"><table><thead><tr>' + COLS.map(([t, k]) =>
+    '<th' + (k ? ' data-k="' + k + '"' : '') + (k === sortKey ? ' class="on' + (sortAsc ? ' asc' : '') + '"' : '') +
+    (k === 'g1' || k === 'g2' ? ' title="전년 대비 영업이익 증가율 (E = 컨센서스)"' : '') + '>' + (lbl[k] || t) + '</th>').join('') +
+    '</tr></thead><tbody>';
+  list.slice(0, shown).forEach((r, i) => {
+    const vh = r.close / r.hi52 - 1;
+    const acc = r.g1 != null && r.g2 != null && r.g2 > r.g1;
+    const fails = TPL_COND.filter((c, k) => !(r.tpl_flags & (1 << k)));
+    h += '<tr class="row" data-nm="' + esc(r.name) + '">' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><span class="nm">' + esc(r.name) + '</span>' +
+        (r.cs && r.cs.tier === 'fit' ? '<span class="badge g" title="CANSLIM 6개 조건 부합">CANSLIM</span>' : '') + '</td>' +
+      '<td>' + fmtN(r.close) + '</td>' +
+      '<td><span class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</span></td>' +
+      '<td class="' + (r.mrs > 0 ? 'up' : 'down') + '">' + (r.mrs == null ? '–' : (r.mrs > 0 ? '+' : '') + r.mrs.toFixed(1)) + '</td>' +
+      '<td>' + (r.mrs_days > 0 ? r.mrs_days + '일째' : r.mrs_days == null && r.mrs > 0 ? '<span class="muted" title="DB 시작부터 내내 플러스">오래전</span>' : '<span class="muted">–</span>') + '</td>' +
+      gCell(r.g1, r.s1) +
+      gCell(r.g2, r.s2).replace('</td>', (acc ? '<span class="badge g" title="뒤 해 증가율이 더 큼 (성장 가속)">가속</span>' : '') + '</td>') +
+      '<td>' + badges(r.cs) + '</td>' +
+      '<td><span class="tpl' + (r.tpl_n === 8 ? ' full' : '') + '" title="' + (fails.length ? '미충족: ' + esc(fails.join(', ')) : '8개 모두 충족') + '">' + r.tpl_n + '/8</span></td>' +
+      '<td class="' + (vh >= -0.05 ? 'up' : '') + '">' + (vh >= -0.0005 ? '신고가' : (vh * 100).toFixed(1) + '%') + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  if (list.length > shown) h += '<button class="btn more" type="button" id="moreBtn">' + (list.length - shown).toLocaleString() + '종목 더 보기</button>';
+  box.innerHTML = h;
+}
+
+// 표 클릭: 머리글 = 정렬, 행 = 종목 보기, 더 보기
+document.getElementById('resBody').addEventListener('click', e => {
+  const th = e.target.closest('th[data-k]');
+  if (th) {
+    const k = th.dataset.k;
+    if (k === sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = k === 'name'; }
+    render();
+    return;
+  }
+  if (e.target.id === 'moreBtn') { shown += PAGE; render(); return; }
+  const tr = e.target.closest('tr.row');
+  if (tr) location.href = link(tr.dataset.nm);
+});
+
+function onCondChange(e) {
+  readForm();
+  if (e && e.target.id === 'accY') { ACC_Y = num(C.accY, ACC_Y); deriveGrowth(); }
+  shown = PAGE;
+  render();
+}
+document.querySelectorAll('.conds input, .conds select').forEach(el => {
+  el.addEventListener(el.type === 'number' ? 'input' : 'change', onCondChange);
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  writeForm(DEF);
+  if (curDate) { ACC_Y = parseInt(curDate.slice(0, 4)); document.getElementById('accY').value = String(ACC_Y); }
+  onCondChange({ target: document.getElementById('accY') });
+});
+document.getElementById('q').addEventListener('input', e => { query = e.target.value; shown = PAGE; render(); });
+
+// 저장된 조건 복원
+try {
+  const saved = JSON.parse(localStorage.getItem('gj-screener') || 'null');
+  writeForm(Object.assign({}, DEF, saved || {}));
+  if (saved && saved.accY) ACC_Y = num(saved.accY, null);
+} catch (e) { writeForm(DEF); }
+readForm();
+
+async function load() {
+  let ym = new Date().toISOString().slice(0, 7), found = null;
+  for (let i = 0; i < 3 && !found; i++) {
+    const rows = await loadMonth(ym);
+    if (rows && rows.length) found = ym; else ym = prevMonth(ym);
+  }
+  if (!found) throw new Error('데이터 없음');
+  earliestYm = found;
+  await loadOlderMonth();
+  if (window.Auth) await Promise.race([Auth.ready, new Promise(r => setTimeout(r, /[?&]code=/.test(location.search) ? 6000 : 1500))]);
+  await goTo(new URLSearchParams(location.search).get('date'), true);
+}
+
+if (window.Auth) {
+  Auth.mount(document.getElementById('authBox'));
+  Auth.onChange(function () { if (curDate) render(); });
+}
+document.getElementById('prevDay').addEventListener('click', () => step(-1));
+document.getElementById('nextDay').addEventListener('click', () => step(1));
+document.getElementById('dateSel').addEventListener('change', async e => {
+  const v = e.target.value;
+  if (v === '__more') {
+    if (busy) return;
+    setBusy(true);
+    try { await loadOlderMonth(); } finally { setBusy(false); renderDateNav(); }
+    e.target.value = curDate;
+    return;
+  }
+  goTo(v, false);
+});
+window.addEventListener('popstate', () => {
+  if (DATES.length) goTo(new URLSearchParams(location.search).get('date'), true);
+});
+document.addEventListener('keydown', e => {
+  if (e.target && /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowLeft') step(-1);
+  else if (e.key === 'ArrowRight') step(1);
+});
+
+load().catch(e => {
+  document.getElementById('resBody').innerHTML = '<div class="loading">데이터를 불러오지 못했습니다 (' + esc(e.message) + ')</div>';
+});
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+</script>
+</body>
+</html>
