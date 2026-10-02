@@ -202,14 +202,17 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
     <div class="panel" id="p-journal">
       <div class="card">
         <h2>📒 매매 복기 <span class="cnt">이 계정만 볼 수 있습니다</span></h2>
-        <p class="muted" style="margin-bottom:8px" id="jStatus"></p>
-        <div class="ctl">
-          <input type="file" id="jFile" accept=".txt,text/plain">
-          <button class="btn sub" id="jPreview">미리 분석</button>
-          <button class="btn" id="jSave">저장</button>
-          <button class="btn warn" id="jDel">저장된 내역 삭제</button>
-        </div>
-        <textarea id="jText" placeholder="키움 체결내역 정리 txt 파일을 고르거나 내용을 붙여넣으세요. (■ 매수 내역 / ■ 매도 내역 형식) 저장하면 새 내역으로 바뀝니다."></textarea>
+        <p class="muted" id="jStatus"></p>
+        <details style="margin-top:10px">
+          <summary class="muted" style="cursor:pointer">직접 올리기 (예비용 · 보통은 Claude 에게 파일을 주면 반영됨)</summary>
+          <div class="ctl" style="margin-top:8px">
+            <input type="file" id="jFile" accept=".txt,text/plain">
+            <button class="btn sub" id="jPreview">미리 분석</button>
+            <button class="btn" id="jSave">저장</button>
+            <button class="btn warn" id="jDel">직접 올린 내역 삭제</button>
+          </div>
+          <textarea id="jText" placeholder="&quot;■ 매수 내역 / ■ 매도 내역&quot; 아래 &quot;날짜 시각 종목 수량 단가 금액&quot; 형식의 txt 를 고르거나 붙여넣으세요. 더 최근에 저장된 쪽이 화면에 반영됩니다."></textarea>
+        </details>
       </div>
       <div class="card" id="jOut"></div>
     </div>
