@@ -1,13 +1,10 @@
-/* 매매 복기 — 체결내역 파싱 · 거래 단위 손익 분석 · 차트
- * 체결내역은 두 곳 중 최신 것을 씁니다. 둘 다 마스터 본인만 열 수 있습니다.
- *   1) admin/data/journal.enc.json — 공개키로 잠근 암호문 (admin/journal-encrypt.mjs 로 생성).
- *      푸는 개인키는 Supabase journal_secret (supabase/003_journal_secret.sql) 에만 있음.
- *   2) Supabase trade_journal — 이 화면에서 직접 올린 원문 (supabase/002_trade_journal.sql). */
+/* 매매 복기 — 체결내역(txt) 파싱 · 거래 단위 손익 분석 · 차트
+ * 체결내역은 Supabase trade_journal 테이블(마스터 본인만 읽기/쓰기, supabase/002_trade_journal.sql)에만 저장되고
+ * 이 파일·저장소에는 들어가지 않습니다. */
 (function (root) {
 'use strict';
 
 var OWNER_EMAIL = 'tyannytyanny@gmail.com';
-var ENC_URL = '/admin/data/journal.enc.json';
 var CHART_SRC = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js';
 var ETF_PREFIX = ['ACE', 'KODEX', 'TIGER', 'PLUS', 'SOL', 'TIME', 'TIMEFOLIO', 'HANARO', 'KIWOOM', 'RISE', 'KOSEF', 'ARIRANG', 'HANA', 'WON', '1Q', 'BNK', 'FOCUS', 'TREX', 'UNICORN', 'KoAct', 'VITA', 'DAISHIN343', 'ITF', 'MASTER', 'KBSTAR'];
 
@@ -311,24 +308,6 @@ function drawCharts(A) {
   bar('jcEntry', A.entry.map(function (g) { return g.label; }), A.entry.map(function (g) { return g.pnl; }), { label: gl(A.entry) });
 }
 
-/* ---------- 암호문 풀기 ---------- */
-var b64 = function (s) { var bin = atob(s), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
-async function loadEncrypted(sb) {
-  var res = await fetch(ENC_URL + '?t=' + Date.now(), { cache: 'no-store' });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error('암호문을 불러오지 못했습니다 (' + res.status + ')');
-  var enc = await res.json();
-  var k = await sb.from('journal_secret').select('private_jwk').maybeSingle();
-  if (k.error) throw new Error('열쇠를 불러오지 못했습니다: ' + k.error.message + ' — supabase/003_journal_secret.sql 실행 여부를 확인하세요.');
-  if (!k.data) throw new Error('Supabase 에 열쇠가 없습니다 — supabase/003_journal_secret.sql 을 열쇠 값과 함께 실행하세요.');
-  var subtle = root.crypto.subtle;
-  var pri = await subtle.importKey('jwk', JSON.parse(k.data.private_jwk), { name: 'RSA-OAEP', hash: 'SHA-256' }, false, ['unwrapKey']);
-  var aes = await subtle.unwrapKey('raw', b64(enc.wk), pri, { name: 'RSA-OAEP' }, { name: 'AES-GCM' }, false, ['decrypt']);
-  var plain = await subtle.decrypt({ name: 'AES-GCM', iv: b64(enc.iv) }, aes, b64(enc.ct));
-  var data = JSON.parse(new TextDecoder().decode(plain));
-  return { rows: data.rows, source: data.source, updated: enc.updated };
-}
-
 /* ---------- 탭 연결 ---------- */
 function mount(opt) {
   var sb = opt.client, $ = function (id) { return document.getElementById(id); };
@@ -336,8 +315,14 @@ function mount(opt) {
   var state = { loaded: false };
 
   function status(t) { el.status.innerHTML = t; }
-  function render(text, label, given) {
-    var rows = given || parse(text);
+  // 응답이 없으면 15초 뒤 오류로 끝냄 (무한 "불러오는 중" 방지)
+  function timed(p) {
+    return Promise.race([p, new Promise(function (ok) {
+      setTimeout(function () { ok({ error: { message: '15초 동안 응답이 없습니다. 새로고침 후 다시 시도해 주세요.' } }); }, 15000);
+    })]);
+  }
+  function render(text, label) {
+    var rows = parse(text);
     if (!rows.length) { el.out.innerHTML = '<p class="empty">체결 줄을 하나도 찾지 못했습니다. "■ 매수 내역" / "■ 매도 내역" 아래에 "날짜 시각 종목 수량 단가 금액" 형식이어야 합니다.</p>'; return null; }
     var A = analyze(rows);
     el.out.innerHTML = (label ? '<p class="muted" style="margin-bottom:10px">' + label + '</p>' : '') + reportHtml(A);
@@ -345,28 +330,14 @@ function mount(opt) {
     return A;
   }
 
-  var when = function (t) { return new Date(t).toLocaleString('ko-KR', { hour12: false }); };
   async function load() {
     status('불러오는 중…');
-    var got = await Promise.all([
-      loadEncrypted(sb).catch(function (e) { return { err: e.message }; }),
-      sb.from('trade_journal').select('raw,file_name,updated_at').maybeSingle()
-    ]);
-    var enc = got[0], man = got[1], notes = [];
-    if (enc && enc.err) { notes.push('<span class="jdn">' + esc(enc.err) + '</span>'); enc = null; }
-    if (man.error) { notes.push('<span class="jdn">직접 올린 내역 불러오기 실패: <code>' + esc(man.error.message) + '</code></span>'); }
-    var m = man.data;
+    var r = await timed(sb.from('trade_journal').select('raw,file_name,updated_at').maybeSingle());
+    if (r.error) { status('<span class="jdn">불러오기 실패: <code>' + esc(r.error.message) + '</code> — Supabase 에 <code>supabase/002_trade_journal.sql</code> 을 실행했는지 확인하세요.</span>'); return; }
+    if (!r.data) { status('저장된 체결내역이 없습니다. 아래에서 파일을 고르거나 붙여넣고 저장하세요.'); el.out.innerHTML = ''; return; }
+    status('저장된 내역: <b>' + esc(r.data.file_name || '붙여넣기') + '</b> · ' + new Date(r.data.updated_at).toLocaleString('ko-KR', { hour12: false }));
     el.text.value = '';
-    if (enc && (!m || enc.updated >= m.updated_at)) {
-      status('반영된 내역: <b>' + esc(enc.source || 'Claude 가 올린 내역') + '</b> · ' + when(enc.updated) + (notes.length ? '<br>' + notes.join('<br>') : ''));
-      render(null, '', enc.rows);
-    } else if (m) {
-      status('반영된 내역: <b>' + esc(m.file_name || '직접 붙여넣기') + '</b> (직접 올림) · ' + when(m.updated_at) + (notes.length ? '<br>' + notes.join('<br>') : ''));
-      render(m.raw);
-    } else {
-      status((notes.length ? notes.join('<br>') + '<br>' : '') + '반영된 체결내역이 없습니다.');
-      el.out.innerHTML = '';
-    }
+    render(r.data.raw);
   }
 
   el.file.onchange = function () {
@@ -385,7 +356,7 @@ function mount(opt) {
     if (!raw.trim()) { el.text.focus(); return; }
     if (!parse(raw).length) { render(raw); return; }
     el.save.disabled = true;
-    var r = await sb.from('trade_journal').upsert({ owner: opt.userId, raw: raw, file_name: el.text.dataset.fname || null, updated_at: new Date().toISOString() });
+    var r = await timed(sb.from('trade_journal').upsert({ owner: opt.userId, raw: raw, file_name: el.text.dataset.fname || null, updated_at: new Date().toISOString() }));
     el.save.disabled = false;
     if (r.error) { status('<span class="jdn">저장 실패: <code>' + esc(r.error.message) + '</code></span>'); return; }
     el.file.value = '';
@@ -393,7 +364,7 @@ function mount(opt) {
   };
   el.del.onclick = async function () {
     if (!confirm('저장된 체결내역을 삭제할까요? 되돌릴 수 없습니다.')) return;
-    var r = await sb.from('trade_journal').delete().eq('owner', opt.userId);
+    var r = await timed(sb.from('trade_journal').delete().eq('owner', opt.userId));
     if (r.error) { status('<span class="jdn">삭제 실패: <code>' + esc(r.error.message) + '</code></span>'); return; }
     el.out.innerHTML = ''; load();
   };
