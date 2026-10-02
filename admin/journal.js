@@ -315,6 +315,12 @@ function mount(opt) {
   var state = { loaded: false };
 
   function status(t) { el.status.innerHTML = t; }
+  // 응답이 없으면 15초 뒤 오류로 끝냄 (무한 "불러오는 중" 방지)
+  function timed(p) {
+    return Promise.race([p, new Promise(function (ok) {
+      setTimeout(function () { ok({ error: { message: '15초 동안 응답이 없습니다. 새로고침 후 다시 시도해 주세요.' } }); }, 15000);
+    })]);
+  }
   function render(text, label) {
     var rows = parse(text);
     if (!rows.length) { el.out.innerHTML = '<p class="empty">체결 줄을 하나도 찾지 못했습니다. "■ 매수 내역" / "■ 매도 내역" 아래에 "날짜 시각 종목 수량 단가 금액" 형식이어야 합니다.</p>'; return null; }
@@ -326,7 +332,7 @@ function mount(opt) {
 
   async function load() {
     status('불러오는 중…');
-    var r = await sb.from('trade_journal').select('raw,file_name,updated_at').maybeSingle();
+    var r = await timed(sb.from('trade_journal').select('raw,file_name,updated_at').maybeSingle());
     if (r.error) { status('<span class="jdn">불러오기 실패: <code>' + esc(r.error.message) + '</code> — Supabase 에 <code>supabase/002_trade_journal.sql</code> 을 실행했는지 확인하세요.</span>'); return; }
     if (!r.data) { status('저장된 체결내역이 없습니다. 아래에서 파일을 고르거나 붙여넣고 저장하세요.'); el.out.innerHTML = ''; return; }
     status('저장된 내역: <b>' + esc(r.data.file_name || '붙여넣기') + '</b> · ' + new Date(r.data.updated_at).toLocaleString('ko-KR', { hour12: false }));
@@ -350,7 +356,7 @@ function mount(opt) {
     if (!raw.trim()) { el.text.focus(); return; }
     if (!parse(raw).length) { render(raw); return; }
     el.save.disabled = true;
-    var r = await sb.from('trade_journal').upsert({ owner: opt.userId, raw: raw, file_name: el.text.dataset.fname || null, updated_at: new Date().toISOString() });
+    var r = await timed(sb.from('trade_journal').upsert({ owner: opt.userId, raw: raw, file_name: el.text.dataset.fname || null, updated_at: new Date().toISOString() }));
     el.save.disabled = false;
     if (r.error) { status('<span class="jdn">저장 실패: <code>' + esc(r.error.message) + '</code></span>'); return; }
     el.file.value = '';
@@ -358,7 +364,7 @@ function mount(opt) {
   };
   el.del.onclick = async function () {
     if (!confirm('저장된 체결내역을 삭제할까요? 되돌릴 수 없습니다.')) return;
-    var r = await sb.from('trade_journal').delete().eq('owner', opt.userId);
+    var r = await timed(sb.from('trade_journal').delete().eq('owner', opt.userId));
     if (r.error) { status('<span class="jdn">삭제 실패: <code>' + esc(r.error.message) + '</code></span>'); return; }
     el.out.innerHTML = ''; load();
   };
