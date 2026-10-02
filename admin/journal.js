@@ -12,6 +12,9 @@ var ETF_PREFIX = ['ACE', 'KODEX', 'TIGER', 'PLUS', 'SOL', 'TIME', 'TIMEFOLIO', '
  * "■ 매수 내역" / "■ 매도 내역" 아래의
  *   2026-01-05 12:53  한미반도체   18   158,800   2,858,400  [비고]
  * 형식 줄을 읽습니다. */
+// 사명 변경 등으로 가격 DB(현재 사명 기준)와 이름이 다른 종목 → 같은 종목으로 합침
+var ALIAS = { 'LIG넥스원': 'LIG디펜스앤에어로스페이스', 'PLUS 우주항공&UAM': 'PLUS 우주항공', '씨어스테크놀로지': '씨어스' };
+var canon = function (n) { return ALIAS[n] || (n.indexOf('TIMEFOLIO ') === 0 ? 'TIME ' + n.slice(10) : n); };
 var LINE = /^\s*(\d{4}-\d\d-\d\d)\s+(\d\d:\d\d)\s+(.+?)\s+([\d,]+)\s+([\d,.]+)\s+([\d,]+)\s*(.*?)\s*$/;
 var num = function (s) { return Number(String(s).replace(/,/g, '')); };
 
@@ -24,7 +27,7 @@ function parse(text) {
     if (!side) return;
     var m = LINE.exec(l);
     if (!m) return;
-    rows.push({ side: side, date: m[1], time: m[2], name: m[3].trim(), qty: num(m[4]), price: num(m[5]), amt: num(m[6]), note: m[7] });
+    rows.push({ side: side, date: m[1], time: m[2], name: canon(m[3].trim()), qty: num(m[4]), price: num(m[5]), amt: num(m[6]), note: m[7] });
   });
   rows.sort(function (a, b) {
     return a.date < b.date ? -1 : a.date > b.date ? 1 : a.time < b.time ? -1 : a.time > b.time ? 1 : (a.side === 'B' ? -1 : 1) - (b.side === 'B' ? -1 : 1);
@@ -54,6 +57,7 @@ function analyze(rows) {
       }
     }
     p.last = r;
+    r.avgBefore = p.q > 0 ? p.cost / p.q : null;   // 종목별 차트의 물타기·손절 판정용
     if (r.side === 'B') {
       var avgBefore = p.q > 0 ? p.cost / p.q : null;
       if (p.q === 0) p.cyc = { name: r.name, start: r.date, buys: [], sells: [], pnl: 0, buycost: 0, maxcost: 0 };
@@ -221,6 +225,8 @@ function reportHtml(A) {
     '</div>' +
     '<div class="jnote">' + head + '</div>' +
 
+    '<h3>종목별 매수·매도 지점</h3><div id="pvBox"></div>' +
+
     '<h3>① 누적 실현손익</h3><div class="jbox"><canvas id="jcCum"></canvas></div>' +
     '<p class="jp">가장 크게 잃은 날: ' + wd.map(function (d) { return d[0].slice(5).replace('-', '/') + ' <span class="jdn">' + man(d[1]) + '</span>'; }).join(', ') +
       '. 이 ' + wd.length + '일만 합쳐도 <b class="jdn">' + man(sum(wd, function (d) { return d[1]; })) + '</b>로, 손실이 시장 급락 며칠에 몰려 있습니다.</p>' +
@@ -308,6 +314,260 @@ function drawCharts(A) {
   bar('jcEntry', A.entry.map(function (g) { return g.label; }), A.entry.map(function (g) { return g.pnl; }), { label: gl(A.entry) });
 }
 
+/* ---------- 종목별 매수·매도 지점 차트 ----------
+ * 가격: db/market/price(수정 종가, 종목·ETF) + db/market/ohlc(수정 시가·고가·저가, 일반 종목만 → ETF 는 종가선)
+ * 같은 날 같은 방향 체결은 화살표 하나로 묶고, 체결 뒤 실제 주가 흐름으로 잘함/실수를 판정합니다. */
+var PQ_SRC = '/tools/etf/hyparquet.min.js';
+var V_GOOD = '#12a150', V_BAD = '#f07800', V_NEU = '#9aa1ad';
+var pqReady = null;
+function loadPq() {
+  if (root.hyparquet) return Promise.resolve();
+  if (!pqReady) pqReady = new Promise(function (ok, no) {
+    var s = document.createElement('script'); s.src = PQ_SRC; s.onload = ok; s.onerror = function () { pqReady = null; no(new Error('가격 파일 해석기를 불러오지 못했습니다')); };
+    document.head.appendChild(s);
+  });
+  return pqReady;
+}
+var monthAdd = function (mo, k) { var y = +mo.slice(0, 4), m = +mo.slice(5, 7) - 1 + k; y += Math.floor(m / 12); m = ((m % 12) + 12) % 12; return y + '-' + (m < 9 ? '0' : '') + (m + 1); };
+var monthsBetween = function (a, b) { var out = []; for (var m = a; m <= b; m = monthAdd(m, 1)) out.push(m); return out; };
+var isoD = function (d) { return d instanceof Date ? d.toISOString().slice(0, 10) : String(d).slice(0, 10); };
+
+var seriesCache = {};
+async function loadSeries(names, firstDate, onProgress) {
+  var key = names.slice().sort().join('|') + '|' + firstDate;
+  if (seriesCache[key]) return seriesCache[key];
+  await loadPq();
+  var want = {}; names.forEach(function (n) { want[n] = 1; });
+  var now = new Date(), cur = now.getFullYear() + '-' + (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1);
+  var m0 = firstDate.slice(0, 7);
+  var pMonths = monthsBetween(monthAdd(m0, -13), cur), oMonths = monthsBetween(monthAdd(m0, -2), cur);
+  var jobs = pMonths.map(function (m) { return ['price', m, ['date', 'name', 'close']]; })
+    .concat(oMonths.map(function (m) { return ['ohlc', m, ['date', 'name', 'open', 'high', 'low']]; }));
+  var done = 0, S = {};
+  var get = function (n) { return S[n] || (S[n] = {}); };
+  // 동시에 4개씩
+  var queue = jobs.slice();
+  async function worker() {
+    while (queue.length) {
+      var j = queue.shift();
+      try {
+        var res = await fetch('/db/market/' + j[0] + '/' + j[1] + '.parquet');
+        if (res.ok) {
+          var rows = await root.hyparquet.parquetReadObjects({ file: await res.arrayBuffer(), columns: j[2] });
+          for (var i = 0; i < rows.length; i++) {
+            var r = rows[i];
+            if (!want[r.name]) continue;
+            var day = get(r.name), d = isoD(r.date), o = day[d] || (day[d] = {});
+            if (j[0] === 'price') o.c = r.close; else { o.o = r.open; o.h = r.high; o.l = r.low; }
+          }
+        }
+      } catch (e) { /* 없는 달은 건너뜀 */ }
+      done++; if (onProgress) onProgress(done, jobs.length);
+    }
+  }
+  await Promise.all([worker(), worker(), worker(), worker()]);
+  var out = {};
+  Object.keys(S).forEach(function (n) {
+    var ds = Object.keys(S[n]).filter(function (d) { return S[n][d].c > 0; }).sort();
+    out[n] = ds.map(function (d) {
+      var o = S[n][d], c = o.c;
+      var ok = o.h > 0 && o.l > 0 && o.l <= c * 1.001 && o.h >= c * 0.999;   // 고가·저가가 종가를 감싸지 않으면(분할 미반영 등) 종가만 사용
+      return { d: d, o: ok ? o.o : c, h: ok ? o.h : c, l: ok ? o.l : c, c: c, ohlc: ok };
+    });
+  });
+  seriesCache[key] = out;
+  return out;
+}
+
+function evaluate(A, S) {
+  // 같은 날·같은 방향 체결을 하나로
+  var groups = {}, order = [];
+  A.rows.forEach(function (r) {
+    var k = r.name + '|' + r.date + '|' + r.side;
+    var g = groups[k];
+    if (!g) { g = groups[k] = { name: r.name, date: r.date, side: r.side, qty: 0, amt: 0, n: 0, avg: r.avgBefore, time: r.time }; order.push(g); }
+    g.qty += r.qty; g.amt += r.amt; g.n++;
+  });
+  var byName = {};
+  order.forEach(function (g) {
+    g.price = g.amt / g.qty;
+    var s = S[g.name];
+    if (!s || !s.length) { g.v = 'na'; return; }
+    var i = 0; while (i < s.length && s[i].d < g.date) i++;
+    if (i >= s.length) { g.v = 'na'; return; }
+    g.i = i;
+    var f = g.price / s[i].c;                       // 체결가 ÷ 수정 종가 → 무상증자·분할 이전 체결은 배율로 환산
+    g.f = Math.abs(f - 1) > 0.3 ? f : 1;   // 30% 넘게 어긋나면 그날 수정 종가 위치에 표시
+    var px = g.price / g.f;
+    g.px = px;
+    var hi = 0; for (var k = Math.max(0, i - 252); k < i; k++) hi = Math.max(hi, s[k].c);
+    g.near = hi > 0 && px >= hi * 0.97;
+    var fut = s.slice(i + 1, i + 21);
+    g.fwd = fut.length;
+    g.f20 = fut.length ? fut[fut.length - 1].c / px - 1 : null;
+    g.v = 'neu'; g.why = '';
+    if (g.side === 'B') {
+      var low10 = Infinity; fut.slice(0, 10).forEach(function (x) { low10 = Math.min(low10, x.l); });
+      g.low10 = isFinite(low10) ? low10 / px - 1 : null;
+      if (g.avg && g.price < g.avg * 0.99) { g.v = 'bad'; g.kind = '물타기'; g.why = '평단(' + Math.round(g.avg).toLocaleString() + ')보다 싸게 추가 매수'; }
+      else if (g.low10 != null && g.low10 <= -0.07 && g.f20 < 0) { g.v = 'bad'; g.kind = g.near ? '진입 직후 급락' : '신고가 전 이른 진입'; g.why = '10일 안에 ' + pct(g.low10, 0) + '까지 밀리고 20일 뒤 ' + pct(g.f20, 0) + (g.near ? '' : ' · 신고가 근처가 아닌 곳에서 진입'); }
+      else if (g.f20 != null && g.f20 >= 0.05) { g.v = 'good'; g.kind = g.near ? '신고가 매수 성공' : '매수 성공'; g.why = '20거래일 뒤 ' + pct(g.f20, 0) + (g.near ? ' · 신고가 근처 매수' : ''); }
+      else g.why = g.f20 == null ? '이후 데이터 없음' : '20거래일 뒤 ' + pct(g.f20, 0);
+    } else {
+      var mx = 0; fut.forEach(function (x) { mx = Math.max(mx, x.h); });
+      g.mx = fut.length ? mx / px - 1 : null;
+      g.ret = g.avg ? g.price / g.avg - 1 : null;
+      if (g.ret != null && g.ret <= -0.07) { g.v = 'bad'; g.kind = '손절 지연'; g.why = '평단 대비 ' + pct(g.ret, 1) + '에서 매도 (-7% 넘김)'; }
+      else if (g.mx != null && g.mx >= 0.15 && (g.ret == null || g.ret >= 0)) { g.v = 'bad'; g.kind = '이른 익절'; g.why = '판 뒤 20일 안에 ' + pct(g.mx, 0) + ' 더 오름'; }
+      else if (g.f20 != null && g.f20 <= -0.05) { g.v = 'good'; g.kind = g.ret != null && g.ret < 0 ? '잘한 손절' : '잘한 매도'; g.why = '판 뒤 20거래일 ' + pct(g.f20, 0) + (g.ret != null ? ' · 평단 대비 ' + pct(g.ret, 1) : ''); }
+      else g.why = (g.ret != null ? '평단 대비 ' + pct(g.ret, 1) + ' · ' : '') + (g.f20 == null ? '이후 데이터 없음' : '판 뒤 20거래일 ' + pct(g.f20, 0));
+    }
+    (byName[g.name] = byName[g.name] || []).push(g);
+  });
+  var pnl = {};
+  A.sells.forEach(function (x) { pnl[x.name] = (pnl[x.name] || 0) + x.pnl; });
+  var stocks = Object.keys(byName).map(function (n) {
+    var m = byName[n];
+    return { name: n, marks: m, pnl: pnl[n] || 0, good: m.filter(function (x) { return x.v === 'good'; }).length, bad: m.filter(function (x) { return x.v === 'bad'; }).length };
+  }).sort(function (a, b) { return a.pnl - b.pnl; });
+  var all = order.filter(function (g) { return g.v !== 'na'; });
+  var kinds = {};
+  all.forEach(function (g) { if (g.kind) { var k = kinds[g.kind] || (kinds[g.kind] = { kind: g.kind, v: g.v, side: g.side, n: 0 }); k.n++; } });
+  var buys = all.filter(function (g) { return g.side === 'B' && g.fwd >= 10; });
+  var rateOf = function (list, v) { return list.length ? list.filter(function (g) { return g.v === v; }).length / list.length : 0; };
+  var nearB = buys.filter(function (g) { return g.near; }), farB = buys.filter(function (g) { return !g.near; });
+  return {
+    stocks: stocks, S: S, all: all, na: order.length - all.length,
+    kinds: Object.keys(kinds).map(function (k) { return kinds[k]; }).sort(function (a, b) { return b.n - a.n; }),
+    near: { n: nearB.length, bad: rateOf(nearB, 'bad'), good: rateOf(nearB, 'good') },
+    far: { n: farB.length, bad: rateOf(farB, 'bad'), good: rateOf(farB, 'good') }
+  };
+}
+
+function pvSummaryHtml(E) {
+  var b = E.all.filter(function (g) { return g.side === 'B'; }), s = E.all.filter(function (g) { return g.side === 'S'; });
+  var cnt = function (l, v) { return l.filter(function (g) { return g.v === v; }).length; };
+  var chip = function (k) { return '<span class="pvk" style="border-color:' + (k.v === 'good' ? V_GOOD : V_BAD) + '"><i style="background:' + (k.v === 'good' ? V_GOOD : V_BAD) + '"></i>' + (k.side === 'B' ? '매수 · ' : '매도 · ') + esc(k.kind) + ' <b>' + k.n + '</b></span>'; };
+  return '<div class="stats">' +
+    '<div class="stat"><div class="k">매수 판정</div><div class="v"><span style="color:' + V_GOOD + '">잘함 ' + cnt(b, 'good') + '</span> · <span style="color:' + V_BAD + '">실수 ' + cnt(b, 'bad') + '</span><small> / ' + b.length + '</small></div></div>' +
+    '<div class="stat"><div class="k">매도 판정</div><div class="v"><span style="color:' + V_GOOD + '">잘함 ' + cnt(s, 'good') + '</span> · <span style="color:' + V_BAD + '">실수 ' + cnt(s, 'bad') + '</span><small> / ' + s.length + '</small></div></div>' +
+    '<div class="stat"><div class="k">신고가 근처 매수 실패율</div><div class="v">' + Math.round(E.near.bad * 100) + '%<small> ' + E.near.n + '회</small></div></div>' +
+    '<div class="stat"><div class="k">그 외 매수 실패율</div><div class="v">' + Math.round(E.far.bad * 100) + '%<small> ' + E.far.n + '회</small></div></div>' +
+    '</div><div class="pvks">' + E.kinds.map(chip).join('') + '</div>' +
+    '<p class="jp">판정 기준 — 매수: 평단보다 싸게 추가하면 <b>물타기</b>, 10거래일 안에 -7% 이상 밀리고 20거래일 뒤에도 손실이면 <b>진입 실패</b>(52주 신고가 3% 이내가 아니면 "신고가 전 이른 진입"), 20거래일 뒤 +5% 이상이면 <b>성공</b>. ' +
+    '매도: 평단 대비 -7%보다 더 잃고 팔면 <b>손절 지연</b>, 이익 매도 후 20거래일 안에 +15% 넘게 더 오르면 <b>이른 익절</b>, 판 뒤 20거래일에 -5% 이상 빠지면 <b>잘한 매도</b>.</p>';
+}
+
+function pvPickerHtml(E) {
+  return '<div class="ctl" style="margin:10px 0 6px"><input type="text" id="pvQ" placeholder="종목 검색"><select id="pvSort"><option value="pnl">손익 나쁜 순</option><option value="bad">실수 많은 순</option><option value="good">잘한 것 많은 순</option><option value="name">이름순</option></select></div>' +
+    '<div class="pvlist" id="pvList"></div>' +
+    '<div id="pvChart" class="pvchart"></div><div id="pvTip" class="pvtip"></div><div class="twrap" id="pvTrades"></div>';
+}
+
+function pvListHtml(E, q, sort) {
+  var list = E.stocks.filter(function (x) { return !q || x.name.toLowerCase().indexOf(q) >= 0; });
+  list = list.slice().sort(sort === 'bad' ? function (a, b) { return b.bad - a.bad || a.pnl - b.pnl; } : sort === 'good' ? function (a, b) { return b.good - a.good || b.pnl - a.pnl; } : sort === 'name' ? function (a, b) { return a.name < b.name ? -1 : 1; } : function (a, b) { return a.pnl - b.pnl; });
+  return list.map(function (x) {
+    return '<button class="pvi" data-n="' + esc(x.name) + '"><span class="pvn">' + esc(x.name) + '</span><span class="' + cls(x.pnl) + '">' + man(x.pnl) + '</span>' +
+      '<span class="pvc"><b style="color:' + V_GOOD + '">✓' + x.good + '</b> <b style="color:' + V_BAD + '">✗' + x.bad + '</b></span></button>';
+  }).join('') || '<p class="empty">해당 종목이 없습니다</p>';
+}
+
+function pvChartSvg(st, s, width) {
+  var marks = st.marks.filter(function (g) { return g.i != null; });
+  if (!marks.length) return { svg: '<p class="empty">가격 데이터가 없습니다</p>', marks: [] };
+  var i0 = Math.max(0, marks[0].i - 25), i1 = Math.min(s.length - 1, marks[marks.length - 1].i + 25);
+  var bars = s.slice(i0, i1 + 1), n = bars.length;
+  var W = Math.max(320, Math.round(width || 1000)), H = W < 640 ? 300 : 380, L = 6, R = W < 640 ? 52 : 62, T = 14, B = 34, pw = W - L - R, ph = H - T - B;
+  var lo = Infinity, hi = -Infinity;
+  bars.forEach(function (b) { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); });
+  marks.forEach(function (g) { lo = Math.min(lo, g.px); hi = Math.max(hi, g.px); });
+  var pad = (hi - lo) * 0.12 || hi * 0.05; lo -= pad; hi += pad;
+  var x = function (k) { return L + (k + 0.5) * pw / n; }, y = function (v) { return T + (hi - v) / (hi - lo) * ph; };
+  var bw = Math.max(1, Math.min(9, pw / n * 0.62));
+  var g = '';
+  // 가로 눈금 4개
+  for (var t = 0; t <= 4; t++) {
+    var v = lo + (hi - lo) * t / 4, yy = y(v);
+    g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + yy + '" y2="' + yy + '" stroke="#eef1f5"/><text x="' + (W - R + 6) + '" y="' + (yy + 4) + '" font-size="11" fill="#9099a6">' + Math.round(v).toLocaleString() + '</text>';
+  }
+  // 월 눈금
+  var lastM = '';
+  bars.forEach(function (b, k) {
+    var m = b.d.slice(0, 7);
+    if (m !== lastM) { lastM = m; if (k < 3) return; g += '<line x1="' + x(k) + '" x2="' + x(k) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="#f3f4f7"/><text x="' + x(k) + '" y="' + (H - B + 16) + '" font-size="11" fill="#9099a6" text-anchor="middle">' + (+m.slice(5)) + '월</text>'; }
+  });
+  var anyOhlc = bars.some(function (b) { return b.ohlc; });
+  if (anyOhlc) {
+    bars.forEach(function (b, k) {
+      var up = b.c >= b.o, col = up ? UP : DN, xx = x(k);
+      g += '<line x1="' + xx + '" x2="' + xx + '" y1="' + y(b.h) + '" y2="' + y(b.l) + '" stroke="' + col + '" stroke-width="1"/>' +
+        '<rect x="' + (xx - bw / 2) + '" y="' + y(Math.max(b.o, b.c)) + '" width="' + bw + '" height="' + Math.max(1, Math.abs(y(b.o) - y(b.c))) + '" fill="' + (up ? col : '#fff') + '" stroke="' + col + '"/>';
+    });
+  } else {
+    g += '<polyline fill="none" stroke="#1a3a6c" stroke-width="2" points="' + bars.map(function (b, k) { return x(k) + ',' + y(b.c); }).join(' ') + '"/>';
+  }
+  // 화살표: 매수 ▲ (체결가 아래), 매도 ▼ (체결가 위)
+  var arr = '';
+  marks.forEach(function (m, idx) {
+    var k = m.i - i0; if (k < 0 || k >= n) return;
+    var xx = x(k), yy = y(m.px), col = m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : V_NEU;
+    var p = m.side === 'B'
+      ? [xx, yy + 3, xx - 7, yy + 15, xx - 2.5, yy + 15, xx - 2.5, yy + 24, xx + 2.5, yy + 24, xx + 2.5, yy + 15, xx + 7, yy + 15]
+      : [xx, yy - 3, xx - 7, yy - 15, xx - 2.5, yy - 15, xx - 2.5, yy - 24, xx + 2.5, yy - 24, xx + 2.5, yy - 15, xx + 7, yy - 15];
+    var pts = []; for (var q = 0; q < p.length; q += 2) pts.push(p[q].toFixed(1) + ',' + p[q + 1].toFixed(1));
+    arr += '<g class="pva" data-k="' + idx + '"><circle cx="' + xx + '" cy="' + yy + '" r="2.4" fill="' + col + '"/><polygon points="' + pts.join(' ') + '" fill="' + col + '" stroke="#fff" stroke-width="1.2"/>' +
+      '<rect x="' + (xx - 10) + '" y="' + (m.side === 'B' ? yy : yy - 26) + '" width="20" height="26" fill="transparent"/></g>';
+  });
+  return { svg: '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block">' + g + arr + '</svg>', marks: marks };
+}
+
+function markText(m) {
+  return '<b>' + m.date + ' ' + (m.side === 'B' ? '매수' : '매도') + '</b> ' + m.qty.toLocaleString() + '주 × ' + Math.round(m.price).toLocaleString() + '원' + (m.n > 1 ? ' (' + m.n + '회 체결)' : '') +
+    (m.f !== 1 ? ' <span class="muted">· 차트는 무상증자·분할 환산가 ' + Math.round(m.px).toLocaleString() + '원</span>' : '') +
+    '<br><span style="color:' + (m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : '#6b7280') + ';font-weight:700">' + (m.v === 'good' ? '✓ ' : m.v === 'bad' ? '✗ ' : '– ') + esc(m.kind || '보통') + '</span> ' + esc(m.why || '');
+}
+
+function mountPriceView(A, box) {
+  var names = Object.keys(A.rows.reduce(function (o, r) { o[r.name] = 1; return o; }, {}));
+  box.innerHTML = '<p class="muted" id="pvLoad">종목별 주가를 불러오는 중… (처음 한 번만 조금 걸립니다)</p>';
+  loadSeries(names, A.period[0], function (d, t) { var e = document.getElementById('pvLoad'); if (e) e.textContent = '종목별 주가를 불러오는 중… ' + d + ' / ' + t; })
+    .then(function (S) {
+      var E = evaluate(A, S);
+      box.innerHTML = pvSummaryHtml(E) + pvPickerHtml(E) + (E.na ? '<p class="muted">가격 DB에 없는 체결 ' + E.na + '건은 차트·판정에서 빠졌습니다.</p>' : '');
+      var $ = function (id) { return document.getElementById(id); };
+      var cur = null;
+      function list() {
+        $('pvList').innerHTML = pvListHtml(E, $('pvQ').value.trim().toLowerCase(), $('pvSort').value);
+        $('pvList').querySelectorAll('.pvi').forEach(function (b) { b.classList.toggle('on', b.dataset.n === cur); b.onclick = function () { show(b.dataset.n); }; });
+      }
+      function show(name) {
+        cur = name; list();
+        var st = E.stocks.filter(function (x) { return x.name === name; })[0];
+        var c = pvChartSvg(st, S[name] || [], $('pvChart').clientWidth - 18);
+        $('pvChart').innerHTML = '<div class="pvhead"><b>' + esc(name) + '</b> <span class="' + cls(st.pnl) + '">' + man(st.pnl) + '</span>' +
+          '<span class="pvleg"><i style="color:' + V_GOOD + '">▲▼ 잘함</i><i style="color:' + V_BAD + '">▲▼ 실수</i><i style="color:' + V_NEU + '">▲▼ 보통</i> · ▲매수 ▼매도</span></div>' + c.svg;
+        $('pvTip').innerHTML = '<span class="muted">화살표를 누르면 그 매매의 판정 이유가 보입니다.</span>';
+        $('pvTrades').innerHTML = '<table><tr><th>날짜</th><th>구분</th><th class="num">수량</th><th class="num">단가</th><th>판정</th><th>이유</th></tr>' +
+          st.marks.map(function (m, k) {
+            return '<tr data-k="' + k + '"><td>' + m.date.slice(5) + '</td><td>' + (m.side === 'B' ? '<b class="jup">매수</b>' : '<b class="jdn">매도</b>') + '</td><td class="num">' + m.qty.toLocaleString() + '</td><td class="num">' + Math.round(m.price).toLocaleString() + '</td>' +
+              '<td style="color:' + (m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : '#6b7280') + ';font-weight:700">' + (m.v === 'good' ? '✓ ' : m.v === 'bad' ? '✗ ' : m.v === 'na' ? '' : '– ') + esc(m.kind || (m.v === 'na' ? '가격 없음' : '보통')) + '</td><td class="muted" style="white-space:normal;min-width:180px">' + esc(m.why || '') + '</td></tr>';
+          }).join('') + '</table>';
+        $('pvChart').querySelectorAll('.pva').forEach(function (a) {
+          var m = c.marks[+a.dataset.k];
+          a.onmouseenter = a.onclick = function () {
+            $('pvTip').innerHTML = markText(m);
+            $('pvChart').querySelectorAll('.pva').forEach(function (z) { z.classList.toggle('on', z === a); });
+          };
+        });
+      }
+      $('pvQ').oninput = list; $('pvSort').onchange = list;
+      list();
+      if (E.stocks.length) show(E.stocks[0].name);
+    })
+    .catch(function (e) { box.innerHTML = '<p class="jdn">주가를 불러오지 못했습니다: ' + esc(e.message) + '</p>'; });
+}
+
 /* ---------- 탭 연결 ---------- */
 function mount(opt) {
   var sb = opt.client, $ = function (id) { return document.getElementById(id); };
@@ -327,6 +587,7 @@ function mount(opt) {
     var A = analyze(rows);
     el.out.innerHTML = (label ? '<p class="muted" style="margin-bottom:10px">' + label + '</p>' : '') + reportHtml(A);
     loadChart().then(function () { drawCharts(A); }).catch(function (e) { status('<span class="jdn">' + esc(e.message) + '</span>'); });
+    if (document.getElementById('pvBox')) mountPriceView(A, document.getElementById('pvBox'));
     return A;
   }
 
@@ -372,7 +633,7 @@ function mount(opt) {
   return { open: function () { if (!state.loaded) { state.loaded = true; load(); } } };
 }
 
-var api = { OWNER_EMAIL: OWNER_EMAIL, parse: parse, analyze: analyze, mount: mount };
+var api = { OWNER_EMAIL: OWNER_EMAIL, parse: parse, analyze: analyze, evaluate: evaluate, mount: mount };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 else root.Journal = api;
 })(typeof window !== 'undefined' ? window : globalThis);
