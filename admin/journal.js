@@ -314,11 +314,10 @@ function drawCharts(A) {
   bar('jcEntry', A.entry.map(function (g) { return g.label; }), A.entry.map(function (g) { return g.pnl; }), { label: gl(A.entry) });
 }
 
-/* ---------- 종목별 매수·매도 지점 차트 ----------
- * 가격: db/market/price(수정 종가, 종목·ETF) + db/market/ohlc(수정 시가·고가·저가, 일반 종목만 → ETF 는 종가선)
- * 같은 날 같은 방향 체결은 화살표 하나로 묶고, 체결 뒤 실제 주가 흐름으로 잘함/실수를 판정합니다. */
+/* ---------- 종목별 매수·매도 지점 ----------
+ * 가격: db/market/price(수정 종가) · 코스피: db/market/index. 종가 실선 차트에 ▲매수 ▼매도 표시.
+ * 매매 일지: 체결일마다 "그날까지의" 종목·코스피 차트를 남겨 당시 눈에 보이던 상황을 그대로 기록 (이후 주가는 넣지 않음). */
 var PQ_SRC = '/tools/etf/hyparquet.min.js';
-var V_GOOD = '#12a150', V_BAD = '#f07800', V_NEU = '#9aa1ad';
 var pqReady = null;
 function loadPq() {
   if (root.hyparquet) return Promise.resolve();
@@ -332,200 +331,152 @@ var monthAdd = function (mo, k) { var y = +mo.slice(0, 4), m = +mo.slice(5, 7) -
 var monthsBetween = function (a, b) { var out = []; for (var m = a; m <= b; m = monthAdd(m, 1)) out.push(m); return out; };
 var isoD = function (d) { return d instanceof Date ? d.toISOString().slice(0, 10) : String(d).slice(0, 10); };
 
+async function readPq(url, columns) {
+  try {
+    var res = await fetch(url);
+    if (!res.ok) return [];
+    return await root.hyparquet.parquetReadObjects({ file: await res.arrayBuffer(), columns: columns });
+  } catch (e) { return []; }
+}
+
 var seriesCache = {};
+// 종목별 종가 시계열 + 코스피. 첫 체결일 13개월 전부터 (스냅샷에 1년치가 들어가도록)
 async function loadSeries(names, firstDate, onProgress) {
   var key = names.slice().sort().join('|') + '|' + firstDate;
   if (seriesCache[key]) return seriesCache[key];
   await loadPq();
   var want = {}; names.forEach(function (n) { want[n] = 1; });
   var now = new Date(), cur = now.getFullYear() + '-' + (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1);
-  var m0 = firstDate.slice(0, 7);
-  var pMonths = monthsBetween(monthAdd(m0, -13), cur), oMonths = monthsBetween(monthAdd(m0, -2), cur);
-  var jobs = pMonths.map(function (m) { return ['price', m, ['date', 'name', 'close']]; })
-    .concat(oMonths.map(function (m) { return ['ohlc', m, ['date', 'name', 'open', 'high', 'low']]; }));
-  var done = 0, S = {};
-  var get = function (n) { return S[n] || (S[n] = {}); };
-  // 동시에 4개씩
+  var m0 = monthAdd(firstDate.slice(0, 7), -13);
+  var jobs = monthsBetween(m0, cur).map(function (m) { return ['/db/market/price/' + m + '.parquet', ['date', 'name', 'close'], 'p']; });
+  for (var y = +m0.slice(0, 4); y <= now.getFullYear(); y++) jobs.push(['/db/market/index/' + y + '.parquet', ['date', 'code', 'close'], 'i']);
+  var done = 0, S = {}, K = {};
   var queue = jobs.slice();
   async function worker() {
     while (queue.length) {
-      var j = queue.shift();
-      try {
-        var res = await fetch('/db/market/' + j[0] + '/' + j[1] + '.parquet');
-        if (res.ok) {
-          var rows = await root.hyparquet.parquetReadObjects({ file: await res.arrayBuffer(), columns: j[2] });
-          for (var i = 0; i < rows.length; i++) {
-            var r = rows[i];
-            if (!want[r.name]) continue;
-            var day = get(r.name), d = isoD(r.date), o = day[d] || (day[d] = {});
-            if (j[0] === 'price') o.c = r.close; else { o.o = r.open; o.h = r.high; o.l = r.low; }
-          }
-        }
-      } catch (e) { /* 없는 달은 건너뜀 */ }
+      var j = queue.shift(), rows = await readPq(j[0], j[1]);
+      for (var i = 0; i < rows.length; i++) {
+        var r = rows[i];
+        if (j[2] === 'i') { if (r.code === 'IKS900' && r.close > 0) K[isoD(r.date)] = r.close; }
+        else if (want[r.name] && r.close > 0) (S[r.name] || (S[r.name] = {}))[isoD(r.date)] = r.close;
+      }
       done++; if (onProgress) onProgress(done, jobs.length);
     }
   }
   await Promise.all([worker(), worker(), worker(), worker()]);
-  var out = {};
-  Object.keys(S).forEach(function (n) {
-    var ds = Object.keys(S[n]).filter(function (d) { return S[n][d].c > 0; }).sort();
-    out[n] = ds.map(function (d) {
-      var o = S[n][d], c = o.c;
-      var ok = o.h > 0 && o.l > 0 && o.l <= c * 1.001 && o.h >= c * 0.999;   // 고가·저가가 종가를 감싸지 않으면(분할 미반영 등) 종가만 사용
-      return { d: d, o: ok ? o.o : c, h: ok ? o.h : c, l: ok ? o.l : c, c: c, ohlc: ok };
-    });
-  });
+  var out = { stocks: {}, kospi: Object.keys(K).sort().map(function (d) { return { d: d, c: K[d] }; }) };
+  Object.keys(S).forEach(function (n) { out.stocks[n] = Object.keys(S[n]).sort().map(function (d) { return { d: d, c: S[n][d] }; }); });
   seriesCache[key] = out;
   return out;
 }
 
-function evaluate(A, S) {
-  // 같은 날·같은 방향 체결을 하나로
+// 같은 날·같은 방향 체결을 하나로 묶고, 체결가를 그날 수정 종가 기준으로 환산 (무상증자·분할 전 체결)
+function tradeMarks(A, S) {
   var groups = {}, order = [];
   A.rows.forEach(function (r) {
-    var k = r.name + '|' + r.date + '|' + r.side;
-    var g = groups[k];
+    var k = r.name + '|' + r.date + '|' + r.side, g = groups[k];
     if (!g) { g = groups[k] = { name: r.name, date: r.date, side: r.side, qty: 0, amt: 0, n: 0, avg: r.avgBefore, time: r.time }; order.push(g); }
     g.qty += r.qty; g.amt += r.amt; g.n++;
   });
   var byName = {};
   order.forEach(function (g) {
     g.price = g.amt / g.qty;
-    var s = S[g.name];
-    if (!s || !s.length) { g.v = 'na'; return; }
-    var i = 0; while (i < s.length && s[i].d < g.date) i++;
-    if (i >= s.length) { g.v = 'na'; return; }
-    g.i = i;
-    var f = g.price / s[i].c;                       // 체결가 ÷ 수정 종가 → 무상증자·분할 이전 체결은 배율로 환산
-    g.f = Math.abs(f - 1) > 0.3 ? f : 1;   // 30% 넘게 어긋나면 그날 수정 종가 위치에 표시
-    var px = g.price / g.f;
-    g.px = px;
-    var hi = 0; for (var k = Math.max(0, i - 252); k < i; k++) hi = Math.max(hi, s[k].c);
-    g.near = hi > 0 && px >= hi * 0.97;
-    var fut = s.slice(i + 1, i + 21);
-    g.fwd = fut.length;
-    g.f20 = fut.length ? fut[fut.length - 1].c / px - 1 : null;
-    g.v = 'neu'; g.why = '';
-    if (g.side === 'B') {
-      var low10 = Infinity; fut.slice(0, 10).forEach(function (x) { low10 = Math.min(low10, x.l); });
-      g.low10 = isFinite(low10) ? low10 / px - 1 : null;
-      if (g.avg && g.price < g.avg * 0.99) { g.v = 'bad'; g.kind = '물타기'; g.why = '평단(' + Math.round(g.avg).toLocaleString() + ')보다 싸게 추가 매수'; }
-      else if (g.low10 != null && g.low10 <= -0.07 && g.f20 < 0) { g.v = 'bad'; g.kind = g.near ? '진입 직후 급락' : '신고가 전 이른 진입'; g.why = '10일 안에 ' + pct(g.low10, 0) + '까지 밀리고 20일 뒤 ' + pct(g.f20, 0) + (g.near ? '' : ' · 신고가 근처가 아닌 곳에서 진입'); }
-      else if (g.f20 != null && g.f20 >= 0.05) { g.v = 'good'; g.kind = g.near ? '신고가 매수 성공' : '매수 성공'; g.why = '20거래일 뒤 ' + pct(g.f20, 0) + (g.near ? ' · 신고가 근처 매수' : ''); }
-      else g.why = g.f20 == null ? '이후 데이터 없음' : '20거래일 뒤 ' + pct(g.f20, 0);
-    } else {
-      var mx = 0; fut.forEach(function (x) { mx = Math.max(mx, x.h); });
-      g.mx = fut.length ? mx / px - 1 : null;
-      g.ret = g.avg ? g.price / g.avg - 1 : null;
-      if (g.ret != null && g.ret <= -0.07) { g.v = 'bad'; g.kind = '손절 지연'; g.why = '평단 대비 ' + pct(g.ret, 1) + '에서 매도 (-7% 넘김)'; }
-      else if (g.mx != null && g.mx >= 0.15 && (g.ret == null || g.ret >= 0)) { g.v = 'bad'; g.kind = '이른 익절'; g.why = '판 뒤 20일 안에 ' + pct(g.mx, 0) + ' 더 오름'; }
-      else if (g.f20 != null && g.f20 <= -0.05) { g.v = 'good'; g.kind = g.ret != null && g.ret < 0 ? '잘한 손절' : '잘한 매도'; g.why = '판 뒤 20거래일 ' + pct(g.f20, 0) + (g.ret != null ? ' · 평단 대비 ' + pct(g.ret, 1) : ''); }
-      else g.why = (g.ret != null ? '평단 대비 ' + pct(g.ret, 1) + ' · ' : '') + (g.f20 == null ? '이후 데이터 없음' : '판 뒤 20거래일 ' + pct(g.f20, 0));
+    var s = S.stocks[g.name];
+    if (s && s.length) {
+      var i = 0; while (i < s.length && s[i].d < g.date) i++;
+      if (i < s.length) { g.i = i; var f = g.price / s[i].c; g.px = Math.abs(f - 1) > 0.3 ? s[i].c : g.price; }
     }
     (byName[g.name] = byName[g.name] || []).push(g);
   });
   var pnl = {};
   A.sells.forEach(function (x) { pnl[x.name] = (pnl[x.name] || 0) + x.pnl; });
-  var stocks = Object.keys(byName).map(function (n) {
+  return Object.keys(byName).map(function (n) {
     var m = byName[n];
-    return { name: n, marks: m, pnl: pnl[n] || 0, good: m.filter(function (x) { return x.v === 'good'; }).length, bad: m.filter(function (x) { return x.v === 'bad'; }).length };
+    return { name: n, marks: m, pnl: pnl[n] || 0, nb: m.filter(function (x) { return x.side === 'B'; }).length, ns: m.filter(function (x) { return x.side === 'S'; }).length, first: m[0].date, last: m[m.length - 1].date };
   }).sort(function (a, b) { return a.pnl - b.pnl; });
-  var all = order.filter(function (g) { return g.v !== 'na'; });
-  var kinds = {};
-  all.forEach(function (g) { if (g.kind) { var k = kinds[g.kind] || (kinds[g.kind] = { kind: g.kind, v: g.v, side: g.side, n: 0 }); k.n++; } });
-  var buys = all.filter(function (g) { return g.side === 'B' && g.fwd >= 10; });
-  var rateOf = function (list, v) { return list.length ? list.filter(function (g) { return g.v === v; }).length / list.length : 0; };
-  var nearB = buys.filter(function (g) { return g.near; }), farB = buys.filter(function (g) { return !g.near; });
-  return {
-    stocks: stocks, S: S, all: all, na: order.length - all.length,
-    kinds: Object.keys(kinds).map(function (k) { return kinds[k]; }).sort(function (a, b) { return b.n - a.n; }),
-    near: { n: nearB.length, bad: rateOf(nearB, 'bad'), good: rateOf(nearB, 'good') },
-    far: { n: farB.length, bad: rateOf(farB, 'bad'), good: rateOf(farB, 'good') }
-  };
 }
 
-function pvSummaryHtml(E) {
-  var b = E.all.filter(function (g) { return g.side === 'B'; }), s = E.all.filter(function (g) { return g.side === 'S'; });
-  var cnt = function (l, v) { return l.filter(function (g) { return g.v === v; }).length; };
-  var chip = function (k) { return '<span class="pvk" style="border-color:' + (k.v === 'good' ? V_GOOD : V_BAD) + '"><i style="background:' + (k.v === 'good' ? V_GOOD : V_BAD) + '"></i>' + (k.side === 'B' ? '매수 · ' : '매도 · ') + esc(k.kind) + ' <b>' + k.n + '</b></span>'; };
-  return '<div class="stats">' +
-    '<div class="stat"><div class="k">매수 판정</div><div class="v"><span style="color:' + V_GOOD + '">잘함 ' + cnt(b, 'good') + '</span> · <span style="color:' + V_BAD + '">실수 ' + cnt(b, 'bad') + '</span><small> / ' + b.length + '</small></div></div>' +
-    '<div class="stat"><div class="k">매도 판정</div><div class="v"><span style="color:' + V_GOOD + '">잘함 ' + cnt(s, 'good') + '</span> · <span style="color:' + V_BAD + '">실수 ' + cnt(s, 'bad') + '</span><small> / ' + s.length + '</small></div></div>' +
-    '<div class="stat"><div class="k">신고가 근처 매수 실패율</div><div class="v">' + Math.round(E.near.bad * 100) + '%<small> ' + E.near.n + '회</small></div></div>' +
-    '<div class="stat"><div class="k">그 외 매수 실패율</div><div class="v">' + Math.round(E.far.bad * 100) + '%<small> ' + E.far.n + '회</small></div></div>' +
-    '</div><div class="pvks">' + E.kinds.map(chip).join('') + '</div>' +
-    '<p class="jp">판정 기준 — 매수: 평단보다 싸게 추가하면 <b>물타기</b>, 10거래일 안에 -7% 이상 밀리고 20거래일 뒤에도 손실이면 <b>진입 실패</b>(52주 신고가 3% 이내가 아니면 "신고가 전 이른 진입"), 20거래일 뒤 +5% 이상이면 <b>성공</b>. ' +
-    '매도: 평단 대비 -7%보다 더 잃고 팔면 <b>손절 지연</b>, 이익 매도 후 20거래일 안에 +15% 넘게 더 오르면 <b>이른 익절</b>, 판 뒤 20거래일에 -5% 이상 빠지면 <b>잘한 매도</b>.</p>';
+/* 종가 실선 차트 (SVG 문자열). bars: [{d,c}], marks: [{k(bars 인덱스), side, cur}] */
+function lineSvg(bars, marks, opt) {
+  opt = opt || {};
+  var W = opt.width || 1000, H = opt.height || 360, L = 6, R = opt.compact ? 50 : 64, T = 12, B = 30, pw = W - L - R, ph = H - T - B, n = bars.length;
+  if (!n) return '<svg viewBox="0 0 ' + W + ' ' + H + '"></svg>';
+  var lo = Infinity, hi = -Infinity;
+  bars.forEach(function (b) { lo = Math.min(lo, b.c); hi = Math.max(hi, b.c); });
+  (marks || []).forEach(function (m) { if (m.px) { lo = Math.min(lo, m.px); hi = Math.max(hi, m.px); } });
+  var pad = (hi - lo) * 0.1 || hi * 0.03; lo -= pad; hi += pad;
+  var x = function (k) { return n === 1 ? L + pw / 2 : L + k * pw / (n - 1); }, y = function (v) { return T + (hi - v) / (hi - lo) * ph; };
+  var fs = opt.compact ? 10 : 11, g = '';
+  for (var t = 0; t <= 4; t++) {
+    var v = lo + (hi - lo) * t / 4, yy = y(v);
+    g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + yy + '" y2="' + yy + '" stroke="#eef1f5"/><text x="' + (W - R + 5) + '" y="' + (yy + 4) + '" font-size="' + fs + '" fill="#9099a6">' + (v >= 100 ? Math.round(v).toLocaleString() : v.toFixed(1)) + '</text>';
+  }
+  var lastM = '', step = n > 160 ? 2 : 1, cnt = 0;   // 긴 구간은 두 달에 한 번만 눈금
+  bars.forEach(function (b, k) {
+    var m = b.d.slice(0, 7);
+    if (m !== lastM) { lastM = m; cnt++; if (k < 3 || cnt % step) return; g += '<line x1="' + x(k) + '" x2="' + x(k) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="#f3f4f7"/><text x="' + x(k) + '" y="' + (H - B + 15) + '" font-size="' + fs + '" fill="#9099a6" text-anchor="middle">' + (m.slice(5) === '01' ? m.slice(2, 4) + "'" : '') + (+m.slice(5)) + '월</text>'; }
+  });
+  g += '<polyline fill="none" stroke="' + (opt.color || '#1a3a6c') + '" stroke-width="' + (opt.compact ? 1.6 : 2) + '" stroke-linejoin="round" points="' + bars.map(function (b, k) { return x(k).toFixed(1) + ',' + y(b.c).toFixed(1); }).join(' ') + '"/>';
+  // 마지막 종가 점 + 값
+  var lb = bars[n - 1];
+  g += '<circle cx="' + x(n - 1) + '" cy="' + y(lb.c) + '" r="2.5" fill="' + (opt.color || '#1a3a6c') + '"/>';
+  (marks || []).forEach(function (m) {
+    var xx = x(m.k), yy = y(m.px != null ? m.px : bars[m.k].c), col = m.side === 'B' ? UP : DN, s = opt.compact ? 0.8 : 1;
+    var p = m.side === 'B'
+      ? [xx, yy + 3, xx - 7 * s, yy + 14 * s, xx - 2.5 * s, yy + 14 * s, xx - 2.5 * s, yy + 23 * s, xx + 2.5 * s, yy + 23 * s, xx + 2.5 * s, yy + 14 * s, xx + 7 * s, yy + 14 * s]
+      : [xx, yy - 3, xx - 7 * s, yy - 14 * s, xx - 2.5 * s, yy - 14 * s, xx - 2.5 * s, yy - 23 * s, xx + 2.5 * s, yy - 23 * s, xx + 2.5 * s, yy - 14 * s, xx + 7 * s, yy - 14 * s];
+    var pts = []; for (var q = 0; q < p.length; q += 2) pts.push(p[q].toFixed(1) + ',' + p[q + 1].toFixed(1));
+    g += '<g class="pva' + (m.cur ? ' cur' : '') + '"' + (m.idx != null ? ' data-k="' + m.idx + '"' : '') + '>' +
+      (m.cur ? '<circle cx="' + xx + '" cy="' + yy + '" r="9" fill="none" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="2 2"/>' : '') +
+      '<polygon points="' + pts.join(' ') + '" fill="' + col + '" stroke="#fff" stroke-width="1.2"' + (m.faint ? ' opacity=".45"' : '') + '/>' +
+      '<rect x="' + (xx - 9) + '" y="' + (m.side === 'B' ? yy : yy - 24) + '" width="18" height="24" fill="transparent"/></g>';
+  });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block" data-n="' + n + '" data-l="' + L + '" data-pw="' + pw + '">' + g + '</svg>';
 }
 
-function pvPickerHtml(E) {
-  return '<div class="ctl" style="margin:10px 0 6px"><input type="text" id="pvQ" placeholder="종목 검색"><select id="pvSort"><option value="pnl">손익 나쁜 순</option><option value="bad">실수 많은 순</option><option value="good">잘한 것 많은 순</option><option value="name">이름순</option></select></div>' +
+function pvPickerHtml() {
+  return '<div class="ctl" style="margin:6px 0"><input type="text" id="pvQ" placeholder="종목 검색"><select id="pvSort"><option value="pnl">손익 나쁜 순</option><option value="n">매매 많은 순</option><option value="recent">최근 매매 순</option><option value="name">이름순</option></select></div>' +
     '<div class="pvlist" id="pvList"></div>' +
-    '<div id="pvChart" class="pvchart"></div><div id="pvTip" class="pvtip"></div><div class="twrap" id="pvTrades"></div>';
+    '<div class="pvhead" id="pvHead"></div>' +
+    '<div class="ctl" id="pvCtl"><label>기간</label><button class="chip" data-w="40">2개월</button><button class="chip on" data-w="65">3개월</button><button class="chip" data-w="130">6개월</button><button class="chip" data-w="0">매매 전체</button>' +
+      '<button class="btn sub" id="pvPrev">◀</button><button class="btn sub" id="pvNext">▶</button><span class="muted" id="pvRange"></span><span class="muted" style="margin-left:auto">차트를 드래그하면 그 구간만 확대 · 두 번 누르면 원래대로</span></div>' +
+    '<div id="pvChart" class="pvchart"></div><div id="pvTip" class="pvtip"></div>' +
+    '<h3 style="margin-top:18px">매매 일지 — 그날까지의 차트 <span class="cnt">이후 주가는 넣지 않았습니다</span></h3>' +
+    '<div class="ctl"><label>스냅샷 기간</label><button class="chip" data-sw="65">3개월</button><button class="chip on" data-sw="130">6개월</button><button class="chip" data-sw="250">1년</button></div>' +
+    '<div id="pvLog"></div>';
 }
 
-function pvListHtml(E, q, sort) {
-  var list = E.stocks.filter(function (x) { return !q || x.name.toLowerCase().indexOf(q) >= 0; });
-  list = list.slice().sort(sort === 'bad' ? function (a, b) { return b.bad - a.bad || a.pnl - b.pnl; } : sort === 'good' ? function (a, b) { return b.good - a.good || b.pnl - a.pnl; } : sort === 'name' ? function (a, b) { return a.name < b.name ? -1 : 1; } : function (a, b) { return a.pnl - b.pnl; });
+function pvListHtml(stocks, q, sort) {
+  var list = stocks.filter(function (x) { return !q || x.name.toLowerCase().indexOf(q) >= 0; });
+  list = list.slice().sort(sort === 'n' ? function (a, b) { return (b.nb + b.ns) - (a.nb + a.ns); } : sort === 'recent' ? function (a, b) { return a.last < b.last ? 1 : -1; } : sort === 'name' ? function (a, b) { return a.name < b.name ? -1 : 1; } : function (a, b) { return a.pnl - b.pnl; });
   return list.map(function (x) {
     return '<button class="pvi" data-n="' + esc(x.name) + '"><span class="pvn">' + esc(x.name) + '</span><span class="' + cls(x.pnl) + '">' + man(x.pnl) + '</span>' +
-      '<span class="pvc"><b style="color:' + V_GOOD + '">✓' + x.good + '</b> <b style="color:' + V_BAD + '">✗' + x.bad + '</b></span></button>';
+      '<span class="pvc muted">매수 ' + x.nb + ' · 매도 ' + x.ns + ' · ' + x.first.slice(5) + '~' + x.last.slice(5) + '</span></button>';
   }).join('') || '<p class="empty">해당 종목이 없습니다</p>';
 }
 
-function pvChartSvg(st, s, width) {
-  var marks = st.marks.filter(function (g) { return g.i != null; });
-  if (!marks.length) return { svg: '<p class="empty">가격 데이터가 없습니다</p>', marks: [] };
-  var i0 = Math.max(0, marks[0].i - 25), i1 = Math.min(s.length - 1, marks[marks.length - 1].i + 25);
-  var bars = s.slice(i0, i1 + 1), n = bars.length;
-  var W = Math.max(320, Math.round(width || 1000)), H = W < 640 ? 300 : 380, L = 6, R = W < 640 ? 52 : 62, T = 14, B = 34, pw = W - L - R, ph = H - T - B;
-  var lo = Infinity, hi = -Infinity;
-  bars.forEach(function (b) { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); });
-  marks.forEach(function (g) { lo = Math.min(lo, g.px); hi = Math.max(hi, g.px); });
-  var pad = (hi - lo) * 0.12 || hi * 0.05; lo -= pad; hi += pad;
-  var x = function (k) { return L + (k + 0.5) * pw / n; }, y = function (v) { return T + (hi - v) / (hi - lo) * ph; };
-  var bw = Math.max(1, Math.min(9, pw / n * 0.62));
-  var g = '';
-  // 가로 눈금 4개
-  for (var t = 0; t <= 4; t++) {
-    var v = lo + (hi - lo) * t / 4, yy = y(v);
-    g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + yy + '" y2="' + yy + '" stroke="#eef1f5"/><text x="' + (W - R + 6) + '" y="' + (yy + 4) + '" font-size="11" fill="#9099a6">' + Math.round(v).toLocaleString() + '</text>';
-  }
-  // 월 눈금
-  var lastM = '';
-  bars.forEach(function (b, k) {
-    var m = b.d.slice(0, 7);
-    if (m !== lastM) { lastM = m; if (k < 3) return; g += '<line x1="' + x(k) + '" x2="' + x(k) + '" y1="' + T + '" y2="' + (H - B) + '" stroke="#f3f4f7"/><text x="' + x(k) + '" y="' + (H - B + 16) + '" font-size="11" fill="#9099a6" text-anchor="middle">' + (+m.slice(5)) + '월</text>'; }
-  });
-  var anyOhlc = bars.some(function (b) { return b.ohlc; });
-  if (anyOhlc) {
-    bars.forEach(function (b, k) {
-      var up = b.c >= b.o, col = up ? UP : DN, xx = x(k);
-      g += '<line x1="' + xx + '" x2="' + xx + '" y1="' + y(b.h) + '" y2="' + y(b.l) + '" stroke="' + col + '" stroke-width="1"/>' +
-        '<rect x="' + (xx - bw / 2) + '" y="' + y(Math.max(b.o, b.c)) + '" width="' + bw + '" height="' + Math.max(1, Math.abs(y(b.o) - y(b.c))) + '" fill="' + (up ? col : '#fff') + '" stroke="' + col + '"/>';
-    });
-  } else {
-    g += '<polyline fill="none" stroke="#1a3a6c" stroke-width="2" points="' + bars.map(function (b, k) { return x(k) + ',' + y(b.c); }).join(' ') + '"/>';
-  }
-  // 화살표: 매수 ▲ (체결가 아래), 매도 ▼ (체결가 위)
-  var arr = '';
-  marks.forEach(function (m, idx) {
-    var k = m.i - i0; if (k < 0 || k >= n) return;
-    var xx = x(k), yy = y(m.px), col = m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : V_NEU;
-    var p = m.side === 'B'
-      ? [xx, yy + 3, xx - 7, yy + 15, xx - 2.5, yy + 15, xx - 2.5, yy + 24, xx + 2.5, yy + 24, xx + 2.5, yy + 15, xx + 7, yy + 15]
-      : [xx, yy - 3, xx - 7, yy - 15, xx - 2.5, yy - 15, xx - 2.5, yy - 24, xx + 2.5, yy - 24, xx + 2.5, yy - 15, xx + 7, yy - 15];
-    var pts = []; for (var q = 0; q < p.length; q += 2) pts.push(p[q].toFixed(1) + ',' + p[q + 1].toFixed(1));
-    arr += '<g class="pva" data-k="' + idx + '"><circle cx="' + xx + '" cy="' + yy + '" r="2.4" fill="' + col + '"/><polygon points="' + pts.join(' ') + '" fill="' + col + '" stroke="#fff" stroke-width="1.2"/>' +
-      '<rect x="' + (xx - 10) + '" y="' + (m.side === 'B' ? yy : yy - 26) + '" width="20" height="26" fill="transparent"/></g>';
-  });
-  return { svg: '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block">' + g + arr + '</svg>', marks: marks };
+function markText(m) {
+  return '<b>' + m.date + ' ' + (m.side === 'B' ? '<span class="jup">매수</span>' : '<span class="jdn">매도</span>') + '</b> ' + m.qty.toLocaleString() + '주 × ' + Math.round(m.price).toLocaleString() + '원 = ' + Math.round(m.amt).toLocaleString() + '원' +
+    (m.n > 1 ? ' <span class="muted">(' + m.n + '회 체결 평균)</span>' : '') +
+    (m.side === 'S' && m.avg ? ' · 평단 ' + Math.round(m.avg).toLocaleString() + '원 대비 <b class="' + cls(m.price - m.avg) + '">' + pct(m.price / m.avg - 1, 1) + '</b>' : '') +
+    (m.side === 'B' && m.avg ? ' · 기존 평단 ' + Math.round(m.avg).toLocaleString() + '원' : '') +
+    (m.px !== m.price ? ' <span class="muted">· 차트에는 무상증자·분할 환산 위치로 표시</span>' : '');
 }
 
-function markText(m) {
-  return '<b>' + m.date + ' ' + (m.side === 'B' ? '매수' : '매도') + '</b> ' + m.qty.toLocaleString() + '주 × ' + Math.round(m.price).toLocaleString() + '원' + (m.n > 1 ? ' (' + m.n + '회 체결)' : '') +
-    (m.f !== 1 ? ' <span class="muted">· 차트는 무상증자·분할 환산가 ' + Math.round(m.px).toLocaleString() + '원</span>' : '') +
-    '<br><span style="color:' + (m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : '#6b7280') + ';font-weight:700">' + (m.v === 'good' ? '✓ ' : m.v === 'bad' ? '✗ ' : '– ') + esc(m.kind || '보통') + '</span> ' + esc(m.why || '');
+// 매매 일지 카드: 체결일까지의 종목 차트(그때까지의 매매 표시) + 같은 기간 코스피
+function snapshotHtml(st, s, kospi, idx, win) {
+  var m = st.marks[idx];
+  if (m.i == null) return '<div class="pvsnap"><div class="pvsh">' + markText(m) + '</div><p class="empty">가격 데이터가 없습니다</p></div>';
+  var i0 = Math.max(0, m.i - win + 1), bars = s.slice(i0, m.i + 1);
+  var marks = [];
+  st.marks.forEach(function (o, j) { if (j <= idx && o.i != null && o.i >= i0) marks.push({ k: o.i - i0, side: o.side, px: o.px, cur: j === idx, faint: j !== idx }); });
+  var d0 = bars[0].d, d1 = bars[bars.length - 1].d, kb = kospi.filter(function (k) { return k.d >= d0 && k.d <= d1; });
+  var kret = kb.length > 1 ? kb[kb.length - 1].c / kb[0].c - 1 : null, k20 = kb.length > 21 ? kb[kb.length - 1].c / kb[kb.length - 21].c - 1 : null;
+  var sret = bars.length > 1 ? bars[bars.length - 1].c / bars[0].c - 1 : null;
+  var hi = -Infinity; bars.forEach(function (b) { hi = Math.max(hi, b.c); });
+  return '<div class="pvsnap" id="snap' + idx + '"><div class="pvsh">' + markText(m) + '</div>' +
+    '<div class="pvsg"><div><div class="pvst">' + esc(st.name) + ' <span class="muted">' + d0.slice(2) + ' ~ ' + d1.slice(2) + ' · 종가 ' + Math.round(bars[bars.length - 1].c).toLocaleString() + (sret != null ? ' · 기간 ' + pct(sret, 0) : '') + ' · 고점 대비 ' + pct(bars[bars.length - 1].c / hi - 1, 0) + '</span></div>' + lineSvg(bars, marks, { width: 480, height: 230, compact: true }) + '</div>' +
+    '<div><div class="pvst">코스피 <span class="muted">' + (kb.length ? '종가 ' + kb[kb.length - 1].c.toFixed(0) + (kret != null ? ' · 기간 ' + pct(kret, 0) : '') + (k20 != null ? ' · 최근 20일 ' + pct(k20, 0) : '') : '데이터 없음') + '</span></div>' + lineSvg(kb, [], { width: 480, height: 230, compact: true, color: '#6b7280' }) + '</div></div></div>';
 }
 
 function mountPriceView(A, box) {
@@ -533,37 +484,64 @@ function mountPriceView(A, box) {
   box.innerHTML = '<p class="muted" id="pvLoad">종목별 주가를 불러오는 중… (처음 한 번만 조금 걸립니다)</p>';
   loadSeries(names, A.period[0], function (d, t) { var e = document.getElementById('pvLoad'); if (e) e.textContent = '종목별 주가를 불러오는 중… ' + d + ' / ' + t; })
     .then(function (S) {
-      var E = evaluate(A, S);
-      box.innerHTML = pvSummaryHtml(E) + pvPickerHtml(E) + (E.na ? '<p class="muted">가격 DB에 없는 체결 ' + E.na + '건은 차트·판정에서 빠졌습니다.</p>' : '');
+      var stocks = tradeMarks(A, S), na = 0;
+      stocks.forEach(function (st) { st.marks.forEach(function (m) { if (m.i == null) na++; }); });
+      box.innerHTML = pvPickerHtml() + (na ? '<p class="muted">가격 DB에 없는 체결 ' + na + '건은 차트에 표시되지 않습니다.</p>' : '');
       var $ = function (id) { return document.getElementById(id); };
-      var cur = null;
+      var cur = null, st = null, s = [], win = 65, snapWin = 130, view = null;   // view = [i0, i1] 표시 구간
       function list() {
-        $('pvList').innerHTML = pvListHtml(E, $('pvQ').value.trim().toLowerCase(), $('pvSort').value);
+        $('pvList').innerHTML = pvListHtml(stocks, $('pvQ').value.trim().toLowerCase(), $('pvSort').value);
         $('pvList').querySelectorAll('.pvi').forEach(function (b) { b.classList.toggle('on', b.dataset.n === cur); b.onclick = function () { show(b.dataset.n); }; });
+      }
+      function defaultView() {
+        var ms = st.marks.filter(function (m) { return m.i != null; });
+        if (!ms.length) return [0, s.length - 1];
+        var last = ms[ms.length - 1].i, first = ms[0].i;
+        if (!win) return [Math.max(0, first - 10), Math.min(s.length - 1, last + 10)];
+        var i1 = Math.min(s.length - 1, last + 5), i0 = Math.max(0, i1 - win + 1);
+        return [i0, i1];
+      }
+      function drawMain() {
+        var bars = s.slice(view[0], view[1] + 1), marks = [];
+        st.marks.forEach(function (m, j) { if (m.i != null && m.i >= view[0] && m.i <= view[1]) marks.push({ k: m.i - view[0], side: m.side, px: m.px, idx: j }); });
+        $('pvChart').innerHTML = bars.length ? lineSvg(bars, marks, { width: Math.max(320, $('pvChart').clientWidth - 18), height: $('pvChart').clientWidth < 640 ? 280 : 380 }) + '<div class="pvsel" id="pvSel"></div>' : '<p class="empty">가격 데이터가 없습니다</p>';
+        $('pvRange').textContent = bars.length ? bars[0].d.slice(2) + ' ~ ' + bars[bars.length - 1].d.slice(2) + ' (' + bars.length + '거래일)' : '';
+        $('pvChart').querySelectorAll('.pva').forEach(function (a) {
+          var m = st.marks[+a.dataset.k];
+          a.onclick = function (e) { e.stopPropagation(); $('pvTip').innerHTML = markText(m) + ' · <a href="#snap' + a.dataset.k + '">일지 보기</a>'; };
+        });
+        bindZoom(bars.length);
+      }
+      // 드래그로 구간 확대 (마우스·터치), 두 번 누르면 원래대로
+      function bindZoom(n) {
+        var el = $('pvChart'), svg = el.querySelector('svg'), sel = $('pvSel'); if (!svg) return;
+        var x0 = null;
+        var toIdx = function (clientX) { var r = svg.getBoundingClientRect(), sc = svg.viewBox.baseVal.width / r.width, L = +svg.dataset.l, pw = +svg.dataset.pw; return Math.round(Math.max(0, Math.min(1, ((clientX - r.left) * sc - L) / pw)) * (n - 1)); };
+        svg.onpointerdown = function (e) { x0 = e.clientX; sel.style.display = 'none'; e.preventDefault(); };
+        svg.onpointermove = function (e) { if (x0 == null) return; var r = svg.getBoundingClientRect(), a = Math.min(x0, e.clientX) - r.left, b = Math.max(x0, e.clientX) - r.left; if (b - a < 4) return; sel.style.display = ''; sel.style.left = (a + svg.offsetLeft) + 'px'; sel.style.width = (b - a) + 'px'; sel.style.top = svg.offsetTop + 'px'; sel.style.height = r.height + 'px'; };
+        svg.onpointerup = svg.onpointerleave = function (e) {
+          if (x0 == null) return; var a = toIdx(Math.min(x0, e.clientX)), b = toIdx(Math.max(x0, e.clientX)); x0 = null; sel.style.display = 'none';
+          if (b - a >= 3) { view = [view[0] + a, view[0] + b]; drawMain(); }
+        };
+        svg.ondblclick = function () { view = defaultView(); drawMain(); };
+      }
+      function drawLog() {
+        $('pvLog').innerHTML = st.marks.map(function (m, j) { return snapshotHtml(st, s, S.kospi, j, snapWin); }).join('');
       }
       function show(name) {
         cur = name; list();
-        var st = E.stocks.filter(function (x) { return x.name === name; })[0];
-        var c = pvChartSvg(st, S[name] || [], $('pvChart').clientWidth - 18);
-        $('pvChart').innerHTML = '<div class="pvhead"><b>' + esc(name) + '</b> <span class="' + cls(st.pnl) + '">' + man(st.pnl) + '</span>' +
-          '<span class="pvleg"><i style="color:' + V_GOOD + '">▲▼ 잘함</i><i style="color:' + V_BAD + '">▲▼ 실수</i><i style="color:' + V_NEU + '">▲▼ 보통</i> · ▲매수 ▼매도</span></div>' + c.svg;
-        $('pvTip').innerHTML = '<span class="muted">화살표를 누르면 그 매매의 판정 이유가 보입니다.</span>';
-        $('pvTrades').innerHTML = '<table><tr><th>날짜</th><th>구분</th><th class="num">수량</th><th class="num">단가</th><th>판정</th><th>이유</th></tr>' +
-          st.marks.map(function (m, k) {
-            return '<tr data-k="' + k + '"><td>' + m.date.slice(5) + '</td><td>' + (m.side === 'B' ? '<b class="jup">매수</b>' : '<b class="jdn">매도</b>') + '</td><td class="num">' + m.qty.toLocaleString() + '</td><td class="num">' + Math.round(m.price).toLocaleString() + '</td>' +
-              '<td style="color:' + (m.v === 'good' ? V_GOOD : m.v === 'bad' ? V_BAD : '#6b7280') + ';font-weight:700">' + (m.v === 'good' ? '✓ ' : m.v === 'bad' ? '✗ ' : m.v === 'na' ? '' : '– ') + esc(m.kind || (m.v === 'na' ? '가격 없음' : '보통')) + '</td><td class="muted" style="white-space:normal;min-width:180px">' + esc(m.why || '') + '</td></tr>';
-          }).join('') + '</table>';
-        $('pvChart').querySelectorAll('.pva').forEach(function (a) {
-          var m = c.marks[+a.dataset.k];
-          a.onmouseenter = a.onclick = function () {
-            $('pvTip').innerHTML = markText(m);
-            $('pvChart').querySelectorAll('.pva').forEach(function (z) { z.classList.toggle('on', z === a); });
-          };
-        });
+        st = stocks.filter(function (x) { return x.name === name; })[0]; s = S.stocks[name] || [];
+        $('pvHead').innerHTML = '<b>' + esc(name) + '</b> <span class="' + cls(st.pnl) + '">' + man(st.pnl) + '</span><span class="muted">매수 ' + st.nb + '회 · 매도 ' + st.ns + '회</span><span class="pvleg"><i style="color:' + UP + '">▲ 매수</i><i style="color:' + DN + '">▼ 매도</i></span>';
+        $('pvTip').innerHTML = '<span class="muted">화살표를 누르면 체결 내용이 보입니다.</span>';
+        view = defaultView(); drawMain(); drawLog();
       }
       $('pvQ').oninput = list; $('pvSort').onchange = list;
+      $('pvCtl').querySelectorAll('.chip[data-w]').forEach(function (c) { c.onclick = function () { $('pvCtl').querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); }); win = +c.dataset.w; if (st) { view = defaultView(); drawMain(); } }; });
+      var pan = function (dir) { if (!st) return; var len = view[1] - view[0], step = Math.max(1, Math.round(len / 2)); var i0 = Math.max(0, Math.min(s.length - 1 - len, view[0] + dir * step)); view = [i0, i0 + len]; drawMain(); };
+      $('pvPrev').onclick = function () { pan(-1); }; $('pvNext').onclick = function () { pan(1); };
+      box.querySelectorAll('.chip[data-sw]').forEach(function (c) { c.onclick = function () { box.querySelectorAll('.chip[data-sw]').forEach(function (x) { x.classList.toggle('on', x === c); }); snapWin = +c.dataset.sw; if (st) drawLog(); }; });
       list();
-      if (E.stocks.length) show(E.stocks[0].name);
+      if (stocks.length) show(stocks[0].name);
     })
     .catch(function (e) { box.innerHTML = '<p class="jdn">주가를 불러오지 못했습니다: ' + esc(e.message) + '</p>'; });
 }
@@ -633,7 +611,7 @@ function mount(opt) {
   return { open: function () { if (!state.loaded) { state.loaded = true; load(); } } };
 }
 
-var api = { OWNER_EMAIL: OWNER_EMAIL, parse: parse, analyze: analyze, evaluate: evaluate, mount: mount };
+var api = { OWNER_EMAIL: OWNER_EMAIL, parse: parse, analyze: analyze, mount: mount };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 else root.Journal = api;
 })(typeof window !== 'undefined' ? window : globalThis);
