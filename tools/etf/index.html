@@ -806,6 +806,44 @@ async function loadMrsSeries(name, code) {
   return out;
 }
 
+// ===== 보유 종목 수익률 (ETF 보유내역 화면 우측 컬럼) =====
+// 기준일 포함 최근 2개월 수정주가에서 종목명별 당일(전 영업일 대비) · 5영업일 · 10영업일 수익률
+const RET_CACHE = new Map();     // 기준일 -> { d0, d1, d5, d10, map: Map(종목명 -> [r1, r5, r10]) }
+async function loadHoldingReturns(date) {
+  if (RET_CACHE.has(date)) return RET_CACHE.get(date);
+  const dateSet = new Set();
+  const pm = new Map();          // 종목명 -> Map(날짜 -> 종가)
+  await Promise.all(monthsList(date, 2).map(async mo => {
+    for (const r of await readMonth('p', mo)) {
+      const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+      if (d > date || !(r.close > 0)) continue;
+      dateSet.add(d);
+      let m2 = pm.get(r.name);
+      if (!m2) pm.set(r.name, m2 = new Map());
+      m2.set(d, r.close);
+    }
+  }));
+  const ds = Array.from(dateSet).sort();
+  const d0 = ds[ds.length - 1], d1 = ds[ds.length - 2] || null, d5 = ds[ds.length - 6] || null, d10 = ds[ds.length - 11] || null;
+  const map = new Map();
+  if (d0) {
+    for (const [nm, m2] of pm) {
+      const p0 = m2.get(d0);
+      if (!(p0 > 0)) continue;
+      const ret = dp => { const p = dp ? m2.get(dp) : null; return p > 0 ? p0 / p - 1 : null; };
+      map.set(nm, [ret(d1), ret(d5), ret(d10)]);
+    }
+  }
+  const res = { d0: d0, d1: d1, d5: d5, d10: d10, map: map };
+  RET_CACHE.set(date, res);
+  return res;
+}
+function retCell(td, v) {
+  if (v == null) { td.className = 'dcell d-flat ret'; td.textContent = '–'; return; }
+  td.className = 'dcell ret ' + (v > 0.00005 ? 'd-up' : v < -0.00005 ? 'd-down' : 'd-flat');
+  td.textContent = (v > 0 ? '+' : '') + (v * 100).toFixed(2) + '%';
+}
+
 function showEtfChart(code, name) {
   const tok = ++chartToken;
   chartArea.style.display = '';
@@ -2042,7 +2080,10 @@ function showEtfHoldings(etfCode, etfName) {
     '<div class="stat-card"><div class="label">보유 종목 수</div><div class="value">' + items.length + '</div></div>';
   statsArea.style.display = 'flex';
 
-  thead.innerHTML = '<tr><th style="width:50px">#</th><th>보유 종목명</th><th style="text-align:right;min-width:120px">비중(%)</th></tr>';
+  thead.innerHTML = '<tr><th style="width:50px">#</th><th>보유 종목명</th><th style="text-align:right;min-width:120px">비중(%)</th>' +
+    '<th style="text-align:right" title="기준일 종가 ÷ 전 영업일 종가 − 1 (수정주가)">당일</th>' +
+    '<th style="text-align:right" title="기준일 종가 ÷ 5영업일 전 종가 − 1 (수정주가)">5영업일</th>' +
+    '<th style="text-align:right" title="기준일 종가 ÷ 10영업일 전 종가 − 1 (수정주가)">10영업일</th></tr>';
 
   let html = '';
   items.forEach((e, i) => {
@@ -2056,12 +2097,29 @@ function showEtfHoldings(etfCode, etfName) {
       '<td class="etf-link">' + escHtml(compName) + (isHighlighted ? ' &#11088;' : '') + '</td>' +
       '<td class="weight">' +
         (weight != null ? '<span class="weight-bar green" style="width:' + barWidth + 'px"></span>' + weight.toFixed(2) + '%' : '-') +
-      '</td></tr>';
+      '</td><td class="dcell d-flat ret" data-nm="' + safeAttr(compName) + '">…</td><td class="dcell d-flat ret">…</td><td class="dcell d-flat ret">…</td></tr>';
   });
   tbody.innerHTML = html;
 
   document.getElementById('resultTitle').textContent = escHtml(etfName) + ' 보유내역 (' + items.length + '개 종목)';
-  document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬';
+  document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬 · 수익률 계산 중…';
+
+  // 수익률 3열은 가격 파일을 읽은 뒤 채움 (현금·선물 등 가격 DB에 없는 항목은 –)
+  const myCode = etfCode, myDate = currentDate;
+  loadHoldingReturns(myDate).then(ret => {
+    if (!currentView || currentView.type !== 'etf' || currentView.code !== myCode || currentDate !== myDate) return;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      const cells = tr.querySelectorAll('td.ret');
+      if (cells.length !== 3) return;
+      const r = ret.map.get(cells[0].dataset.nm) || [null, null, null];
+      for (let k = 0; k < 3; k++) retCell(cells[k], r[k]);
+    });
+    const fmt = d => d ? d.slice(5).replace('-', '/') : '?';
+    document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬 · 수익률은 수정주가 기준 ' +
+      (ret.d0 ? ret.d0 + ' 종가 vs 전일 ' + fmt(ret.d1) + ' · 5영업일 전 ' + fmt(ret.d5) + ' · 10영업일 전 ' + fmt(ret.d10) : '가격 데이터 없음');
+  }).catch(() => {
+    document.getElementById('sortInfo').textContent = '비중(%) 기준 내림차순 정렬 · 수익률을 불러오지 못했습니다';
+  });
   introArea.style.display = 'none';
   resultArea.style.display = '';
   syncUrl();
