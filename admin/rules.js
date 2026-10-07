@@ -7,7 +7,7 @@
 
 var PQ_SRC = '/tools/etf/hyparquet.min.js';
 var LS_KEY = 'gj_rules_meta_v1';
-var MAX_DAYS_PEAK = 60;          // 고점: 최근 60거래일 종가 최고가
+var MAX_DAYS_PEAK = 60;          // 고점: 진입일 이후(진입일을 모르면 최근 60거래일) 수정 고가 최고가 — 고가 DB가 없으면 종가
 var ARM_PCT = 0.05;              // 고점이 평단 +5% 를 넘긴 뒤부터 본전/고점−15% 규칙
 var TRAIL = 0.15;                // 고점 대비 −15%
 var INIT_STOP = 0.07;            // 초기 손절가 미지정 시 −7%
@@ -21,10 +21,10 @@ var DEFAULT_META = {
   'HPSP':       { cost: 56747,  r: 1, memo: '1/3 매도 (+20%)' },
   '인텍플러스':    { cost: 48878,  r: 1, memo: '1/3 매도 (+20%)' },
   '티에스이':      { cost: 282360, r: 1, memo: '' },
-  '컴투스':       { cost: 37838,  r: 2, stop: 36200,   memo: '구글플레이 매출 순위 5위 밖이면 손절선과 무관하게 정리' },
-  '삼성전기':      { cost: 1574000, r: 2, stop: 1462000, memo: '7월 반등 고점 1,828,000 종가 돌파 전까지는 손절선 하나만' },
-  '씨젠':        { cost: 35887,  r: 0.5, stop: 33100, memo: '' },
-  '가온전선':      { cost: 310700, r: 1, stop: 296000,  memo: '' }
+  '컴투스':       { cost: 37838,  r: 2, stop: 36200, since: '2026-10-02', memo: '구글플레이 매출 순위 5위 밖이면 손절선과 무관하게 정리' },
+  '삼성전기':      { cost: 1574000, r: 2, stop: 1462000, since: '2026-10-02', memo: '7월 반등 고점 1,828,000 종가 돌파 전까지는 손절선 하나만' },
+  '씨젠':        { cost: 35887,  r: 0.5, stop: 33100, since: '2026-10-02', memo: '' },
+  '가온전선':      { cost: 310700, r: 1, stop: 296000, since: '2026-09-29', memo: '' }
 };
 
 /* 체결내역에 남아 있어도 표에서 빼는 종목 (전량 매도 완료 등) */
@@ -79,6 +79,7 @@ var DONTS = [
 
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
+  ['2026-10-07', '고점 −15% 선의 고점을 종가 최고가에서 수정 고가(장중 고가) 최고가로 변경하고, 진입일 이후 고점만 쓰도록 수정(진입 전 고점이 섞이던 문제). 시초가·장중에 찍은 고점도 매도선에 바로 반영.'],
   ['2026-10-06', '페이지를 스터디에서 관리자 탭으로 이동. 보유 종목·평단을 매매 복기 체결내역에서 자동 계산. 비중(R)·초기 손절가·메모 설정 추가. 신규 진입 종목은 고점 +5% 전까지 초기 손절가 적용.'],
   ['2026-10-06', '매매: KODEX 구리 전량 매도 · 컴투스 1R 추가 매수(합계 2R, 평단 37,838) · 삼성전기 1R 추가 매수(합계 2R, 평단 1,574,000) · 심텍·피에스케이홀딩스 시초가 +20% 도달 → 1/3 매도. 씨젠 0.5R(35,887) 보유 등록.'],
   ['2026-10-02', '매수 체크리스트 추가 (급등 뒤 돌파 · 무너진 주도주 박스 돌파 · 제로선 직전 선취매 통계). 가온전선 추가 매수 보류, 삼성전기 매수 보류 판단.'],
@@ -119,7 +120,7 @@ function positionsFromRows(rows) {
 /* ---------- 탭 ---------- */
 function mount(opt) {
   var sb = opt.client, box = document.getElementById('rulesBox');
-  var state = { loaded: false, px: null, last: null, journalPos: null, journalInfo: '' };
+  var state = { loaded: false, px: null, hi: null, last: null, journalPos: null, journalInfo: '' };
 
   function staticHtml() {
     var h = '';
@@ -131,10 +132,10 @@ function mount(opt) {
     h += '</div>';
 
     h += '<div class="card"><h2>📋 보유 종목 매도선 <span class="cnt" id="rHoldSub">불러오는 중…</span></h2>' +
-      '<div class="twrap"><table><thead><tr><th class="l">종목</th><th>수량</th><th>평단</th><th>종가</th><th>수익률</th><th>+20%선</th><th>+40%선</th><th>본전선</th><th>고점−15%</th><th>적용 매도선</th><th>여유</th><th>10일선</th><th>20일선</th><th>판단</th><th></th></tr></thead>' +
+      '<div class="twrap"><table><thead><tr><th class="l">종목</th><th>수량</th><th>평단</th><th>종가</th><th>수익률</th><th>+20%선</th><th>+40%선</th><th>본전선</th><th>고점−15%<br><span class="rsub">(진입 후 고가)</span></th><th>적용 매도선</th><th>여유</th><th>10일선</th><th>20일선</th><th>판단</th><th></th></tr></thead>' +
       '<tbody id="rHoldBody"><tr><td colspan="15" class="empty">불러오는 중…</td></tr></tbody></table></div>' +
       '<p class="muted" style="font-size:12.5px;margin-top:8px">판단: <span class="rtag sell">매도</span> 종가가 적용 매도선 아래 · <span class="rtag part">분할</span> +20% 또는 +40% 통과(다음 날 실행) · <span class="rtag near">주의</span> 매도선까지 5% 이내 · <span class="rtag hold">보유</span> 그 외. ' +
-      '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 최근 60거래일 종가 최고가. 적용 매도선: 고점이 평단 +5%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 비중(R)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장.</p>' +
+      '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 <b>진입일 이후 수정 고가(장중 고가)</b>의 최고가(진입일은 체결내역의 첫 매수일, 없으면 설정값·최근 60거래일). 적용 매도선: 고점이 평단 +5%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 비중(R)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장.</p>' +
       '<div class="ctl" style="margin-top:8px"><input type="text" id="rName" placeholder="종목명 (체결내역에 없는 종목 추가)"><input type="text" id="rCost" placeholder="평단" inputmode="numeric"><input type="text" id="rR" placeholder="R" inputmode="decimal" style="min-width:60px"><input type="text" id="rStop" placeholder="초기 손절가" inputmode="numeric"><button class="btn sub" id="rAdd">추가 / 수정</button><button class="btn sub" id="rReset">설정 초기화</button></div>' +
       '</div>';
 
@@ -162,14 +163,17 @@ function mount(opt) {
 
   async function loadPrices() {
     await loadPq();
-    var S = {}, jobs = monthsBack(5).map(function (m) { return '/db/market/price/' + m + '.parquet'; });
-    await Promise.all(jobs.map(async function (u) {
-      var rows = []; try { rows = await readPq(u, ['date', 'name', 'close']); } catch (e) {}
+    var S = {}, HI = {}, months = monthsBack(5);
+    await Promise.all(months.map(async function (m) {
+      var rows = []; try { rows = await readPq('/db/market/price/' + m + '.parquet', ['date', 'name', 'close']); } catch (e) {}
       rows.forEach(function (r) { if (r.close > 0) (S[r.name] || (S[r.name] = {}))[isoD(r.date)] = r.close; });
+      var hs = []; try { hs = await readPq('/db/market/ohlc/' + m + '.parquet', ['date', 'name', 'high']); } catch (e) {}
+      hs.forEach(function (r) { if (r.high > 0) (HI[r.name] || (HI[r.name] = {}))[isoD(r.date)] = r.high; });
     }));
-    var out = {}, last = '';
+    var out = {}, hi = {}, last = '';
     Object.keys(S).forEach(function (n) { out[n] = Object.keys(S[n]).sort().map(function (d) { return [d, S[n][d]]; }); var l = out[n][out[n].length - 1][0]; if (l > last) last = l; });
-    state.px = out; state.last = last;
+    Object.keys(HI).forEach(function (n) { hi[n] = Object.keys(HI[n]).sort().map(function (d) { return [d, HI[n][d]]; }); });
+    state.px = out; state.hi = hi; state.last = last;
   }
 
   async function loadJournal() {
@@ -192,6 +196,7 @@ function mount(opt) {
     return Object.keys(names).map(function (n) {
       var d = DEFAULT_META[n] || {}, m = meta[n] || {}, j = state.journalPos ? state.journalPos[n] : null;
       return { name: n, cost: (j && j.avg) || m.cost || d.cost || 0, qty: j ? j.qty : null, soldFrac: j ? j.soldFrac : 0, fromJournal: !!j,
+        since: (j && j.first) || m.since || d.since || null,
         r: m.r || d.r || 1, stop: m.stop || d.stop || 0, memo: (m.memo != null ? m.memo : d.memo) || '' };
     }).filter(function (h) { return h.cost > 0; });
   }
@@ -207,12 +212,17 @@ function mount(opt) {
       // 분할 진행: 체결내역의 매도 비율이 우선, 없으면 메모로 판단
       var sold20 = x.soldFrac >= 0.3 || /1\/3|20%/.test(memo), sold40 = x.soldFrac >= 0.55 || /절반|40%/.test(memo);
       var remain = sold40 ? 1 / 3 : sold20 ? 2 / 3 : 1; totR += x.r * remain;
-      var label = '<b>' + esc(x.name) + '</b> <span class="rR">' + x.r + 'R</span>' + (x.fromJournal ? '' : ' <span class="rman" title="체결내역에 없어 기본 설정값 사용">설정값</span>') +
+      var label = '<b>' + esc(x.name) + '</b> <span class="rR">' + x.r + 'R</span>' + (x.since ? ' <span class="rsub">' + x.since.slice(5) + '~</span>' : '') + (x.fromJournal ? '' : ' <span class="rman" title="체결내역에 없어 기본 설정값 사용">설정값</span>') +
         (x.soldFrac > 0.05 ? '<br><span class="rsub">보유 중 ' + Math.round(x.soldFrac * 100) + '% 매도</span>' : '') + (memo ? '<br><span class="rsub">' + esc(memo) + '</span>' : '');
       var btns = '<td><button class="chip" data-set="' + esc(x.name) + '">설정</button> <button class="chip" data-del="' + esc(x.name) + '">숨김</button></td>';
       if (!a || a.length < 20) { h += '<tr><td class="l">' + label + '</td><td>' + (x.qty || '–') + '</td><td>' + fmt(x.cost) + '</td><td colspan="11" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td>' + btns + '</tr>'; return; }
       var c = a.map(function (p) { return p[1]; }), px = c[c.length - 1], ret = (px / x.cost - 1) * 100;
-      var peak = Math.max.apply(null, c.slice(-MAX_DAYS_PEAK)), l15 = peak * (1 - TRAIL), be = x.cost;
+      // 고점: 수정 고가(ohlc) 기준. 진입일(since)을 알면 그 날 이후, 모르면 최근 60거래일. 고가 DB가 없는 종목은 종가
+      var src = state.hi && state.hi[x.name] && state.hi[x.name].length ? state.hi[x.name] : a, peakSrc = (src === a) ? '종가' : '고가';
+      var win = x.since ? src.filter(function (p) { return p[0] >= x.since; }) : src.slice(-MAX_DAYS_PEAK);
+      if (!win.length) win = src.slice(-MAX_DAYS_PEAK);
+      var peak = -1, peakD = ''; win.forEach(function (p) { if (p[1] > peak) { peak = p[1]; peakD = p[0]; } });
+      var l15 = peak * (1 - TRAIL), be = x.cost;
       var armed = peak >= x.cost * (1 + ARM_PCT), init = x.stop > 0 ? x.stop : x.cost * (1 - INIT_STOP);
       var line = armed ? Math.max(l15, be) : init, lineLbl = !armed ? '초기 손절' : (line === be ? '본전' : '고점−15%');
       var ma10 = c.slice(-10).reduce(function (s, v) { return s + v; }, 0) / 10, ma20 = c.slice(-20).reduce(function (s, v) { return s + v; }, 0) / 20;
@@ -223,7 +233,7 @@ function mount(opt) {
       else if (room >= -5) { tag = '주의'; cls = 'near'; }
       else { tag = '보유'; cls = 'hold'; }
       h += '<tr><td class="l">' + label + '</td><td>' + (x.qty != null ? fmt(x.qty) : '–') + '</td><td>' + fmt(x.cost) + '</td><td>' + fmt(px) + '</td>' +
-        '<td class="' + (ret >= 0 ? 'jup' : 'jdn') + '">' + pct(ret) + '</td><td>' + fmt(x.cost * 1.2) + '</td><td>' + fmt(x.cost * 1.4) + '</td><td>' + fmt(be) + '</td><td>' + fmt(l15) + '</td>' +
+        '<td class="' + (ret >= 0 ? 'jup' : 'jdn') + '">' + pct(ret) + '</td><td>' + fmt(x.cost * 1.2) + '</td><td>' + fmt(x.cost * 1.4) + '</td><td>' + fmt(be) + '</td><td>' + fmt(l15) + '<br><span class="rsub">' + peakSrc + ' ' + fmt(peak) + ' · ' + peakD.slice(5) + '</span></td>' +
         '<td><b>' + fmt(line) + '</b><br><span class="rsub">' + lineLbl + '</span></td><td class="' + (room > -5 ? 'rwarn' : '') + '">' + pct(room) + '</td>' +
         '<td>' + fmt(ma10) + '<br><span class="rsub' + (px < ma10 ? ' rwarn' : '') + '">' + (px < ma10 ? '아래 · 추가매수 금지' : '위') + '</span></td><td>' + fmt(ma20) + '</td>' +
         '<td><span class="rtag ' + cls + '">' + tag + '</span></td>' + btns + '</tr>';
@@ -238,8 +248,9 @@ function mount(opt) {
     var m = getMeta(), cur = Object.assign({}, DEFAULT_META[name] || {}, m[name] || {});
     var r = prompt(name + ' 비중 (R)', cur.r || 1); if (r === null) return;
     var stop = prompt(name + ' 초기 손절가 (없으면 비움)', cur.stop || ''); if (stop === null) return;
+    var since = prompt(name + ' 진입일 (YYYY-MM-DD, 체결내역이 있으면 비워도 됨)', cur.since || ''); if (since === null) return;
     var memo = prompt(name + ' 메모 (예: 1/3 매도, 절반 매도)', cur.memo || ''); if (memo === null) return;
-    m[name] = Object.assign({}, m[name] || {}, { r: Number(r) || 1, stop: Number(String(stop).replace(/[^0-9.]/g, '')) || 0, memo: memo.trim(), removed: false });
+    m[name] = Object.assign({}, m[name] || {}, { r: Number(r) || 1, stop: Number(String(stop).replace(/[^0-9.]/g, '')) || 0, since: /^\d{4}-\d{2}-\d{2}$/.test(since.trim()) ? since.trim() : '', memo: memo.trim(), removed: false });
     setMeta(m); renderHold();
   }
 
