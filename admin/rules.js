@@ -27,6 +27,9 @@ var DEFAULT_META = {
   '가온전선':      { cost: 310700, r: 1, stop: 296000,  memo: '' }
 };
 
+/* 체결내역에 남아 있어도 표에서 빼는 종목 (전량 매도 완료 등) */
+var DEFAULT_HIDE = { 'KODEX 구리': '2026-10-06 전량 매도' };
+
 /* ---------- 원칙 본문 ---------- */
 var RULES = [
   ['+20% 도달 → 1/3 매도', '종가가 평단 +20%를 넘으면 다음 거래일에 1/3을 판다. 다음 날 수익률이 조금 낮아져도 그냥 실행한다. "다시 +20% 오면 팔지"로 미루면 규칙이 재량으로 바뀐다.', '이것만으로 승률 67% → 77%, 수익을 전부 반납하고 손실로 끝나는 비율 28% → 17%.'],
@@ -77,7 +80,7 @@ var DONTS = [
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
   ['2026-10-06', '페이지를 스터디에서 관리자 탭으로 이동. 보유 종목·평단을 매매 복기 체결내역에서 자동 계산. 비중(R)·초기 손절가·메모 설정 추가. 신규 진입 종목은 고점 +5% 전까지 초기 손절가 적용.'],
-  ['2026-10-06', '피에스케이홀딩스·심텍 시초가 +20% 도달 → 1/3 매도. 컴투스 2R(37,838)·삼성전기 2R(1,574,000)·씨젠 0.5R(35,887) 신규 진입.'],
+  ['2026-10-06', '매매: KODEX 구리 전량 매도 · 컴투스 1R 추가 매수(합계 2R, 평단 37,838) · 삼성전기 1R 추가 매수(합계 2R, 평단 1,574,000) · 심텍·피에스케이홀딩스 시초가 +20% 도달 → 1/3 매도. 씨젠 0.5R(35,887) 보유 등록.'],
   ['2026-10-02', '매수 체크리스트 추가 (급등 뒤 돌파 · 무너진 주도주 박스 돌파 · 제로선 직전 선취매 통계). 가온전선 추가 매수 보류, 삼성전기 매수 보류 판단.'],
   ['2026-10-02', '분할 익절 규칙 채택: +20% 1/3, +40% 절반, 나머지 고점 −15%/본전. 193건 검증으로 전량 매도 규칙 대비 중앙값 +7%p.'],
   ['2026-10-01', '매도 원칙 첫 정리: 고점 −15% 또는 본전 이탈 전량 매도, 10일선은 경계선. 소부장 74종목 286건 백테스트.']
@@ -184,7 +187,8 @@ function mount(opt) {
     var meta = getMeta(), names = {};
     Object.keys(DEFAULT_META).forEach(function (n) { names[n] = 1; });
     Object.keys(meta).forEach(function (n) { if (!meta[n].removed) names[n] = 1; else delete names[n]; });
-    if (state.journalPos) Object.keys(state.journalPos).forEach(function (n) { if (!(meta[n] && meta[n].removed)) names[n] = 1; });
+    Object.keys(DEFAULT_HIDE).forEach(function (n) { if (!(meta[n] && meta[n].removed === false)) delete names[n]; });
+    if (state.journalPos) Object.keys(state.journalPos).forEach(function (n) { if (!(meta[n] && meta[n].removed) && !(DEFAULT_HIDE[n] && !(meta[n] && meta[n].removed === false))) names[n] = 1; });
     return Object.keys(names).map(function (n) {
       var d = DEFAULT_META[n] || {}, m = meta[n] || {}, j = state.journalPos ? state.journalPos[n] : null;
       return { name: n, cost: (j && j.avg) || m.cost || d.cost || 0, qty: j ? j.qty : null, soldFrac: j ? j.soldFrac : 0, fromJournal: !!j,
