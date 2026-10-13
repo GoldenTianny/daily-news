@@ -32,6 +32,16 @@ var DEFAULT_META = {
 /* 체결내역에 남아 있어도 표에서 빼는 종목 (전량 매도 완료 등) */
 var DEFAULT_HIDE = { 'KODEX 구리': '2026-10-06 전량 매도', '가온전선': '2026-10-08 시가 전량 매도 (본전선 이탈)', '컴투스': '2026-10-12 시가 전량 손절 (10/8 종가 36,000 < 손절선 36,200)', '펌텍코리아': '2026-10-12 장중 전량 매도 (10/8 종가 65,500 < 실패선 66,000)', '심텍': '2026-10-12 NXT 애프터마켓 전량 매도 (종가 154,900 < 고점 −15% 선 155,210)', '삼성전기': '2026-10-13 NXT 애프터마켓 1,364,000 전량 손절 (종가가 손절선 1,462,000 아래)' };
 
+/* ---------- 관심 종목 (매수 대기) ----------
+ * 피벗 = 종가로 넘으면 다음 날 진입하는 가격, stop = 진입 후 손절선(손잡이 저점 등). 포트 점검 때 함께 확인. */
+var WATCH = [
+  { name: 'DB손해보험',     pattern: '손잡이 달린 컵', pivot: 203000, stop: 182800, r: 0.5, since: '2026-10-13', memo: '26주 컵(−36%) · 손잡이 4.6주(−10%) · 10/13 코스피 −6%에 +0.9% · ETF 매집 최상위 · 손절 폭이 넓어 0.5R' },
+  { name: '메리츠금융지주',  pattern: '손잡이 달린 컵', pivot: 136900, stop: 125000, r: 0.5, since: '2026-10-13', memo: '26주 컵(−31%) · 손잡이 4.6주(−9%) · 10/13 +2.2% · RS 75로 다소 약함' },
+  { name: '코메론',         pattern: '손잡이 달린 컵', pivot: 23350,  stop: 21850,  r: 0.5, since: '2026-10-13', memo: '22주 컵(−23%) · 손잡이 3.6주(−6%) · RS 90 · 거래대금 하루 8억 수준이라 소량만' },
+  { name: 'HD현대마린솔루션', pattern: '손잡이 달린 컵', pivot: 247000, stop: 212500, r: 0.5, since: '2026-10-13', memo: '10/13 장중 212,500 → 고가 마감(+5.3%) · RS 72로 아직 약함, 관찰' },
+  { name: '펌텍코리아',      pattern: '신고가 재진입', pivot: 69800,  stop: 66000,  r: 0.5, since: '2026-10-13', memo: '10/12 손절 후 재진입 조건 = 52주 신고가 종가 · 화장품 업종 급락 중이라 시장 안정 확인 후' }
+];
+
 /* ---------- 원칙 본문 ---------- */
 var RULES = [
   ['+20% 도달 → 1/3 매도', '종가가 평단 +20%를 넘으면 다음 거래일에 1/3을 판다. 다음 날 수익률이 조금 낮아져도 그냥 실행한다. "다시 +20% 오면 팔지"로 미루면 규칙이 재량으로 바뀐다.', '이것만으로 승률 67% → 77%, 수익을 전부 반납하고 손실로 끝나는 비율 28% → 17%.'],
@@ -82,6 +92,7 @@ var DONTS = [
 
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
+  ['2026-10-13', '관심 종목 표 추가 — 손잡이 달린 컵 스크리닝(10/12 기준 36개 중 손잡이가 실제로 형성된 종목)에서 DB손해보험·메리츠금융지주·코메론·HD현대마린솔루션, 재진입 대기 펌텍코리아. 피벗 종가 돌파 시 다음 날 0.5R, 손절은 손잡이 저점. 포트 점검 때 함께 확인.'],
   ['2026-10-13', '코스맥스 1R → 0.5R 축소 — NXT 282,500 (평단 305,200 대비 −7.4%, 매도분 약 −0.04R). 10/6 돌파 뒤 박스 위쪽 285,000 아래로 종가 복귀(돌파 실패)했고, 화장품 업종이 사흘간 급락(에이피알 −25%, 한국콜마 −15%, 코스메카 −11%). SDI와 같은 "피벗 아래 마감 → 절반" 기준 적용. 남은 0.5R 손절 264,000.'],
   ['2026-10-13', '삼성전기 2R 전량 손절 — NXT 애프터마켓 1,364,000. 평단 1,574,000 대비 −13.3%, 포트 기준 약 −0.27R. 반도체 급락 사흘째(코스피 −6%, 삼성전자 −8%, SK하이닉스 −10.5%)에 −8.7% 갭 하락해 손절선 1,462,000을 크게 밑돌았고, 계획 손실(−0.14R)의 두 배가 됨. 종가 원칙의 갭 위험이 실제로 나온 사례. 같은 날 보유 소부장(피에스케이 +6%, 티에스이 +7%, 인텍플러스 +5%)은 시장과 반대로 올랐고, HPSP·씨젠·SDI는 장중 손절선을 깼다가 종가로 회복해 보유 유지.'],
   ['2026-10-12', '삼성SDI 1R → 0.5R 축소 — 진입 당일 장중 597,000까지 갔다가 종가 561,000으로 피벗 577,000 아래 마감(10/8에 이어 두 번째 돌파 실패). NXT 애프터마켓에서 절반 매도. 남은 0.5R 손절은 535,000.'],
@@ -154,6 +165,11 @@ function mount(opt) {
       '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 <b>진입일 이후 수정 고가(장중 고가)</b>의 최고가(진입일은 체결내역의 첫 매수일, 없으면 설정값·최근 60거래일). 적용 매도선: 고점이 평단 +10%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 비중(R)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장.</p>' +
       '<div class="ctl" style="margin-top:8px"><input type="text" id="rName" placeholder="종목명 (체결내역에 없는 종목 추가)"><input type="text" id="rCost" placeholder="평단" inputmode="numeric"><input type="text" id="rR" placeholder="R" inputmode="decimal" style="min-width:60px"><input type="text" id="rStop" placeholder="초기 손절가" inputmode="numeric"><button class="btn sub" id="rAdd">추가 / 수정</button><button class="btn sub" id="rReset">설정 초기화</button></div>' +
       '</div>';
+
+    h += '<div class="card"><h2>👀 관심 종목 <span class="cnt">매수 대기 · 피벗을 종가로 넘으면 다음 날 진입</span></h2>' +
+      '<div class="twrap"><table><thead><tr><th class="l">종목</th><th class="l">패턴</th><th>종가</th><th>피벗</th><th>피벗까지</th><th>손절선</th><th>손절선까지</th><th>비중</th><th>판단</th><th class="l">메모</th></tr></thead>' +
+      '<tbody id="rWatchBody"><tr><td colspan="10" class="empty">불러오는 중…</td></tr></tbody></table></div>' +
+      '<p class="muted" style="font-size:12.5px;margin-top:8px">판단: <span class="rtag part">매수 신호</span> 종가가 피벗 이상(다음 날 진입) · <span class="rtag near">근접</span> 피벗까지 3% 이내 · <span class="rtag sell">무효</span> 종가가 손절선 아래(패턴 깨짐) · <span class="rtag hold">대기</span> 그 외. 코스피가 7/30 저점(5,594)을 종가로 깨면 신규 매수는 모두 보류.</p></div>';
 
     h += '<div class="card"><h2>🚦 사이클 경고 신호 <span class="cnt">둘 중 하나라도 켜지면 전체 절반 축소</span></h2><div class="rsig">' +
       '<div class="rbox"><h3>① 메모리 대형주 7/30 저점 이탈</h3><div class="v" id="rSigBig">확인 중…</div><div class="k" id="rSigBigK">삼성전자·SK하이닉스 종가가 2026-07-30 종가 아래로 내려가면 소부장 판정과 무관하게 전체 정리.</div></div>' +
@@ -270,6 +286,18 @@ function mount(opt) {
     setMeta(m); renderHold();
   }
 
+  function renderWatch() {
+    var body = document.getElementById('rWatchBody'); if (!body) return;
+    if (!state.px) { body.innerHTML = '<tr><td colspan="10" class="empty">가격 데이터를 불러오지 못했습니다</td></tr>'; return; }
+    body.innerHTML = WATCH.map(function (w) {
+      var a = state.px[w.name];
+      if (!a || !a.length) return '<tr><td class="l">' + esc(w.name) + '</td><td colspan="9" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td></tr>';
+      var px = a[a.length - 1][1], d = a[a.length - 1][0], toP = (w.pivot / px - 1) * 100, toS = (px / w.stop - 1) * 100;
+      var tag = px < w.stop ? '<span class="rtag sell">무효</span>' : px >= w.pivot ? '<span class="rtag part">매수 신호</span>' : toP <= 3 ? '<span class="rtag near">근접</span>' : '<span class="rtag hold">대기</span>';
+      return '<tr><td class="l">' + esc(w.name) + '</td><td class="l">' + esc(w.pattern) + '</td><td>' + fmt(px) + '<br><span class="rsub">' + d.slice(5) + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + pct(toP) + '</td><td>' + fmt(w.stop) + '</td><td>' + pct(toS) + '</td><td>' + w.r + 'R</td><td>' + tag + '</td><td class="l" style="font-size:12.5px">' + esc(w.memo) + '</td></tr>';
+    }).join('');
+  }
+
   function renderSignals() {
     var set = function (id, v, cls) { var el = document.getElementById(id); el.textContent = v; el.className = 'v ' + cls; };
     var rows = [];
@@ -305,7 +333,7 @@ function mount(opt) {
   async function load() {
     box.innerHTML = staticHtml(); wire();
     await Promise.all([loadPrices().catch(function () {}), loadJournal()]);
-    renderHold(); renderSignals();
+    renderHold(); renderWatch(); renderSignals();
   }
 
   return { open: function () { if (!state.loaded) { state.loaded = true; load(); } }, refresh: function () { state.loaded = false; } };
