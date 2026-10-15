@@ -97,6 +97,7 @@ var DONTS = [
 
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
+  ['2026-10-15', '사이클 경고 ① 카드 문구 수정 — "전체 정리" → "전체 절반 축소". 매도 원칙 본문(절반 축소)과 어긋나 있던 것을 통일. 판단은 종가 기준(삼성전자 207,000 / SK하이닉스 1,322,000).'],
   ['2026-10-14', 'HPSP 남은 0.67R 전량 매도 — 시간외 종가 57,100. 반도체 장비 매물에 −7.3% 마감, 종가가 고점(70,000) −15% 선 59,500 아래. 장중 내내 선 아래였지만 15:20까지 기다려 종가로 판단(원칙 준수). 평단 56,747 대비 +0.6%, 앞서 +20%에 판 1/3 포함 매매 전체 약 +0.07R 이익.'],
   ['2026-10-14', '삼성SDI 0.5R 추가 → 1R 복원 (평단 590,000) — 종가 591,000으로 피벗 577,000 종가 재돌파 확인 후 장 마감 뒤 매수. 메리츠금융지주 0.5R 신규 매수 131,000 (10/13 RS 0선 돌파 신호 ①, 손절 125,000). 둘 다 종가 확인 후 시간외·동시호가 체결. 하나마이크론은 종가 44,700으로 무효선 45,300 이탈해 관심 종목에서 제외. HPSP는 종가 57,100으로 매도선 59,500 아래 = 매도 신호(체결 확인 전).'],
   ['2026-10-14', '관심 종목 추가 — 팬오션(10/13 52주 종가 신고가, 눌림 대기)·고영(하락 추세선 돌파)·하나마이크론(10일선 눌림 대기)·LG에너지솔루션(RS 0선 대기). 메리츠금융지주는 10/13 RS 0선 상향 돌파로 신호 ① 발생 메모. 검토 후 제외: 라온시큐어(20일 +94%)·케이씨텍(20일 +77%)·주성엔지니어링(120일 저점 대비 +312%)·엑스게이트(52주 고점 −42% + 20일 +41%)·하나머티리얼즈(52주 고점 −27%, 10/14 10일선 이탈).'],
@@ -181,7 +182,7 @@ function mount(opt) {
       '<p class="muted" style="font-size:12.5px;margin-top:8px">판단: <span class="rtag part">매수 신호</span> 종가가 피벗 이상(다음 날 진입) · <span class="rtag near">근접</span> 피벗까지 3% 이내 · <span class="rtag sell">무효</span> 종가가 손절선 아래(패턴 깨짐) · <span class="rtag hold">대기</span> 그 외. 코스피가 7/30 저점(5,594)을 종가로 깨면 신규 매수는 모두 보류.</p></div>';
 
     h += '<div class="card"><h2>🚦 사이클 경고 신호 <span class="cnt">둘 중 하나라도 켜지면 전체 절반 축소</span></h2><div class="rsig">' +
-      '<div class="rbox"><h3>① 메모리 대형주 7/30 저점 이탈</h3><div class="v" id="rSigBig">확인 중…</div><div class="k" id="rSigBigK">삼성전자·SK하이닉스 종가가 2026-07-30 종가 아래로 내려가면 소부장 판정과 무관하게 전체 정리.</div></div>' +
+      '<div class="rbox"><h3>① 메모리 대형주 7/30 저점 이탈</h3><div class="v" id="rSigBig">확인 중…</div><div class="k" id="rSigBigK">삼성전자·SK하이닉스 종가가 2026-07-30 종가 아래로 내려가면 소부장 판정과 무관하게 남은 보유 전체를 절반으로 축소. 7/30이 이번 조정의 바닥이라, 이 아래는 쌍바닥 실패·하락 2막 신호로 본다.</div></div>' +
       '<div class="rbox"><h3>② 소부장 신고가 종목 비율 40% 이상</h3><div class="v" id="rSigNh">확인 중…</div><div class="k" id="rSigNhK">이번 사이클 앞선 두 고점에서 이 비율이 정점을 찍고 2주~2개월 뒤 지수가 꺾여 −16%, −58% 빠졌다.</div></div>' +
       '<div class="rbox"><h3>③ 테스트 업종 목표주가 상향 폭 50% 초과</h3><div class="v" id="rSigTp">확인 중…</div><div class="k" id="rSigTpK">병목 업종에서 애널리스트가 앞다퉈 목표가를 올리기 시작하면 과열 시작. 신규 매수 중단 신호.</div></div>' +
       '</div><p class="muted" style="font-size:12.5px;margin-top:8px">②③은 <a href="/study/semi-cycle/" target="_blank" rel="noopener">반도체 사이클 계기판</a> 데이터를 그대로 읽는다.</p></div>';
@@ -317,7 +318,7 @@ function mount(opt) {
     });
     if (rows.length) {
       var broke = rows.some(function (r) { return r[1] < r[2]; });
-      set('rSigBig', broke ? '🔴 이탈 — 전체 정리' : '🟢 유지', broke ? 'bad' : 'ok');
+      set('rSigBig', broke ? '🔴 이탈 — 전체 절반 축소' : '🟢 유지', broke ? 'bad' : 'ok');
       document.getElementById('rSigBigK').textContent = rows.map(function (r) { return r[0] + ' ' + fmt(r[1]) + ' (저점 ' + fmt(r[2]) + ' 대비 ' + pct(r[3]) + ')'; }).join(' · ');
     } else set('rSigBig', '데이터 없음', 'warn');
     fetch('/study/semi-cycle/data.json').then(function (r) { return r.json(); }).then(function (d) {
