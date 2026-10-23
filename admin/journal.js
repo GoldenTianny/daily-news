@@ -1,4 +1,4 @@
-/* 매매 복기 — 체결내역(txt) 파싱 · 거래 단위 손익 분석 · 차트
+/* 매매 복기 — 체결내역(txt) 파싱 · 매매 성적표 · 거래 단위 손익 분석 · 차트
  * 체결내역은 Supabase trade_journal 테이블(마스터 본인만 읽기/쓰기, supabase/002_trade_journal.sql)에만 저장되고
  * 이 파일·저장소에는 들어가지 않습니다. */
 (function (root) {
@@ -127,6 +127,27 @@ function analyze(rows) {
     }
   });
 
+  // 성적표: 기대값·손익계수·실현손익 최대 낙폭·분기별·원칙 전후
+  var RULES_START = '2026-10-01';
+  var peakV = 0, peakD = '', ddV = 0, ddFrom = '', ddTo = '';
+  cumSeries.forEach(function (x) {
+    if (x[1] > peakV) { peakV = x[1]; peakD = x[0]; }
+    if (x[1] - peakV < ddV) { ddV = x[1] - peakV; ddFrom = peakD; ddTo = x[0]; }
+  });
+  var lastCum = cumSeries.length ? cumSeries[cumSeries.length - 1][1] : 0;
+  var card = function (label, g) {
+    var w = g.filter(function (c) { return c.pnl > 0; }), l = g.filter(function (c) { return c.pnl <= 0; });
+    var aw = mean(w.map(function (c) { return c.ret; })), al = mean(l.map(function (c) { return c.ret; }));
+    return { label: label, n: g.length, win: w.length, pnl: sum(g, pnlOf), avgWin: aw, avgLoss: al,
+      exp: mean(g.map(function (c) { return c.ret; })), payoff: al ? aw / -al : 0,
+      big: g.filter(function (c) { return c.ret > 0.15; }).length, deep: g.filter(function (c) { return c.ret < -0.10; }).length };
+  };
+  var qOf = function (d) { return d.slice(0, 4) + ' ' + (Math.floor((+d.slice(5, 7) - 1) / 3) + 1) + '분기'; };
+  var byQ = {};
+  cycles.forEach(function (c) { (byQ[qOf(c.end)] = byQ[qOf(c.end)] || []).push(c); });
+  var lossSorted = L.slice().sort(function (a, b) { return a.pnl - b.pnl; });
+  var top5Loss = sum(lossSorted.slice(0, 5), pnlOf);
+
   var stair = L.filter(function (c) { return c.stair; });
   var openPos = Object.keys(pos).filter(function (k) { return pos[k].q > 0; }).map(function (k) { return { name: k, qty: pos[k].q, cost: pos[k].cost }; });
   var etfC = cycles.filter(function (c) { return isEtf(c.name); }), stkC = cycles.filter(function (c) { return !isEtf(c.name); });
@@ -161,6 +182,14 @@ function analyze(rows) {
     kind: [grp('ETF', etfC), grp('개별주', stkC)],
     stockSellAmt: sum(rows.filter(function (r) { return r.side === 'S' && !isEtf(r.name); }), function (r) { return r.amt; }),
     totalAmt: sum(rows, function (r) { return r.amt; }),
+    exp: mean(cycles.map(function (c) { return c.ret; })),
+    pf: sum(L, pnlOf) ? sum(W, pnlOf) / -sum(L, pnlOf) : 0,
+    dd: { peak: peakV, peakD: peakD, v: ddV, from: ddFrom, to: ddTo, now: lastCum - peakV },
+    deep: cycles.filter(function (c) { return c.ret < -0.10; }).length,
+    deepPnl: sum(cycles.filter(function (c) { return c.ret < -0.10; }), pnlOf),
+    top5Share: sum(L, pnlOf) ? top5Loss / sum(L, pnlOf) : 0,
+    quarters: Object.keys(byQ).sort().map(function (q) { return card(q, byQ[q]); }),
+    rulesSplit: [card('원칙 이전 (~9/30 시작)', cycles.filter(function (c) { return c.start < RULES_START; })), card('원칙 이후 (10/1~ 시작)', cycles.filter(function (c) { return c.start >= RULES_START; }))],
     topLoss: cycles.slice().sort(function (a, b) { return a.pnl - b.pnl; }).slice(0, 12),
     topWin: cycles.slice().sort(function (a, b) { return b.pnl - a.pnl; }).slice(0, 8)
   };
@@ -182,6 +211,46 @@ function loadChart() {
     document.head.appendChild(s);
   });
   return chartReady;
+}
+
+/* 매매 성적표 — 한눈에 보는 체크리스트 + 분기별·원칙 전후 비교 */
+function scoreHtml(A) {
+  var n = A.cycles.length, wr = A.win / n, payoff = A.avgLoss ? A.avgWin / -A.avgLoss : 0, ad = A.style[2];
+  var adShare = A.gl ? Math.min(1, Math.max(0, ad.pnl / A.gl)) : 0, stShare = A.gl ? A.stair.pnl / A.gl : 0;
+  var mark = function (ok, warn) { return ok ? '✅' : warn ? '⚠️' : '❌'; };
+  var rowsS = [
+    ['승률', Math.round(wr * 100) + '%', '40% 이상 (모멘텀 매매는 낮아도 됨)', mark(wr >= 0.5, wr >= 0.4)],
+    ['손익비 (평균 수익 ÷ 평균 손실)', payoff.toFixed(2) + '배', '2배 이상', mark(payoff >= 2, payoff >= 1.3)],
+    ['기대값 (거래 1회 평균 수익률)', pct(A.exp, 2), '+0% 초과', mark(A.exp > 0.01, A.exp > 0)],
+    ['손익계수 (총이익 ÷ 총손실)', A.pf.toFixed(2), '1.5 이상', mark(A.pf >= 1.5, A.pf >= 1)],
+    ['−10% 넘게 잃은 거래', A.deep + '건 · ' + man(A.deepPnl), '0건 (손절선 −7%)', mark(A.deep === 0, A.deep <= Math.max(1, n * 0.05))],
+    ['+15% 넘게 번 거래', A.big + '건', '손실 큰 거래보다 많게', mark(A.big > A.deep, A.big >= A.deep)],
+    ['물타기 거래 손익', ad.n + '건 · ' + man(ad.pnl), '0건', mark(ad.n === 0, ad.pnl >= 0)],
+    ['계단식 손절 비중', Math.round(stShare * 100) + '% (' + man(A.stair.pnl) + ')', '손실의 20% 미만', mark(stShare < 0.2, stShare < 0.4)],
+    ['손실 상위 5건 비중', Math.round(A.top5Share * 100) + '%', '50% 미만 (손실이 고르게 작게)', mark(A.top5Share < 0.5, A.top5Share < 0.7)]
+  ];
+  var good = rowsS.filter(function (r) { return r[3] === '✅'; }).length;
+  var grade = good >= 8 ? 'A' : good >= 6 ? 'B' : good >= 4 ? 'C' : 'D';
+  var ct = function (list) {
+    return '<tr><th>구분</th><th class="num">거래</th><th class="num">승률</th><th class="num">평균 수익 / 손실</th><th class="num">손익비</th><th class="num">기대값</th><th class="num">실현손익</th></tr>' +
+      list.filter(function (g) { return g.n; }).map(function (g) {
+        return '<tr><td>' + esc(g.label) + '</td><td class="num">' + g.n + '</td><td class="num">' + Math.round(g.win / g.n * 100) + '%</td>' +
+          '<td class="num"><span class="jup">' + (g.win ? pct(g.avgWin) : '–') + '</span> / <span class="jdn">' + (g.n - g.win ? pct(g.avgLoss) : '–') + '</span></td>' +
+          '<td class="num">' + g.payoff.toFixed(2) + '</td><td class="num ' + cls(g.exp) + '">' + pct(g.exp, 2) + '</td>' +
+          '<td class="num ' + cls(g.pnl) + '">' + man(g.pnl) + '</td></tr>';
+      }).join('');
+  };
+  var dd = A.dd;
+  return '<h3>📋 매매 성적표 — 종합 ' + grade + ' (' + good + '/' + rowsS.length + ' 통과)</h3>' +
+    '<div class="twrap"><table><tr><th>항목</th><th class="num">내 성적</th><th>기준</th><th class="num">판정</th></tr>' +
+      rowsS.map(function (r) { return '<tr><td>' + r[0] + '</td><td class="num">' + r[1] + '</td><td>' + r[2] + '</td><td class="num">' + r[3] + '</td></tr>'; }).join('') +
+    '</table></div>' +
+    '<p class="jp">실현손익 기준 최고점은 <b>' + (dd.peakD ? dd.peakD.slice(5).replace('-', '/') : '–') + '</b>의 <b class="' + cls(dd.peak) + '">' + man(dd.peak) + '</b>' +
+      (dd.v < 0 ? ', 최대 낙폭은 ' + dd.from.slice(5).replace('-', '/') + '~' + dd.to.slice(5).replace('-', '/') + ' <b class="jdn">' + man(dd.v) + '</b>' : '') +
+      ', 지금은 최고점 대비 <b class="' + cls(dd.now) + '">' + man(dd.now) + '</b>입니다. (보유 중인 종목의 평가손익과 입출금은 빠진 실현손익 기준)</p>' +
+    '<h3>분기별 성적</h3><div class="twrap"><table>' + ct(A.quarters) + '</table></div>' +
+    '<h3>원칙 이전 vs 이후</h3><div class="twrap"><table>' + ct(A.rulesSplit) + '</table></div>' +
+    '<p class="jp muted">원칙 = 10/1부터 정리한 매도·매수 원칙(종가 손절, 분할 익절, 비중 = 0.07R ÷ 손절 폭). 거래 시작일 기준으로 나눴습니다. 원칙 이후 표본이 적을 때는 방향만 참고하세요.</p>';
 }
 
 function reportHtml(A) {
@@ -215,7 +284,8 @@ function reportHtml(A) {
       }).join('');
   };
 
-  return '' +
+  return scoreHtml(A) +
+    '<h3>세부 분석</h3>' +
     '<div class="stats">' +
       '<div class="stat"><div class="k">실현손익 (세전)</div><div class="v ' + cls(A.realized) + '">' + man(A.realized) + '</div></div>' +
       '<div class="stat"><div class="k">끝난 거래</div><div class="v">' + n + '<small>회</small></div></div>' +
