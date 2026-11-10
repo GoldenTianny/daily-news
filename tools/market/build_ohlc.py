@@ -132,7 +132,7 @@ def parse_snapshot(xlsx_path, date_key):
             continue
         period, item_row = rows[hdr['Period']], rows[code_hdr]
         cols = {ITEMS[str(item_row[c] or '').strip()]: c for c in range(3, len(item_row))
-                if str(item_row[c] or '').strip() in ITEMS and str(period[c] or '').strip() == 'CPD'}
+                if str(item_row[c] or '').strip() in ITEMS and re.fullmatch(r'CPD(-\d+)?', str(period[c] or '').strip())}
         if len(cols) < len(VALS):
             continue
         d = datetime.date.fromisoformat(date_key)

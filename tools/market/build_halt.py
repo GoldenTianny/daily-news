@@ -90,7 +90,7 @@ def parse_snapshot(xlsx_path, date_key):
     code_hdr = next(i for i, r in enumerate(rows[:18]) if r and str(r[0] or '').strip() == 'Code')
     period, item_row = rows[hdr['Period']], rows[code_hdr]
     col = next((c for c in range(3, len(item_row))
-                if str(item_row[c] or '').strip() == ITEM and str(period[c] or '').strip() == 'CPD'), None)
+                if str(item_row[c] or '').strip() == ITEM and re.fullmatch(r'CPD(-\d+)?', str(period[c] or '').strip())), None)
     if col is None:
         return pd.DataFrame(columns=['date', 'code', 'name']), []
     d = datetime.date.fromisoformat(date_key)
