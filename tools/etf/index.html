@@ -1344,9 +1344,9 @@ function renderEtfConsChart(code, name, res) {
   buildConsChart(document.getElementById('etfConsChart'), res, { pfx: 'ecs', showCount: true });
 }
 
-// ===== 캔들 차트: 최근 약 7개월 일봉 + 이동평균(5·20·60·120일) + 지지·저항 추세선 =====
+// ===== 캔들 차트: 최근 1년 일봉 + 이동평균(5·20·60·120일) + 지지·저항 추세선 =====
 // 시가·고가·저가는 db/market/ohlc, 종가는 수정주가 DB. 거래량 자료가 없어 거래량 패널은 없음.
-const CANDLE_BARS = 150;         // 화면에 그리는 거래일 수
+const CANDLE_BARS = 270;         // 화면에 그리는 최대 거래일 수 — 1년치 전부 (선 차트와 같은 기간)
 const CANDLE_PAD = 12;           // 추세선 연장용 오른쪽 여백(거래일)
 const PIVOT_K = 5;               // 앞뒤 5거래일 중 최고·최저면 고점·저점(피벗)
 const TL_TOL = 0.01;             // 추세선 판정 허용 오차 (종가 기준 1%)
@@ -1361,7 +1361,7 @@ async function loadOhlcSeries(name, code) {
   const key = 'O:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const out = new Map();         // 날짜 -> [시가, 고가, 저가]
-  await Promise.all(monthsList(currentDate, 9).map(async mo => {
+  await Promise.all(monthsList(currentDate, 13).map(async mo => {
     for (const r of await readMonth('o', mo)) {
       if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -1372,13 +1372,13 @@ async function loadOhlcSeries(name, code) {
   return out;
 }
 
-// 120일선을 화면 왼쪽 끝부터 그리기 위한 1년 이전 종가 (약 3개월치)
+// 120일선을 화면 왼쪽 끝부터 그리기 위한 1년 이전 종가 (약 6개월치)
 async function loadPreCloses(name, code) {
   const key = 'B:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
   const out = [];
-  await Promise.all(monthsList(currentDate, 16).slice(0, 4).map(async mo => {
+  await Promise.all(monthsList(currentDate, 19).slice(0, 7).map(async mo => {
     for (const r of await readMonth('p', mo)) {
       if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -1571,7 +1571,7 @@ function renderCandleChart(name, s, ohlc, pre) {
     (tl.brk ? lg('#d946a8', '<span style="color:#e53935">&#9650;</span> 돌파일(돌파한 선 · ' + bars[tl.brk.bx].d.slice(5).replace('-', '/') + ')', true) : '');
 
   chartArea.innerHTML = '<div class="chart-card">' +
-    '<div class="chart-title" style="display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline">&#128201; ' + escHtml(name) +
+    '<div class="chart-title" style="display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline">&#128201; ' + escHtml(name) + ' &middot; 최근 1년' +
       '<span style="margin-left:auto;font-weight:600;color:' + ccol + '">' + fmt(lastB.c) +
       (chg == null ? '' : ' &nbsp;' + (chg > 0 ? '+' : '') + (chg * 100).toFixed(2) + '%') +
       ' <span style="font-weight:400;font-size:12px">(' + lastB.d + ')</span></span></div>' +
