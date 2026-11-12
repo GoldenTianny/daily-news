@@ -379,6 +379,7 @@
 // ===== STATE =====
 let DATA = {};
 let NAMES = [];
+let NO_ETF = new Set();   // ETF에 편입되지 않았지만 주식 DB(db/market/screen)에 있는 종목 — 검색은 되고 차트·실적만 표시
 let HOLDINGS = {};
 let DATES = [];        // 저장된 영업일 목록 (오름차순)
 let COMPS = {};        // {1:{date,w,codes}, 5:{...}, 10:{...}} — N영업일 전 비중 비교용
@@ -683,7 +684,7 @@ function monthsList(date, n) {
   return out;
 }
 
-const DB_DIR = { p: 'price', c: 'consensus', r: 'rs', e: 'earnings/consensus', m: 'mrs' };
+const DB_DIR = { p: 'price', c: 'consensus', r: 'rs', e: 'earnings/consensus', m: 'mrs', s: 'screen' };
 async function readMonth(kind, mo) {
   const key = kind + '|' + mo;
   let buf = FILE_BUFS.get(key);
@@ -1873,8 +1874,18 @@ async function loadDateData(date) {
       }
     }
     NAMES = Array.from(nameSet).sort();
+    NO_ETF = new Set();
 
     dateInfo.textContent = NAMES.length.toLocaleString() + '개 종목 / ' + Object.keys(HOLDINGS).length.toLocaleString() + '개 ETF';
+    // ETF에 없는 일반 종목도 검색되도록 주식 DB 종목명을 비동기로 합친다 (검색 사용을 막지 않음)
+    loadStockNames(date).then(extra => {
+      if (currentDate !== date || !extra.length) return;
+      const add = extra.filter(n => !nameSet.has(n));
+      if (!add.length) return;
+      NO_ETF = new Set(add);
+      NAMES = NAMES.concat(add).sort();
+      dateInfo.textContent = NAMES.length.toLocaleString() + '개 종목 / ' + Object.keys(HOLDINGS).length.toLocaleString() + '개 ETF';
+    });
 
     searchInput.disabled = false;
     searchInput.placeholder = '종목명을 입력하세요 (예: 삼성전자, NVIDIA, SK하이닉스)';
@@ -1942,6 +1953,21 @@ function highlightMatch(text, query) {
 
 function safeAttr(s) {
   return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+// 주식 DB(db/market/screen)의 기준일 무렵 종목명 목록 — 해당 월 파일이 없거나 비면 전월 파일로 대신
+async function loadStockNames(date) {
+  const iso = r => (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
+  try {
+    for (const mo of monthsList(date, 2).reverse()) {
+      const rows = (await readMonth('s', mo)).map(r => [iso(r), r.name]).filter(x => x[0] <= date && x[1]);
+      if (!rows.length) continue;
+      let last = '';
+      for (const x of rows) if (x[0] > last) last = x[0];
+      return Array.from(new Set(rows.filter(x => x[0] === last).map(x => x[1])));
+    }
+  } catch (e) {}
+  return [];
 }
 
 // ===== STOCK SEARCH VIEW =====
@@ -2136,6 +2162,8 @@ function searchComponent(name) {
 // ===== MULTI-STOCK TAG MANAGEMENT =====
 function addStock(name) {
   if (selectedStocks.includes(name)) return;
+  // ETF 미편입 종목은 '함께 담은 ETF' 비교가 의미 없으므로 단독으로 연다
+  if (!DATA[name] || selectedStocks.some(n => !DATA[n])) selectedStocks = [];
   selectedStocks.push(name);
   searchInput.value = '';
   renderTags();
@@ -2326,7 +2354,8 @@ function updateAutocomplete() {
   acIndex = -1;
   if (acFiltered.length === 0) { autocompleteEl.style.display = 'none'; return; }
   autocompleteEl.innerHTML = acFiltered.map((n, i) =>
-    '<div class="item" data-idx="' + i + '">' + highlightMatch(n, q) + '</div>'
+    '<div class="item" data-idx="' + i + '">' + highlightMatch(n, q) +
+    (NO_ETF.has(n) ? ' <span style="font-size:11px;color:#999;margin-left:6px">ETF 미편입</span>' : '') + '</div>'
   ).join('');
   autocompleteEl.style.display = 'block';
   autocompleteEl.querySelectorAll('.item').forEach(el => {
