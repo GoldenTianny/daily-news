@@ -1342,9 +1342,9 @@ function renderEtfConsChart(code, name, res) {
   buildConsChart(document.getElementById('etfConsChart'), res, { pfx: 'ecs', showCount: true });
 }
 
-// ===== 캔들 차트: 최근 1년 일봉 + 이동평균(5·20·60·120일) + 지지·저항 추세선 =====
+// ===== 캔들 차트: 최근 약 7개월 일봉 + 이동평균(5·20·60·120일) + 지지·저항 추세선 =====
 // 시가·고가·저가는 db/market/ohlc, 종가는 수정주가 DB. 그리기는 공용 모듈 candle.js (CandleChart.draw)
-const CANDLE_BARS = 270;         // 화면에 그리는 최대 거래일 수 — 1년치 전부 (선 차트와 같은 기간)
+const CANDLE_BARS = 150;         // 화면에 그리는 거래일 수 (약 7개월) — 1년을 다 넣으면 캔들이 너무 얇아 안 보임
 let chartMode = 'candle';        // 'candle' | 'line' — 브라우저에 저장
 try { if (localStorage.getItem('gj-chart-mode') === 'line') chartMode = 'line'; } catch (e) {}
 let lastChart = null;            // 보기 전환 때 다시 그릴 재료 {name, s, ohlc, pre}
@@ -1353,7 +1353,7 @@ async function loadOhlcSeries(name, code) {
   const key = 'O:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const out = new Map();         // 날짜 -> [시가, 고가, 저가]
-  await Promise.all(monthsList(currentDate, 13).map(async mo => {
+  await Promise.all(monthsList(currentDate, 9).map(async mo => {
     for (const r of await readMonth('o', mo)) {
       if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -1364,13 +1364,13 @@ async function loadOhlcSeries(name, code) {
   return out;
 }
 
-// 120일선을 화면 왼쪽 끝부터 그리기 위한 1년 이전 종가 (약 6개월치)
+// 120일선을 화면 왼쪽 끝부터 그리기 위한 1년 이전 종가 (약 3개월치)
 async function loadPreCloses(name, code) {
   const key = 'B:' + (code ? 'C:' + code : 'N:' + name) + '|' + currentDate;
   if (SERIES_CACHE.has(key)) return SERIES_CACHE.get(key);
   const from = (parseInt(currentDate.slice(0, 4)) - 1) + currentDate.slice(4);
   const out = [];
-  await Promise.all(monthsList(currentDate, 19).slice(0, 7).map(async mo => {
+  await Promise.all(monthsList(currentDate, 16).slice(0, 4).map(async mo => {
     for (const r of await readMonth('p', mo)) {
       if (code ? r.code !== code : r.name !== name) continue;
       const d = (r.date instanceof Date) ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10);
@@ -1415,7 +1415,10 @@ function drawChart(name, s, ohlc, pre) {
 
 function renderCandleChart(name, s, ohlc, pre) {
   chartArea.innerHTML = '<div class="chart-card"></div>';
-  CandleChart.draw(chartArea.firstChild, { name: name, price: s.price.slice(-CANDLE_BARS), ohlc: ohlc, pre: pre,
+  // 화면에 안 그리는 앞쪽 종가는 이동평균 계산용으로 넘김
+  const cut = Math.max(0, s.price.length - CANDLE_BARS);
+  CandleChart.draw(chartArea.firstChild, { name: name, price: s.price.slice(cut), ohlc: ohlc,
+    pre: (pre || []).concat(s.price.slice(0, cut).map(p => p[1])),
     width: Math.max(320, chartArea.clientWidth - 40) });
 }
 
