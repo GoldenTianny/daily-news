@@ -40,6 +40,7 @@
     text-decoration: none; font-size: 13px;
   }
   .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+  .container.wide { max-width: 1240px; }   /* 차트 모아보기: 캔들이 굵게 보이도록 넓게 */
 
   .card {
     background: white; border-radius: 12px; padding: 20px 22px 18px;
@@ -112,8 +113,8 @@
   }
   .viewbar { margin-top: -4px; }
   .chbox { border: 1px solid #e8eaf2; border-radius: 10px; padding: 12px 14px 8px; margin-bottom: 12px; background: #fff; }
-  .chbox .chbody { min-height: 392px; }
-  .chbox .chwait { display: flex; align-items: center; justify-content: center; min-height: 392px; color: #bbb; font-size: 13px; }
+  .chbox .chbody { min-height: 472px; }
+  .chbox .chwait { display: flex; align-items: center; justify-content: center; min-height: 472px; color: #bbb; font-size: 13px; }
   .chbox .cc-title a { color: #1a237e; text-decoration: none; }
   .chbox .cc-title a:hover { text-decoration: underline; }
   .chbox .cc-title .meta { font-size: 12px; font-weight: 500; color: #666; }
@@ -812,6 +813,7 @@ function setPassView(v) {
 function renderPassCharts(passed) {
   const box = document.getElementById('passCharts'), tbl = document.getElementById('passTable'), hint = document.getElementById('viewHint');
   document.querySelectorAll('.chip[data-view]').forEach(x => x.classList.toggle('on', x.dataset.view === passView));
+  document.querySelector('.container').classList.toggle('wide', passView === 'chart');
   if (passView !== 'chart') { box.style.display = 'none'; tbl.style.display = ''; hint.textContent = ''; chKey = ''; return; }
   tbl.style.display = 'none'; box.style.display = '';
   const d = curDate, member = isMember();
@@ -846,7 +848,7 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 갑니다.</div>' +
+  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, <b>이미지 저장</b>을 누르면 그 차트 한 장을 사진(PNG)으로 저장합니다. 화면이 좁으면 차트를 좌우로 밀어 볼 수 있습니다.</div>' +
     passed.map((r, i) => '<div class="chbox" data-i="' + i + '"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>').join('');
   const drawOne = el => {
     const i = Number(el.dataset.i), r = passed[i], e = data.get(r.code), body = el.firstChild;
@@ -858,7 +860,8 @@ function renderPassCharts(passed) {
       (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · 연속 ' + r.streak + '일</span></span>';
     const cut = Math.max(0, e.price.length - CH_BARS);
     CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
-      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false });
+      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, height: 420, minWidth: 900,
+      titleText: (i + 1) + '. ' + r.name + '  ·  RS ' + (r.rs == null ? '–' : r.rs) + '  ·  고점比 ' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '  ·  연속 ' + r.streak + '일' });
   };
   // 화면 근처에 온 차트만 그림 (90여 개를 한꺼번에 그리지 않도록)
   if ('IntersectionObserver' in window) {

@@ -1,6 +1,6 @@
 // 캔들 차트 공용 모듈 — ETF 검색기 종목 화면(index.html)과 미너비니 템플릿 차트 모아보기(minervini.html)가 함께 씀
 // 일봉 캔들 + 이동평균(5·20·60·120일) + 자동 지지·저항 추세선. 거래량 자료가 없어 거래량 패널은 없음.
-// 사용: CandleChart.draw(el, { name, price, ohlc, pre, width, titleHtml, note })
+// 사용: CandleChart.draw(el, { name, price, ohlc, pre, width, minWidth, height, titleHtml, titleText, note, save })
 (function () {
 'use strict';
 const CANDLE_PAD = 12;           // 추세선 연장용 오른쪽 여백(거래일)
@@ -18,7 +18,11 @@ css.textContent =
   '.cc-legend{display:flex;flex-wrap:wrap;gap:3px 12px;color:#555}' +
   '.cc-item{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}' +
   '.cc-item i{display:inline-block;width:16px;height:0}' +
+  '.cc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}' +
   '.cc-wrap{position:relative}.cc-wrap svg{display:block;width:100%}' +
+  '.cc-save{margin-left:auto;padding:3px 10px;border-radius:999px;border:1px solid #c5cae9;background:#fff;color:#3f51b5;' +
+    'font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap}' +
+  '.cc-save:hover{background:#e8eaf6}.cc-save:disabled{opacity:.5;cursor:default}' +
   '.cc-tip{position:absolute;pointer-events:none;display:none;z-index:10;background:rgba(26,35,126,.94);color:#fff;' +
     'font-size:12px;padding:6px 10px;border-radius:6px;white-space:nowrap;line-height:1.5;text-align:left}';
 document.head.appendChild(css);
@@ -78,8 +82,10 @@ function findTrendlines(bars) {
 
 // el 안에 캔들 차트를 그린다.
 //  o.name 종목명 · o.price [[날짜, 종가]...] (그릴 구간, 오름차순) · o.ohlc Map(날짜 -> [시가, 고가, 저가])
-//  o.pre 그 이전 종가 배열(이동평균용, 없어도 됨) · o.width 그림 너비(px, 없으면 el 너비)
-//  o.titleHtml 제목 왼쪽 HTML(없으면 종목명) · o.note false 면 하단 안내문 생략
+//  o.pre 그 이전 종가 배열(이동평균용, 없어도 됨) · o.width 그림 너비(px, 없으면 el 너비) · o.height 그림 높이(px)
+//  o.minWidth 그림 최소 너비 — 화면이 이보다 좁으면 차트를 가로로 밀어 보게 하고 최근 쪽(오른쪽 끝)부터 보여줌
+//  o.titleHtml 제목 왼쪽 HTML(없으면 종목명) · o.titleText 저장 이미지에 넣을 제목(일반 글자) · o.note false 면 하단 안내문 생략
+//  o.save false 면 '이미지 저장' 버튼 생략
 function draw(el, o) {
   const name = o.name, price = o.price, ohlc = o.ohlc || new Map(), pre = o.pre;
   // 이동평균은 (1년 이전 종가 + 1년치 종가) 전체로 계산한 뒤 화면 구간만 잘라 씀
@@ -100,8 +106,9 @@ function draw(el, o) {
   }
   const n = bars.length, tl = findTrendlines(bars);
 
-  const W = Math.max(300, o.width || el.clientWidth);
-  const H = 340, L = 10, R = 64, T = 14, B = 26;
+  const avail = Math.max(300, o.width || el.clientWidth);
+  const W = Math.max(avail, o.minWidth || 0);
+  const H = o.height || 340, L = 10, R = 64, T = 14, B = 26;
   const step = (W - L - R) / (n + CANDLE_PAD);
   const X = i => L + (i + 0.5) * step;
   let vmin = Infinity, vmax = -Infinity;
@@ -142,11 +149,11 @@ function draw(el, o) {
 
   // 캔들 (오르면 빨강, 내리면 파랑)
   let cd = '';
-  const bw = Math.max(1, Math.min(9, step * 0.68));
+  const bw = Math.max(1.5, Math.min(12, step * 0.76)), wick = step >= 4 ? 1.3 : 1;
   for (let i = 0; i < n; i++) {
     const b = bars[i], col = b.c >= b.o ? UP : DN, x = X(i);
     const y1 = Y(Math.max(b.o, b.c)), y2 = Y(Math.min(b.o, b.c));
-    cd += '<line x1="' + x.toFixed(1) + '" y1="' + Y(b.h).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + Y(b.l).toFixed(1) + '" stroke="' + col + '"/>' +
+    cd += '<line x1="' + x.toFixed(1) + '" y1="' + Y(b.h).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + Y(b.l).toFixed(1) + '" stroke="' + col + '" stroke-width="' + wick + '"/>' +
       '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, y2 - y1).toFixed(1) + '" fill="' + col + '"/>';
   }
 
@@ -173,20 +180,26 @@ function draw(el, o) {
     '<rect x="' + (W - R + 2) + '" y="' + (yl - 9).toFixed(1) + '" width="' + (R - 4) + '" height="18" rx="3" fill="' + ccol + '"/>' +
     '<text x="' + (W - R / 2) + '" y="' + yl.toFixed(1) + '" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#fff">' + fmt(lastB.c) + '</text>';
 
-  const lg = (col, txt, dash) => '<span class="cc-item"><i style="border-top:2px ' + (dash ? 'dotted' : 'solid') + ' ' + col + '"></i>' + txt + '</span>';
-  const legend = MAS.map(([w, col]) => lg(col, w + '일')).join('') +
-    (tl.sup ? lg('#12a5c4', '지지 추세선') : '') + (tl.res ? lg('#e0489e', '저항 추세선') : '') +
-    (tl.brk ? lg('#d946a8', '<span style="color:#e53935">&#9650;</span> 돌파일(돌파한 선 · ' + bars[tl.brk.bx].d.slice(5).replace('-', '/') + ')', true) : '');
+  // 범례 항목 [색, 글자, 점선 여부] — 화면과 저장 이미지가 같이 씀
+  const items = MAS.map(([w, col]) => [col, w + '일', false]);
+  if (tl.sup) items.push(['#12a5c4', '지지 추세선', false]);
+  if (tl.res) items.push(['#e0489e', '저항 추세선', false]);
+  if (tl.brk) items.push(['#d946a8', '▲ 돌파일(돌파한 선 · ' + bars[tl.brk.bx].d.slice(5).replace('-', '/') + ')', true]);
+  const legend = items.map(([col, txt, dash]) => '<span class="cc-item"><i style="border-top:2px ' + (dash ? 'dotted' : 'solid') + ' ' + col + '"></i>' +
+    esc(txt).replace('▲', '<span style="color:#e53935">&#9650;</span>') + '</span>').join('');
+  const priceText = fmt(lastB.c) + (chg == null ? '' : '  ' + (chg > 0 ? '+' : '') + (chg * 100).toFixed(2) + '%') + '  (' + lastB.d + ')';
+  const chartSvg = g + ma + cd + tls + cur;
 
   el.innerHTML =
     '<div class="cc-title">' + (o.titleHtml || '&#128201; ' + esc(name) + ' &middot; 최근 ' + price.length + '거래일') +
       '<span style="margin-left:auto;font-weight:600;color:' + ccol + '">' + fmt(lastB.c) +
       (chg == null ? '' : ' &nbsp;' + (chg > 0 ? '+' : '') + (chg * 100).toFixed(2) + '%') +
       ' <span style="font-weight:400;font-size:12px">(' + lastB.d + ')</span></span></div>' +
-    '<div class="cc-sub cc-legend">' + legend + '</div>' +
-    '<div class="cc-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + ma + cd + tls + cur +
+    '<div class="cc-sub cc-legend">' + legend +
+      (o.save === false ? '' : '<button type="button" class="cc-save" title="이 차트를 이미지(PNG)로 저장">&#128247; 이미지 저장</button>') + '</div>' +
+    '<div class="cc-scroll"><div class="cc-wrap"' + (W > avail ? ' style="width:' + W + 'px"' : '') + '><svg viewBox="0 0 ' + W + ' ' + H + '">' + chartSvg +
     '<line class="cc-cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
-    '</svg><div class="cc-tip"></div></div>' +
+    '</svg><div class="cc-tip"></div></div></div>' +
     (o.note === false ? '' : '<div class="cc-sub" style="margin:6px 0 0">추세선은 앞뒤 ' + PIVOT_K + '거래일 기준 고점·저점을 이어 자동으로 그린 참고선입니다. 거래량은 자료가 없어 표시하지 않습니다.</div>');
 
   // 호버: 그날의 시가·고가·저가·종가
@@ -209,6 +222,61 @@ function draw(el, o) {
   svg.addEventListener('touchstart', ev => show(ev.touches[0].clientX), { passive: true });
   svg.addEventListener('touchmove', ev => show(ev.touches[0].clientX), { passive: true });
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+  if (W > avail) { const sc = el.querySelector('.cc-scroll'); sc.scrollLeft = sc.scrollWidth; }   // 최근 쪽부터
+
+  const btn = el.querySelector('.cc-save');
+  if (btn) btn.addEventListener('click', () => {
+    btn.disabled = true;
+    saveImage({ W: W, H: H, chart: chartSvg, items: items, title: o.titleText || name, priceText: priceText, priceCol: ccol,
+      file: name.replace(/[\\/:*?"<>|\s]+/g, '_') + '_' + lastB.d + '.png' })
+      .catch(e => alert('이미지를 만들지 못했습니다: ' + e.message))
+      .then(() => { btn.disabled = false; });
+  });
+}
+
+// 차트 한 장을 PNG 로 저장: 제목 · 현재가 · 범례를 얹은 SVG 를 만들어 캔버스에 2배 해상도로 그린다
+function saveImage(c) {
+  const HEAD = 58, FOOT = 6, W = c.W, H = c.H + HEAD + FOOT;
+  const font = "-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif";
+  const meas = document.createElement('canvas').getContext('2d');
+  meas.font = '12px ' + font;
+  let lx = 12, lgd = '';
+  for (const [col, txt, dash] of c.items) {
+    lgd += '<line x1="' + lx + '" y1="44" x2="' + (lx + 16) + '" y2="44" stroke="' + col + '" stroke-width="2"' + (dash ? ' stroke-dasharray="2 3"' : '') + '/>' +
+      '<text x="' + (lx + 21) + '" y="48" font-size="12" fill="#555">' + esc(txt) + '</text>';
+    lx += 21 + meas.measureText(txt).width + 14;
+  }
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" font-family="' + font + '">' +
+    '<rect width="' + W + '" height="' + H + '" fill="#fff"/>' +
+    '<text x="12" y="24" font-size="16" font-weight="700" fill="#1a237e">' + esc(c.title) + '</text>' +
+    '<text x="' + (W - 12) + '" y="24" text-anchor="end" font-size="14" font-weight="700" fill="' + c.priceCol + '">' + esc(c.priceText) + '</text>' +
+    lgd + '<text x="' + (W - 12) + '" y="48" text-anchor="end" font-size="11" fill="#b0b6c8">gjbuffet.kr</text>' +
+    '<g transform="translate(0,' + HEAD + ')">' + c.chart + '</g></svg>';
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onerror = () => reject(new Error('차트 그림을 읽지 못했습니다'));
+    img.onload = () => {
+      const k = 2, cv = document.createElement('canvas');
+      cv.width = W * k; cv.height = H * k;
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      cv.toBlob(blob => {
+        if (!blob) { reject(new Error('PNG 변환 실패')); return; }
+        // 휴대폰은 공유 창(사진에 저장 포함), 그 외에는 파일로 내려받기
+        const file = typeof File === 'function' ? new File([blob], c.file, { type: 'image/png' }) : null;
+        const touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+        if (touch && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file] }).then(resolve, resolve);      // 취소해도 오류로 보지 않음
+          return;
+        }
+        const a = document.createElement('a'), url = URL.createObjectURL(blob);
+        a.href = url; a.download = c.file;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        resolve();
+      }, 'image/png');
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
 }
 
 window.CandleChart = { draw: draw };
