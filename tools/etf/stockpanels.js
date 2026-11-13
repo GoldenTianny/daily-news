@@ -124,7 +124,7 @@ function line(el, o) {
 
   el.innerHTML = '<div class="sp-title">' + (o.titleHtml || esc(o.name)) + '<span style="font-weight:500;font-size:12px;color:#888">최근 1년 · 목표주가 · RS</span></div>' +
     '<div class="sp-sub">' + legend + '</div>' +
-    '<div class="sp-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + lines +
+    '<div class="sp-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '" style="aspect-ratio:' + W + '/' + H + ';height:auto">' + g + lines +
     '<line class="sp-cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/></svg><div class="sp-tip"></div></div>';
 
   const svg = el.querySelector('svg'), tip = el.querySelector('.sp-tip'), cross = el.querySelector('.sp-cross');
@@ -183,7 +183,7 @@ function consChart(box, res, width) {
     lg += '<span style="white-space:nowrap"><b style="color:' + c + '">&#9644; ' + fy + 'E</b> ' + fmtOp(last[1]) +
       (ch == null ? '' : ' (' + (ch >= 0 ? '+' : '') + ch.toFixed(1) + '%)') + '</span> &nbsp;';
   });
-  box.innerHTML = '<div class="sp-sub" style="color:#666;margin:0 0 4px">' + lg + '</div><div class="sp-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '">' + g +
+  box.innerHTML = '<div class="sp-sub" style="color:#666;margin:0 0 4px">' + lg + '</div><div class="sp-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '" style="aspect-ratio:' + W + '/' + H + ';height:auto">' + g +
     '<line class="sp-cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/></svg><div class="sp-tip"></div></div>';
   const svg = box.querySelector('svg'), tip = box.querySelector('.sp-tip'), cross = box.querySelector('.sp-cross');
   const allDates = Array.from(new Set([].concat(...fys.map(fy => res.byFy.get(fy).map(p => p[0]))))).sort();
