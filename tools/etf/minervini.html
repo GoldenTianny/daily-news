@@ -944,7 +944,7 @@ function renderPassCharts(passed) {
   if (chFitObs) chFitObs.disconnect();
   chFitObs = 'ResizeObserver' in window ? new ResizeObserver(ents => {
     const seen = new Set();
-    ents.forEach(en => { const sl = en.target.parentNode; if (sl && !seen.has(sl)) { seen.add(sl); chFit(sl); } });
+    ents.forEach(en => { const sl = en.target.parentNode; if (sl && !seen.has(sl) && !sl._t) { seen.add(sl); chFit(sl); } });   // 넘기는 중에는 건드리지 않음
   }) : null;
   if (chFitObs) box.querySelectorAll('.chslide').forEach(el => chFitObs.observe(el));
   const titleOf = i => {
@@ -1055,7 +1055,16 @@ document.getElementById('passCharts').addEventListener('scroll', ev => {
   const idx = Math.round(sl.scrollLeft / sl.clientWidth), box = sl.closest('.chbox');
   box.querySelectorAll('.chtabs button').forEach(b => b.classList.toggle('on', Number(b.dataset.s) === idx));
   if (chShowSlide) chShowSlide(box, idx);
-  chFit(sl);
+  // 높이 조정은 넘김이 멈춘 뒤에 — 움직이는 도중에 상자 높이를 바꾸면 사파리에서 장이 어중간한 위치에 멈춤
+  clearTimeout(sl._t);
+  sl._t = setTimeout(() => {
+    sl._t = null;
+    const w = sl.clientWidth;
+    if (!w) return;
+    const k = Math.round(sl.scrollLeft / w);
+    if (Math.abs(sl.scrollLeft - k * w) > 2) { sl.scrollTo({ left: k * w, behavior: 'smooth' }); return; }   // 어긋나 있으면 가장 가까운 장에 맞춤
+    chFit(sl);
+  }, 160);
 }, true);
 document.getElementById('passCharts').addEventListener('click', ev => {
   const tab = ev.target.closest && ev.target.closest('.chtabs button');
