@@ -1012,7 +1012,7 @@ function renderPassCharts(passed) {
     const cut = Math.max(0, e.price.length - CH_BARS);
     body.style.minHeight = '0';              // 그린 뒤에는 자리 확보용 높이 해제 (좁은 화면에서는 차트가 더 낮음)
     CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
-      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, save: false, height: 420, width: Math.max(900, body.clientWidth),   // 좁은 화면에서도 900px 기준으로 그려 한 화면에 축소 표시 (저장 이미지와 같은 모양)
+      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, save: false, tip: false, height: 420, width: Math.max(900, body.clientWidth),   // 좁은 화면에서도 900px 기준으로 그려 한 화면에 축소 표시 (저장 이미지와 같은 모양)
       titleText: (i + 1) + '. ' + r.name + '  ·  RS ' + (r.rs == null ? '–' : r.rs) + '  ·  고점比 ' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '  ·  ' + tagOf(r) });
   };
   chDrawOne = drawOne;
