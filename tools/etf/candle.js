@@ -224,18 +224,21 @@ function draw(el, o) {
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
   if (W > avail) { const sc = el.querySelector('.cc-scroll'); sc.scrollLeft = sc.scrollWidth; }   // 최근 쪽부터
 
+  // 이 차트를 PNG 로 만드는 함수 — 개별 저장 버튼과 일괄 저장(CandleChart.png)이 같이 씀
+  const cfg = { W: W, H: H, chart: chartSvg, items: items, title: o.titleText || name, priceText: priceText, priceCol: ccol,
+    file: name.replace(/[\\/:*?"<>|\s]+/g, '_') + '_' + lastB.d + '.png' };
+  el.__ccPng = () => renderPng(cfg).then(blob => ({ blob: blob, name: cfg.file }));
   const btn = el.querySelector('.cc-save');
   if (btn) btn.addEventListener('click', () => {
     btn.disabled = true;
-    saveImage({ W: W, H: H, chart: chartSvg, items: items, title: o.titleText || name, priceText: priceText, priceCol: ccol,
-      file: name.replace(/[\\/:*?"<>|\s]+/g, '_') + '_' + lastB.d + '.png' })
-      .catch(e => alert('이미지를 만들지 못했습니다: ' + e.message))
+    el.__ccPng().then(f => deliver([f]))
+      .catch(e => alert('이미지를 저장하지 못했습니다: ' + e.message))
       .then(() => { btn.disabled = false; });
   });
 }
 
-// 차트 한 장을 PNG 로 저장: 제목 · 현재가 · 범례를 얹은 SVG 를 만들어 캔버스에 2배 해상도로 그린다
-function saveImage(c) {
+// 차트 한 장을 PNG(Blob)로: 제목 · 현재가 · 범례를 얹은 SVG 를 만들어 캔버스에 2배 해상도로 그린다
+function renderPng(c) {
   const HEAD = 58, FOOT = 6, W = c.W, H = c.H + HEAD + FOOT;
   const font = "-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif";
   const meas = document.createElement('canvas').getContext('2d');
@@ -259,25 +262,31 @@ function saveImage(c) {
       const k = 2, cv = document.createElement('canvas');
       cv.width = W * k; cv.height = H * k;
       cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-      cv.toBlob(blob => {
-        if (!blob) { reject(new Error('PNG 변환 실패')); return; }
-        // 휴대폰은 공유 창(사진에 저장 포함), 그 외에는 파일로 내려받기
-        const file = typeof File === 'function' ? new File([blob], c.file, { type: 'image/png' }) : null;
-        const touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-        if (touch && file && navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file] }).then(resolve, resolve);      // 취소해도 오류로 보지 않음
-          return;
-        }
-        const a = document.createElement('a'), url = URL.createObjectURL(blob);
-        a.href = url; a.download = c.file;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-        resolve();
-      }, 'image/png');
+      cv.toBlob(blob => { if (blob) resolve(blob); else reject(new Error('PNG 변환 실패')); }, 'image/png');
     };
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   });
 }
 
-window.CandleChart = { draw: draw };
+// 만든 PNG 들을 사용자에게 넘김: 휴대폰은 공유 창 한 번(사진에 저장 포함), 그 외에는 파일로 차례차례 내려받기
+// files: [{blob, name}]. 공유 창을 사용자가 닫은 것은 오류로 보지 않는다. 브라우저가 공유를 막으면(NotAllowedError) 그대로 던진다
+function deliver(files) {
+  const touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+  if (touch && typeof File === 'function' && navigator.canShare) {
+    const fs = files.map(f => new File([f.blob], f.name, { type: 'image/png' }));
+    if (navigator.canShare({ files: fs })) {
+      return navigator.share({ files: fs }).catch(e => { if (e && e.name === 'NotAllowedError') throw e; });
+    }
+  }
+  return files.reduce((p, f, i) => p.then(() => new Promise(done => {
+    const a = document.createElement('a'), url = URL.createObjectURL(f.blob);
+    a.href = url; a.download = f.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    setTimeout(done, i < files.length - 1 ? 350 : 0);       // 연속 다운로드가 막히지 않게 간격을 둠
+  })), Promise.resolve());
+}
+
+// png(el): draw 로 그린 컨테이너의 차트를 {blob, name} 으로 · deliver(files): 여러 장을 한 번에 저장
+window.CandleChart = { draw: draw, png: el => el.__ccPng ? el.__ccPng() : Promise.reject(new Error('차트가 아직 그려지지 않았습니다')), deliver: deliver };
 })();
