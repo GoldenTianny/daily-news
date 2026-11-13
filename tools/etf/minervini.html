@@ -270,7 +270,7 @@
     <div class="toolbar viewbar">
       <span class="muted" style="font-size:12.5px">보기</span>
       <button class="chip on" data-view="table" type="button">&#128203; 표</button>
-      <button class="chip" data-view="chart" type="button">&#128201; 차트 모아보기</button>
+      <button class="chip" data-view="chart" type="button" title="템플릿 충족 · CANSLIM · VCP · 근접 종목의 차트를 이어서 보기">&#128201; 차트 모아보기</button>
       <span class="muted" style="font-size:12px" id="viewHint"></span>
     </div>
     <div class="twrap" id="passTable"><table>
@@ -424,7 +424,7 @@ async function showDate(d, replace) {
 
   // VCP 베이스 (사전 계산 DB) — 준비되면 해당 카드만 다시 그림
   VCP = null;
-  loadVcp(d).then(v => { if (curDate !== d) return; VCP = v; renderVcp(); })
+  loadVcp(d).then(v => { if (curDate !== d) return; VCP = v; render(); })
             .catch(() => { if (curDate === d) { VCP = []; renderVcp(); } });
 
   // 주소에 기준일 반영 (최신이면 생략) — 뒤로가기로 이전 기준일로 돌아갈 수 있게
@@ -779,6 +779,7 @@ const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuf
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
 const chSel = new Set();         // 일괄 저장용으로 체크한 종목코드 (기준일이 바뀌면 비움)
+let chSrc = 'pass';              // 차트로 볼 목록: pass 템플릿 충족 / cs CANSLIM / vcp VCP 베이스 / near 근접(7/8)
 let chSelDate = null, chReady = null, chDrawOne = null, chShowSlide = null, chFitObs = null;
 function chFit(sl) {              // 넘김 영역의 높이를 현재 장의 높이로
   if (!sl.clientWidth) return;
@@ -899,11 +900,35 @@ function renderPassCharts(passed) {
   tbl.style.display = 'none'; box.style.display = '';
   const d = curDate, member = isMember();
   if (chSelDate !== d) { chSel.clear(); chSelDate = d; chReady = null; }
-  const key = d + '|' + member + '|' + passed.map(r => r.code).join(',') + '|' + (CH_DATA.get(d) instanceof Map);
+  // 차트로 볼 목록 4가지 — 이 페이지의 각 표와 같은 종목·같은 순서 (종목명 필터 공통 적용)
+  const q = query.trim().toLowerCase(), okq = r => !q || r.name.toLowerCase().includes(q);
+  const byCode = new Map(ROWS.map(r => [r.code, r])), tag = new Map();
+  const lists = { pass: passed, cs: [], vcp: [], near: sorted(ROWS.filter(r => Number(r.pass_n) === 7 && okq(r))) };
+  if (EARN_Q) {
+    const ev = ROWS.filter(r => r.passed && okq(r)).map(r => ({ r: r, c: canslim(r) })).filter(x => x.c.tier);
+    ev.sort((a, b) => (a.c.tier === 'fit' ? 0 : 1) - (b.c.tier === 'fit' ? 0 : 1) || (b.r.rs || 0) - (a.r.rs || 0));
+    lists.cs = ev.map(x => x.r);
+    if (chSrc === 'cs') ev.forEach(x => tag.set(x.r.code, 'CANSLIM ' + (x.c.tier === 'fit' ? '부합' : '근접')));
+  }
+  if (VCP) {
+    const vs = VCP.filter(v => v.tf === vcpTf && okq(v) && byCode.has(v.code));
+    vs.sort((a, b) => (a.tier === 'fit' ? 0 : 1) - (b.tier === 'fit' ? 0 : 1) || b.dist - a.dist);
+    lists.vcp = vs.map(v => byCode.get(v.code));
+    if (chSrc === 'vcp') vs.forEach(v => tag.set(v.code, (vcpTf === 'D' ? '일봉' : '주봉') + ' VCP ' + (v.tier === 'fit' ? '완성' : '형성 중') +
+      ' · 피벗까지 ' + (v.dist >= 0 ? '+' : '') + v.dist.toFixed(1) + '%'));
+  }
+  if (chSrc === 'near') lists.near.forEach(r => tag.set(r.code, '7/8 · 부족: ' + COND.filter((c, k) => !(Number(r.flags) & (1 << k))).join(', ')));
+  const tagOf = r => tag.get(r.code) || (r.passed ? '연속 ' + r.streak + '일' : '7/8 충족');
+  const srcBar = '<div class="toolbar" style="margin:0 0 10px"><span class="muted" style="font-size:12.5px">차트로 볼 목록</span>' +
+    [['pass', '템플릿 충족'], ['cs', 'CANSLIM'], ['vcp', 'VCP 베이스'], ['near', '근접 7/8']].map(([k, t]) =>
+      '<button type="button" class="chip' + (chSrc === k ? ' on' : '') + '" data-src="' + k + '">' + t + ' ' + lists[k].length + '</button>').join('') + '</div>';
+  passed = lists[chSrc];
+  const key = d + '|' + member + '|' + chSrc + vcpTf + '|' + [lists.pass, lists.cs, lists.vcp, lists.near].map(l => l.length).join('/') + '|' +
+    passed.map(r => r.code).join(',') + '|' + (CH_DATA.get(d) instanceof Map);
   if (key === chKey) return;                 // 같은 목록이면 다시 그리지 않음 (그려 둔 차트 유지)
   chKey = key;
   if (chObs) { chObs.disconnect(); chObs = null; }
-  hint.textContent = passed.length ? '차트 ' + passed.length + '개 · 표와 같은 순서 · 아래로 스크롤' : '';
+  hint.textContent = passed.length ? '차트 ' + passed.length + '개 · 아래로 스크롤' : '';
 
   if (!member) {
     const bars = [30, 44, 40, 55, 50, 63, 60, 72, 68, 80, 76, 88].map(h => '<i style="height:' + h + '%"></i>').join('');
@@ -913,13 +938,16 @@ function renderPassCharts(passed) {
       '<button class="lock-btn" type="button" onclick="Auth.login()">&#128100; 구글로 로그인</button></div></div>';
     return;
   }
-  if (!passed.length) { box.innerHTML = '<div class="loading">해당 종목이 없습니다</div>'; return; }
+  if (!passed.length) {
+    box.innerHTML = srcBar + '<div class="loading">' + (chSrc === 'cs' && !EARN_Q ? '실적 데이터를 불러오는 중&hellip;' : chSrc === 'vcp' && !VCP ? 'VCP 데이터를 불러오는 중&hellip;' : '해당 종목이 없습니다') + '</div>';
+    return;
+  }
 
   let data = CH_DATA.get(d);
   if (!(data instanceof Map)) {
-    box.innerHTML = '<div class="loading" id="chProg">가격 데이터를 불러오는 중&hellip;</div>';
+    box.innerHTML = srcBar + '<div class="loading" id="chProg">가격 데이터를 불러오는 중&hellip;</div>';
     if (!data) {
-      const codes = ROWS.filter(r => r.passed).map(r => r.code);     // 필터와 무관하게 그날 충족 종목 전부
+      const codes = ROWS.filter(r => Number(r.pass_n) >= 7).map(r => r.code);     // 필터와 무관하게 그날 충족 + 근접(7/8) 종목 전부 — 네 목록 모두 이 안에 있음
       data = loadChartData(d, codes, (a, b) => {
         const el = document.getElementById('chProg');
         if (el && curDate === d) el.textContent = '가격 데이터를 불러오는 중… ' + Math.round(a / b * 100) + '%';
@@ -930,7 +958,7 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 차트를 <b>왼쪽으로 쓸어 넘기면</b>(또는 오른쪽 위 탭) 1년 주가·목표주가·RS 차트, 한 번 더 넘기면 재무 이력과 컨센서스가 나옵니다. 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
+  box.innerHTML = srcBar + '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 차트를 <b>왼쪽으로 쓸어 넘기면</b>(또는 오른쪽 위 탭) 1년 주가·목표주가·RS 차트, 한 번 더 넘기면 재무 이력과 컨센서스가 나옵니다. 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
     '<div class="savebar"><span>&#128247; 선택 <b id="selCnt">0</b>개</span>' +
       '<button type="button" class="sb" id="selAll">전체 선택</button><button type="button" class="sb" id="selNone">선택 해제</button>' +
       '<button type="button" class="sb go" id="selSave" disabled>선택한 차트 저장</button></div>' +
@@ -950,12 +978,12 @@ function renderPassCharts(passed) {
   const titleOf = i => {
     const r = passed[i], vh = r.close / r.hi52 - 1;
     return '<span><span class="no">' + (i + 1) + '</span> <a href="' + link(r.name) + '">' + esc(r.name) + '</a>' +
-      (Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') +
+      (r.passed && Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') +
       ' <span class="meta">RS <b class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</b> · 고점比 ' +
-      (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · 연속 ' + r.streak + '일</span></span>';
+      (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · ' + esc(tagOf(r)) + '</span></span>';
   };
   // 옆 장(1: 1년 선 차트, 2: 재무·컨센서스)은 처음 넘겨 볼 때 그날 충족 종목 전체 자료를 한 번 읽어 그린다
-  const allCodes = ROWS.filter(r => r.passed).map(r => r.code);
+  const allCodes = ROWS.filter(r => Number(r.pass_n) >= 7).map(r => r.code);
   chShowSlide = (el, idx) => {
     if (idx < 1 || el.dataset['p' + idx]) return;
     el.dataset['p' + idx] = '1';
@@ -985,7 +1013,7 @@ function renderPassCharts(passed) {
     body.style.minHeight = '0';              // 그린 뒤에는 자리 확보용 높이 해제 (좁은 화면에서는 차트가 더 낮음)
     CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
       pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, save: false, height: 420, width: Math.max(900, body.clientWidth),   // 좁은 화면에서도 900px 기준으로 그려 한 화면에 축소 표시 (저장 이미지와 같은 모양)
-      titleText: (i + 1) + '. ' + r.name + '  ·  RS ' + (r.rs == null ? '–' : r.rs) + '  ·  고점比 ' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '  ·  연속 ' + r.streak + '일' });
+      titleText: (i + 1) + '. ' + r.name + '  ·  RS ' + (r.rs == null ? '–' : r.rs) + '  ·  고점比 ' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '  ·  ' + tagOf(r) });
   };
   chDrawOne = drawOne;
   // 화면 근처에 온 차트만 그림 (90여 개를 한꺼번에 그리지 않도록)
@@ -1067,6 +1095,8 @@ document.getElementById('passCharts').addEventListener('scroll', ev => {
   }, 160);
 }, true);
 document.getElementById('passCharts').addEventListener('click', ev => {
+  const src = ev.target.closest && ev.target.closest('.chip[data-src]');
+  if (src) { chSrc = src.dataset.src; chKey = ''; render(); return; }
   const tab = ev.target.closest && ev.target.closest('.chtabs button');
   if (tab) {
     const box = tab.closest('.chbox'), sl = box.querySelector('.chslides'), idx = Number(tab.dataset.s);
@@ -1163,7 +1193,7 @@ document.querySelectorAll('.chip[data-vcptf]').forEach(b => b.addEventListener('
   document.querySelectorAll('.chip[data-vcptf]').forEach(x => x.classList.toggle('on', x === b));
   vcpTf = b.dataset.vcptf;
   document.getElementById('vcpTfHint').textContent = VCP_TF_HINT[vcpTf];
-  renderVcp();
+  if (passView === 'chart' && chSrc === 'vcp') render(); else renderVcp();
 }));
 document.querySelectorAll('.chip[data-sort]').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.chip[data-sort]').forEach(x => x.classList.toggle('on', x === b));
