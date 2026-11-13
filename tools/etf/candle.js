@@ -179,7 +179,7 @@ function draw(el, o) {
     (tl.brk ? lg('#d946a8', '<span style="color:#e53935">&#9650;</span> 돌파일(돌파한 선 · ' + bars[tl.brk.bx].d.slice(5).replace('-', '/') + ')', true) : '');
 
   el.innerHTML =
-    '<div class="cc-title">' + (o.titleHtml || '&#128201; ' + esc(name) + ' &middot; 최근 1년') +
+    '<div class="cc-title">' + (o.titleHtml || '&#128201; ' + esc(name) + ' &middot; 최근 ' + price.length + '거래일') +
       '<span style="margin-left:auto;font-weight:600;color:' + ccol + '">' + fmt(lastB.c) +
       (chg == null ? '' : ' &nbsp;' + (chg > 0 ? '+' : '') + (chg * 100).toFixed(2) + '%') +
       ' <span style="font-weight:400;font-size:12px">(' + lastB.d + ')</span></span></div>' +

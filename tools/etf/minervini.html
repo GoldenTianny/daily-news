@@ -751,9 +751,10 @@ function render() {
 }
 
 // ===== 차트 모아보기 (회원 전용) — 템플릿 충족 종목의 캔들 차트를 표와 같은 순서로 이어서 보여줌 =====
-// 최근 1년 일봉 + 이동평균 + 지지·저항 추세선 (그리기는 candle.js). 가격 파일은 '차트' 보기를 처음 켤 때만 읽는다.
+// 최근 150거래일(약 7개월) 일봉 + 이동평균 + 지지·저항 추세선 (그리기는 candle.js). 가격 파일은 '차트' 보기를 처음 켤 때만 읽는다.
 let passView = 'table';
 try { if (localStorage.getItem('gj-mv-view') === 'chart') passView = 'chart'; } catch (e) {}
+const CH_BARS = 150;             // 차트 하나에 그리는 거래일 수 (ETF 검색기 종목 화면과 동일)
 const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuffer (없으면 null)
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
@@ -773,12 +774,12 @@ async function chRows(kind, ym) {
   const buf = CH_BUFS.get(key);
   return buf ? hyparquet.parquetReadObjects({ file: buf }) : [];
 }
-// 기준일의 충족 종목 전부에 대해 1년치 종가·시고저 + 그 이전 6개월 종가(120일선용)를 모은다
+// 기준일의 충족 종목 전부에 대해 최근 9개월 시고저 + 16개월 종가(화면 150거래일 + 120일선 계산용)를 모은다
 async function loadChartData(d, codes, onProg) {
   const from = (parseInt(d.slice(0, 4)) - 1) + d.slice(4);
   const out = new Map();
   codes.forEach(c => out.set(c, { price: [], ohlc: new Map(), pre: [] }));
-  const jobs = monthsBack(d, 19).map(ym => ['price', ym]).concat(monthsBack(d, 13).map(ym => ['ohlc', ym]));
+  const jobs = monthsBack(d, 16).map(ym => ['price', ym]).concat(monthsBack(d, 9).map(ym => ['ohlc', ym]));
   let done = 0, next = 0;
   const worker = async () => {
     while (next < jobs.length) {
@@ -845,7 +846,7 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 1년 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 갑니다.</div>' +
+  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 갑니다.</div>' +
     passed.map((r, i) => '<div class="chbox" data-i="' + i + '"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>').join('');
   const drawOne = el => {
     const i = Number(el.dataset.i), r = passed[i], e = data.get(r.code), body = el.firstChild;
@@ -855,7 +856,9 @@ function renderPassCharts(passed) {
       (Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') +
       ' <span class="meta">RS <b class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</b> · 고점比 ' +
       (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · 연속 ' + r.streak + '일</span></span>';
-    CandleChart.draw(body, { name: r.name, price: e.price, ohlc: e.ohlc, pre: e.pre, titleHtml: title, note: false });
+    const cut = Math.max(0, e.price.length - CH_BARS);
+    CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
+      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false });
   };
   // 화면 근처에 온 차트만 그림 (90여 개를 한꺼번에 그리지 않도록)
   if ('IntersectionObserver' in window) {
