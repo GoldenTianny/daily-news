@@ -371,6 +371,74 @@ function mount(opt) {
     }).join('');
   }
 
+  /* ---------- 관심 종목 일별 정리 (별도 탭) ---------- */
+  var W_DAYS = 10, CHASE = 0.05, NEAR = 0.03;
+  // 그날 종가의 위치: buy = 피벗 이상·추격 한도 안, over = 한도 초과, near = 피벗까지 3% 이내, dead = 손절 기준 아래, wait = 그 외
+  function watchState(w, px) {
+    if (px < w.stop) return 'dead';
+    if (px > w.pivot * (1 + CHASE)) return 'over';
+    if (px >= w.pivot) return 'buy';
+    if (w.pivot / px - 1 <= NEAR) return 'near';
+    return 'wait';
+  }
+  var W_LABEL = { buy: '매수 범위', near: '근접', over: '한도 초과', wait: '대기', dead: '무효' }, W_ORDER = { buy: 0, near: 1, over: 2, wait: 3, dead: 4 };
+  function renderWatchDaily() {
+    var wb = document.getElementById('watchBox'); if (!wb) return;
+    if (!state.px) { wb.innerHTML = '<div class="card"><p class="empty">가격 데이터를 불러오지 못했습니다</p></div>'; return; }
+    // 거래일 축: 관심 종목들의 날짜를 모아 최근 W_DAYS일 (최신이 왼쪽)
+    var dset = {}; WATCH.forEach(function (w) { (state.px[w.name] || []).slice(-W_DAYS - 2).forEach(function (p) { dset[p[0]] = 1; }); });
+    var days = Object.keys(dset).sort().slice(-W_DAYS).reverse();
+    if (!days.length) { wb.innerHTML = '<div class="card"><p class="empty">관심 종목의 가격 데이터가 없습니다</p></div>'; return; }
+    var rows = WATCH.map(function (w) {
+      var m = {}, a = state.px[w.name] || []; a.forEach(function (p) { m[p[0]] = p[1]; });
+      var prev = {}; for (var i = 1; i < a.length; i++) prev[a[i][0]] = a[i - 1][1];
+      var px0 = m[days[0]], st0 = px0 ? watchState(w, px0) : 'wait';
+      return { w: w, m: m, prev: prev, px0: px0, st0: st0, has: a.length > 0 };
+    });
+    rows.sort(function (x, y) { return W_ORDER[x.st0] - W_ORDER[y.st0] || (y.px0 / y.w.pivot || 0) - (x.px0 / x.w.pivot || 0); });
+    var cnt = { buy: 0, near: 0, over: 0, wait: 0, dead: 0 }; rows.forEach(function (r) { if (r.px0) cnt[r.st0]++; });
+    var h = '<div class="card"><h2>👀 관심 종목 일별 정리 <span class="cnt">' + days[0] + ' 종가 기준 · ' + WATCH.length + '종목 · 이 계정만 볼 수 있습니다</span></h2>' +
+      '<div class="wsum">' + ['buy', 'near', 'over', 'wait', 'dead'].map(function (k) { return '<div class="wchip"><b>' + cnt[k] + '</b><span>' + W_LABEL[k] + '</span></div>'; }).join('') + '</div>' +
+      '<p class="muted wleg" style="margin-top:8px"><span class="w-buy">매수 범위</span>종가가 피벗 이상이고 추격 한도(피벗 +5%) 안 · <span class="w-near">근접</span>피벗까지 3% 이내 · <span class="w-over">한도 초과</span>피벗 +5% 넘음(눌림 대기) · <span class="w-dead">무효</span>종가가 손절 기준 아래 · 흐린 칸은 등록 전</p>' +
+      '<p class="muted" style="font-size:12.5px;margin-top:4px">색은 종가 위치만 보여준다. 실제 매수는 <b>시장 팔로스루</b>와 종목 메모의 조건(반도체 경고, 눌림 대기 등)을 함께 확인한다.</p></div>';
+    // ① 종목 × 날짜 표
+    h += '<div class="card"><h2>📅 종목별 일별 종가 <span class="cnt">칸 = 종가 · 전일 대비 · 피벗 대비</span></h2><div class="twrap"><table><thead><tr><th class="l wn">종목</th><th>피벗</th><th>손절</th><th>비중</th>' +
+      days.map(function (d) { return '<th>' + d.slice(5) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    rows.forEach(function (r) {
+      var w = r.w;
+      h += '<tr><td class="l wn"><b>' + esc(w.name) + '</b><br><span class="rsub">' + (w.since ? w.since.slice(5) + ' 등록' : '') + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + fmt(w.stop) + '</td><td>' + w.r + 'R</td>';
+      if (!r.has) { h += '<td colspan="' + days.length + '" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td></tr>'; return; }
+      days.forEach(function (d) {
+        var px = r.m[d]; if (!px) { h += '<td class="wc">–</td>'; return; }
+        var st = watchState(w, px), pv = r.prev[d], chg = pv ? (px / pv - 1) * 100 : null, pre = w.since && d < w.since;
+        h += '<td class="wc' + (st !== 'wait' ? ' w-' + st : '') + (pre ? ' w-pre' : '') + '" title="' + esc(w.name) + ' ' + d + ' · ' + W_LABEL[st] + '">' + fmt(px) +
+          '<small>' + (chg != null ? pct(chg) : '') + ' · 피벗 ' + pct((px / w.pivot - 1) * 100) + '</small></td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+    // ② 날짜별 요약: 그날 매수 범위·한도 초과·무효였던 종목과 새로 등록한 종목
+    h += '<div class="card"><h2>🗓️ 날짜별 요약 <span class="cnt">등록일 이후 종목만 집계</span></h2>';
+    days.forEach(function (d) {
+      var g = { buy: [], near: [], over: [], dead: [] }, added = [];
+      rows.forEach(function (r) {
+        var w = r.w; if (w.since === d) added.push(w.name);
+        var px = r.m[d]; if (!px || (w.since && d < w.since)) return;
+        var st = watchState(w, px); if (g[st]) g[st].push(w.name + ' ' + fmt(px));
+      });
+      var parts = [];
+      if (added.length) parts.push('🆕 등록: ' + esc(added.join(', ')));
+      ['buy', 'near', 'over', 'dead'].forEach(function (k) { if (g[k].length) parts.push('<span class="wleg"><span class="w-' + k + '">' + W_LABEL[k] + ' ' + g[k].length + '</span></span>' + esc(g[k].join(' · '))); });
+      h += '<div class="wday"><b class="d">' + d + '</b>' + (parts.length ? '<br>' + parts.join('<br>') : '<span class="muted">해당 없음</span>') + '</div>';
+    });
+    h += '</div>';
+    // ③ 종목별 진입 조건 메모
+    h += '<div class="card"><h2>📝 종목별 진입 조건</h2><div class="twrap"><table><thead><tr><th class="l">종목</th><th class="l">패턴</th><th class="l">메모</th></tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr><td class="l"><b>' + esc(r.w.name) + '</b></td><td class="l" style="white-space:normal;min-width:120px">' + esc(r.w.pattern) + '</td><td class="l" style="white-space:normal;min-width:260px;line-height:1.6">' + esc(r.w.memo) + '</td></tr>'; }).join('') +
+      '</tbody></table></div></div>';
+    wb.innerHTML = h;
+  }
+
   function renderSignals() {
     var set = function (id, v, cls) { var el = document.getElementById(id); el.textContent = v; el.className = 'v ' + cls; };
     var rows = [];
@@ -406,10 +474,11 @@ function mount(opt) {
   async function load() {
     box.innerHTML = staticHtml(); wire();
     await Promise.all([loadPrices().catch(function () {}), loadJournal()]);
-    renderHold(); renderWatch(); renderSignals();
+    renderHold(); renderWatch(); renderSignals(); renderWatchDaily();
   }
+  function ensure() { if (!state.loaded) { state.loaded = true; state.loading = load(); } return state.loading || Promise.resolve(); }
 
-  return { open: function () { if (!state.loaded) { state.loaded = true; load(); } }, refresh: function () { state.loaded = false; } };
+  return { open: function () { ensure(); }, openWatch: function () { ensure().then(renderWatchDaily); }, refresh: function () { state.loaded = false; } };
 }
 
 var api = { mount: mount, positionsFromRows: positionsFromRows, DEFAULT_META: DEFAULT_META, CHANGELOG: CHANGELOG };

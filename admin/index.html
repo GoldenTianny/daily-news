@@ -112,6 +112,25 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
 .rbox h3 { font-size: 13.5px; margin-bottom: 6px; }
 .rbox .v { font-size: 18px; font-weight: 800; color: #1a3a6c; } .rbox .v.ok { color: #2e7d32; } .rbox .v.warn { color: #ef6c00; } .rbox .v.bad { color: #d93a3a; }
 .rbox .k { font-size: 12px; color: #6b7280; line-height: 1.5; margin-top: 4px; }
+/* 관심 종목 일별 정리 */
+.wsum { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.wchip { border: 1px solid #e6e9ef; border-radius: 12px; padding: 8px 14px; min-width: 92px; }
+.wchip b { display: block; font-size: 20px; color: #1a3a6c; } .wchip span { font-size: 12px; color: #6b7280; }
+#p-watch table { font-size: 12.5px; }
+#p-watch th, #p-watch td { text-align: right; white-space: nowrap; }
+#p-watch th.l, #p-watch td.l { text-align: left; }
+#p-watch td.wn { position: sticky; left: 0; background: #fff; z-index: 1; white-space: normal; min-width: 124px; }
+#p-watch th.wn { position: sticky; left: 0; background: #f6f8fb; z-index: 2; }
+#p-watch td.wc { font-variant-numeric: tabular-nums; line-height: 1.35; }
+#p-watch td.wc small { display: block; font-size: 10.5px; opacity: .85; }
+.w-buy { background: #dff3e3; color: #14532d; font-weight: 700; }
+.w-near { background: #f1e6f8; color: #5b1a7a; }
+.w-over { background: #fde7c8; color: #8a4b00; }
+.w-dead { background: #f2f3f5; color: #9099a6; }
+.w-pre { opacity: .45; }
+.wleg span { display: inline-block; padding: 2px 9px; border-radius: 8px; font-size: 11.5px; margin: 2px 4px 2px 0; }
+.wday { padding: 10px 0; border-bottom: 1px dashed #e6e9ef; font-size: 13px; line-height: 1.7; color: #33415c; }
+.wday:last-child { border-bottom: none; } .wday b.d { color: #1a3a6c; margin-right: 6px; }
 #p-rules tr.pick td { background: rgba(42,92,168,.08); font-weight: 700; }
 #p-rules tr.bad td { color: #9099a6; }
 #p-rules th.l, #p-rules td.l { text-align: left; }
@@ -143,6 +162,7 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
       <button class="tab" data-tab="recent">🕒 최근 조회</button>
       <button class="tab" data-tab="journal" id="jTab" style="display:none">📒 매매 복기</button>
       <button class="tab" data-tab="rules" id="rTab" style="display:none">📐 매수·매도 원칙</button>
+      <button class="tab" data-tab="watch" id="wTab" style="display:none">👀 관심 종목</button>
     </div>
 
     <!-- 통계 -->
@@ -255,6 +275,9 @@ tr.day td small { font-weight: 500; color: #6b7280; margin-left: 8px; }
 
     <!-- 매수·매도 원칙 (마스터 본인 전용) -->
     <div class="panel" id="p-rules"><div id="rulesBox"><div class="card"><p class="empty">불러오는 중…</p></div></div></div>
+
+    <!-- 관심 종목 일별 정리 (마스터 본인 전용) -->
+    <div class="panel" id="p-watch"><div id="watchBox"><div class="card"><p class="empty">불러오는 중…</p></div></div></div>
   </div>
 </div>
 
@@ -305,10 +328,10 @@ async function boot() {
   if (window.Journal && (Auth.user.email || '').toLowerCase() === Journal.OWNER_EMAIL) {
     journal = Journal.mount({ client: sb, userId: Auth.user.id });
     $('jTab').style.display = '';
-    if (window.Rules) { rules = Rules.mount({ client: sb, userId: Auth.user.id }); $('rTab').style.display = ''; }
-    // 주소에 #rules / #journal 이 있으면 그 탭으로 바로
+    if (window.Rules) { rules = Rules.mount({ client: sb, userId: Auth.user.id }); $('rTab').style.display = ''; $('wTab').style.display = ''; }
+    // 주소에 #rules / #journal / #watch 가 있으면 그 탭으로 바로
     var want = (location.hash || '').replace('#', '');
-    if (want === 'rules' || want === 'journal') { var tb = document.querySelector('.tab[data-tab="' + want + '"]'); if (tb) tb.click(); }
+    if (want === 'rules' || want === 'journal' || want === 'watch') { var tb = document.querySelector('.tab[data-tab="' + want + '"]'); if (tb) tb.click(); }
   }
   await Promise.all([loadStats(), loadUsers(), loadProfiles(), loadRecent(), loadGrants()]);
 }
@@ -335,7 +358,8 @@ document.querySelectorAll('.tab').forEach(function (b) {
     document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('on', p.id === 'p-' + b.dataset.tab); });
     if (b.dataset.tab === 'journal' && journal) journal.open();
     if (b.dataset.tab === 'rules' && rules) { rules.open(); }
-    if (b.dataset.tab === 'rules' || b.dataset.tab === 'journal') history.replaceState(null, '', '#' + b.dataset.tab); else if (location.hash) history.replaceState(null, '', location.pathname);
+    if (b.dataset.tab === 'watch' && rules) { rules.openWatch(); }
+    if (b.dataset.tab === 'rules' || b.dataset.tab === 'journal' || b.dataset.tab === 'watch') history.replaceState(null, '', '#' + b.dataset.tab); else if (location.hash) history.replaceState(null, '', location.pathname);
   };
 });
 
