@@ -119,7 +119,7 @@
   .chtabs button { padding: 4px 10px; border-radius: 999px; border: 1px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .chtabs button.on { background: #3f51b5; border-color: #3f51b5; color: #fff; }
   /* 옆으로 넘기는 3장: 캔들 → 1년·목표주가·RS → 재무·컨센서스 */
-  .chslides { display: flex; align-items: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .chslides { display: flex; align-items: flex-start; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .chslides::-webkit-scrollbar { display: none; }
   .chslide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
   .chbox .chk input { width: 17px; height: 17px; accent-color: #3f51b5; cursor: pointer; }
@@ -779,7 +779,12 @@ const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuf
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
 const chSel = new Set();         // 일괄 저장용으로 체크한 종목코드 (기준일이 바뀌면 비움)
-let chSelDate = null, chReady = null, chDrawOne = null, chShowSlide = null;   // chReady: 공유가 막혔을 때 다시 누르면 바로 넘길 준비된 파일
+let chSelDate = null, chReady = null, chDrawOne = null, chShowSlide = null, chFitObs = null;
+function chFit(sl) {              // 넘김 영역의 높이를 현재 장의 높이로
+  if (!sl.clientWidth) return;
+  const cur = sl.children[Math.round(sl.scrollLeft / sl.clientWidth)];
+  if (cur && cur.offsetHeight) sl.style.height = cur.offsetHeight + 'px';
+}   // chReady: 공유가 막혔을 때 다시 누르면 바로 넘길 준비된 파일
 
 function monthsBack(d, n) {      // 기준일이 속한 달까지 n개월 (오름차순)
   const out = []; let ym = d.slice(0, 7);
@@ -935,6 +940,13 @@ function renderPassCharts(passed) {
       '<div class="chslides"><div class="chslide"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>' +
       '<div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div><div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div></div></div>').join('');
   updateSelBar();
+  // 상자 높이는 지금 보고 있는 장에 맞춘다 — 긴 장(재무)을 봤다가 돌아와도 캔들 장 아래에 빈 공간이 남지 않게
+  if (chFitObs) chFitObs.disconnect();
+  chFitObs = 'ResizeObserver' in window ? new ResizeObserver(ents => {
+    const seen = new Set();
+    ents.forEach(en => { const sl = en.target.parentNode; if (sl && !seen.has(sl)) { seen.add(sl); chFit(sl); } });
+  }) : null;
+  if (chFitObs) box.querySelectorAll('.chslide').forEach(el => chFitObs.observe(el));
   const titleOf = i => {
     const r = passed[i], vh = r.close / r.hi52 - 1;
     return '<span><span class="no">' + (i + 1) + '</span> <a href="' + link(r.name) + '">' + esc(r.name) + '</a>' +
@@ -1043,6 +1055,7 @@ document.getElementById('passCharts').addEventListener('scroll', ev => {
   const idx = Math.round(sl.scrollLeft / sl.clientWidth), box = sl.closest('.chbox');
   box.querySelectorAll('.chtabs button').forEach(b => b.classList.toggle('on', Number(b.dataset.s) === idx));
   if (chShowSlide) chShowSlide(box, idx);
+  chFit(sl);
 }, true);
 document.getElementById('passCharts').addEventListener('click', ev => {
   const tab = ev.target.closest && ev.target.closest('.chtabs button');

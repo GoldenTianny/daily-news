@@ -197,7 +197,7 @@ function draw(el, o) {
       ' <span style="font-weight:400;font-size:12px">(' + lastB.d + ')</span></span></div>' +
     '<div class="cc-sub cc-legend">' + legend +
       (o.save === false ? '' : '<button type="button" class="cc-save" title="이 차트를 이미지(PNG)로 저장">&#128247; 이미지 저장</button>') + '</div>' +
-    '<div class="cc-scroll"><div class="cc-wrap"' + (W > avail ? ' style="width:' + W + 'px"' : '') + '><svg viewBox="0 0 ' + W + ' ' + H + '">' + chartSvg +
+    '<div class="cc-scroll"><div class="cc-wrap"' + (W > avail ? ' style="width:' + W + 'px"' : '') + '><svg viewBox="0 0 ' + W + ' ' + H + '" style="aspect-ratio:' + W + '/' + H + ';height:auto">' + chartSvg +
     '<line class="cc-cross" x1="0" y1="' + T + '" x2="0" y2="' + (H - B) + '" stroke="#bbb" stroke-dasharray="2 2" style="display:none"/>' +
     '</svg><div class="cc-tip"></div></div></div>' +
     (o.note === false ? '' : '<div class="cc-sub" style="margin:6px 0 0">추세선은 앞뒤 ' + PIVOT_K + '거래일 기준 고점·저점을 이어 자동으로 그린 참고선입니다. 거래량은 자료가 없어 표시하지 않습니다.</div>');
