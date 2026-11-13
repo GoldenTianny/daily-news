@@ -85,7 +85,7 @@ function findTrendlines(bars) {
 //  o.pre 그 이전 종가 배열(이동평균용, 없어도 됨) · o.width 그림 너비(px, 없으면 el 너비) · o.height 그림 높이(px)
 //  o.minWidth 그림 최소 너비 — 화면이 이보다 좁으면 차트를 가로로 밀어 보게 하고 최근 쪽(오른쪽 끝)부터 보여줌
 //  o.titleHtml 제목 왼쪽 HTML(없으면 종목명) · o.titleText 저장 이미지에 넣을 제목(일반 글자) · o.note false 면 하단 안내문 생략
-//  o.save false 면 '이미지 저장' 버튼 생략
+//  o.save false 면 '이미지 저장' 버튼 생략 · o.tip false 면 누르거나 올렸을 때 시가·고가·저가·종가 말풍선을 띄우지 않음
 function draw(el, o) {
   const name = o.name, price = o.price, ohlc = o.ohlc || new Map(), pre = o.pre;
   // 이동평균은 (1년 이전 종가 + 1년치 종가) 전체로 계산한 뒤 화면 구간만 잘라 씀
@@ -218,10 +218,12 @@ function draw(el, o) {
     tip.style.left = Math.max(4, Math.min(px + 12, r.width - tip.offsetWidth - 4)) + 'px';
     tip.style.top = '4px'; tip.style.bottom = 'auto';
   };
-  svg.addEventListener('mousemove', ev => show(ev.clientX));
-  svg.addEventListener('touchstart', ev => show(ev.touches[0].clientX), { passive: true });
-  svg.addEventListener('touchmove', ev => show(ev.touches[0].clientX), { passive: true });
-  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+  if (o.tip !== false) {
+    svg.addEventListener('mousemove', ev => show(ev.clientX));
+    svg.addEventListener('touchstart', ev => show(ev.touches[0].clientX), { passive: true });
+    svg.addEventListener('touchmove', ev => show(ev.touches[0].clientX), { passive: true });
+    svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; cross.style.display = 'none'; });
+  }
   if (W > avail) { const sc = el.querySelector('.cc-scroll'); sc.scrollLeft = sc.scrollWidth; }   // 최근 쪽부터
 
   // 이 차트를 PNG 로 만드는 함수 — 개별 저장 버튼과 일괄 저장(CandleChart.png)이 같이 씀
