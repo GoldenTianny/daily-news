@@ -113,7 +113,15 @@
   }
   .viewbar { margin-top: -4px; }
   .chbox { border: 1px solid #e8eaf2; border-radius: 10px; padding: 12px 14px 8px; margin-bottom: 12px; background: #fff; }
-  .chbox .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #3f51b5; cursor: pointer; margin-bottom: 6px; user-select: none; }
+  .chbox .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #3f51b5; cursor: pointer; user-select: none; }
+  .chhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; }
+  .chtabs { display: inline-flex; gap: 4px; margin-left: auto; }
+  .chtabs button { padding: 4px 10px; border-radius: 999px; border: 1px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .chtabs button.on { background: #3f51b5; border-color: #3f51b5; color: #fff; }
+  /* 옆으로 넘기는 3장: 캔들 → 1년·목표주가·RS → 재무·컨센서스 */
+  .chslides { display: flex; align-items: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .chslides::-webkit-scrollbar { display: none; }
+  .chslide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }
   .chbox .chk input { width: 17px; height: 17px; accent-color: #3f51b5; cursor: pointer; }
   .chbox.sel { border-color: #7986cb; box-shadow: 0 0 0 2px #e8eaf6; }
   .savebar { position: sticky; top: 8px; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 12px; margin-bottom: 12px;
@@ -125,10 +133,10 @@
   .chbox .chbody { min-height: 472px; }
   .chbox .chwait { display: flex; align-items: center; justify-content: center; min-height: 472px; color: #bbb; font-size: 13px; }
   @media (max-width: 600px) { .chbox .chbody, .chbox .chwait { min-height: 230px; } }
-  .chbox .cc-title a { color: #1a237e; text-decoration: none; }
-  .chbox .cc-title a:hover { text-decoration: underline; }
-  .chbox .cc-title .meta { font-size: 12px; font-weight: 500; color: #666; }
-  .chbox .cc-title .no { color: #9fa8da; font-weight: 700; }
+  .chbox .cc-title a, .chbox .sp-title a { color: #1a237e; text-decoration: none; }
+  .chbox .cc-title a:hover, .chbox .sp-title a:hover { text-decoration: underline; }
+  .chbox .cc-title .meta, .chbox .sp-title .meta { font-size: 12px; font-weight: 500; color: #666; }
+  .chbox .cc-title .no, .chbox .sp-title .no { color: #9fa8da; font-weight: 700; }
   @media (max-width: 600px) { .chbox { padding: 10px 8px 6px; } }
   .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; min-width: 560px; }
@@ -289,6 +297,7 @@
 <script src="/assets/auth.js"></script>
 <script src="hyparquet.min.js"></script>
 <script src="candle.js"></script>
+<script src="stockpanels.js"></script>
 <script>
 const COND = ['150·200일선 아래', '150일선 < 200일선', '200일선 하락', '50일선 < 150·200일선',
               '50일선 아래', '52주 저점 +30% 미달', '52주 고점 −25% 초과 이탈', 'RS 70 미만'];
@@ -770,7 +779,7 @@ const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuf
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
 const chSel = new Set();         // 일괄 저장용으로 체크한 종목코드 (기준일이 바뀌면 비움)
-let chSelDate = null, chReady = null, chDrawOne = null;   // chReady: 공유가 막혔을 때 다시 누르면 바로 넘길 준비된 파일
+let chSelDate = null, chReady = null, chDrawOne = null, chShowSlide = null;   // chReady: 공유가 막혔을 때 다시 누르면 바로 넘길 준비된 파일
 
 function monthsBack(d, n) {      // 기준일이 속한 달까지 n개월 (오름차순)
   const out = []; let ym = d.slice(0, 7);
@@ -812,6 +821,61 @@ async function loadChartData(d, codes, onProg) {
   const byDate = (a, b) => a[0] < b[0] ? -1 : 1;
   for (const e of out.values()) { e.price.sort(byDate); e.pre.sort(byDate); e.pre = e.pre.map(p => p[1]); }
   return out;
+}
+
+// 옆 장 자료 — 기준일의 충족 종목 전체를 한 번에 읽어 둔다 (기준일 -> Promise<Map(code -> ...)>)
+const CH_LINE = new Map(), CH_CONS = new Map();
+async function chScan(jobs, onRow) {      // jobs: [[kind, ym]] 를 동시에 3개씩 읽어 행마다 onRow(kind, row)
+  let next = 0;
+  const worker = async () => { while (next < jobs.length) { const [kind, ym] = jobs[next++]; for (const r of await chRows(kind, ym)) onRow(kind, r); } };
+  await Promise.all([worker(), worker(), worker()]);
+}
+// 1년 선 차트용: 목표주가 컨센서스 · RS 등급 · 와인스타인 RS (각 13개월)
+function loadLineData(d, codes) {
+  if (!CH_LINE.has(d)) CH_LINE.set(d, (async () => {
+    const from = (parseInt(d.slice(0, 4)) - 1) + d.slice(4);
+    const out = new Map();
+    codes.forEach(c => out.set(c, { tp: [], rs: [], mrs: [] }));
+    const jobs = [];
+    monthsBack(d, 13).forEach(ym => ['consensus', 'rs', 'mrs'].forEach(k => jobs.push([k, ym])));
+    await chScan(jobs, (kind, r) => {
+      const e = out.get(r.code);
+      if (!e) return;
+      const dd = dstr(r.date);
+      if (dd < from || dd > d) return;
+      if (kind === 'consensus') { if (r.target_price > 0) e.tp.push([dd, r.target_price]); }
+      else if (kind === 'rs') e.rs.push([dd, Number(r.rs)]);
+      else e.mrs.push([dd, Number(r.mrs)]);
+    });
+    const byDate = (a, b) => a[0] < b[0] ? -1 : 1;
+    for (const e of out.values()) { e.tp.sort(byDate); e.rs.sort(byDate); e.mrs.sort(byDate); }
+    return out;
+  })().catch(e => { CH_LINE.delete(d); throw e; }));
+  return CH_LINE.get(d);
+}
+// 재무·컨센서스용: 연간 영업이익 컨센서스의 일별 추이 (DB 시작 2024-12부터 기준일까지)
+function loadConsData(d, codes) {
+  if (!CH_CONS.has(d)) CH_CONS.set(d, (async () => {
+    const want = new Set(codes), raw = new Map();     // code -> Map(fy -> [[d, op]])
+    const n = Math.max(1, (parseInt(d.slice(0, 4)) - 2024) * 12 + parseInt(d.slice(5, 7)) - 11);
+    await chScan(monthsBack(d, n).map(ym => ['earnings/consensus', ym]), (kind, r) => {
+      if (!want.has(r.code) || r.op == null) return;
+      const dd = dstr(r.date);
+      if (dd > d) return;
+      let m = raw.get(r.code); if (!m) raw.set(r.code, m = new Map());
+      const fy = Number(r.fy);
+      let a = m.get(fy); if (!a) m.set(fy, a = []);
+      a.push([dd, r.op]);
+    });
+    const out = new Map();
+    for (const [code, m] of raw) {
+      const byFy = new Map();
+      for (const [fy, a] of m) { a.sort((x, y) => x[0] < y[0] ? -1 : 1); if (a.length >= 2) byFy.set(fy, a); }
+      out.set(code, { fys: Array.from(byFy.keys()).sort((x, y) => x - y), byFy: byFy });
+    }
+    return out;
+  })().catch(e => { CH_CONS.delete(d); throw e; }));
+  return CH_CONS.get(d);
 }
 
 function setPassView(v) {
@@ -861,24 +925,50 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
+  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 차트를 <b>왼쪽으로 쓸어 넘기면</b>(또는 오른쪽 위 탭) 1년 주가·목표주가·RS 차트, 한 번 더 넘기면 재무 이력과 컨센서스가 나옵니다. 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
     '<div class="savebar"><span>&#128247; 선택 <b id="selCnt">0</b>개</span>' +
       '<button type="button" class="sb" id="selAll">전체 선택</button><button type="button" class="sb" id="selNone">선택 해제</button>' +
       '<button type="button" class="sb go" id="selSave" disabled>선택한 차트 저장</button></div>' +
     passed.map((r, i) => '<div class="chbox' + (chSel.has(r.code) ? ' sel' : '') + '" data-i="' + i + '" data-code="' + r.code + '">' +
-      '<label class="chk"><input type="checkbox"' + (chSel.has(r.code) ? ' checked' : '') + '> 저장할 차트로 선택</label>' +
-      '<div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>').join('');
+      '<div class="chhead"><label class="chk"><input type="checkbox"' + (chSel.has(r.code) ? ' checked' : '') + '> 저장할 차트로 선택</label>' +
+      '<span class="chtabs"><button type="button" data-s="0" class="on">캔들</button><button type="button" data-s="1">1년 · 목표주가 · RS</button><button type="button" data-s="2">재무 · 컨센</button></span></div>' +
+      '<div class="chslides"><div class="chslide"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>' +
+      '<div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div><div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div></div></div>').join('');
   updateSelBar();
+  const titleOf = i => {
+    const r = passed[i], vh = r.close / r.hi52 - 1;
+    return '<span><span class="no">' + (i + 1) + '</span> <a href="' + link(r.name) + '">' + esc(r.name) + '</a>' +
+      (Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') +
+      ' <span class="meta">RS <b class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</b> · 고점比 ' +
+      (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · 연속 ' + r.streak + '일</span></span>';
+  };
+  // 옆 장(1: 1년 선 차트, 2: 재무·컨센서스)은 처음 넘겨 볼 때 그날 충족 종목 전체 자료를 한 번 읽어 그린다
+  const allCodes = ROWS.filter(r => r.passed).map(r => r.code);
+  chShowSlide = (el, idx) => {
+    if (idx < 1 || el.dataset['p' + idx]) return;
+    el.dataset['p' + idx] = '1';
+    const i = Number(el.dataset.i), r = passed[i], slide = el.querySelectorAll('.chslide')[idx];
+    const fail = e => { delete el.dataset['p' + idx]; slide.innerHTML = '<div class="chwait">불러오지 못했습니다 (' + esc(e.message) + ')</div>'; };
+    if (idx === 1) {
+      loadLineData(d, allCodes).then(m => {
+        if (!slide.isConnected) return;
+        const e = data.get(r.code), x = m.get(r.code) || { tp: [], rs: [], mrs: [] };
+        const w = slide.clientWidth;
+        StockPanels.line(slide, { name: r.name, date: d, price: e ? e.price : [], tp: x.tp, rs: x.rs, mrs: x.mrs, titleHtml: titleOf(i), width: w, height: w < 500 ? 230 : 320 });
+      }).catch(fail);
+    } else {
+      Promise.all([loadEarnings(), loadConsData(d, allCodes)]).then(([, m]) => {
+        if (!slide.isConnected) return;
+        StockPanels.earnings(slide, { name: r.name, annual: EARN_A.get(r.code), quarterly: EARN_Q.get(r.code), cons: m.get(r.code), titleHtml: titleOf(i) });
+      }).catch(fail);
+    }
+  };
   const drawOne = el => {
     if (el.dataset.drawn) return;
     el.dataset.drawn = '1';
     const i = Number(el.dataset.i), r = passed[i], e = data.get(r.code), body = el.querySelector('.chbody');
     if (!e || e.price.length < 2) { body.innerHTML = '<div class="chwait">' + (i + 1) + '. ' + esc(r.name) + ' · 가격 데이터가 없습니다</div>'; return; }
-    const vh = r.close / r.hi52 - 1;
-    const title = '<span><span class="no">' + (i + 1) + '</span> <a href="' + link(r.name) + '">' + esc(r.name) + '</a>' +
-      (Number(r.streak) === 1 ? '<span class="badge">NEW</span>' : '') +
-      ' <span class="meta">RS <b class="rs' + ((r.rs || 0) >= 80 ? ' hi' : '') + '">' + (r.rs == null ? '–' : r.rs) + '</b> · 고점比 ' +
-      (vh >= -0.0005 ? '신고가' : pct(vh)) + ' · 연속 ' + r.streak + '일</span></span>';
+    const vh = r.close / r.hi52 - 1, title = titleOf(i);
     const cut = Math.max(0, e.price.length - CH_BARS);
     body.style.minHeight = '0';              // 그린 뒤에는 자리 확보용 높이 해제 (좁은 화면에서는 차트가 더 낮음)
     CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
@@ -946,7 +1036,22 @@ document.getElementById('passCharts').addEventListener('change', ev => {
   setSel(cb.closest('.chbox'), cb.checked);
   updateSelBar();
 });
+// 옆으로 넘기기: 쓸어 넘기면(또는 탭을 누르면) 해당 장을 그리고 탭 표시를 맞춘다
+document.getElementById('passCharts').addEventListener('scroll', ev => {
+  const sl = ev.target;
+  if (!sl.classList || !sl.classList.contains('chslides') || !sl.clientWidth) return;
+  const idx = Math.round(sl.scrollLeft / sl.clientWidth), box = sl.closest('.chbox');
+  box.querySelectorAll('.chtabs button').forEach(b => b.classList.toggle('on', Number(b.dataset.s) === idx));
+  if (chShowSlide) chShowSlide(box, idx);
+}, true);
 document.getElementById('passCharts').addEventListener('click', ev => {
+  const tab = ev.target.closest && ev.target.closest('.chtabs button');
+  if (tab) {
+    const box = tab.closest('.chbox'), sl = box.querySelector('.chslides'), idx = Number(tab.dataset.s);
+    if (chShowSlide) chShowSlide(box, idx);
+    sl.scrollTo({ left: idx * sl.clientWidth, behavior: 'smooth' });
+    return;
+  }
   const id = ev.target.id;
   if (id === 'selAll' || id === 'selNone') {
     document.querySelectorAll('#passCharts .chbox').forEach(el => setSel(el, id === 'selAll'));
