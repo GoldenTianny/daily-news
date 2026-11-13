@@ -113,6 +113,15 @@
   }
   .viewbar { margin-top: -4px; }
   .chbox { border: 1px solid #e8eaf2; border-radius: 10px; padding: 12px 14px 8px; margin-bottom: 12px; background: #fff; }
+  .chbox .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #3f51b5; cursor: pointer; margin-bottom: 6px; user-select: none; }
+  .chbox .chk input { width: 17px; height: 17px; accent-color: #3f51b5; cursor: pointer; }
+  .chbox.sel { border-color: #7986cb; box-shadow: 0 0 0 2px #e8eaf6; }
+  .savebar { position: sticky; top: 8px; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 12px; margin-bottom: 12px;
+    background: #fff; border: 1.5px solid #c5cae9; border-radius: 10px; box-shadow: 0 2px 8px rgba(26,35,126,.12); font-size: 13px; }
+  .savebar b { color: #1a237e; }
+  .savebar .sb { padding: 6px 12px; border-radius: 8px; border: 1.5px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .savebar .sb.go { margin-left: auto; background: #3f51b5; border-color: #3f51b5; color: #fff; }
+  .savebar .sb:disabled { opacity: .45; cursor: default; }
   .chbox .chbody { min-height: 472px; }
   .chbox .chwait { display: flex; align-items: center; justify-content: center; min-height: 472px; color: #bbb; font-size: 13px; }
   @media (max-width: 600px) { .chbox .chbody, .chbox .chwait { min-height: 230px; } }
@@ -760,6 +769,8 @@ const CH_BARS = 150;             // 차트 하나에 그리는 거래일 수 (ET
 const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuffer (없으면 null)
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
+const chSel = new Set();         // 일괄 저장용으로 체크한 종목코드 (기준일이 바뀌면 비움)
+let chSelDate = null, chReady = null, chDrawOne = null;   // chReady: 공유가 막혔을 때 다시 누르면 바로 넘길 준비된 파일
 
 function monthsBack(d, n) {      // 기준일이 속한 달까지 n개월 (오름차순)
   const out = []; let ym = d.slice(0, 7);
@@ -818,6 +829,7 @@ function renderPassCharts(passed) {
   if (passView !== 'chart') { box.style.display = 'none'; tbl.style.display = ''; hint.textContent = ''; chKey = ''; return; }
   tbl.style.display = 'none'; box.style.display = '';
   const d = curDate, member = isMember();
+  if (chSelDate !== d) { chSel.clear(); chSelDate = d; chReady = null; }
   const key = d + '|' + member + '|' + passed.map(r => r.code).join(',') + '|' + (CH_DATA.get(d) instanceof Map);
   if (key === chKey) return;                 // 같은 목록이면 다시 그리지 않음 (그려 둔 차트 유지)
   chKey = key;
@@ -849,10 +861,18 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, <b>이미지 저장</b>을 누르면 그 차트 한 장을 사진(PNG)으로 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
-    passed.map((r, i) => '<div class="chbox" data-i="' + i + '"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>').join('');
+  box.innerHTML = '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
+    '<div class="savebar"><span>&#128247; 선택 <b id="selCnt">0</b>개</span>' +
+      '<button type="button" class="sb" id="selAll">전체 선택</button><button type="button" class="sb" id="selNone">선택 해제</button>' +
+      '<button type="button" class="sb go" id="selSave" disabled>선택한 차트 저장</button></div>' +
+    passed.map((r, i) => '<div class="chbox' + (chSel.has(r.code) ? ' sel' : '') + '" data-i="' + i + '" data-code="' + r.code + '">' +
+      '<label class="chk"><input type="checkbox"' + (chSel.has(r.code) ? ' checked' : '') + '> 저장할 차트로 선택</label>' +
+      '<div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>').join('');
+  updateSelBar();
   const drawOne = el => {
-    const i = Number(el.dataset.i), r = passed[i], e = data.get(r.code), body = el.firstChild;
+    if (el.dataset.drawn) return;
+    el.dataset.drawn = '1';
+    const i = Number(el.dataset.i), r = passed[i], e = data.get(r.code), body = el.querySelector('.chbody');
     if (!e || e.price.length < 2) { body.innerHTML = '<div class="chwait">' + (i + 1) + '. ' + esc(r.name) + ' · 가격 데이터가 없습니다</div>'; return; }
     const vh = r.close / r.hi52 - 1;
     const title = '<span><span class="no">' + (i + 1) + '</span> <a href="' + link(r.name) + '">' + esc(r.name) + '</a>' +
@@ -862,9 +882,10 @@ function renderPassCharts(passed) {
     const cut = Math.max(0, e.price.length - CH_BARS);
     body.style.minHeight = '0';              // 그린 뒤에는 자리 확보용 높이 해제 (좁은 화면에서는 차트가 더 낮음)
     CandleChart.draw(body, { name: r.name, price: e.price.slice(cut), ohlc: e.ohlc,
-      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, height: 420, width: Math.max(900, body.clientWidth),   // 좁은 화면에서도 900px 기준으로 그려 한 화면에 축소 표시 (저장 이미지와 같은 모양)
+      pre: e.pre.concat(e.price.slice(0, cut).map(p => p[1])), titleHtml: title, note: false, save: false, height: 420, width: Math.max(900, body.clientWidth),   // 좁은 화면에서도 900px 기준으로 그려 한 화면에 축소 표시 (저장 이미지와 같은 모양)
       titleText: (i + 1) + '. ' + r.name + '  ·  RS ' + (r.rs == null ? '–' : r.rs) + '  ·  고점比 ' + (vh >= -0.0005 ? '신고가' : pct(vh)) + '  ·  연속 ' + r.streak + '일' });
   };
+  chDrawOne = drawOne;
   // 화면 근처에 온 차트만 그림 (90여 개를 한꺼번에 그리지 않도록)
   if ('IntersectionObserver' in window) {
     chObs = new IntersectionObserver(ents => ents.forEach(en => {
@@ -875,6 +896,63 @@ function renderPassCharts(passed) {
   } else box.querySelectorAll('.chbox').forEach(drawOne);
 }
 document.querySelectorAll('.chip[data-view]').forEach(b => b.addEventListener('click', () => setPassView(b.dataset.view)));
+
+// ----- 체크한 차트 일괄 저장 -----
+function updateSelBar() {
+  const cnt = document.getElementById('selCnt'), btn = document.getElementById('selSave');
+  if (!cnt) return;
+  chReady = null;
+  cnt.textContent = chSel.size;
+  btn.disabled = chSel.size === 0;
+  btn.textContent = chSel.size ? '선택한 ' + chSel.size + '개 저장' : '선택한 차트 저장';
+}
+function setSel(el, on) {
+  const code = el.dataset.code;
+  if (on) chSel.add(code); else chSel.delete(code);
+  el.classList.toggle('sel', on);
+  const cb = el.querySelector('.chk input'); if (cb) cb.checked = on;
+}
+async function saveSelected(btn) {
+  if (chReady) {                              // 이미 만들어 둔 파일 — 누르는 즉시 공유 창으로
+    const files = chReady;
+    try { await CandleChart.deliver(files); chReady = null; updateSelBar(); } catch (e) { alert('저장하지 못했습니다: ' + e.message); }
+    return;
+  }
+  const boxes = Array.from(document.querySelectorAll('#passCharts .chbox')).filter(el => chSel.has(el.dataset.code));
+  if (!boxes.length) { alert('지금 목록에 보이는 차트 중 선택된 것이 없습니다.'); return; }
+  btn.disabled = true;
+  const files = [];
+  try {
+    for (let k = 0; k < boxes.length; k++) {
+      btn.textContent = '이미지 만드는 중… ' + (k + 1) + '/' + boxes.length;
+      if (chDrawOne) chDrawOne(boxes[k]);     // 아직 화면에 안 그려진 차트는 먼저 그림
+      const body = boxes[k].querySelector('.chbody');
+      if (body.__ccPng) files.push(await CandleChart.png(body));
+    }
+    if (!files.length) throw new Error('저장할 수 있는 차트가 없습니다');
+    try { await CandleChart.deliver(files); updateSelBar(); }
+    catch (e) {
+      // 사파리는 준비에 시간이 걸리면 공유 창을 막음 → 파일을 들고 있다가 한 번 더 누르면 바로 엶
+      if (!e || e.name !== 'NotAllowedError') throw e;
+      chReady = files;
+      btn.textContent = '준비 완료 · 한 번 더 눌러 저장 (' + files.length + '장)';
+    }
+  } catch (e) { alert('저장하지 못했습니다: ' + e.message); updateSelBar(); }
+  finally { btn.disabled = chSel.size === 0; }
+}
+document.getElementById('passCharts').addEventListener('change', ev => {
+  const cb = ev.target;
+  if (!cb.matches || !cb.matches('.chk input')) return;
+  setSel(cb.closest('.chbox'), cb.checked);
+  updateSelBar();
+});
+document.getElementById('passCharts').addEventListener('click', ev => {
+  const id = ev.target.id;
+  if (id === 'selAll' || id === 'selNone') {
+    document.querySelectorAll('#passCharts .chbox').forEach(el => setSel(el, id === 'selAll'));
+    updateSelBar();
+  } else if (id === 'selSave') saveSelected(ev.target);
+});
 
 // ===== VCP 베이스 (회원 전용) — db/market/vcp 사전 계산 결과 =====
 const VCP_MONTHS = new Map();   // 'YYYY-MM' -> 행 배열 (파일 없으면 null)
