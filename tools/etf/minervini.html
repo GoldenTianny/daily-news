@@ -316,7 +316,7 @@ let curDate = null, earliestYm = null, exhausted = false, busy = false, etfTok =
 const ETF_CACHE = new Map();
 
 async function readParquet(url) {
-  const r = await fetch(url);
+  const r = await fetch(url, { cache: 'no-cache' });
   if (!r.ok) throw new Error(url + ' ' + r.status);
   return hyparquet.parquetReadObjects({ file: await r.arrayBuffer() });
 }
@@ -437,7 +437,7 @@ async function showDate(d, replace) {
   if (!ETFMAP) {
     const tok = ++etfTok;
     try {
-      const dj = await (await fetch('data/dates.json')).json();
+      const dj = await (await fetch('data/dates.json', { cache: 'no-cache' })).json();
       const dates = Array.isArray(dj) ? dj : dj.dates;
       const ed = dates.filter(x => x <= d).at(-1) || dates[0];
       const eh = await readParquet('/db/etf/' + ed + '.parquet');
@@ -801,7 +801,7 @@ async function chRows(kind, ym) {
     for (let t = 0; t < 3 && buf === undefined; t++) {
       if (t) await new Promise(r => setTimeout(r, 400 * t));
       try {
-        const r = await fetch('/db/market/' + kind + '/' + ym + '.parquet');
+        const r = await fetch('/db/market/' + kind + '/' + ym + '.parquet', { cache: 'no-cache' });
         if (r.ok) buf = await r.arrayBuffer();
         else if (r.status === 404) buf = null;
         else err = new Error(kind + ' ' + ym + ' 응답 ' + r.status);
