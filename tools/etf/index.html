@@ -511,7 +511,7 @@ if (window.Auth) {
 // ===== INIT =====
 async function init() {
   try {
-    const resp = await fetch('data/dates.json');
+    const resp = await fetch('data/dates.json', { cache: 'no-cache' });
     const dates = await resp.json();
 
     DATES = dates;
@@ -536,7 +536,7 @@ async function init() {
 // ===== Load date data =====
 // 날짜 하나의 데이터를 로드 (db/etf/*.parquet를 hyparquet로 직접 읽음)
 async function fetchDateMap(date) {
-  const buf = await (await fetch('/db/etf/' + date + '.parquet')).arrayBuffer();
+  const buf = await (await fetch('/db/etf/' + date + '.parquet', { cache: 'no-cache' })).arrayBuffer();
   const rows = await hyparquet.parquetReadObjects({ file: buf });
   const etfs = {}, holdings = {};
   for (const r of rows) {
@@ -569,7 +569,7 @@ async function loadPrices(date, etfMap) {
   }
   const chunks = await Promise.all(months.map(async mo => {
     try {
-      const resp = await fetch('/db/market/price/' + mo + '.parquet');
+      const resp = await fetch('/db/market/price/' + mo + '.parquet', { cache: 'no-cache' });
       if (!resp.ok) return [];
       return await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
     } catch (e) { return []; }
@@ -620,7 +620,7 @@ async function loadConsensus(date) {
   }
   const chunks = await Promise.all(months.map(async mo => {
     try {
-      const resp = await fetch('/db/market/consensus/' + mo + '.parquet');
+      const resp = await fetch('/db/market/consensus/' + mo + '.parquet', { cache: 'no-cache' });
       if (!resp.ok) return [];
       return await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
     } catch (e) { return []; }
@@ -695,7 +695,7 @@ async function readMonth(kind, mo) {
   let buf = FILE_BUFS.get(key);
   if (buf === undefined) {
     try {
-      const resp = await fetch('/db/market/' + DB_DIR[kind] + '/' + mo + '.parquet');
+      const resp = await fetch('/db/market/' + DB_DIR[kind] + '/' + mo + '.parquet', { cache: 'no-cache' });
       buf = resp.ok ? await resp.arrayBuffer() : null;
     } catch (e) { buf = null; }
     FILE_BUFS.set(key, buf);
@@ -877,7 +877,7 @@ let EARN = null;   // Map(종목명 -> {code, fy: Map(fy -> [op, src])})
 async function loadEarnings() {
   if (EARN) return EARN;
   EARN = (async () => {
-    const resp = await fetch('/db/market/earnings/annual.parquet');
+    const resp = await fetch('/db/market/earnings/annual.parquet', { cache: 'no-cache' });
     if (!resp.ok) return null;
     const rows = await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
     const m = new Map();
@@ -1000,7 +1000,7 @@ let EARN_Q = null;   // Map(code -> Map(fy*10+q -> op))
 function loadQuarterly() {
   if (EARN_Q) return EARN_Q;
   EARN_Q = (async () => {
-    const resp = await fetch('/db/market/earnings/quarterly.parquet');
+    const resp = await fetch('/db/market/earnings/quarterly.parquet', { cache: 'no-cache' });
     if (!resp.ok) return null;
     const rows = await hyparquet.parquetReadObjects({ file: await resp.arrayBuffer() });
     const m = new Map();

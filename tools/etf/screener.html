@@ -271,7 +271,7 @@ const link = nm => '/tools/etf/?stock=' + encodeURIComponent(nm);
 const isMember = () => !window.Auth || !Auth.configured || !!Auth.user;
 
 async function readParquet(url) {
-  const r = await fetch(url);
+  const r = await fetch(url, { cache: 'no-cache' });
   if (!r.ok) throw new Error(url + ' ' + r.status);
   return hyparquet.parquetReadObjects({ file: await r.arrayBuffer() });
 }
@@ -371,7 +371,7 @@ async function loadCons(d) {
 async function loadEtf(d) {
   if (ETF_CACHE.has(d)) return ETF_CACHE.get(d);
   if (!ETF_DATES) {
-    const dj = await (await fetch('data/dates.json')).json();
+    const dj = await (await fetch('data/dates.json', { cache: 'no-cache' })).json();
     ETF_DATES = Array.isArray(dj) ? dj : dj.dates;
   }
   const ed = ETF_DATES.filter(x => x <= d).at(-1) || ETF_DATES[0];
