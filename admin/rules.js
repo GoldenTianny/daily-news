@@ -1,6 +1,7 @@
 /* 매수·매도 원칙 — 관리자 '매매 복기' 옆 탭 (마스터 본인 전용)
  * 보유 종목·평단은 Supabase trade_journal(매매 복기에 저장한 체결내역)에서 자동 계산하고,
- * 비중(R)·초기 손절가·메모 같은 운용 설정은 이 브라우저(localStorage)에 둡니다.
+ * R = 위험 단위 = 계좌의 1% (틀리면 잃는 돈). 포지션 위험 = 수량 × (평단 − 적용 매도선), 매도선이 평단 이상이면 0R.
+ * 수량(체결내역 없을 때)·초기 손절가·메모 같은 운용 설정은 이 브라우저(localStorage)에 둡니다.
  * 매도선은 가격 DB(db/market/price) 종가로 매일 다시 계산됩니다. */
 (function (root) {
 'use strict';
@@ -11,6 +12,16 @@ var MAX_DAYS_PEAK = 60;          // 고점: 진입일 이후(진입일을 모르
 var ARM_PCT = 0.10;              // 고점(고가)이 평단 +10% 를 넘긴 뒤부터 본전/고점−15% 규칙 (+5%는 검증상 휩소 과다)
 var TRAIL = 0.15;                // 고점 대비 −15%
 var INIT_STOP = 0.07;            // 초기 손절가 미지정 시 −7%
+var ACCOUNT = 54500000;          // 계좌 평가금액 (2026-11-17 기준, 바뀌면 여기만 고친다)
+var R_WON = ACCOUNT * 0.01;      // 1R = 계좌의 1% = 틀렸을 때 잃는 돈
+var POS_CAP = 0.25;              // 한 종목 금액 상한 = 계좌의 25% (손절이 가까워 수량이 커지는 것 방지)
+var HEAT = [['팔로스루 직후', 2], ['1단계', 4], ['2단계', 6]]; // 열린 위험 합계 한도 (R)
+function sizeFor(rr, entry, stop) { // 위험 rr(R)로 살 수 있는 수량 — 금액 상한 적용
+  if (!(entry > stop) || !(stop > 0)) return { q: 0, won: 0, cap: false };
+  var q = Math.floor(rr * R_WON / (entry - stop)), qc = Math.floor(ACCOUNT * POS_CAP / entry), cap = q > qc;
+  q = Math.min(q, qc); return { q: q, won: q * entry, cap: cap };
+}
+function man(v) { return Math.round(v / 10000).toLocaleString('ko-KR') + '만'; }
 var BIG_LOW_DATES = { '삼성전자': '2026-10-15', 'SK하이닉스': '2026-10-20' }; // 메모리 대형주 이번 조정 최저 종가(사이클 경고 기준) — 7/30 저점은 10/15에 깨져 10월 저점으로 갱신
 
 /* ---------- 보유 종목 기본 설정 (체결내역에 없을 때의 평단 · 비중 · 초기 손절 · 메모) ----------
@@ -25,7 +36,7 @@ var DEFAULT_META = {
   '씨젠':        { cost: 35887,  r: 0.25, stop: 35887, since: '2026-10-02', memo: '10/15 사이클 경고(SK하이닉스 7/30 저점 이탈)로 0.5R 중 반을 35,950에 매도 → 0.25R 남김 · 매도선 = 본전 35,887' },
   '펌텍코리아':     { cost: 66600, r: 0.5, stop: 66000, since: '2026-10-08', memo: '10/8 종가 65,500으로 돌파 실패선(66,000) 이탈 → 10/12 시가 매도 신호였으나 시초 급등으로 보유(원칙 위반). 이제 종가 66,000 아래면 예외 없이 다음 날 시가 정리 · 추가 0.5R은 종가 69,800 돌파 시' },
   '삼성SDI':      { cost: 590000, r: 0.5, stop: 535000, since: '2026-10-12', memo: '10/14 피벗 재돌파로 1R 복원 → 10/15 종가가 피벗 577,000 아래(돌파 실패) + 사이클 경고로 반을 543,000에 매도 → 0.5R 남김 · 손절 535,000(10/15 장중 529,000까지 내려감) · 577,000 재돌파와 시장 안정 확인 전 추가 없음' },
-  '삼성E&A':         { cost: 65500, r: 0.25, stop: 59500, since: '2026-11-04', memo: '플랜트 · 10/22 실적 서프라이즈+자사주로 5개월 박스 55,400 돌파 → 10/29 고점 65,500 후 4일 휴식, 10일선(약 60,000)이 따라붙은 뒤 11/4 +6.3%로 종가 65,500(52주 고점 피벗 도달) · 동시호가 매수 · RS 94, 템플릿 8/8, 올해 이익 전망 1개월 +42% 상향 · 손절 59,500(11/2 눌림 저점 59,700·10일선 아래, 약 −9%, 손절 시 약 −12만 원) · 새 신고가 종가가 나오면 본전 위 추가 매수 검토 · 11/11 종가 66,200으로 신고가 종가 발생(조건 충족)했지만 시장이 팔로스루 전(반등 2일째)이라 대기 → 팔로스루가 확인되는 날(빠르면 11/13) 15:20에 66,200 이상이면 동시호가로 20주 추가(합계 0.5R, 추격 한도 68,775), 추가하면 손절을 62,000(11/10 저점·10일선 아래)으로 올림' },
+  '삼성E&A':         { cost: 65500, qty: 20, stop: 59500, since: '2026-11-04', memo: '플랜트 · 10/22 실적 서프라이즈+자사주로 5개월 박스 55,400 돌파 → 10/29 고점 65,500 후 4일 휴식, 10일선(약 60,000)이 따라붙은 뒤 11/4 +6.3%로 종가 65,500(52주 고점 피벗 도달) · 동시호가 매수 · RS 94, 템플릿 8/8, 올해 이익 전망 1개월 +42% 상향 · 손절 59,500(11/2 눌림 저점 59,700·10일선 아래, 약 −9%, 손절 시 약 −12만 원) · 새 신고가 종가가 나오면 본전 위 추가 매수 검토 · 11/11 종가 66,200으로 신고가 종가 발생(조건 충족)했지만 시장이 팔로스루 전(반등 2일째)이라 대기 → 팔로스루가 확인되는 날(빠르면 11/13) 15:20에 66,200 이상이면 동시호가로 20주 추가(합계 40주, 추격 한도 68,775), 추가하면 손절을 62,000(11/10 저점·10일선 아래)으로 올림' },
 };
 
 /* 체결내역에 남아 있어도 표에서 빼는 종목 (전량 매도 완료 등) */
@@ -41,7 +52,7 @@ var WATCH = [
   { name: '디케이티',        pattern: '돌파 후 첫 10일선 눌림 대기', pivot: 25700, stop: 23000, r: 0.5, since: '2026-11-12', memo: '스마트폰·배터리 부품(FPCA) · 11/11 28,300(+20%)으로 이전 종가 고점 25,700 돌파, 11/12 28,550으로 추격 한도 26,985 초과 → 돌파는 보냄 · RS 97, 템플릿 7/8 · 이익: 올해 +58%, 내년 +70% · 진입 = 첫 10일선(11/12 약 24,000, 상승 중) 근처 눌림 후 반등 종가 · 손절 = 눌림 저점 아래(잠정 23,000)' },
   { name: '타이거일렉',      pattern: '신고가 후 첫 10일선 눌림 대기 (재진입)', pivot: 103900, stop: 92000, r: 0.5, since: '2026-11-12', memo: '반도체 테스트용 기판 · 11/6 78,400 손절 뒤 나흘 만에 +45%로 52주 신고가(11/12 113,600) → 종목은 주도주로 확인, 손절은 규칙대로였음 · RS 97, 템플릿 8/8 · 이익: 올해 +269%, 내년 +52% · 10일선(약 94,000)보다 많이 위라 추격 금지 · 진입 = 첫 10일선 눌림 반등 종가(이전 종가 고점 103,900 부근 지지 확인) · 손절 = 눌림 저점 아래(잠정 92,000) · 반도체 사이클 경고가 켜져 있으면 진입 보류' },
   { name: '코리아써키트',    pattern: '바닥 탈출 후 박스 상단 돌파', pivot: 89300, stop: 78000, r: 0.5, since: '2026-11-12', memo: '사용자 관심 · 반도체 패키지 기판 · 6월 고점 148,000에서 −70% 빠진 뒤 8~10월 바닥, 11/11 +29%로 10/6 종가 고점 89,300 바로 아래(88,200)까지 복귀 · RS 98, 템플릿 6/8(52주 고점 대비 −39%) · 이익: 올해 +75%, 내년 +74% · 진입 = 팔로스루 뒤 15:20에 89,300 종가 돌파 확인 시 동시호가(추격 한도 93,750) · 손절 78,000(약 −13%) · 하루 변동이 커서 장중 추격 금지 · 반도체 사이클 경고가 켜져 있으면 보류' },
-  { name: '안랩',            pattern: '급등 후 높은 자리 횡보 (돌파 대기)', pivot: 121100, stop: 103000, r: 0.45, since: '2026-11-12', memo: '사용자 관심 · 보안 소프트웨어 · 9월 57,000 → 11/3 장중 137,300까지 두 배 넘게 오른 뒤 100,000~121,000에서 횡보 · RS 96, 템플릿 8/8 · 증권사 이익 전망 없음(실적 확인 필요) · 하루 변동폭 10% 안팎으로 매우 큼 · 진입 = 팔로스루 뒤 15:20에 10/30 종가 고점 121,100 돌파 확인 시 동시호가(추격 한도 127,150) · 손절 103,000(11/10 저점 아래, 약 −15%) → 계산 비중 약 0.45R' },
+  { name: '안랩',            pattern: '급등 후 높은 자리 횡보 (돌파 대기)', pivot: 121100, stop: 103000, r: 0.5, since: '2026-11-12', memo: '사용자 관심 · 보안 소프트웨어 · 9월 57,000 → 11/3 장중 137,300까지 두 배 넘게 오른 뒤 100,000~121,000에서 횡보 · RS 96, 템플릿 8/8 · 증권사 이익 전망 없음(실적 확인 필요) · 하루 변동폭 10% 안팎으로 매우 큼 · 진입 = 팔로스루 뒤 15:20에 10/30 종가 고점 121,100 돌파 확인 시 동시호가(추격 한도 127,150) · 손절 103,000(11/10 저점 아래, 약 −15%) → 계산 비중 약 0.45R' },
   { name: '펌텍코리아',      pattern: '52주 신고가 돌파', pivot: 74600, stop: 66500, r: 0.5, since: '2026-11-12', memo: '사용자 관심 · 화장품 용기 · 10월에 보유했다가 10/12 정리한 종목 · 11/11 74,600으로 신고가 종가, 11/12 77,300(+3.6%)으로 추가 상승 · RS 92, 템플릿 7/8 · 이익: 올해 +41%, 내년 +21% · 진입 = 팔로스루 확인되는 날 15:20에 74,600 이상·추격 한도 78,330 이하면 동시호가, 한도를 넘으면 10일선(약 68,400) 눌림 대기 · 손절 66,500(11/11 저점 아래, 약 −11%) · 11/13 73,900(−4.5%)으로 피벗 74,600 아래로 되밀림 → 돌파 재확인 필요(종가 74,600 회복) · 화장품 업종(코스맥스)은 둘 중 먼저 신호 나는 1종목만' },
   { name: '코스맥스',        pattern: '한 달 조정 후 반등 (고점 재도전)', pivot: 292000, stop: 257000, r: 0.5, since: '2026-11-13', memo: '사용자 관심 · 화장품 위탁 생산(ODM) 1위 · 10/27 263,500에 손절했던 종목 · 10월 초 고점 308,500에서 한 달 조정, 11/11 장중 222,000까지 밀렸다가 긴 아래꼬리로 반등해 60일선 회복(11/13 280,500) · RS 91, 템플릿 8/8 · 영업이익 1,958억 → 2,830억 → 3,626억, 내년 전망 3개월 +16% 상향 · 진입 = 팔로스루 뒤 15:20에 11/12 고가 292,000 종가 돌파 확인 시 동시호가(추격 한도 306,600) · 손절 257,000(11/12 저가·10일선 아래, 약 −12%) · 화장품 업종(펌텍코리아)은 둘 중 먼저 신호 나는 1종목만' },
   { name: 'LG씨엔에스',      pattern: '긴 박스 상단 돌파 대기', pivot: 80000, stop: 71000, r: 0.5, since: '2026-11-12', memo: '사용자 관심 · IT 서비스(AI·클라우드) · 6월 급등(153,000) 뒤 다섯 달 동안 60,000~80,000 박스, 하락 추세선은 10월에 돌파 · RS 82, 템플릿 6/8 · 이익: 올해 +7%, 내년 +14%(성장 낮음) · 진입 = 팔로스루 뒤 15:20에 박스 상단 80,000 종가 돌파 확인 시 동시호가(추격 한도 84,000) · 손절 71,000(약 −11%)' },
@@ -49,7 +60,7 @@ var WATCH = [
   { name: '슈프리마에이치큐',  pattern: '석 달 박스 상단 돌파', pivot: 13500, stop: 12400, r: 0.5, since: '2026-11-13', memo: '사용자 관심 · 생체인식 슈프리마의 지주사 · 9~11월 12,000~13,500 박스를 11/13 +5.8%(13,700)로 돌파, 장중 13,990 · RS 94, 템플릿 8/8 · 증권사 이익 전망 없음(작년 영업이익 39억) · 진입 = 팔로스루 확인되는 날 15:20에 13,500 이상·추격 한도 14,175 이하면 동시호가 · 손절 12,400(박스 중간·20일선 아래, 약 −8%)' },
   { name: '나이스정보통신',    pattern: '고점 아래 좁은 횡보 (돌파 대기)', pivot: 8100, stop: 7400, r: 0.5, since: '2026-11-13', memo: '사용자 관심 · 결제 대행(VAN·PG), 반도체와 무관한 실적 성장주 · 영업이익 553억 → 779억 → 995억 · 고점 8,430 대비 −5.5%, 60일선 지지 후 7,900 안팎 횡보 · RS 95, 템플릿 8/8 · 11/10·11/13 장중 8,600대까지 올랐다가 밀려 위에 매물 있음 → 종가 확인 필수 · 진입 = 팔로스루 뒤 15:20에 8,100 종가 돌파 확인 시 동시호가(추격 한도 8,505) · 손절 7,400(약 −9%)' },
   { name: '티에프이',          pattern: '폭락 회복 후 신고가 (돌파 대기)', pivot: 91800, stop: 80000, r: 0.5, since: '2026-11-13', memo: '재등록 · 반도체 테스트 부품 · 11/9 관심 손절 기준 이탈로 제외했으나 닷새 연속 올라 11/13 90,800으로 신고가 종가 · RS 98, 템플릿 8/8 · 영업이익 191억 → 368억 → 634억 · 10일선(약 77,000)보다 많이 위 · 진입 = 팔로스루 뒤 15:20에 10/29 고가 91,800 종가 돌파 확인 시 동시호가(추격 한도 96,400), 아니면 첫 10일선 눌림 반등 · 손절 80,000(약 −13%) · 반도체 사이클 경고가 켜져 있으면 보류 · 반도체 테스트 업종(타이거일렉·엑시콘)은 합쳐서 1종목만' },
-  { name: '엑시콘',            pattern: 'V자 회복 후 고점 돌파 대기', pivot: 65100, stop: 55000, r: 0.45, since: '2026-11-13', memo: '재등록 · 메모리 테스터 · 11/9 제외 뒤 나흘 연속 올라 61,700, 11/13 장중 고점 67,000에서 밀림 · RS 99, 템플릿 8/8 · 영업이익 1억 → 231억 → 456억 · 진입 = 팔로스루 뒤 15:20에 10/28 종가 65,100 돌파 확인 시 동시호가(추격 한도 68,355) · 손절 55,000(약 −15.5%) → 계산 비중 약 0.45R · 반도체 사이클 경고가 켜져 있으면 보류 · 반도체 테스트 업종은 합쳐서 1종목만' },
+  { name: '엑시콘',            pattern: 'V자 회복 후 고점 돌파 대기', pivot: 65100, stop: 55000, r: 0.5, since: '2026-11-13', memo: '재등록 · 메모리 테스터 · 11/9 제외 뒤 나흘 연속 올라 61,700, 11/13 장중 고점 67,000에서 밀림 · RS 99, 템플릿 8/8 · 영업이익 1억 → 231억 → 456억 · 진입 = 팔로스루 뒤 15:20에 10/28 종가 65,100 돌파 확인 시 동시호가(추격 한도 68,355) · 손절 55,000(약 −15.5%) → 계산 비중 약 0.45R · 반도체 사이클 경고가 켜져 있으면 보류 · 반도체 테스트 업종은 합쳐서 1종목만' },
   { name: '지니언스',          pattern: '신고가 급등 후 첫 10일선 눌림 대기', pivot: 30500, stop: 26500, r: 0.5, since: '2026-11-13', memo: '사용자 관심 · 보안 소프트웨어(네트워크 접근 통제·EDR) · 영업이익 70억 → 112억 → 142억 · 11/11~13 사흘에 +30%로 신고가 34,300, 10일선(약 27,000)보다 많이 위 → 추격 금지 · RS 97, 템플릿 8/8 · 진입 = 이전 고점대 30,500 부근 또는 10일선 눌림 뒤 반등 종가 · 손절 = 눌림 저점 아래(잠정 26,500) · 안랩과 같은 보안 업종 → 둘 중 1종목만' },
   { name: '지어소프트',        pattern: '신고가 직전 좁은 상승', pivot: 15000, stop: 13300, r: 0.5, since: '2026-11-13', memo: '사용자 관심 · IT 서비스(오아시스마켓 모회사) · 10일선을 타고 사흘 연속 고가 15,000에서 막힘, 고점 14,770 대비 −0.9% · RS 95, 템플릿 8/8(64일 연속) · 증권사 이익 전망 없음(작년 영업이익 251억) · 진입 = 팔로스루 뒤 15:20에 15,000 종가 돌파 확인 시 동시호가(추격 한도 15,750) · 손절 13,300(20일선 아래, 약 −11%)' },
   { name: '아스플로',          pattern: '신고가 급등 후 눌림 대기', pivot: 36500, stop: 31000, r: 0.25, since: '2026-11-13', memo: '사용자 관심 · 반도체 가스 공급 부품(튜브·밸브) · 11/10~13 나흘에 +60%대 급등해 신고가 38,900, 10일선(약 30,400)보다 많이 위 → 추격 금지 · RS 99, 템플릿 8/8 · 작년 영업적자(−70억), 증권사 전망 없음 → 비중 0.25R · 진입 = 10월 고점대 36,500 부근 또는 10일선 눌림 뒤 반등 종가 · 손절 = 눌림 저점 아래(잠정 31,000) · 반도체 사이클 경고가 켜져 있으면 보류' },
@@ -84,20 +95,20 @@ var BUY_STATS = [
 ];
 
 var BUY_RULES = [
-  '<b>손절선을 먼저 정하고, 비중은 거기서 거꾸로 계산한다.</b> 비중 = 허용 손실 0.07R ÷ 손절 폭. 손절 −7%면 1R, −10%면 0.7R, −14%면 0.5R. 손절선은 차트(직전 눌림 저점·손잡이 저점)가 정하고, 비중을 키우려고 손절선을 좁히지 않는다. 계산이 2R을 넘어도 상한은 2R이고, 유형·시장 때문에 권장 비중이 더 낮으면 낮은 쪽을 쓴다. 종가 원칙상 갭 하락이면 실제 손실이 계획의 두 배가 될 수 있다 (10/13 삼성전기: 2R × 손절 −7% = 계획 −0.14R이 갭으로 −0.27R. 1R이었으면 −0.13R, 권장 0.5R이었으면 −0.07R).',
+  '<b>손절선을 먼저 정하고, 수량은 거기서 거꾸로 계산한다.</b> <b>1R = 계좌의 1%</b>(5,450만 원 기준 54.5만 원) = 틀렸을 때 잃을 돈. 수량 = 감수할 위험(R × 54.5만 원) ÷ (매수가 − 손절가). 손절이 가까우면 많이, 멀면 적게 산다 — 위험은 같고 수량만 다르다(예: 위험 0.5R이면 손절 −7% 자리는 약 390만 원, −14% 자리는 약 195만 원). 한 종목 금액은 계좌의 25%(약 1,360만 원)까지. 손절선은 차트(직전 눌림 저점·손잡이 저점)가 정하고, 수량을 늘리려고 손절선을 좁히지 않는다. 종가 원칙과 갭 하락 때문에 실제 손실은 계획보다 30~50% 커진다 (10/13 삼성전기: 계획 1.3R → 실제 2.4R, 10~11월 손절 7건 평균 +30%). 그래서 <b>손절 폭이 8%를 넘는 자리는 피하거나 위험을 줄인다.</b>',
   '<b>진입 신호는 셋 중 하나</b>: ① 와인스타인 RS 제로선 상향 돌파 ② 돌파 후 첫 10일선 눌림 반등 ③ 52주 신고가(피벗) 돌파. 그 외는 신호가 아니다. <b>신호가 15:20 가격으로 확인되면 그날 동시호가에서 산다</b>(피벗 +5% 추격 한도 안일 때). 그날 못 샀으면 다음 날 14시 이후, 역시 추격 한도 안에서만. 다음 날 시가가 이미 한도를 넘으면 그 돌파는 보내고 ②(첫 10일선 눌림)를 기다린다 (10/27 뉴파워프라즈마: 14,580 돌파 종가에 안 사고 다음 날 +10% 갭 → 놓침).',
-  '<b>시장 조건은 팔로스루 하나로 판단한다.</b> 팔로스루가 유효하면(종가가 조정 최저점 위) 50일선 아래여도 첫 매수 0.5R씩, 합계 1~2R은 허용. 장중에 실패선을 건드렸다고 "○○ 회복 전까지 보류" 같은 추가 조건을 즉흥적으로 붙이지 않는다 (10/23 5,736 회복 조건을 덧붙였다가 10/27 뉴파워프라즈마 돌파를 놓침).',
-  '<b>비중 한도는 정찰병 성적과 시장으로 단계적으로 푼다.</b> 팔로스루 직후 합계 2R(약 1,000만 원). 1단계 3R: ① 보유 종목 2개 이상이 고가 기준 평단 +10%를 넘어 손절선이 본전으로 올라갔거나 ② 코스피 종가가 50일선 위. 2단계 최대 5R: ①과 ② 둘 다 맞고 분산일(거래대금 기준)이 3개 이하. 되돌림: 분산일 4~5개면 2R로 돌아가고 신규 매수 중단. 종가가 조정 최저점(팔로스루 실패선, 현재 5,451) 아래면 팔로스루 실패 — 신규 매수 중단하고 새 팔로스루를 기다린다. 기준선은 하나(조정 최저점)만 쓰고, 팔로스루 날 저가 같은 다른 선을 덧붙이지 않는다. 정찰병이 계속 손절되면 한도를 늘리지 않는다.',
+  '<b>시장 조건은 팔로스루 하나로 판단한다.</b> 팔로스루가 유효하면(종가가 조정 최저점 위) 50일선 아래여도 첫 매수는 종목당 위험 0.5R, 열린 위험 합계 2R까지 허용. 장중에 실패선을 건드렸다고 "○○ 회복 전까지 보류" 같은 추가 조건을 즉흥적으로 붙이지 않는다 (10/23 5,736 회복 조건을 덧붙였다가 10/27 뉴파워프라즈마 돌파를 놓침).',
+  '<b>열린 위험 한도는 정찰병 성적과 시장으로 단계적으로 푼다.</b> 열린 위험 = 보유 종목마다 수량 × (평단 − 적용 매도선)을 더한 값(매도선이 본전 이상이면 0R). 팔로스루 직후 합계 2R(약 109만 원, 계좌 −2%), 종목당 0.5R. 1단계 4R(종목당 최대 1R): ① 보유 종목 2개 이상이 고가 기준 평단 +10%를 넘어 손절선이 본전으로 올라갔거나 ② 코스피 종가가 50일선 위. 2단계 최대 6R(계좌 −6%): ①과 ② 둘 다 맞고 분산일(거래대금 기준)이 3개 이하. 되돌림: 분산일 4~5개면 2R로 돌아가고 신규 매수 중단. 종가가 조정 최저점(팔로스루 실패선, 현재 5,451) 아래면 팔로스루 실패 — 신규 매수 중단하고 새 팔로스루를 기다린다. 기준선은 하나(조정 최저점)만 쓰고, 팔로스루 날 저가 같은 다른 선을 덧붙이지 않는다. 정찰병이 계속 손절되면 한도를 늘리지 않는다.',
   '<b>한도가 찼을 때는 약한 종목을 강한 종목으로 교체한다 (오닐식).</b> 조건 세 가지가 모두 맞을 때만: ① 비중 한도가 찬 상태에서 새 종목의 진입 신호가 15:20 가격으로 확인됨(추격 한도 안) ② 보유 종목 중 산 지 10거래일 이상 지났고 ③ 종가가 평단 아래이며 RS가 80 미만인 종목이 있음. 해당 종목이 여럿이면 RS가 가장 낮은 1종목만, 같은 날 동시호가에서 그 종목을 팔고 새 종목을 산다(새 종목 비중은 판 종목 이하, 하루 1건). 조건이 하나라도 빠지면 교체하지 않고 새 신호는 보낸다. 손절선을 피하려는 교체·물타기 대신 다른 종목으로 갈아타는 교체는 금지.',
   '<b>사는 시점은 장 마감 근처(14시 이후 ~ 종가)다.</b> 장중에 오를 때 따라 사지 않는다. 장중 고점 근처에서 사면 같은 종목이라도 손절선에 먼저 닿는다. 검증(1~10월 실제 매수 종목 그대로, 매도만 지금 원칙 적용): 실제 매수가 기준 +53만 → 그날 종가 매수로 바꾸면 +1,446만 (기가비스 −2% 손절 → +44%, 삼천당제약 −10% → +32%). 실제 매매에서도 14시 이후 매수만 플러스(+488만), 11~14시 매수는 −976만. <b>장 마감 후 시간외는 종가 이하일 때만 산다</b>: 종가로 신호가 확인된 종목을 종가와 같거나 낮은 가격에 사는 것은 동시호가 매수와 같아서 허용(시간외 종가·단일가·NXT 애프터마켓 모두 지정가). 종가보다 오른 가격으로 따라 사는 것은 금지 — 실제 매매에서 17~19시 시간외 매수는 5일 뒤 −13~−17%로 가장 나빴다 (10/30 KT&G: 동시호가를 놓쳤지만 종가 196,200 이하 196,000으로 시간외 체결).',
   '<b>코스피가 50일선 아래면 신규 매수를 줄인다.</b> 팔로스루 데이 직후 첫 매수(0.5R씩)는 예외. 검증: 같은 조건에서 50일선 아래 날 진입 49건을 빼면 7·8월 손실 약 −650만을 피해 종가 매수 기준 +1,446만 → +2,291만(연초 자산 대비 약 +48%, 같은 기간 실제 계좌 −23.7%).',
   '<b>10배 오른 종목의 신고가 돌파에는 불타기하지 않는다.</b> 10건 중 8건이 40일 안에 15% 넘게 밀린다. 두 번째 진입 자리는 돌파가 아니라 20일선 눌림이다.',
   '<b>−30% 빠진 옛 주도주가 박스 상단을 넘는 건 매수 신호가 아니다.</b> 위에 쌓인 매물이 반등마다 나온다. 직전 반등 고점을 종가로 넘고 와인스타인 RS가 다시 오르기 시작할 때 본다.',
   '<b>베이스는 최소 5~7주.</b> 7일짜리 쉼은 베이스가 아니다.',
-  '<b>제로선 "직전" 선취매는 절반(0.5R)까지만</b>, 손절선은 직전 눌림 저점. 나머지 절반은 돌파 확인 후.',
+  '<b>제로선 "직전" 선취매는 계획 위험의 반까지만</b>, 손절선은 직전 눌림 저점. 나머지 절반은 돌파 확인 후.',
   '<b>추가 매수는 손절선이 가까운 자리에서만.</b> 같은 금액이라도 눌림에서 사면 R이 절반이 된다.',
   '<b>목표주가와 현재가의 괴리를 본다.</b> 주가가 목표가를 넘어선 종목은 애널리스트가 올려주지 않으면 쉬어간다. 2027년 전망이 2026년보다 낮은 종목(실적 정점 전망)은 뒤로 미룬다.',
-  '<b>종목 비중 합계는 3~5R.</b> 손절선이 본전 위로 올라온 종목은 위험 계산에서 빼도 되지만, 신규 진입은 그 합계 안에서만.'
+  '<b>열린 위험 합계는 최대 6R(계좌 −6%).</b> 손절선이 본전 위로 올라온 종목은 0R로 계산해 새 종목을 살 여유가 생긴다(피라미딩의 원리). 다만 갭 하락은 매도선을 뛰어넘으므로 그런 종목도 종목당 0.2R씩 남아 있다고 보고 합계에 넣는다.'
 ];
 
 var DONTS = [
@@ -113,6 +124,7 @@ var DONTS = [
 
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
+  ['2026-11-17', 'R 정의 변경 — 1R = 매수 금액 500만 원 → <b>계좌의 1%(5,450만 원 기준 54.5만 원) = 틀렸을 때 잃는 돈</b>. 포지션 위험 = 수량 × (평단 − 적용 매도선), 매도선이 평단 이상이면 0R. 보유 표는 수량으로 위험 R·투자금·열린 위험 합계를 자동 계산하고, 관심 표는 위험 R을 피벗 기준 매수 수량·금액으로 보여줌(한 종목 금액 상한 계좌의 25%). 한도는 단계 조건은 그대로 두고 단위만 바꿈: 팔로스루 직후 열린 위험 2R(종목당 0.5R) → 1단계 4R(종목당 1R) → 2단계 6R. 옛 기준 성적(10/1~11/17, 21건): 4승 17패, 확정 −238만 원 = 새 기준 −4.4R(계좌 −4.1%, 같은 기간 코스피 −26.7%), 평균 이익 +1.3R · 평균 손실 −0.55R. 계획보다 실제 손실이 30~50% 커서 손절 폭 8% 초과 자리는 피하거나 위험을 줄이기로 함.'],
   ['2026-11-16', '관심 종목에서 뉴파워프라즈마(11,710 < 12,800)·마이크로컨텍솔(45,000 < 46,000) 제외 — 종가가 관심 손절 기준 아래. 코스피 5,100(−3.6%, 거래대금 약 15.8조)로 나흘째 하락, 반등 시도 5일째에도 팔로스루 없음(11/6 저점 4,911까지 −3.7%). 삼성전자 196,800·SK하이닉스 1,120,000으로 반도체 경고 유지, 반도체 관심 종목 하루 −9~−18%. 화장품(펌텍코리아 +4.2%·코스맥스 +1.6%)과 삼성E&A(−0.6%)는 하락장에서 버팀. 엑시콘(55,800)·아스플로(32,400)·티에프이(82,600)는 손절 기준 근처.'],
   ['2026-11-13', '관심 종목에 코스맥스 추가(피벗 292,000, 손절 257,000) — 화장품 업종은 코스맥스·펌텍코리아 중 먼저 신호 나는 1종목만. 펌텍코리아는 11/13 −4.5%로 피벗 아래로 되밀려 돌파 재확인 필요.'],
   ['2026-11-13', '관심 종목 추가 10개 — 슈프리마에이치큐·나이스정보통신(범위 안, 반도체 무관) · 티에프이·뉴파워프라즈마·엑시콘(돌파 대기, 반도체) · 지니언스·지어소프트 · 마이크로컨텍솔(조건 대기) · 아스플로·심텍홀딩스(급등 후 눌림 대기, 적자라 0.25R). 제외 4개: NAVER(172,500 < 손절 기준 174,000)·동국제약·뷰웍스·카카오게임즈(반등장에서 약세). 코스피 5,284(−1.1%)로 반등 4일째에도 팔로스루 없음, 장중 5,504에서 밀림. 삼성전자·SK하이닉스 모두 경고선 아래라 반도체 종목은 보류 유지.'],
@@ -234,12 +246,12 @@ function mount(opt) {
       '<div class="twrap"><table><thead><tr><th class="l">종목</th><th>수량</th><th>평단</th><th>종가</th><th>수익률</th><th>+20%선</th><th>+40%선</th><th>본전선</th><th>고점−15%<br><span class="rsub">(진입 후 고가)</span></th><th>적용 매도선</th><th>여유</th><th>10일선</th><th>20일선</th><th>판단</th><th></th></tr></thead>' +
       '<tbody id="rHoldBody"><tr><td colspan="15" class="empty">불러오는 중…</td></tr></tbody></table></div>' +
       '<p class="muted" style="font-size:12.5px;margin-top:8px">판단: <span class="rtag sell">매도</span> 종가가 적용 매도선 아래 · <span class="rtag part">분할</span> +20% 또는 +40% 통과(다음 날 실행) · <span class="rtag near">주의</span> 매도선까지 5% 이내 · <span class="rtag hold">보유</span> 그 외. ' +
-      '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 <b>진입일 이후 수정 고가(장중 고가)</b>의 최고가(진입일은 체결내역의 첫 매수일, 없으면 설정값·최근 60거래일). 적용 매도선: 고점이 평단 +10%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 비중(R)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장.</p>' +
-      '<div class="ctl" style="margin-top:8px"><input type="text" id="rName" placeholder="종목명 (체결내역에 없는 종목 추가)"><input type="text" id="rCost" placeholder="평단" inputmode="numeric"><input type="text" id="rR" placeholder="R" inputmode="decimal" style="min-width:60px"><input type="text" id="rStop" placeholder="초기 손절가" inputmode="numeric"><button class="btn sub" id="rAdd">추가 / 수정</button><button class="btn sub" id="rReset">설정 초기화</button></div>' +
+      '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 <b>진입일 이후 수정 고가(장중 고가)</b>의 최고가(진입일은 체결내역의 첫 매수일, 없으면 설정값·최근 60거래일). 적용 매도선: 고점이 평단 +10%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 수량(체결내역이 없을 때)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장. <b>위험 R</b> = 수량 × (평단 − 적용 매도선) ÷ 1R(계좌의 1%), 매도선이 평단 이상이면 0R.</p>' +
+      '<div class="ctl" style="margin-top:8px"><input type="text" id="rName" placeholder="종목명 (체결내역에 없는 종목 추가)"><input type="text" id="rCost" placeholder="평단" inputmode="numeric"><input type="text" id="rR" placeholder="수량" inputmode="numeric" style="min-width:60px"><input type="text" id="rStop" placeholder="초기 손절가" inputmode="numeric"><button class="btn sub" id="rAdd">추가 / 수정</button><button class="btn sub" id="rReset">설정 초기화</button></div>' +
       '</div>';
 
     h += '<div class="card"><h2>👀 관심 종목 <span class="cnt">매수 대기 · 피벗을 종가로 넘으면 다음 날 진입</span></h2>' +
-      '<div class="twrap"><table><thead><tr><th class="l">종목</th><th class="l">패턴</th><th>종가</th><th>피벗</th><th>피벗까지</th><th>손절선</th><th>손절선까지</th><th>비중</th><th>판단</th><th class="l">메모</th></tr></thead>' +
+      '<div class="twrap"><table><thead><tr><th class="l">종목</th><th class="l">패턴</th><th>종가</th><th>피벗</th><th>피벗까지</th><th>손절선</th><th>손절선까지</th><th>위험 · 수량</th><th>판단</th><th class="l">메모</th></tr></thead>' +
       '<tbody id="rWatchBody"><tr><td colspan="10" class="empty">불러오는 중…</td></tr></tbody></table></div>' +
       '<p class="muted" style="font-size:12.5px;margin-top:8px">판단: <span class="rtag part">매수 신호</span> 종가가 피벗 이상(다음 날 진입) · <span class="rtag near">근접</span> 피벗까지 3% 이내 · <span class="rtag sell">무효</span> 종가가 손절선 아래(패턴 깨짐) · <span class="rtag hold">대기</span> 그 외. 코스피가 7/30 저점(5,594)을 종가로 깨면 신규 매수는 모두 보류.</p></div>';
 
@@ -299,7 +311,7 @@ function mount(opt) {
     if (state.journalPos) Object.keys(state.journalPos).forEach(function (n) { if (!(meta[n] && meta[n].removed) && !(DEFAULT_HIDE[n] && !(meta[n] && meta[n].removed === false))) names[n] = 1; });
     return Object.keys(names).map(function (n) {
       var d = DEFAULT_META[n] || {}, m = meta[n] || {}, j = state.journalPos ? state.journalPos[n] : null;
-      return { name: n, cost: (j && j.avg) || m.cost || d.cost || 0, qty: j ? j.qty : null, soldFrac: j ? j.soldFrac : 0, fromJournal: !!j,
+      return { name: n, cost: (j && j.avg) || m.cost || d.cost || 0, qty: j ? j.qty : (m.qty || d.qty || null), soldFrac: j ? j.soldFrac : 0, fromJournal: !!j,
         since: (j && j.first) || m.since || d.since || null,
         r: m.r || d.r || 1, stop: m.stop || d.stop || 0, memo: (m.memo != null ? m.memo : d.memo) || '' };
     }).filter(function (h) { return h.cost > 0; });
@@ -309,17 +321,17 @@ function mount(opt) {
     var body = document.getElementById('rHoldBody'), sub = document.getElementById('rHoldSub');
     var H = holdings();
     if (!state.px) { body.innerHTML = '<tr><td colspan="15" class="empty">가격 데이터를 불러오지 못했습니다</td></tr>'; return; }
-    var totR = 0, h = '';
+    var totR = 0, totW = 0, h = '';
     H.forEach(function (x) {
       var a = state.px[x.name];
       var memo = x.memo || '';
       // 분할 진행: 체결내역의 매도 비율이 우선, 없으면 메모로 판단
       var sold20 = x.soldFrac >= 0.3 || /1\/3|20%/.test(memo), sold40 = x.soldFrac >= 0.55 || /절반|40%/.test(memo);
-      var remain = sold40 ? 1 / 3 : sold20 ? 2 / 3 : 1; totR += x.r * remain;
-      var label = '<b>' + esc(x.name) + '</b> <span class="rR">' + x.r + 'R</span>' + (x.since ? ' <span class="rsub">' + x.since.slice(5) + '~</span>' : '') + (x.fromJournal ? '' : ' <span class="rman" title="체결내역에 없어 기본 설정값 사용">설정값</span>') +
+      var remain = sold40 ? 1 / 3 : sold20 ? 2 / 3 : 1;
+      var label = '<b>' + esc(x.name) + '</b> <span class="rR">RISK</span>' + (x.since ? ' <span class="rsub">' + x.since.slice(5) + '~</span>' : '') + (x.fromJournal ? '' : ' <span class="rman" title="체결내역에 없어 기본 설정값 사용">설정값</span>') +
         (x.soldFrac > 0.05 ? '<br><span class="rsub">보유 중 ' + Math.round(x.soldFrac * 100) + '% 매도</span>' : '') + (memo ? '<br><span class="rsub">' + esc(memo) + '</span>' : '');
       var btns = '<td><button class="chip" data-set="' + esc(x.name) + '">설정</button> <button class="chip" data-del="' + esc(x.name) + '">숨김</button></td>';
-      if (!a || a.length < 20) { h += '<tr><td class="l">' + label + '</td><td>' + (x.qty || '–') + '</td><td>' + fmt(x.cost) + '</td><td colspan="11" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td>' + btns + '</tr>'; return; }
+      if (!a || a.length < 20) { h += '<tr><td class="l">' + label.replace('<span class="rR">RISK</span>', '') + '</td><td>' + (x.qty || '–') + '</td><td>' + fmt(x.cost) + '</td><td colspan="11" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td>' + btns + '</tr>'; return; }
       var c = a.map(function (p) { return p[1]; }), px = c[c.length - 1], ret = (px / x.cost - 1) * 100;
       // 고점: 수정 고가(ohlc) 기준. 진입일(since)을 알면 그 날 이후, 모르면 최근 60거래일. 고가 DB가 없는 종목은 종가
       var src = state.hi && state.hi[x.name] && state.hi[x.name].length ? state.hi[x.name] : a, peakSrc = (src === a) ? '종가' : '고가';
@@ -331,6 +343,9 @@ function mount(opt) {
       var line = armed ? Math.max(l15, be) : init, lineLbl = !armed ? '초기 손절' : (line === be ? '본전' : '고점−15%');
       var ma10 = c.slice(-10).reduce(function (s, v) { return s + v; }, 0) / 10, ma20 = c.slice(-20).reduce(function (s, v) { return s + v; }, 0) / 20;
       var room = (line / px - 1) * 100, tag, cls;
+      var rk = x.qty ? Math.max(0, x.qty * (x.cost - line)) / R_WON : null; // 열린 위험(R): 매도선이 평단 이상이면 0
+      if (rk != null) { totR += rk; totW += x.qty * px; }
+      label = label.replace('<span class="rR">RISK</span>', rk == null ? '<span class="rR">수량 미입력</span>' : '<span class="rR" title="수량 × (평단 − 적용 매도선) ÷ 1R(' + man(R_WON) + ')">위험 ' + rk.toFixed(2) + 'R</span>');
       if (px < line) { tag = '매도'; cls = 'sell'; }
       else if (ret >= 40 && !sold40) { tag = '+40% 분할'; cls = 'part'; }
       else if (ret >= 20 && !sold20) { tag = '+20% 분할'; cls = 'part'; }
@@ -343,19 +358,24 @@ function mount(opt) {
         '<td><span class="rtag ' + cls + '">' + tag + '</span></td>' + btns + '</tr>';
     });
     body.innerHTML = h || '<tr><td colspan="15" class="empty">보유 종목이 없습니다</td></tr>';
-    sub.textContent = state.last + ' 종가 기준 · ' + state.journalInfo + ' · ' + H.length + '종목 · 남은 비중 약 ' + totR.toFixed(1) + 'R' + (totR > 5 ? ' (기준 3~5R 초과)' : '');
+    sub.textContent = state.last + ' 종가 기준 · ' + state.journalInfo + ' · ' + H.length + '종목 · 투자금 ' + man(totW) + '(계좌 ' + (totW / ACCOUNT * 100).toFixed(0) + '%) · 열린 위험 ' + totR.toFixed(2) + 'R(' + man(totR * R_WON) + ') · 1R = 계좌 ' + man(ACCOUNT) + '의 1% = ' + man(R_WON) + ' · 위험 한도 ' + HEAT.map(function (x) { return x[0] + ' ' + x[1] + 'R'; }).join(' / ');
     body.querySelectorAll('[data-set]').forEach(function (b) { b.onclick = function () { editMeta(b.dataset.set); }; });
     body.querySelectorAll('[data-del]').forEach(function (b) { b.onclick = function () { var m = getMeta(); if (!confirm(b.dataset.del + ' 을(를) 표에서 숨길까요? (체결내역은 그대로)')) return; m[b.dataset.del] = Object.assign({}, m[b.dataset.del] || {}, { removed: true }); setMeta(m); renderHold(); }; });
   }
 
   function editMeta(name) {
     var m = getMeta(), cur = Object.assign({}, DEFAULT_META[name] || {}, m[name] || {});
-    var r = prompt(name + ' 비중 (R)', cur.r || 1); if (r === null) return;
+    var qty = prompt(name + ' 보유 수량 (체결내역이 있으면 비워도 됨)', cur.qty || ''); if (qty === null) return;
     var stop = prompt(name + ' 초기 손절가 (없으면 비움)', cur.stop || ''); if (stop === null) return;
     var since = prompt(name + ' 진입일 (YYYY-MM-DD, 체결내역이 있으면 비워도 됨)', cur.since || ''); if (since === null) return;
     var memo = prompt(name + ' 메모 (예: 1/3 매도, 절반 매도)', cur.memo || ''); if (memo === null) return;
-    m[name] = Object.assign({}, m[name] || {}, { r: Number(r) || 1, stop: Number(String(stop).replace(/[^0-9.]/g, '')) || 0, since: /^\d{4}-\d{2}-\d{2}$/.test(since.trim()) ? since.trim() : '', memo: memo.trim(), removed: false });
+    m[name] = Object.assign({}, m[name] || {}, { qty: Number(String(qty).replace(/[^0-9]/g, '')) || 0, stop: Number(String(stop).replace(/[^0-9.]/g, '')) || 0, since: /^\d{4}-\d{2}-\d{2}$/.test(since.trim()) ? since.trim() : '', memo: memo.trim(), removed: false });
     setMeta(m); renderHold();
+  }
+
+  function sizeTxt(w) { // 관심 종목: 위험 w.r(R)을 피벗 매수 기준 수량·금액으로
+    var z = sizeFor(w.r, w.pivot, w.stop);
+    return '<b>' + w.r + 'R</b><br><span class="rsub">' + fmt(z.q) + '주 · ' + man(z.won) + (z.cap ? ' (25% 상한)' : '') + '</span>';
   }
 
   function renderWatch() {
@@ -366,7 +386,7 @@ function mount(opt) {
       if (!a || !a.length) return '<tr><td class="l">' + esc(w.name) + '</td><td colspan="9" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td></tr>';
       var px = a[a.length - 1][1], d = a[a.length - 1][0], toP = (w.pivot / px - 1) * 100, toS = (px / w.stop - 1) * 100;
       var tag = px < w.stop ? '<span class="rtag sell">무효</span>' : px >= w.pivot ? '<span class="rtag part">매수 신호</span>' : toP <= 3 ? '<span class="rtag near">근접</span>' : '<span class="rtag hold">대기</span>';
-      return '<tr><td class="l">' + esc(w.name) + '</td><td class="l">' + esc(w.pattern) + '</td><td>' + fmt(px) + '<br><span class="rsub">' + d.slice(5) + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + pct(toP) + '</td><td>' + fmt(w.stop) + '</td><td>' + pct(toS) + '</td><td>' + w.r + 'R<br><span class="rsub">계산 ' + Math.min(2, 0.07 / ((w.pivot - w.stop) / w.pivot)).toFixed(1) + 'R</span></td><td>' + tag + '</td><td class="l" style="font-size:12.5px">' + esc(w.memo) + '</td></tr>';
+      return '<tr><td class="l">' + esc(w.name) + '</td><td class="l">' + esc(w.pattern) + '</td><td>' + fmt(px) + '<br><span class="rsub">' + d.slice(5) + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + pct(toP) + '</td><td>' + fmt(w.stop) + '</td><td>' + pct(toS) + '</td><td>' + sizeTxt(w) + '</td><td>' + tag + '</td><td class="l" style="font-size:12.5px">' + esc(w.memo) + '</td></tr>';
     }).join('');
   }
 
@@ -401,11 +421,11 @@ function mount(opt) {
       '<p class="muted wleg" style="margin-top:8px"><span class="w-buy">매수 범위</span>종가가 피벗 이상이고 추격 한도(피벗 +5%) 안 · <span class="w-near">근접</span>피벗까지 3% 이내 · <span class="w-over">한도 초과</span>피벗 +5% 넘음(눌림 대기) · <span class="w-dead">무효</span>종가가 손절 기준 아래 · 흐린 칸은 등록 전</p>' +
       '<p class="muted" style="font-size:12.5px;margin-top:4px">색은 종가 위치만 보여준다. 실제 매수는 <b>시장 팔로스루</b>와 종목 메모의 조건(반도체 경고, 눌림 대기 등)을 함께 확인한다.</p></div>';
     // ① 종목 × 날짜 표
-    h += '<div class="card"><h2>📅 종목별 일별 종가 <span class="cnt">칸 = 종가 · 전일 대비 · 피벗 대비</span></h2><div class="twrap"><table><thead><tr><th class="l wn">종목</th><th>피벗</th><th>손절</th><th>비중</th>' +
+    h += '<div class="card"><h2>📅 종목별 일별 종가 <span class="cnt">칸 = 종가 · 전일 대비 · 피벗 대비</span></h2><div class="twrap"><table><thead><tr><th class="l wn">종목</th><th>피벗</th><th>손절</th><th>위험 · 수량</th>' +
       days.map(function (d) { return '<th>' + d.slice(5) + '</th>'; }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
       var w = r.w;
-      h += '<tr><td class="l wn"><b>' + esc(w.name) + '</b><br><span class="rsub">' + (w.since ? w.since.slice(5) + ' 등록' : '') + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + fmt(w.stop) + '</td><td>' + w.r + 'R</td>';
+      h += '<tr><td class="l wn"><b>' + esc(w.name) + '</b><br><span class="rsub">' + (w.since ? w.since.slice(5) + ' 등록' : '') + '</span></td><td>' + fmt(w.pivot) + '</td><td>' + fmt(w.stop) + '</td><td>' + sizeTxt(w) + '</td>';
       if (!r.has) { h += '<td colspan="' + days.length + '" style="text-align:left;color:#9099a6">가격 DB에 없는 종목명</td></tr>'; return; }
       days.forEach(function (d) {
         var px = r.m[d]; if (!px) { h += '<td class="wc">–</td>'; return; }
@@ -462,9 +482,9 @@ function mount(opt) {
   function wire() {
     document.getElementById('rAdd').onclick = function () {
       var name = document.getElementById('rName').value.trim(), cost = Number(document.getElementById('rCost').value.replace(/[^0-9.]/g, ''));
-      var r = Number(document.getElementById('rR').value) || 0, stop = Number(document.getElementById('rStop').value.replace(/[^0-9.]/g, '')) || 0;
+      var qty = Number(document.getElementById('rR').value.replace(/[^0-9]/g, '')) || 0, stop = Number(document.getElementById('rStop').value.replace(/[^0-9.]/g, '')) || 0;
       if (!name || !(cost > 0)) { alert('종목명과 평단을 입력하세요'); return; }
-      var m = getMeta(); m[name] = Object.assign({}, m[name] || {}, { cost: cost, r: r || (m[name] && m[name].r) || (DEFAULT_META[name] || {}).r || 1, stop: stop || (m[name] && m[name].stop) || 0, removed: false });
+      var m = getMeta(); m[name] = Object.assign({}, m[name] || {}, { cost: cost, qty: qty || (m[name] && m[name].qty) || (DEFAULT_META[name] || {}).qty || 0, stop: stop || (m[name] && m[name].stop) || 0, removed: false });
       setMeta(m); ['rName', 'rCost', 'rR', 'rStop'].forEach(function (id) { document.getElementById(id).value = ''; }); renderHold();
     };
     document.getElementById('rReset').onclick = function () { if (!confirm('이 브라우저에 저장한 비중·손절가·메모·숨김 설정을 모두 지우고 기본값으로 되돌릴까요?')) return; setMeta({}); renderHold(); };
