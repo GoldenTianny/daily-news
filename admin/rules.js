@@ -44,6 +44,14 @@ var DEFAULT_HIDE = { 'KODEX 구리': '2026-10-06 전량 매도', '가온전선':
 
 /* ---------- 관심 종목 (매수 대기) ----------
  * 피벗 = 종가로 넘으면 다음 날 진입하는 가격, stop = 진입 후 손절선(손잡이 저점 등). 포트 점검 때 함께 확인. */
+/* R 매매일지 — 2026-11-17부터. 1R = 계좌의 1%(ACCOUNT 기준).
+ * 매수: d 날짜, qty 수량, px 평단, stop 손절, target 목표가(없으면 0) → 계획 위험·기대 R배수는 자동 계산
+ * 청산: out [날짜, 가격] — 일부 매도는 sells [[날짜, 수량, 가격], ...] (마지막 남은 수량은 out 가격)
+ * why: 진입 근거 / lesson: 청산 뒤 한 줄 복기 */
+var TRADE_LOG = [
+  { name: '삼성E&A', d: '2026-11-04', qty: 20, px: 65500, stop: 59500, target: 0, why: '첫 10일선 눌림 후 52주 고점 65,500 종가 마감 · 동시호가 · 새 R 기준 이전 진입(기록 시작 시점 보유분)', sells: [], out: null, lesson: '' }
+];
+
 var WATCH = [
   { name: '나노신소재',      pattern: 'RS 0선 돌파 + 박스 돌파', pivot: 66200, stop: 58000, r: 0.5, target: 95300, tnote: '52주 고점(위 매물)', since: '2026-11-02', memo: '1순위 · 2차전지 소재(CNT 도전재)·반도체용 나노 소재 · 11/2 67,800(+11%)으로 6주 박스 상단 66,200을 거래량 급증하며 종가 돌파 = 신호 발생 · 와인스타인 RS 0선 상향 돌파(10/30), RS 94, 템플릿 6/8(52주 고점 88,800 대비 −24%) · 이익: 작년 47억 → 올해 183억 → 내년 302억 · 11/2은 비중 한도(2R)로 매수 못 함 → 여유 생기면 다음 날 14시 이후 추격 한도 69,500 안, 아니면 첫 10일선(11/2 약 59,500) 눌림 반등 대기 · 손절 58,000(20일선·10/30 저점 아래, 약 −14%)' },
   { name: '셀트리온',        pattern: '새 팔로스루 대기 (신고가 영역 돌파)', pivot: 216000, stop: 187500, r: 0.5, target: 239000, tnote: '2월 사상 최고가(위 매물)', since: '2026-11-05', memo: '사용자 관심 · 바이오시밀러 · 이익: 영업이익 2025 1.17조(+137%) → 2026E 1.90조(+63%) → 2027E 2.38조(+25%), 연초 대비 전망 2026 +17%·2027 +26% 상향, 목표주가 평균 287,000 · 11/5 시장 −5.3%에도 +7% 214,000으로 10월 고점 203,500·8월 고점 212,000 돌파 = 하락장 속 신고가 영역(장중 216,000) · 11/5 코스피 5,384로 팔로스루 실패 → 신규 매수 중단이라 보냄 · 진입 조건 = ① 새 팔로스루(새 저점 이후 반등 4일째 이후 코스피 +1.5% 이상 + 거래대금 증가) 확인 후 ② 15:20에 216,000(11/5 고가) 위 종가(추격 한도 226,800) 또는 첫 10일선 눌림 반등 종가 ③ RS 80 이상 · 비중 0.5R(손절 폭에 따라 0.07R ÷ 손절 폭) · 손절 187,500(잠정, 진입 시 직전 눌림 저점 아래로 재설정)' },
@@ -124,6 +132,7 @@ var DONTS = [
 
 /* 변경 이력 — 대화에서 원칙이 바뀌거나 추가될 때마다 위에 한 줄씩 쌓습니다. */
 var CHANGELOG = [
+  ['2026-11-17', 'R 매매일지 시작 — 매수마다 계획 위험(R)·기대 R배수·근거를 남기고, 청산하면 결과 R·계획 대비 배수·복기 한 줄을 남긴다. 기대 R배수 3배 이상과 미만의 성적, 손실이 계획 위험의 몇 배로 끝났는지를 자동 집계. 첫 기록은 보유 중인 삼성E&A(20주 65,500, 손절 59,500, 위험 0.22R).'],
   ['2026-11-17', '관심 종목에 목표가·기대 R배수 추가 — 기대 R배수 = (목표가 − 피벗) ÷ (피벗 − 손절), 1을 걸고 몇을 버는지. 3배 이상을 우선 후보로, 관심 표는 기대 R배수 순 정렬. 목표가는 피벗 위 10% 안에 옛 고점이 없으면 박스 높이만큼 위(측정 이동), 있으면 그 고점(위 매물). 손절·수량은 자동 계산, 종목 선택은 상승여력 큰 순.'],
   ['2026-11-17', 'R 정의 변경 — 1R = 매수 금액 500만 원 → <b>계좌의 1%(5,450만 원 기준 54.5만 원) = 틀렸을 때 잃는 돈</b>. 포지션 위험 = 수량 × (평단 − 적용 매도선), 매도선이 평단 이상이면 0R. 보유 표는 수량으로 위험 R·투자금·열린 위험 합계를 자동 계산하고, 관심 표는 위험 R을 피벗 기준 매수 수량·금액으로 보여줌(한 종목 금액 상한 계좌의 25%). 한도는 단계 조건은 그대로 두고 단위만 바꿈: 팔로스루 직후 열린 위험 2R(종목당 0.5R) → 1단계 4R(종목당 1R) → 2단계 6R. 옛 기준 성적(10/1~11/17, 21건): 4승 17패, 확정 −238만 원 = 새 기준 −4.4R(계좌 −4.1%, 같은 기간 코스피 −26.7%), 평균 이익 +1.3R · 평균 손실 −0.55R. 계획보다 실제 손실이 30~50% 커서 손절 폭 8% 초과 자리는 피하거나 위험을 줄이기로 함.'],
   ['2026-11-16', '관심 종목에서 뉴파워프라즈마(11,710 < 12,800)·마이크로컨텍솔(45,000 < 46,000) 제외 — 종가가 관심 손절 기준 아래. 코스피 5,100(−3.6%, 거래대금 약 15.8조)로 나흘째 하락, 반등 시도 5일째에도 팔로스루 없음(11/6 저점 4,911까지 −3.7%). 삼성전자 196,800·SK하이닉스 1,120,000으로 반도체 경고 유지, 반도체 관심 종목 하루 −9~−18%. 화장품(펌텍코리아 +4.2%·코스맥스 +1.6%)과 삼성E&A(−0.6%)는 하락장에서 버팀. 엑시콘(55,800)·아스플로(32,400)·티에프이(82,600)는 손절 기준 근처.'],
@@ -250,6 +259,8 @@ function mount(opt) {
       '평단·수량·매도 비율은 <b>매매 복기에 저장된 체결내역</b>에서 자동 계산(체결내역에 없는 종목은 기본 설정값). 고점은 <b>진입일 이후 수정 고가(장중 고가)</b>의 최고가(진입일은 체결내역의 첫 매수일, 없으면 설정값·최근 60거래일). 적용 매도선: 고점이 평단 +10%를 넘긴 뒤에는 본전선과 고점 −15% 중 높은 쪽, 그 전에는 초기 손절가(없으면 −7%). 수량(체결내역이 없을 때)·초기 손절가·메모는 "설정" 버튼으로 이 브라우저에 저장. <b>위험 R</b> = 수량 × (평단 − 적용 매도선) ÷ 1R(계좌의 1%), 매도선이 평단 이상이면 0R.</p>' +
       '<div class="ctl" style="margin-top:8px"><input type="text" id="rName" placeholder="종목명 (체결내역에 없는 종목 추가)"><input type="text" id="rCost" placeholder="평단" inputmode="numeric"><input type="text" id="rR" placeholder="수량" inputmode="numeric" style="min-width:60px"><input type="text" id="rStop" placeholder="초기 손절가" inputmode="numeric"><button class="btn sub" id="rAdd">추가 / 수정</button><button class="btn sub" id="rReset">설정 초기화</button></div>' +
       '</div>';
+
+    h += tradeLogHtml();
 
     h += '<div class="card"><h2>👀 관심 종목 <span class="cnt">매수 대기 · 피벗을 종가로 넘으면 다음 날 진입</span></h2>' +
       '<div class="twrap"><table><thead><tr><th class="l">종목</th><th class="l">패턴</th><th>종가</th><th>피벗</th><th>피벗까지</th><th>손절선</th><th>손절선까지</th><th>기대 R배수<br><span class="rsub">목표</span></th><th>위험 · 수량</th><th>판단</th><th class="l">메모</th></tr></thead>' +
@@ -383,6 +394,36 @@ function mount(opt) {
   function upTxt(w) {
     var u = upR(w); if (u == null) return '–';
     return '<b class="' + (u >= 3 ? 'jup' : u < 1.5 ? 'rwarn' : '') + '">' + u.toFixed(1) + '배</b><br><span class="rsub" title="' + esc(w.tnote || '') + '">목표 ' + fmt(w.target) + ' (' + pct((w.target / w.pivot - 1) * 100, 0) + ')</span>';
+  }
+
+  function tradeLogHtml() { // R 매매일지: 계획 위험·기대 R배수·결과 R, 기대 R배수 3배 기준 성적 비교
+    var rows = '', done = [], open = 0;
+    TRADE_LOG.forEach(function (t) {
+      var risk = t.qty * (t.px - t.stop), planR = risk / R_WON, expR = t.target > t.px ? (t.target - t.px) / (t.px - t.stop) : null;
+      var pnl = 0, left = t.qty, sold = (t.sells || []).map(function (x) { left -= x[1]; pnl += x[1] * (x[2] - t.px); return x[0].slice(5) + ' ' + fmt(x[1]) + '주 ' + fmt(x[2]); });
+      var closed = !!t.out; if (closed) { pnl += left * (t.out[1] - t.px); sold.push(t.out[0].slice(5) + ' ' + fmt(left) + '주 ' + fmt(t.out[1])); } else open++;
+      var resR = pnl / R_WON, mult = risk > 0 ? pnl / risk : null;
+      if (closed) done.push({ r: resR, m: mult, e: expR, p: planR });
+      rows += '<tr><td class="l"><b>' + esc(t.name) + '</b><br><span class="rsub">' + t.d.slice(5) + ' · ' + fmt(t.qty) + '주 ' + fmt(t.px) + '</span></td><td>' + fmt(t.stop) + '<br><span class="rsub">' + pct((t.stop / t.px - 1) * 100) + '</span></td>' +
+        '<td>' + planR.toFixed(2) + 'R<br><span class="rsub">' + man(risk) + '</span></td><td>' + (expR != null ? expR.toFixed(1) + '배<br><span class="rsub">목표 ' + fmt(t.target) + '</span>' : '–') + '</td>' +
+        '<td class="l" style="font-size:12.5px">' + (sold.length ? esc(sold.join(' · ')) : '<span class="rtag hold">보유 중</span>') + '</td>' +
+        '<td class="' + (pnl >= 0 ? 'jup' : 'jdn') + '">' + (sold.length ? (resR >= 0 ? '+' : '') + resR.toFixed(2) + 'R<br><span class="rsub">' + man(pnl) + (mult != null ? ' · 계획의 ' + mult.toFixed(1) + '배' : '') + '</span>' : '–') + '</td>' +
+        '<td class="l" style="font-size:12.5px">' + esc(t.why || '') + (t.lesson ? '<br><b>복기:</b> ' + esc(t.lesson) : '') + '</td></tr>';
+    });
+    function stat(a) {
+      if (!a.length) return '–';
+      var w = a.filter(function (x) { return x.r > 0; }), l = a.filter(function (x) { return x.r <= 0; }), sum = a.reduce(function (s, x) { return s + x.r; }, 0);
+      var aw = w.length ? w.reduce(function (s, x) { return s + x.r; }, 0) / w.length : 0, al = l.length ? l.reduce(function (s, x) { return s + x.r; }, 0) / l.length : 0;
+      return a.length + '건 · 승률 ' + Math.round(w.length / a.length * 100) + '% · 합계 ' + (sum >= 0 ? '+' : '') + sum.toFixed(2) + 'R · 평균 이익 +' + aw.toFixed(2) + 'R / 평균 손실 ' + al.toFixed(2) + 'R · 거래당 ' + (sum / a.length >= 0 ? '+' : '') + (sum / a.length).toFixed(2) + 'R';
+    }
+    var lossM = done.filter(function (x) { return x.r < 0 && x.m != null; }), over = lossM.length ? lossM.reduce(function (s, x) { return s - x.m; }, 0) / lossM.length : null;
+    return '<div class="card"><h2>📒 R 매매일지 <span class="cnt">11/17부터 · 청산 ' + done.length + '건 · 보유 ' + open + '건 · 1R = ' + man(R_WON) + '</span></h2>' +
+      '<div class="twrap"><table><thead><tr><th class="l">종목 · 진입</th><th>손절</th><th>계획 위험</th><th>기대 R배수</th><th class="l">청산</th><th>결과</th><th class="l">근거 · 복기</th></tr></thead><tbody>' + (rows || '<tr><td colspan="7" class="empty">기록 없음</td></tr>') + '</tbody></table></div>' +
+      '<ul class="jul" style="margin-top:8px;font-size:13px"><li><b>전체</b>: ' + stat(done) + '</li>' +
+      '<li><b>기대 R배수 3배 이상</b>: ' + stat(done.filter(function (x) { return x.e != null && x.e >= 3; })) + '</li>' +
+      '<li><b>기대 R배수 3배 미만·목표 없음</b>: ' + stat(done.filter(function (x) { return x.e == null || x.e < 3; })) + '</li>' +
+      '<li><b>손절 크기</b>: ' + (over != null ? '손실 거래는 평균 계획 위험의 ' + over.toFixed(1) + '배로 끝남 (1.0배가 계획대로, 1.3배 이상이면 갭·종가 원칙 점검)' : '–') + '</li></ul>' +
+      '<p class="muted" style="font-size:12.5px">계획 위험 = 수량 × (평단 − 손절) ÷ 1R · 기대 R배수 = (목표 − 평단) ÷ (평단 − 손절) · 결과 R = 실현 손익 ÷ 1R · "계획의 N배" = 실현 손익 ÷ 계획 위험. 20~30건이 쌓이면 기대 R배수 기준이 실제로 성적을 가르는지 확인한다.</p></div>';
   }
 
   function renderWatch() {
