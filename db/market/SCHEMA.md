@@ -215,6 +215,30 @@
   JOIN 'db/market/mcap/*.parquet'  m USING (date, code)
   ```
 
+## db/market/flow/ — 투자자별 순매수대금 시계열
+
+원본은 HTS Peer Analysis 배열의 `<투자자> 순매수대금(일간)` 시트(투자자 1종류당 파일 1개, 2023-12-28~ 전체 이력, 주식·ETF 포함)와, 일일 파일 스냅샷 시트에 같은 항목 열(Period `CPD`/`CPD-n`)이 있으면 그 기준일 1일치. `tools/market/build_flow.py`가 항목명으로 투자자를 판별해 적재 (ingest_daily.py — 일일 파일은 5단계, 열이 없으면 건너뜀). **월별** 파일 `YYYY-MM.parquet`.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` | DATE | 거래일 |
+| `code` / `name` | VARCHAR | 종목코드 / 종목명 |
+| `retail` | DOUBLE | 개인 |
+| `frgn` | DOUBLE | 외국인총합계 (`foreign`은 SQL 예약어라 `frgn`) |
+| `inst` | DOUBLE | 기관계 |
+| `fin_inv` / `insurance` / `trust` / `pe` / `bank` / `other_fin` / `pension` / `govt` | DOUBLE | 금융투자 / 보험 / 투신 / 사모펀드 / 은행 / 기타금융 / 연기금 / 국가지자체 |
+| `corp` | DOUBLE | 기타법인 |
+
+- 값 = 일간 순매수대금(매수−매도), **원** 단위 (원본 백만원 × 10⁶). 0은 그대로 저장(거래 없음과 구분 없음)
+- **열 단위 병합**: 원본에 든 투자자 열만 (date, code) 기준으로 교체하고 나머지 투자자 열은 유지 — 투자자별로 나눠 올려도 됨. 아직 안 올린 투자자 열은 NULL
+- 현재 적재: 개인·외국인·금융투자·보험·사모펀드·은행·연기금 (2023-12-28 ~ 2026-11-18). 기관계·투신·기타금융·국가지자체·기타법인은 미적재(NULL)
+- 용도: 외국인·기관 연속 순매수 추적, 누적 순매수/시총(수급 강도), 개인 역지표, 수급 동반 돌파 백테스트
+  ```sql
+  SELECT f.date, f.code, f.frgn, sum(f.frgn) OVER w / m.mcap AS 외인20일순매수_시총비
+  FROM 'db/market/flow/*.parquet' f JOIN 'db/market/mcap/*.parquet' m USING (date, code)
+  WINDOW w AS (PARTITION BY f.code ORDER BY f.date ROWS 19 PRECEDING)
+  ```
+
 ## db/market/index/ — 시장지수 (코스피·코스닥)
 
 원본은 HTS Time Series (Sector) 형식의 코스피·코스닥 시트 — 단독 파일 `kospi_kosdaq.xlsx`(전체 이력)이든 일일 파일 `ETF_price_concensus_*.xlsx`에 추가된 시트든 시트명과 무관하게 Code 행의 지수 코드로 자동 인식 (ingest_daily.py 3단계). `python3 tools/market/build_index.py <원본.xlsx>` 로 단독 실행도 가능. **연도별** 파일 `YYYY.parquet`.
