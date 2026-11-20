@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
-import refresh_prices, build_halt, build_ohlc, build_value, build_vcp, build_semi_cycle, build_mrs, build_screen
+import refresh_prices, build_halt, build_ohlc, build_value, build_flow, build_vcp, build_semi_cycle, build_mrs, build_screen
 
 
 def detect_date(xlsx_path):
@@ -84,7 +84,8 @@ def main():
         print('== 완료')
         return
     # Peer Analysis 배열 파일: 수정주가 전체 이력 시트(가격 DB 전면 갱신 + 종목명 정정)와
-    # 거래정지 시계열 시트(halt DB), 수정 시가·고가·저가 시트(OHLC DB), 거래대금·시가총액·유동시가총액 시트(value·mcap·ffmcap DB)를
+    # 거래정지 시계열 시트(halt DB), 수정 시가·고가·저가 시트(OHLC DB), 거래대금·시가총액·유동시가총액 시트(value·mcap·ffmcap DB),
+    # 투자자별 순매수대금 시트(flow DB)를
     # 시트 구조로 각각 인식.
     # 30MB 제한으로 항목이 여러 파일에 나뉘면 함께 넘긴다 (OHLC는 파일 간 필드 병합).
     # 가격이 실제로 바뀐 경우에만 파생 재계산
@@ -93,7 +94,8 @@ def main():
         halt_files = [f for f in files if build_halt.is_halt_file(f)]
         ohlc_files = [f for f in files if build_ohlc.is_ohlc_file(f)]
         value_files = [f for f in files if build_value.is_value_file(f)]
-        if price_files or halt_files or ohlc_files or value_files:
+        flow_files = [f for f in files if build_flow.is_flow_file(f)]
+        if price_files or halt_files or ohlc_files or value_files or flow_files:
             print(f"== Peer Analysis 파일 · {', '.join(os.path.basename(f) for f in files)}")
             changed = False
             for f in price_files:
@@ -105,6 +107,9 @@ def main():
             for f in value_files:
                 print(f'[거래대금·시가총액·유동시총 시계열] {os.path.basename(f)}')
                 build_value.build(f)
+            if flow_files:
+                print('[투자자별 순매수대금]')
+                build_flow.build(flow_files)
             if ohlc_files:
                 print('[수정 시가·고가·저가]')
                 changed = bool(build_ohlc.build(ohlc_files)) or changed
@@ -151,10 +156,11 @@ def main():
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[5/14] 거래정지 여부 · 거래대금 · 시가총액 · 유동시총')
+    print('[5/14] 거래정지 여부 · 거래대금 · 시가총액 · 유동시총 · 투자자 순매수')
     if snap:
         build_halt.build_snapshot(xlsx, date_key)
         build_value.build_snapshot(xlsx, date_key)   # 거래대금·시가총액·유동시총 열이 있을 때만
+        build_flow.build_snapshot(xlsx, date_key)    # 투자자별 순매수대금 열이 있을 때만
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
     print('[6/14] 영업이익 컨센서스')
