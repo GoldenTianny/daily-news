@@ -91,8 +91,11 @@ def parse(wb, sn, item, cpd_date=None):
 
 
 def parse_snapshot(wb, item, date_key):
-    """일일 스냅샷 시트의 item 열(Period 'CPD'/'CPD-n') -> 기준일 1일치. 열이 없으면 빈 DataFrame"""
+    """일일 스냅샷 시트들의 item 열(Period 'CPD'/'CPD-n') -> 기준일 1일치. 열이 없으면 빈 DataFrame.
+    'ETF price'(ETF)와 '수정주가, 목표주가'(주식)처럼 여러 시트에 있으면 모두 합친다"""
     COLS = cols(SPECS[item][0])
+    d = datetime.date.fromisoformat(date_key)
+    out = []
     for ws in wb.worksheets:
         rows = list(ws.iter_rows(values_only=True))
         hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:16]) if r and r[1]}
@@ -105,15 +108,13 @@ def parse_snapshot(wb, item, date_key):
                     and re.fullmatch(r'CPD(-\d+)?', str(period[c] or '').strip())), None)
         if col is None:
             continue
-        d = datetime.date.fromisoformat(date_key)
-        out = []
         for r in rows[code_hdr + 1:]:
             code = str(r[0] or '').strip()
             v = r[col] if col < len(r) else None
             if code.startswith('A') and isinstance(v, numbers.Number) and v > 0:
                 out.append((d, code, clean_name(r[1]), float(v)))
-        return pd.DataFrame(out, columns=COLS)
-    return pd.DataFrame(columns=COLS)
+    df = pd.DataFrame(out, columns=COLS)
+    return df.drop_duplicates(['date', 'code'], keep='last')
 
 
 def norm(d, col):

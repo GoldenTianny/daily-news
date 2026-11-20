@@ -184,7 +184,7 @@ def parse_snapshot(xlsx_path, date_key):
     """일일 스냅샷 시트의 '<투자자> 순매수대금(일간)' 열(Period 'CPD'/'CPD-n') -> 기준일 1일치"""
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
     d = datetime.date.fromisoformat(date_key)
-    frames = []
+    by_col = {}                      # 열 이름 -> [DataFrame] (같은 투자자 열이 여러 시트에 있으면 이어 붙임)
     for ws in wb.worksheets:
         rows = list(ws.iter_rows(values_only=True))
         hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:16]) if r and r[1]}
@@ -199,7 +199,8 @@ def parse_snapshot(xlsx_path, date_key):
             out = [(d, str(r[0]).strip(), clean_name(r[1]), float(r[c]) * UNIT)
                    for r in rows[code_hdr + 1:]
                    if str(r[0] or '').strip().startswith('A') and c < len(r) and isinstance(r[c], numbers.Number)]
-            frames.append(pd.DataFrame(out, columns=KEYS + ['name', col]))
+            by_col.setdefault(col, []).append(pd.DataFrame(out, columns=KEYS + ['name', col]))
+    frames = [pd.concat(fs).drop_duplicates(KEYS, keep='last') for fs in by_col.values()]
     return merge_frames(frames) if frames else None
 
 
