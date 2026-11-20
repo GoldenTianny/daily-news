@@ -7,7 +7,7 @@
 - 기준일은 'ETF raw' 시트의 Date 셀(CPD [YYYYMMDD] / CPD-1TD [YYYYMMDD])에서 자동 인식
   (인식 실패 시 두 번째 인자로 YYYY-MM-DD 직접 지정)
 - 실행 순서: build_data(ETF 보유내역) -> build_market(수정주가·컨센서스)
-  -> build_index(코스피·코스닥 지수, 시트가 있을 때) -> build_halt.build_snapshot(거래정지 여부, 열이 있을 때)
+  -> build_index(코스피·코스닥 지수, 시트가 있을 때) -> build_halt/build_value.build_snapshot(거래정지 여부·거래대금, 열이 있을 때)
   -> build_earnings.build_daily(영업이익 컨센서스) -> build_rs(RS 등급) -> build_mrs(와인스타인 RS)
   -> build_high52(52주 신고가 돌파 분석, 스터디) -> build_etf_movers(편입 비중 증가 TOP 10 검증, 스터디)
   -> build_semi_cycle(반도체 병목 업종 과열 계기판, 스터디)
@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
-import refresh_prices, build_halt, build_ohlc, build_vcp, build_semi_cycle, build_mrs, build_screen
+import refresh_prices, build_halt, build_ohlc, build_value, build_vcp, build_semi_cycle, build_mrs, build_screen
 
 
 def detect_date(xlsx_path):
@@ -84,14 +84,16 @@ def main():
         print('== 완료')
         return
     # Peer Analysis 배열 파일: 수정주가 전체 이력 시트(가격 DB 전면 갱신 + 종목명 정정)와
-    # 거래정지 시계열 시트(halt DB), 수정 시가·고가·저가 시트(OHLC DB)를 시트 구조로 각각 인식.
+    # 거래정지 시계열 시트(halt DB), 수정 시가·고가·저가 시트(OHLC DB), 거래대금 시트(value DB)를
+    # 시트 구조로 각각 인식.
     # 30MB 제한으로 항목이 여러 파일에 나뉘면 함께 넘긴다 (OHLC는 파일 간 필드 병합).
     # 가격이 실제로 바뀐 경우에만 파생 재계산
     if all('ETF raw' not in all_sheets[f] for f in files):
         price_files = [f for f in files if refresh_prices.is_price_history_file(f)]
         halt_files = [f for f in files if build_halt.is_halt_file(f)]
         ohlc_files = [f for f in files if build_ohlc.is_ohlc_file(f)]
-        if price_files or halt_files or ohlc_files:
+        value_files = [f for f in files if build_value.is_value_file(f)]
+        if price_files or halt_files or ohlc_files or value_files:
             print(f"== Peer Analysis 파일 · {', '.join(os.path.basename(f) for f in files)}")
             changed = False
             for f in price_files:
@@ -100,6 +102,9 @@ def main():
             for f in halt_files:
                 print(f'[거래정지 시계열] {os.path.basename(f)}')
                 build_halt.build(f)
+            for f in value_files:
+                print(f'[거래대금 시계열] {os.path.basename(f)}')
+                build_value.build(f)
             if ohlc_files:
                 print('[수정 시가·고가·저가]')
                 changed = bool(build_ohlc.build(ohlc_files)) or changed
@@ -146,9 +151,10 @@ def main():
         build_index.build(xlsx)
     else:
         print('SKIP: 지수 시트 없음')
-    print('[5/14] 거래정지 여부')
+    print('[5/14] 거래정지 여부 · 거래대금')
     if snap:
         build_halt.build_snapshot(xlsx, date_key)
+        build_value.build_snapshot(xlsx, date_key)   # 거래대금 열이 있을 때만
     else:
         print('SKIP: 스냅샷 시트 없음 (구형 파일)')
     print('[6/14] 영업이익 컨센서스')

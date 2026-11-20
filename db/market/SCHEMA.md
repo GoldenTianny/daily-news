@@ -193,6 +193,24 @@
   LEFT JOIN 'db/market/halt/*.parquet' h USING (date, code) WHERE h.code IS NULL
   ```
 
+## db/market/value/ — 거래대금 시계열
+
+원본은 HTS Peer Analysis 배열의 `거래대금` 시트(2023-12-28~ 전체 이력, 주식·ETF 포함)와, 일일 파일 스냅샷 시트에 `거래대금` 열(Period `CPD`/`CPD-n`)이 있으면 그 기준일 1일치. `tools/market/build_value.py`가 시트명과 무관하게 항목명으로 인식해 적재 (ingest_daily.py — 일일 파일은 5단계, 열이 없으면 건너뜀). **월별** 파일 `YYYY-MM.parquet`.
+
+| 컬럼 | 타입 | 설명 |
+|---|---|---|
+| `date` | DATE | 거래일 |
+| `code` / `name` | VARCHAR | 종목코드 / 종목명 |
+| `value` | DOUBLE | 거래대금 (원) |
+
+- 값이 0 이하이거나 빈 칸은 저장하지 않음. `CPD-1TD` 같은 비날짜 열은 제외(받은 시각에 따라 가리키는 날짜가 달라짐)
+- 원본에 있는 (date, code)만 교체하는 upsert, 내용이 같은 달은 재기록하지 않음
+- 용도: 유동성 필터(예: 20일 평균 거래대금 하한), 거래대금 급증 탐지, 백테스트 체결 가능 규모 점검
+  ```sql
+  SELECT p.*, v.value FROM 'db/market/price/*.parquet' p
+  JOIN 'db/market/value/*.parquet' v USING (date, code)
+  ```
+
 ## db/market/index/ — 시장지수 (코스피·코스닥)
 
 원본은 HTS Time Series (Sector) 형식의 코스피·코스닥 시트 — 단독 파일 `kospi_kosdaq.xlsx`(전체 이력)이든 일일 파일 `ETF_price_concensus_*.xlsx`에 추가된 시트든 시트명과 무관하게 Code 행의 지수 코드로 자동 인식 (ingest_daily.py 3단계). `python3 tools/market/build_index.py <원본.xlsx>` 로 단독 실행도 가능. **연도별** 파일 `YYYY.parquet`.
