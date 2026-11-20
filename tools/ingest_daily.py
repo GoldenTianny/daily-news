@@ -106,7 +106,7 @@ def main():
                 build_halt.build(f)
             for f in value_files:
                 print(f'[거래대금·시가총액·유동시총 시계열] {os.path.basename(f)}')
-                build_value.build(f)
+                build_value.build(f, dates[0] if dates else None)   # 날짜 인자 = CPD 열의 날짜
             if flow_files:
                 print('[투자자별 순매수대금]')
                 build_flow.build(flow_files)

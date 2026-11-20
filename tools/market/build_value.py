@@ -6,6 +6,7 @@
   '거래대금' -> db/market/value/ (컬럼 value),  '시가총액' -> db/market/mcap/ (컬럼 mcap),
   '유동시가총액' -> db/market/ffmcap/ (컬럼 ffmcap, 최대주주 등 고정 보유분을 뺀 유통 물량 기준)
 'CPD-1TD' 같은 비날짜 열은 제외한다(받은 시각에 따라 가리키는 날짜가 달라 오인 위험).
+'CPD' 열은 기본 제외, 날짜를 지정하면(--cpd=YYYY-MM-DD) 그 날짜로 적재.
 
 일일 파일(ETF_price_concensus_*.xlsx)의 스냅샷 시트에 기준일 1일치 '거래대금'·'시가총액'·'유동시가총액' 열(Period 'CPD'/'CPD-n')이
 있으면 build_snapshot()으로 같은 DB에 병합한다 (ingest_daily, 열이 없으면 건너뜀).
@@ -17,7 +18,7 @@
 - 용도: 유동성 필터, 거래대금 급증 탐지, 시총 규모별 분류, 백테스트 체결 가능 규모 점검 등
     SELECT p.*, v.value FROM 'db/market/price/*.parquet' p
     JOIN 'db/market/value/*.parquet' v USING (date, code)
-실행: python3 tools/market/build_value.py <파일.xlsx> [...]   (ingest_daily.py가 시트 구조로 자동 인식)
+실행: python3 tools/market/build_value.py <파일.xlsx> [...] [--cpd=YYYY-MM-DD]   (ingest_daily.py가 시트 구조로 자동 인식)
 """
 import sys, os, re, glob, numbers, datetime
 import openpyxl
@@ -60,7 +61,7 @@ def is_value_file(xlsx_path):
     return bool(item_sheets(wb))
 
 
-def parse(wb, sn, item):
+def parse(wb, sn, item, cpd_date=None):
     col_name = SPECS[item][0]
     rows = list(wb[sn].iter_rows(values_only=True))
     hdr = {str(r[1] or '').strip(): i for i, r in enumerate(rows[:16]) if r and r[1]}
@@ -70,8 +71,12 @@ def parse(wb, sn, item):
     date_cols = []
     for c in range(3, len(period)):
         s = str(period[c] or '').strip()
-        if re.fullmatch(r'\d{8}', s) and str(item_row[c] or '').strip() == item:
+        if str(item_row[c] or '').strip() != item:
+            continue
+        if re.fullmatch(r'\d{8}', s):
             date_cols.append((c, datetime.date(int(s[:4]), int(s[4:6]), int(s[6:]))))
+        elif s == 'CPD' and cpd_date:          # 날짜를 지정받은 경우에만 CPD 열 사용
+            date_cols.append((c, cpd_date))
     out = []
     for r in rows[code_hdr + 1:]:
         code = str(r[0] or '').strip()
@@ -149,12 +154,16 @@ def write(df, col):
     return n_new
 
 
-def build(xlsx_path):
-    """Peer Analysis 시계열 시트용 (전체 이력). 파일에 든 항목(거래대금·시가총액)을 각각 적재"""
+def build(xlsx_path, cpd_date=None):
+    """Peer Analysis 시계열 시트용 (전체 이력). 파일에 든 항목을 각각 적재.
+    cpd_date(YYYY-MM-DD)를 주면 'CPD' 열을 그 날짜로 적재 — CPD는 받은 시각에 따라 장중 값일 수 있어
+    기본은 제외하고, 확정 종가 기준임을 확인한 경우에만 지정한다 (ingest_daily: 날짜 인자로 전달)"""
+    if isinstance(cpd_date, str):
+        cpd_date = datetime.date.fromisoformat(cpd_date)
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
     changed = False
     for sn, item in item_sheets(wb):
-        df = parse(wb, sn, item)
+        df = parse(wb, sn, item, cpd_date)
         if df.empty:
             print(f'SKIP: {item} 데이터 없음')
             continue
@@ -179,5 +188,6 @@ def build_snapshot(xlsx_path, date_key):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit('사용법: python3 tools/market/build_value.py <거래대금·시가총액 시트가 있는 xlsx> [...]')
-    for f in sys.argv[1:]:
-        build(f)
+    cpd = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--cpd=')), None)
+    for f in (a for a in sys.argv[1:] if not a.startswith('--')):
+        build(f, cpd)
