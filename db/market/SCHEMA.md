@@ -193,9 +193,9 @@
   LEFT JOIN 'db/market/halt/*.parquet' h USING (date, code) WHERE h.code IS NULL
   ```
 
-## db/market/value/ · db/market/mcap/ — 거래대금 · 시가총액 시계열
+## db/market/value/ · mcap/ · ffmcap/ — 거래대금 · 시가총액 · 유동시가총액 시계열
 
-원본은 HTS Peer Analysis 배열의 `거래대금`·`시가총액` 시트(2023-12-28~ 전체 이력, 주식·ETF 포함)와, 일일 파일 스냅샷 시트에 같은 이름의 열(Period `CPD`/`CPD-n`)이 있으면 그 기준일 1일치. `tools/market/build_value.py`가 시트명과 무관하게 항목명으로 DB를 골라 적재 (ingest_daily.py — 일일 파일은 5단계, 열이 없으면 건너뜀). **월별** 파일 `YYYY-MM.parquet`.
+원본은 HTS Peer Analysis 배열의 `거래대금`·`시가총액`·`유동시가총액` 시트(2023-12-28~ 전체 이력. 거래대금·시총은 주식·ETF, 유동시총은 주식만)와, 일일 파일 스냅샷 시트에 같은 이름의 열(Period `CPD`/`CPD-n`)이 있으면 그 기준일 1일치. `tools/market/build_value.py`가 시트명과 무관하게 항목명으로 DB를 골라 적재 (ingest_daily.py — 일일 파일은 5단계, 열이 없으면 건너뜀). **월별** 파일 `YYYY-MM.parquet`.
 
 | 컬럼 | 타입 | 설명 |
 |---|---|---|
@@ -203,10 +203,11 @@
 | `code` / `name` | VARCHAR | 종목코드 / 종목명 |
 | `value` (value/) | DOUBLE | 거래대금 (원) |
 | `mcap` (mcap/) | DOUBLE | 시가총액 (원) |
+| `ffmcap` (ffmcap/) | DOUBLE | 유동시가총액 (원) — 최대주주 등 고정 보유분을 뺀 유통 물량 기준. 원본 그대로이며 일부(약 0.3%) 행은 HTS 산출 시차로 시총보다 큼 |
 
 - 값이 0 이하이거나 빈 칸은 저장하지 않음. `CPD-1TD` 같은 비날짜 열은 제외(받은 시각에 따라 가리키는 날짜가 달라짐)
 - 원본에 있는 (date, code)만 교체하는 upsert, 내용이 같은 달은 재기록하지 않음
-- 용도: 유동성 필터(예: 20일 평균 거래대금 하한), 거래대금 급증 탐지, 시총 규모별 분류(대형·중형·소형), 회전율(거래대금÷시총), 백테스트 체결 가능 규모 점검
+- 용도: 유동성 필터(예: 20일 평균 거래대금 하한), 거래대금 급증 탐지, 시총 규모별 분류(대형·중형·소형), 회전율(거래대금÷시총 또는 ÷유동시총), 유동비율(유동시총÷시총), 백테스트 체결 가능 규모 점검
   ```sql
   SELECT p.*, v.value, m.mcap, v.value / m.mcap AS turnover
   FROM 'db/market/price/*.parquet' p

@@ -3,14 +3,15 @@
 
 원본: HTS Peer Analysis 다운로드. 행 = 종목(Code, Name, 결산월), 열 = 일자(Period 행 YYYYMMDD),
 값 = 원 단위 금액. 시트명과 무관하게 Code 헤더 행의 항목명으로 DB를 고른다:
-  '거래대금' -> db/market/value/ (컬럼 value),  '시가총액' -> db/market/mcap/ (컬럼 mcap)
+  '거래대금' -> db/market/value/ (컬럼 value),  '시가총액' -> db/market/mcap/ (컬럼 mcap),
+  '유동시가총액' -> db/market/ffmcap/ (컬럼 ffmcap, 최대주주 등 고정 보유분을 뺀 유통 물량 기준)
 'CPD-1TD' 같은 비날짜 열은 제외한다(받은 시각에 따라 가리키는 날짜가 달라 오인 위험).
 
-일일 파일(ETF_price_concensus_*.xlsx)의 스냅샷 시트에 기준일 1일치 '거래대금'·'시가총액' 열(Period 'CPD'/'CPD-n')이
+일일 파일(ETF_price_concensus_*.xlsx)의 스냅샷 시트에 기준일 1일치 '거래대금'·'시가총액'·'유동시가총액' 열(Period 'CPD'/'CPD-n')이
 있으면 build_snapshot()으로 같은 DB에 병합한다 (ingest_daily, 열이 없으면 건너뜀).
 
-산출물: db/market/value/YYYY-MM.parquet · db/market/mcap/YYYY-MM.parquet
-  date DATE, code VARCHAR, name VARCHAR('(주)'·'㈜' 접두 제거), value 또는 mcap DOUBLE (원)
+산출물: db/market/{value,mcap,ffmcap}/YYYY-MM.parquet
+  date DATE, code VARCHAR, name VARCHAR('(주)'·'㈜' 접두 제거), value / mcap / ffmcap DOUBLE (원)
 - 주식·ETF 모두 포함(원본에 든 코드 그대로). 값이 0 이하이거나 비어 있으면 저장하지 않음
 - 원본에 있는 (date, code)만 교체하는 upsert. 내용이 같은 달은 다시 쓰지 않음
 - 용도: 유동성 필터, 거래대금 급증 탐지, 시총 규모별 분류, 백테스트 체결 가능 규모 점검 등
@@ -24,7 +25,7 @@ import duckdb
 import pandas as pd
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SPECS = {'거래대금': ('value', '거래대금'), '시가총액': ('mcap', '시가총액')}   # 항목 -> (DB 폴더·컬럼명, 표시명)
+SPECS = {'거래대금': ('value', '거래대금'), '시가총액': ('mcap', '시가총액'), '유동시가총액': ('ffmcap', '유동시가총액')}   # 항목 -> (DB 폴더·컬럼명, 표시명)
 
 
 def out_dir(col):
