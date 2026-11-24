@@ -87,6 +87,13 @@
 - 확정(A)은 2019~, 4분기 실적 확정 시 해당 연도가 자동 추가됨 (fixed 시트의 AS 컬럼 기준)
 - 컨센서스(E)는 확정이 없는 연도만 수록 (현재 2026·2027)
 
+**quarterly.parquet** — 분기별 확정 영업이익 (code, name, fy SMALLINT, q TINYINT, op DOUBLE 천원)
+
+- 기본 출처는 `concensus_for_db*.xlsx`의 `fixed` 시트(YYYYMM 분기 컬럼). fixed 시트에 없는 분기는 기존 행 유지
+- 최신 분기를 먼저 넣을 때는 CSV `op_YYYYQn.csv`(컬럼 code,name,op[,fs], **원** 단위, 오픈DART 3개월 값)를
+  `python3 tools/ingest_daily.py op_2026Q3.csv` 로 올리면 해당 분기만 (code, fy, q) 단위로 추가·교체 (천원 환산)
+- 2026Q3: 오픈DART 3분기보고서 연결 기준(연결 없으면 별도) 2,515종목 (2026-11-24 적재)
+
 **consensus/YYYY-MM.parquet** — 연간 컨센서스의 일별 추이 (date, code, name, fy, op).
 날짜 단위 병합이라 짧은 기간 원본을 올려도 과거가 유지됨. Base Date가 날짜가 아닌 컬럼('CPD-1TD')은 제외.
 
