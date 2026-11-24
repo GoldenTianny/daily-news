@@ -14,6 +14,7 @@
   -> build_minervini(미너비니 트렌드 템플릿) -> build_vcp(VCP 베이스) -> build_screen(주식 검색기 스냅샷)
 - 어느 디렉터리에서 실행해도 저장소 기준 경로로 동작
 - 별도 형식 파일은 시트 구조로 자동 인식: concensus_for_db*.xlsx(영업이익 실적·컨센서스 -> build_earnings),
+  op_YYYYQn.csv(분기 영업이익, 원 단위 -> earnings/quarterly.parquet에 해당 분기 추가),
   kospi_kosdaq.xlsx(코스피·코스닥 지수 -> build_index)
 """
 import sys, os, re, datetime, numbers
@@ -62,6 +63,16 @@ def detect_date(xlsx_path):
 
 
 def main():
+    csvs = [a for a in sys.argv[1:] if a.lower().endswith('.csv')]
+    if csvs:                                    # 분기 영업이익 CSV(op_YYYYQn.csv) — 실적 DB에 분기 추가
+        for f in csvs:
+            if build_earnings.is_quarter_csv(f):
+                print(f'== 분기 영업이익 CSV · {os.path.basename(f)}')
+                build_earnings.build_quarter_csv(f)
+            else:
+                print(f'SKIP: 알 수 없는 CSV 형식 · {os.path.basename(f)}')
+        print('== 완료')
+        return
     files = [a for a in sys.argv[1:] if a.lower().endswith('.xlsx')]
     dates = [a for a in sys.argv[1:] if re.fullmatch(r'\d{4}-\d{2}-\d{2}', a)]
     if not files:

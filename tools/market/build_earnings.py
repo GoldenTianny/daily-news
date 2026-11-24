@@ -161,18 +161,67 @@ def build(xlsx_path):
 
     if quarterly:
         qdf = pd.DataFrame(quarterly, columns=['code', 'name', 'fy', 'q', 'op'])
-        qdf = qdf.sort_values(['code', 'fy', 'q']).reset_index(drop=True)
         qdst = os.path.join(OUT, 'quarterly.parquet')
-        duckdb.connect().execute(f"""
-            COPY (SELECT code, name, CAST(fy AS SMALLINT) AS fy, CAST(q AS TINYINT) AS q,
-                         CAST(op AS DOUBLE) AS op FROM qdf)
-            TO '{qdst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
-        print(f"OK  quarterly.parquet: {len(qdf):,}행 ({os.path.getsize(qdst) // 1024} KB)")
+        # fixed 시트에 없는 분기(예: CSV로 먼저 넣은 최신 분기)는 기존 행 유지
+        if os.path.exists(qdst):
+            old = pd.read_parquet(qdst)
+            have = set(zip(qdf['fy'], qdf['q']))
+            old = old[[k not in have for k in zip(old['fy'], old['q'])]]
+            if len(old):
+                print(f"    fixed 시트에 없는 분기 유지: {sorted(set(zip(old['fy'], old['q'])))}")
+                qdf = pd.concat([qdf, old[['code', 'name', 'fy', 'q', 'op']]])
+        write_quarterly(qdf)
 
     if cons_rows:
         cdf = pd.DataFrame(cons_rows, columns=['date', 'code', 'name', 'fy', 'op'])
         n_new, n_same = write_monthly(cdf)
         print(f"OK  consensus/: {len(cdf):,}행 | 월 파일 {n_new}개 갱신, {n_same}개 동일")
+
+
+def write_quarterly(qdf):
+    qdf = qdf.sort_values(['code', 'fy', 'q']).reset_index(drop=True)
+    qdst = os.path.join(OUT, 'quarterly.parquet')
+    duckdb.connect().execute(f"""
+        COPY (SELECT code, name, CAST(fy AS SMALLINT) AS fy, CAST(q AS TINYINT) AS q,
+                     CAST(op AS DOUBLE) AS op FROM qdf)
+        TO '{qdst}' (FORMAT PARQUET, COMPRESSION SNAPPY)""")
+    print(f"OK  quarterly.parquet: {len(qdf):,}행 ({os.path.getsize(qdst) // 1024} KB)")
+
+
+QCSV_RE = re.compile(r'op_(\d{4})Q([1-4])', re.I)
+
+
+def is_quarter_csv(path):
+    """분기 영업이익 CSV(헤더 code,name,op — 파일명 op_YYYYQn 또는 fq 컬럼)인지"""
+    if not path.lower().endswith('.csv'):
+        return False
+    with open(path, encoding='utf-8-sig') as f:
+        head = f.readline().strip().lower().split(',')
+    return {'code', 'op'} <= set(head) and bool(QCSV_RE.search(os.path.basename(path)) or 'fq' in head)
+
+
+def build_quarter_csv(path):
+    """분기 영업이익 CSV(원 단위, 오픈DART 등) -> quarterly.parquet에 해당 분기 upsert (천원 환산)"""
+    d = pd.read_csv(path, dtype={'code': str}, encoding='utf-8-sig')
+    if 'fq' not in d.columns:
+        m = QCSV_RE.search(os.path.basename(path))
+        d['fq'] = f'{m.group(1)}Q{m.group(2)}'
+    fq = d['fq'].astype(str).str.upper().str.extract(r'(\d{4})Q([1-4])')
+    d['fy'], d['q'] = fq[0].astype(int), fq[1].astype(int)
+    d = d[d['code'].astype(str).str.match(r'A[0-9A-Z]{6}$') & d['op'].notna()]
+    names = canonical_names()
+    d['name'] = [names.get(c) or re.sub(r'^\(주\)|^㈜', '', str(n or '').strip())
+                 for c, n in zip(d['code'], d['name'])]
+    d['op'] = d['op'].astype(float) / 1000          # 원 -> 천원 (annual·quarterly 공통 단위)
+    new = d[['code', 'name', 'fy', 'q', 'op']]
+    qdst = os.path.join(OUT, 'quarterly.parquet')
+    old = pd.read_parquet(qdst) if os.path.exists(qdst) else new.iloc[:0]
+    keys = set(zip(new['code'], new['fy'], new['q']))
+    old = old[[k not in keys for k in zip(old['code'], old['fy'], old['q'])]]
+    periods = sorted(set(zip(new['fy'], new['q'])))
+    print(f"    {os.path.basename(path)}: 분기 {', '.join(f'{y}Q{q}' for y, q in periods)} · {len(new):,}종목")
+    write_quarterly(pd.concat([old, new]))
+    return True
 
 
 def build_daily(xlsx_path, date_key):
@@ -235,5 +284,8 @@ def build_daily(xlsx_path, date_key):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        sys.exit('사용법: python3 tools/market/build_earnings.py <concensus_for_db*.xlsx>')
-    build(sys.argv[1])
+        sys.exit('사용법: python3 tools/market/build_earnings.py <concensus_for_db*.xlsx | op_YYYYQn.csv>')
+    if is_quarter_csv(sys.argv[1]):
+        build_quarter_csv(sys.argv[1])
+    else:
+        build(sys.argv[1])
