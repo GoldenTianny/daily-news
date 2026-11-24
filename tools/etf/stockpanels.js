@@ -209,33 +209,35 @@ function earnings(el, o) {
   const head = '<div class="sp-title">' + (o.titleHtml || esc(o.name)) + '<span style="font-weight:500;font-size:12px;color:#888">재무 이력 · 컨센서스</span></div>';
   if (!a || !a.size) { el.innerHTML = head + '<div class="sp-empty">영업이익 데이터가 없습니다</div>'; return; }
   const fys = Array.from(a.keys()).sort((x, y) => x - y);
-  let rows = '';
+  // 진행 중인 해(마지막 확정 연도 + 1): 발표된 분기까지의 누적 실적 — 컨센서스 E 행 바로 앞에 표시
+  const nextFy = Math.max(0, ...fys.filter(f => a.get(f)[1] !== 'E')) + 1, qs = [];
+  if (q) for (let k = 1; k <= 4; k++) if (q.get(nextFy * 10 + k) != null) qs.push(k);
+  let ytd = '';
+  const lbl = qs.length > 1 ? qs[0] + '~' + qs[qs.length - 1] + 'Q' : qs[0] + 'Q';
+  if (qs.length && qs.length < 4) {
+    const sum = qs.reduce((t, k) => t + q.get(nextFy * 10 + k), 0);
+    const prevAll = qs.every(k => q.get((nextFy - 1) * 10 + k) != null);
+    const [gv, cls] = growthCell(sum, prevAll ? qs.reduce((t, k) => t + q.get((nextFy - 1) * 10 + k), 0) : null);
+    ytd = '<tr class="yrow" data-fy="' + nextFy + '"><td class="yr">' + nextFy + '<span class="e" style="color:#00897b"> ' + lbl + '</span></td>' +
+      '<td class="op">' + Math.round(sum / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
+      '<td class="gv ' + cls + '">' + gv + '</td><td class="chev">&#9656; 분기</td></tr>';
+  }
+  let rows = '', ytdDone = !ytd;
   for (const fy of fys) {
     if (fy < 2020) continue;
+    if (!ytdDone && fy >= nextFy) { rows += ytd; ytdDone = true; }
     const cur = a.get(fy), prev = a.get(fy - 1);
     const [gv, cls] = growthCell(cur[0], prev ? prev[0] : null), est = cur[1] === 'E';
     rows += '<tr class="yrow" data-fy="' + fy + '"><td class="yr">' + fy + (est ? '<span class="e">E</span>' : '') + '</td>' +
       '<td class="op">' + Math.round(cur[0] / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
       '<td class="gv ' + cls + '">' + gv + '</td><td class="chev">&#9656; 분기</td></tr>';
   }
-  // 컨센서스가 없는 종목은 진행 중인 해(예: 2026)의 연간 행이 없다 → 발표된 분기까지의 누적 실적을 한 줄로 보여줌
-  const nextFy = fys[fys.length - 1] + 1, qs = [];
-  if (q) for (let k = 1; k <= 4; k++) if (q.get(nextFy * 10 + k) != null) qs.push(k);
-  let partial = false;
-  if (qs.length) {
-    partial = true;
-    const sum = qs.reduce((t, k) => t + q.get(nextFy * 10 + k), 0);
-    const prevAll = qs.every(k => q.get((nextFy - 1) * 10 + k) != null);
-    const [gv, cls] = growthCell(sum, prevAll ? qs.reduce((t, k) => t + q.get((nextFy - 1) * 10 + k), 0) : null);
-    rows += '<tr class="yrow" data-fy="' + nextFy + '"><td class="yr">' + nextFy + '<span class="e" style="color:#00897b"> ' +
-      (qs.length > 1 ? qs[0] + '~' + qs[qs.length - 1] + 'Q' : qs[0] + 'Q') + '</span></td>' +
-      '<td class="op">' + Math.round(sum / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
-      '<td class="gv ' + cls + '">' + gv + '</td><td class="chev">&#9656; 분기</td></tr>';
-  }
+  if (!ytdDone) rows += ytd;                       // 컨센서스(E)가 없는 종목은 맨 아래
+  const partial = !!ytd;
   const hasCons = o.cons && o.cons.fys && o.cons.fys.length;
   el.innerHTML = head +
     '<div class="sp-sub">영업이익(억원) · 증가율은 전년 대비 · E = 컨센서스 · 연도를 누르면 분기 실적' +
-      (partial ? '<br>' + nextFy + '년은 컨센서스가 없어 발표된 분기까지의 누적이며, 증가율은 전년 같은 분기 누적 대비입니다' : '') + '</div>' +
+      (partial ? '<br>' + nextFy + ' ' + lbl + ' = 올해 발표된 분기까지의 누적 실적 · 증가율은 전년 같은 분기 누적 대비' : '') + '</div>' +
     '<div class="sp-cols"><div><table class="sp-earn">' + rows + '</table></div>' +
     '<div>' + (hasCons ? '<div class="sp-cons"></div><div class="sp-sub" style="margin-top:4px">연간 영업이익 컨센서스 추이 · 괄호는 첫 관측일 대비 변화</div>'
       : '<div class="sp-empty">컨센서스 추이가 없습니다 (애널리스트 커버리지 없음)</div>') + '</div></div>';
