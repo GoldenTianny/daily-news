@@ -196,6 +196,7 @@
   .earn-tbl td { padding: 4px 0; font-size: 13px; }
   .earn-tbl td.yr { color: #888; font-weight: 600; font-size: 12px; padding-right: 16px; white-space: nowrap; }
   .earn-tbl td.yr .e-badge { color: #3f51b5; }
+  .earn-tbl td.yr .ytd-badge { color: #00897b; }
   .earn-tbl td.op { text-align: right; color: #555; font-variant-numeric: tabular-nums; min-width: 86px; white-space: nowrap; }
   .earn-tbl td.op .unit { color: #aaa; font-size: 11px; }
   .earn-tbl td.gv { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 64px; }
@@ -903,19 +904,24 @@ function showEarnings(name) {
   const tok = chartToken;
   earnArea.style.display = 'none';
   earnArea.innerHTML = '';
-  loadEarnings().then(m => {
+  Promise.all([loadEarnings(), loadQuarterly()]).then(([m, qm]) => {
     if (tok !== chartToken || !m) return;
     if (!currentView || currentView.type !== 'stock' || currentView.name !== name) return;
     const e = m.get(name);
     if (!e) return;                                  // 실적 데이터 없는 종목은 카드 생략
     const fys = Array.from(e.fy.keys()).sort((a, b) => a - b);
     const member = canSeeCons();
-    let cells = '';
+    // 진행 중인 해: 마지막 확정 연도 다음 해의 발표된 분기 누적 (컨센서스 E 행 앞에 표시)
+    const lastA = Math.max(0, ...fys.filter(f => e.fy.get(f)[1] !== 'E'));
+    const partial = ytdRowHtml(qm && qm.get(e.code), e.code, lastA + 1);
+    const ytdLbl = (partial.match(/ytd-badge"> ([^<]+)</) || [])[1] || '';
+    let cells = '', partialDone = !partial;
     for (const fy of fys) {
       if (fy < 2020) continue;                       // 표시 시작 연도 (기준치는 전년도 사용)
       const cur = e.fy.get(fy), prev = e.fy.get(fy - 1);
       if (!cur) continue;
       const est = cur[1] === 'E';
+      if (!partialDone && fy > lastA) { cells += partial; partialDone = true; }
       if (est && !member) {                          // 비회원: 전망치는 가림
         cells += '<tr class="locked" onclick="Auth.login()"><td class="yr">' + fy + '<span class="e-badge">E</span></td>' +
           '<td class="lockcell" colspan="3">&#128274; 컨센서스 전망 · 로그인하면 보입니다</td></tr>';
@@ -938,10 +944,12 @@ function showEarnings(name) {
         '<td class="gv ' + cls + '">' + gv + '</td>' +
         '<td class="chev">&#9656; 분기</td></tr>';
     }
+    if (!partialDone) cells += partial;              // 컨센서스가 없는 종목은 맨 아래
     if (!cells) return;
     earnArea.innerHTML = '<div class="chart-card">' +
       '<div class="chart-title">&#128202; ' + escHtml(name) + ' &middot; 연도별 영업이익 증가율</div>' +
-      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스 · 연도를 클릭하면 분기 실적</div>' +
+      '<div class="chart-sub">영업이익(억원) · 증가율은 전년 대비(YoY) · E = 컨센서스 · 연도를 클릭하면 분기 실적' +
+        (partial ? '<br>' + (lastA + 1) + ' ' + ytdLbl + ' = 올해 발표된 분기까지의 누적 실적 · 증가율은 전년 같은 분기 누적 대비' : '') + '</div>' +
       '<table class="earn-tbl">' + cells + '</table>' +
       '<div id="earnCons" style="margin-top:14px">' +
       (member ? '<div class="chart-loading">컨센서스 추이를 불러오는 중&hellip;</div>'
@@ -1045,6 +1053,22 @@ async function toggleEarnQ(cell, code, fy) {
   let rows = qRowsHtml(m && m.get(code), fy);
   if (!rows) rows = '<tr class="qrow"><td class="yr" colspan="4" style="color:#aaa">분기 실적 데이터가 없습니다</td></tr>';
   cell.insertAdjacentHTML('afterend', rows);
+}
+
+// 진행 중인 해의 누적 실적 행: 발표된 분기(1~nQ) 합계, 증가율은 전년 같은 분기 누적 대비 (없으면 '')
+function ytdRowHtml(e, code, fy) {
+  if (!e) return '';
+  const qs = [1, 2, 3, 4].filter(k => e.get(fy * 10 + k) != null);
+  if (!qs.length || qs.length === 4) return '';    // 4분기까지 나오면 연간 확정(A) 행이 생김
+  const sum = qs.reduce((t, k) => t + e.get(fy * 10 + k), 0);
+  const prevAll = qs.every(k => e.get((fy - 1) * 10 + k) != null);
+  const [gv, cls] = growthCell(sum, prevAll ? qs.reduce((t, k) => t + e.get((fy - 1) * 10 + k), 0) : null);
+  const lbl = qs.length > 1 ? qs[0] + '~' + qs[qs.length - 1] + 'Q' : qs[0] + 'Q';
+  return '<tr class="est ytd" onclick="toggleEarnQ(this,\'' + safeAttr(code) + '\',' + fy + ')">' +
+    '<td class="yr">' + fy + '<span class="ytd-badge"> ' + lbl + '</span></td>' +
+    '<td class="op">' + Math.round(sum / 1e5).toLocaleString() + '<span class="unit">억</span></td>' +
+    '<td class="gv ' + cls + '">' + gv + '</td>' +
+    '<td class="chev">&#9656; 분기</td></tr>';
 }
 
 function qRowsHtml(e, fy) {
