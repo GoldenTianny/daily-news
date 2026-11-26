@@ -1,4 +1,5 @@
 // 일일브리프 기사 하단 '종목 차트' — 기사에 나온 종목 버튼을 누르면 그 자리에서 캔들 차트를 펼친다.
+// 기본으로 기사마다 첫 종목 차트가 펼쳐져 있고, 다른 버튼을 누르면 바꿔 보거나 같은 버튼을 다시 눌러 접는다.
 // 블록: <div class="stock-charts" data-stocks='[{"name":"삼성SDI","code":"A006400"}]'></div>  (tools/news_stock_charts.py 가 삽입)
 // 자료: /db/newschart/<code>.json (최근 150거래일 종가·시고저 + 120일선용 앞쪽 종가). 그리기: /tools/etf/candle.js
 (function () {
@@ -74,6 +75,16 @@ function init(el) {
     show(panel, list[+b.dataset.i]);
     if (window.gtag) gtag('event', 'news_stock_chart', { stock: list[+b.dataset.i].name });
   });
+  // 기본: 첫 종목 차트를 펼친 상태 — 화면 가까이 왔을 때 그려서 처음 로딩을 가볍게
+  const first = el.querySelector('.sc-chip');
+  first.classList.add('on');
+  panel.hidden = false;
+  panel.innerHTML = '<div class="sc-msg">차트를 불러오는 중…</div>';
+  const open = () => { if (first.classList.contains('on') && !panel.__tok) show(panel, list[0]); };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); open(); } }, { rootMargin: '400px 0px' });
+    io.observe(el);
+  } else open();
 }
 
 function run() { document.querySelectorAll('.stock-charts').forEach(init); }
