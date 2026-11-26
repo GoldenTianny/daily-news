@@ -115,7 +115,13 @@
   .chbox { border: 1px solid #e8eaf2; border-radius: 10px; padding: 12px 14px 8px; margin-bottom: 12px; background: #fff; }
   .chbox .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #3f51b5; cursor: pointer; user-select: none; }
   .chhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; }
-  .chtabs { display: inline-flex; gap: 4px; margin-left: auto; }
+  .chtabs { display: inline-flex; gap: 4px; }
+  .chhead .chk { margin-left: auto; padding: 6px 4px 6px 12px; }   /* 오른손 스크롤용: 체크는 오른쪽 끝 */
+  .chbox .chk input { width: 22px !important; height: 22px !important; }
+  .chnote { margin: 8px 0 2px; padding: 8px 10px; background: #f7f8fc; border-radius: 8px; font-size: 12.5px; line-height: 1.55; color: #37474f; }
+  .chnote .ind { display: inline-block; padding: 1px 8px; margin-right: 6px; border-radius: 999px; background: #e8eaf6; color: #283593; font-weight: 700; font-size: 11.5px; }
+  .chnote .st { font-weight: 600; color: #1a237e; }
+  .chnote .g { color: #c62828; font-weight: 700; } .chnote .b { color: #1565c0; font-weight: 700; }
   .chtabs button { padding: 4px 10px; border-radius: 999px; border: 1px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .chtabs button.on { background: #3f51b5; border-color: #3f51b5; color: #fff; }
   /* 옆으로 넘기는 3장: 캔들 → 1년·목표주가·RS → 재무·컨센서스 */
@@ -778,6 +784,25 @@ const CH_BARS = 150;             // 차트 하나에 그리는 거래일 수 (ET
 const CH_BUFS = new Map();       // 'price|YYYY-MM' / 'ohlc|YYYY-MM' -> ArrayBuffer (없으면 null)
 const CH_DATA = new Map();       // 기준일 -> Map(code -> {price:[[d,c]], ohlc:Map(d->[o,h,l]), pre:[c]})  또는 진행 중 Promise
 let chKey = '', chObs = null;
+// ----- 차트 카드 아래 메모: 업종 · 성장 스토리 · 호재 · 악재 (db/market/stock_notes.json, 업종명은 네이버 업종) -----
+let NOTES = null, INDMAP = null;
+fetch('/db/market/stock_notes.json', { cache: 'no-cache' }).then(r => r.json()).then(j => { NOTES = j; if (INDMAP) fillNotes(); }).catch(() => {});
+fetch('/db/market/industry.json', { cache: 'no-cache' }).then(r => r.json()).then(j => { INDMAP = j.map || {}; if (NOTES) fillNotes(); }).catch(() => {});
+function noteHtml(code) {
+  if (!NOTES || !INDMAP) return '<div class="chnote" data-note="' + code + '" hidden></div>';
+  const n = (NOTES.notes || {})[code], ic = INDMAP[code], ind = n ? n.ind : (ic && NOTES.industry_names ? NOTES.industry_names[String(ic)] : '');
+  if (!n && !ind) return '';
+  let h = '<div class="chnote" data-note="' + code + '">' + (ind ? '<span class="ind">' + esc(ind) + '</span>' : '');
+  if (n) {
+    if (n.story && n.story !== '—') h += '<span class="st">' + esc(n.story) + '</span>';
+    if (n.good && n.good !== '—') h += '<br><span class="g">호재</span> ' + esc(n.good);
+    if (n.bad && n.bad !== '—') h += '<br><span class="b">악재</span> ' + esc(n.bad);
+  } else h += '<span style="color:#90a4ae">성장 스토리 미조사</span>';
+  return h + '</div>';
+}
+function fillNotes() {
+  document.querySelectorAll('.chnote[data-note]').forEach(el => { const t = document.createElement('div'); t.innerHTML = noteHtml(el.dataset.note); const nn = t.firstChild; if (nn) el.replaceWith(nn); else el.remove(); });
+}
 const chSel = new Set();         // 일괄 저장용으로 체크한 종목코드 (기준일이 바뀌면 비움)
 let chSrc = 'pass';              // 차트로 볼 목록: pass 템플릿 충족 / cs CANSLIM / vcp VCP 베이스 / near 근접(7/8)
 let chSelDate = null, chReady = null, chDrawOne = null, chShowSlide = null, chFitObs = null;
@@ -969,15 +994,15 @@ function renderPassCharts(passed) {
     return;
   }
 
-  box.innerHTML = srcBar + '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 차트를 <b>왼쪽으로 쓸어 넘기면</b>(또는 오른쪽 위 탭) 1년 주가·목표주가·RS 차트, 한 번 더 넘기면 재무 이력과 컨센서스가 나옵니다. 저장하고 싶은 차트를 <b>체크</b>해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다.</div>' +
+  box.innerHTML = srcBar + '<div class="note" style="margin:0 0 12px">최근 150거래일(약 7개월) 일봉입니다. 추세선은 고점·저점을 이어 자동으로 그린 참고선이며, 거래량은 자료가 없어 표시하지 않습니다. 종목명을 누르면 ETF 검색기 종목 화면으로 가고, 차트를 <b>왼쪽으로 쓸어 넘기면</b>(또는 오른쪽 위 탭) 1년 주가·목표주가·RS 차트, 한 번 더 넘기면 재무 이력과 컨센서스가 나옵니다. 저장하고 싶은 차트를 오른쪽 <b>사진 저장</b> 칸에 체크해 두었다가 위의 <b>선택한 차트 저장</b>을 누르면 사진(PNG)으로 한꺼번에 저장합니다. 휴대폰에서는 150거래일 전체가 한 화면에 들어오며, 두 손가락으로 화면을 벌리면 확대됩니다. 차트 아래에는 업종·성장 스토리·호재·악재 메모를 붙였습니다(조사한 종목만, 나머지는 업종명).</div>' +
     '<div class="savebar"><span>&#128247; 선택 <b id="selCnt">0</b>개</span>' +
       '<button type="button" class="sb" id="selAll">전체 선택</button><button type="button" class="sb" id="selNone">선택 해제</button>' +
       '<button type="button" class="sb go" id="selSave" disabled>선택한 차트 저장</button></div>' +
     passed.map((r, i) => '<div class="chbox' + (chSel.has(r.code) ? ' sel' : '') + '" data-i="' + i + '" data-code="' + r.code + '">' +
-      '<div class="chhead"><label class="chk"><input type="checkbox"' + (chSel.has(r.code) ? ' checked' : '') + '> 저장할 차트로 선택</label>' +
-      '<span class="chtabs"><button type="button" data-s="0" class="on">캔들</button><button type="button" data-s="1">1년 · 목표주가 · RS</button><button type="button" data-s="2">재무 · 컨센</button></span></div>' +
+      '<div class="chhead"><span class="chtabs"><button type="button" data-s="0" class="on">캔들</button><button type="button" data-s="1">1년 · 목표주가 · RS</button><button type="button" data-s="2">재무 · 컨센</button></span>' +
+      '<label class="chk">사진 저장 <input type="checkbox"' + (chSel.has(r.code) ? ' checked' : '') + '></label></div>' +
       '<div class="chslides"><div class="chslide"><div class="chbody"><div class="chwait">' + (i + 1) + '. ' + esc(r.name) + '</div></div></div>' +
-      '<div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div><div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div></div></div>').join('');
+      '<div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div><div class="chslide"><div class="chwait">불러오는 중&hellip;</div></div></div>' + noteHtml(r.code) + '</div>').join('');
   updateSelBar();
   // 상자 높이는 지금 보고 있는 장에 맞춘다 — 긴 장(재무)을 봤다가 돌아와도 캔들 장 아래에 빈 공간이 남지 않게
   if (chFitObs) chFitObs.disconnect();
