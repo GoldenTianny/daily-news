@@ -122,6 +122,7 @@
   .chnote .ind { display: inline-block; padding: 1px 8px; margin-right: 6px; border-radius: 999px; background: #e8eaf6; color: #283593; font-weight: 700; font-size: 11.5px; }
   .chnote .st { font-weight: 600; color: #1a237e; }
   .chnote .g { color: #c62828; font-weight: 700; } .chnote .b { color: #1565c0; font-weight: 700; }
+  .chnote .asof { display: block; margin-top: 3px; text-align: right; font-size: 11px; color: #90a4ae; }
   .chtabs button { padding: 4px 10px; border-radius: 999px; border: 1px solid #c5cae9; background: #fff; color: #3f51b5; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .chtabs button.on { background: #3f51b5; border-color: #3f51b5; color: #fff; }
   /* 옆으로 넘기는 3장: 캔들 → 1년·목표주가·RS → 재무·컨센서스 */
@@ -797,6 +798,8 @@ function noteHtml(code) {
     if (n.story && n.story !== '—') h += '<span class="st">' + esc(n.story) + '</span>';
     if (n.good && n.good !== '—') h += '<br><span class="g">호재</span> ' + esc(n.good);
     if (n.bad && n.bad !== '—') h += '<br><span class="b">악재</span> ' + esc(n.bad);
+    const asof = n.asof || String(NOTES.updated || '').slice(0, 10);
+    if (asof) h += '<span class="asof">' + esc(asof.slice(5).replace('-', '/')) + ' 업데이트</span>';
   } else h += '<span style="color:#90a4ae">성장 스토리 미조사</span>';
   return h + '</div>';
 }
