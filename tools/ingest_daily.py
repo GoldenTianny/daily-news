@@ -26,6 +26,7 @@ sys.path.insert(0, os.path.join(HERE, 'etf'))
 sys.path.insert(0, os.path.join(HERE, 'market'))
 sys.path.insert(0, os.path.join(HERE, 'study'))
 import build_data, build_market, build_rs, build_high52, build_earnings, build_minervini, build_etf_movers, build_index
+import notes_todo
 import refresh_prices, build_halt, build_ohlc, build_value, build_flow, build_vcp, build_semi_cycle, build_mrs, build_screen
 
 
@@ -145,6 +146,7 @@ def main():
             elif price_files or ohlc_files:
                 print('가격 변경 없음 — 파생 재계산 생략')
             print('== 완료')
+            notes_reminder()
             return
 
     date_key = dates[0] if dates else detect_date(xlsx)
@@ -196,6 +198,15 @@ def main():
     print('[14/14] 주식 검색기 스냅샷')
     build_screen.build()
     print('== 완료')
+    notes_reminder()
+
+
+def notes_reminder():
+    """템플릿 종목 메모(호재·악재·성장 스토리) 할 일 안내 — 실패해도 DB 반영은 그대로."""
+    try:
+        notes_todo.report()
+    except Exception as e:
+        print(f'[종목 메모] 점검 생략: {e}')
 
 
 if __name__ == '__main__':
